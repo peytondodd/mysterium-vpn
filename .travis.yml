@@ -20,8 +20,23 @@ install:
 - source ~/.bashrc
 - yarn global add xvfb-maybe
 - MYSTERIUM_CLIENT_PREVENT_LOCAL_INSTALL=true yarn
-script:
-- yarn ci
+jobs:
+  include:
+    - stage: Test
+      script: util_scripts/check-headers.sh
+      name: Check headers
+    - script: yarn flow
+      name: Flow
+    - script: yarn lint
+      name: Lint
+    - script: yarn unit
+      name: Unit tests
+    - script: yarn test:integration
+      name: Integration tests
+    - script: yarn test:coverage
+      name: Coverage
+    - script: yarn packages:check-outdated
+      name: Outdated packages
 before_deploy:
 - bash util_scripts/travis-number.sh
 - mkdir binaries && mkdir releases
