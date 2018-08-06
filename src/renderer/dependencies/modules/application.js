@@ -19,6 +19,7 @@
 import { Container } from '../../../app/di'
 import RendererCommunication from '../../../app/communication/renderer-communication'
 import RendererIpc from '../../../app/communication/ipc/renderer-ipc'
+import FeatureToggle from '../../../app/feature-toggle'
 import { remote } from 'electron'
 import VpnInitializer from '../../../app/vpn-initializer'
 import type { TequilapiClient } from '../../../libraries/mysterium-tequilapi/client'
@@ -31,12 +32,20 @@ function bootstrap (container: Container) {
 
   container.service(
     'rendererCommunication',
-    ['bugReporterMetrics'],
-    (bugReporterMetrics) => {
+    [],
+    () => {
       const ipc = new RendererIpc()
       const messageBus = new IpcMessageBus(ipc)
-      const communication = new RendererCommunication(messageBus)
-      return communication
+      return new RendererCommunication(messageBus)
+    }
+  )
+
+  container.service(
+    'featureToggle',
+    [],
+    () => {
+      declare var FEATURES: any
+      return new FeatureToggle(FEATURES)
     }
   )
 

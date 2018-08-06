@@ -18,6 +18,7 @@
 // @flow
 import { app, BrowserWindow } from 'electron'
 import type { Container } from '../../../app/di'
+import FeatureToggle from '../../../app/feature-toggle'
 import Mysterion from '../../../app/mysterion'
 import type { MysterionConfig } from '../../../app/mysterion-config'
 import path from 'path'
@@ -69,6 +70,15 @@ function bootstrap (container: Container) {
   )
 
   container.service(
+    'featureToggle',
+    [],
+    () => {
+      declare var FEATURES: any
+      return new FeatureToggle(FEATURES)
+    }
+  )
+
+  container.service(
     'mysterionApplication',
     [
       'mysterionApplication.config',
@@ -85,6 +95,7 @@ function bootstrap (container: Container) {
       'bugReporterMetrics',
       'userSettingsStore',
       'disconnectNotification',
+      'featureToggle',
       'eventSender'
     ],
     (
@@ -102,6 +113,7 @@ function bootstrap (container: Container) {
       bugReporterMetrics,
       userSettingsStore,
       disconnectNotification,
+      featureToggle,
       eventSender
     ) => {
       const startupEventTracker = new StartupEventTracker(eventSender)
@@ -123,6 +135,7 @@ function bootstrap (container: Container) {
         mysteriumProcessLogCache,
         userSettingsStore,
         disconnectNotification,
+        featureToggle,
         startupEventTracker
       })
     }
