@@ -19,7 +19,7 @@
 import { Container } from '../../../app/di'
 import RendererCommunication from '../../../app/communication/renderer-communication'
 import RendererIpc from '../../../app/communication/ipc/renderer-ipc'
-import FeatureToggle from '../../../app/feature-toggle'
+import FeatureToggle from '../../../app/features/feature-toggle'
 import { remote } from 'electron'
 import VpnInitializer from '../../../app/vpn-initializer'
 import type { TequilapiClient } from '../../../libraries/mysterium-tequilapi/client'

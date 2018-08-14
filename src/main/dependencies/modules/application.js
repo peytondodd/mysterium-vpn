@@ -18,7 +18,7 @@
 // @flow
 import { app, BrowserWindow } from 'electron'
 import type { Container } from '../../../app/di'
-import FeatureToggle from '../../../app/feature-toggle'
+import FeatureToggle from '../../../app/features/feature-toggle'
 import Mysterion from '../../../app/mysterion'
 import type { MysterionConfig } from '../../../app/mysterion-config'
 import path from 'path'
