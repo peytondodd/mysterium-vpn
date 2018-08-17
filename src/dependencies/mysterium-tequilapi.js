@@ -21,6 +21,7 @@ import { BugReporterMetrics } from '../app/bug-reporting/bug-reporter-metrics'
 import TequilapiClientWithMetrics from '../app/bug-reporting/tequilapi-client-with-metrics'
 import type { TequilapiClient } from '../libraries/mysterium-tequilapi/client'
 import tequilapiClientFactory from '../libraries/mysterium-tequilapi/client-factory'
+import type { BugReporter } from '../app/bug-reporting/interface'
 
 function bootstrap (container: Container) {
   container.constant(
@@ -31,9 +32,9 @@ function bootstrap (container: Container) {
   )
   container.service(
     'tequilapiClient',
-    ['bugReporterMetrics', 'tequilapiClient.config'],
-    (bugReporterMetrics: BugReporterMetrics, config: Object) => {
-      const client: TequilapiClient = tequilapiClientFactory(config.baseURL)
+    ['bugReporterMetrics', 'tequilapiClient.config', 'bugReporter'],
+    (bugReporterMetrics: BugReporterMetrics, config: Object, bugReporter: BugReporter) => {
+      const client: TequilapiClient = tequilapiClientFactory(bugReporter, config.baseURL)
       const clientWithMetrics = new TequilapiClientWithMetrics(client, bugReporterMetrics)
       return clientWithMetrics
     }

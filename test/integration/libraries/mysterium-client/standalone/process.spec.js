@@ -25,6 +25,7 @@ import tequilapiClientFactory from '../../../../../src/libraries/mysterium-tequi
 import { describe, xdescribe, it, before, after, expect } from '../../../../helpers/dependencies'
 import path from 'path'
 import os from 'os'
+import BugReporterMock from '../../../../helpers/bug-reporter-mock'
 
 xdescribe('Standalone Process', () => {
   let process, tequilapi
@@ -49,7 +50,8 @@ xdescribe('Standalone Process', () => {
     process.start()
     process.onLog(processLogLevels.INFO, data => logs.push(data))
 
-    tequilapi = tequilapiClientFactory(`http://127.0.0.1:${tequilapiPort}`)
+    const bugReporter = new BugReporterMock()
+    tequilapi = tequilapiClientFactory(bugReporter, `http://127.0.0.1:${tequilapiPort}`)
 
     await sleep(100)
   })
