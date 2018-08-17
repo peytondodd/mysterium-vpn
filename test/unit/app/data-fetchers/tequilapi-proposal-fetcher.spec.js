@@ -50,117 +50,115 @@ class IdentityTequilapiClientMock extends EmptyTequilapiClientMock {
   }
 }
 
-describe('DataFetchers', () => {
-  describe('ProposalFetcher', () => {
-    let clock
-    const interval = 1001
-    const tequilapi = new IdentityTequilapiClientMock([
-      new ProposalDTO({ id: '0x1' }),
-      new ProposalDTO({ id: '0x2' })
-    ])
-    let fetcher
+describe('TequilapiProposalFetcher', () => {
+  let clock
+  const interval = 1001
+  const tequilapi = new IdentityTequilapiClientMock([
+    new ProposalDTO({ id: '0x1' }),
+    new ProposalDTO({ id: '0x2' })
+  ])
+  let fetcher
 
-    before(() => {
-      clock = lolex.install()
+  before(() => {
+    clock = lolex.install()
+  })
+
+  after(() => {
+    clock.uninstall()
+  })
+
+  beforeEach(() => {
+    fetcher = new TequilapiProposalFetcher(tequilapi, interval)
+  })
+
+  async function tickWithDelay (duration) {
+    clock.tick(duration)
+    await nextTick()
+  }
+
+  describe('.start', () => {
+    it('triggers subscriber callbacks', async () => {
+      let counter = 0
+
+      fetcher.onFetchedProposals(() => counter++)
+      fetcher.start()
+
+      await tickWithDelay(1000)
+      expect(counter).to.equal(1)
+
+      await tickWithDelay(1000)
+      expect(counter).to.equal(2)
     })
 
-    after(() => {
-      clock.uninstall()
-    })
+    it('triggers subscriber callbacks with proposals', async () => {
+      let proposals = []
 
-    beforeEach(() => {
-      fetcher = new TequilapiProposalFetcher(tequilapi, interval)
-    })
-
-    async function tickWithDelay (duration) {
-      clock.tick(duration)
-      await nextTick()
-    }
-
-    describe('.start', () => {
-      it('triggers subscriber callbacks', async () => {
-        let counter = 0
-
-        fetcher.onFetchedProposals(() => counter++)
-        fetcher.start()
-
-        await tickWithDelay(1000)
-        expect(counter).to.equal(1)
-
-        await tickWithDelay(1000)
-        expect(counter).to.equal(2)
+      fetcher.onFetchedProposals((fetchedProposals) => {
+        proposals = fetchedProposals
       })
 
-      it('triggers subscriber callbacks with proposals', async () => {
-        let proposals = []
+      fetcher.start()
 
-        fetcher.onFetchedProposals((fetchedProposals) => {
-          proposals = fetchedProposals
+      await tickWithDelay(1000)
+
+      expect(proposals.length).to.equal(2)
+      expect(proposals[0]).to.deep.equal(new ProposalDTO({ id: '0x1' }))
+      expect(proposals[1]).to.deep.equal(new ProposalDTO({ id: '0x2' }))
+    })
+
+    describe('when proposal fetching fails', () => {
+      before(() => {
+        tequilapi.markToFail()
+      })
+
+      after(() => {
+        tequilapi.markToSucceed()
+      })
+
+      it('triggers failure callbacks with error', async () => {
+        let error = null
+        fetcher.onFetchingError((err) => {
+          logger.info('ERROR!', err)
+          error = err
         })
 
         fetcher.start()
 
-        await tickWithDelay(1000)
-
-        expect(proposals.length).to.equal(2)
-        expect(proposals[0]).to.deep.equal(new ProposalDTO({ id: '0x1' }))
-        expect(proposals[1]).to.deep.equal(new ProposalDTO({ id: '0x2' }))
-      })
-
-      describe('when proposal fetching fails', () => {
-        before(() => {
-          tequilapi.markToFail()
-        })
-
-        after(() => {
-          tequilapi.markToSucceed()
-        })
-
-        it('triggers failure callbacks with error', async () => {
-          let error = null
-          fetcher.onFetchingError((err) => {
-            logger.info('ERROR!', err)
-            error = err
-          })
-
-          fetcher.start()
-
-          await tickWithDelay(1001)
-          expect(error).to.eql(tequilapi.mockError)
-        })
+        await tickWithDelay(1001)
+        expect(error).to.eql(tequilapi.mockError)
       })
     })
+  })
 
-    describe('.stop', () => {
-      it('stops fetching of proposals', async () => {
-        let counter = 0
+  describe('.stop', () => {
+    it('stops fetching of proposals', async () => {
+      let counter = 0
 
-        fetcher.onFetchedProposals(() => counter++)
-        fetcher.start()
+      fetcher.onFetchedProposals(() => counter++)
+      fetcher.start()
 
-        await tickWithDelay(1000)
-        expect(counter).to.equal(1)
+      await tickWithDelay(1000)
+      expect(counter).to.equal(1)
 
-        const stopPromise = fetcher.stop()
-        await tickWithDelay(1000)
-        await stopPromise
+      const stopPromise = fetcher.stop()
+      await tickWithDelay(1000)
+      await stopPromise
 
-        expect(counter).to.equal(1)
-      })
-
-      it('does not fail when invoked without starting', async () => {
-        await fetcher.stop()
-      })
+      expect(counter).to.equal(1)
     })
 
-    describe('.fetch', () => {
-      it('returns proposals', async () => {
-        const proposals = await fetcher.fetch()
+    it('does not fail when invoked without starting', async () => {
+      await fetcher.stop()
+    })
+  })
 
-        expect(proposals.length).to.equal(2)
-        expect(proposals[0]).to.deep.equal(new ProposalDTO({ id: '0x1' }))
-        expect(proposals[1]).to.deep.equal(new ProposalDTO({ id: '0x2' }))
-      })
+  describe('.fetch', () => {
+    it('returns proposals', async () => {
+      const proposals = await fetcher.fetch()
+
+      expect(proposals.length).to.equal(2)
+      expect(proposals[0]).to.deep.equal(new ProposalDTO({ id: '0x1' }))
+      expect(proposals[1]).to.deep.equal(new ProposalDTO({ id: '0x2' }))
     })
   })
 })
