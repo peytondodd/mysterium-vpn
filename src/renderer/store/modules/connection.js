@@ -236,10 +236,11 @@ function actionsFactory (
           eventTracker.connectCanceled()
           return
         }
+
         commit(type.SHOW_ERROR_MESSAGE, messages.connectFailed)
-        const error: Object = new Error('Connection to node failed.')
-        error.original = err
-        eventTracker.connectEnded(error.toString())
+
+        eventTracker.connectEnded('Error: Connection to node failed.')
+
         bugReporter.captureInfoException(err)
       } finally {
         if (looper) {

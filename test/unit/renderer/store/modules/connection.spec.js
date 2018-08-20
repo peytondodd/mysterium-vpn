@@ -144,9 +144,9 @@ const fakeTequilapi = factoryTequilapiManipulator()
 const fakeMessageBus = new FakeMessageBus()
 const rendererCommunication = new RendererCommunication(fakeMessageBus)
 
-const fakeEventSender = new MockEventSender()
+let fakeEventSender: MockEventSender
 
-const bugReporterMock = new BugReporterMock()
+let bugReporterMock: BugReporterMock
 
 async function executeAction (action, state = {}, payload = {}, getters = {}) {
   const mutations = []
@@ -249,6 +249,8 @@ describe('mutations', () => {
 describe('actions', () => {
   beforeEach(() => {
     fakeTequilapi.cleanup()
+    fakeEventSender = new MockEventSender()
+    bugReporterMock = new BugReporterMock()
   })
 
   describe('START_ACTION_LOOPING', () => {
@@ -534,17 +536,27 @@ describe('actions', () => {
         fakeTequilapi.setConnectFail(true)
       })
 
+      const state = {
+        actionLoopers: {},
+        location: { originalCountry: '' }
+      }
+
       it('shows error', async () => {
-        fakeTequilapi.setConnectFail(true)
-        const state = {
-          actionLoopers: {},
-          location: { originalCountry: '' }
-        }
         const committed = await executeAction(type.CONNECT, state)
+
         expect(committed[committed.length - 1]).to.eql({
           key: 'SHOW_ERROR_MESSAGE',
           value: 'Connection failed. Try another country'
         })
+      })
+
+      it('sends error event', async () => {
+        await executeAction(type.CONNECT, state)
+
+        expect(fakeEventSender.events.length).to.eql(1)
+        const event = fakeEventSender.events[0]
+        expect(event.eventName).to.eql('connect_failed')
+        expect(event.context.error).to.eql('Error: Connection to node failed.')
       })
     })
 
