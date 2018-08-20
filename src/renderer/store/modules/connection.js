@@ -241,7 +241,9 @@ function actionsFactory (
 
         eventTracker.connectEnded('Error: Connection to node failed.')
 
-        bugReporter.captureInfoException(err)
+        if (!isHttpError(err)) {
+          bugReporter.captureInfoException(err)
+        }
       } finally {
         if (looper) {
           looper.start()

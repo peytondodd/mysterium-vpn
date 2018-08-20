@@ -34,6 +34,7 @@ import ConnectionIPDTO from '../../../../../src/libraries/mysterium-tequilapi/dt
 import BugReporterMock from '../../../../helpers/bug-reporter-mock'
 import ConnectionRequestDTO from '../../../../../src/libraries/mysterium-tequilapi/dto/connection-request'
 import MockEventSender from '../../../../helpers/statistics/mock-event-sender'
+import { markErrorAsHttp } from '../../../../../src/libraries/mysterium-tequilapi/client-error'
 
 function factoryTequilapiManipulator () {
   let statusFail = false
@@ -43,7 +44,7 @@ function factoryTequilapiManipulator () {
   let connectFail = false
   let connectFailClosedRequest = false
 
-  const errorMock = new Error('Mock error')
+  let errorMock = new Error('Mock error')
   const timeoutErrorMock = createMockTimeoutError()
   const closedRequestErrorMock = createMockRequestClosedError()
 
@@ -122,6 +123,9 @@ function factoryTequilapiManipulator () {
     },
     getFakeError (): Error {
       return errorMock
+    },
+    setFakeError (error: Error) {
+      errorMock = error
     }
   }
 }
@@ -557,6 +561,22 @@ describe('actions', () => {
         const event = fakeEventSender.events[0]
         expect(event.eventName).to.eql('connect_failed')
         expect(event.context.error).to.eql('Error: Connection to node failed.')
+      })
+
+      it('captures unknown error', async () => {
+        await executeAction(type.CONNECT, state)
+
+        expect(bugReporterMock.infoExceptions.length).to.eql(1)
+      })
+
+      it('does not capture http error', async () => {
+        const httpError = new Error('Mock http error')
+        markErrorAsHttp(httpError)
+        fakeTequilapi.setFakeError(httpError)
+
+        await executeAction(type.CONNECT, state)
+
+        expect(bugReporterMock.infoExceptions.length).to.eql(0)
       })
     })
 
