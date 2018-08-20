@@ -18,7 +18,7 @@
 // @flow
 
 import { beforeEach, describe, expect, it } from '../../../../helpers/dependencies'
-import BugReporterAdapter from '../../../../../src/libraries/mysterium-tequilapi/adapters/bug-reporter-adapter'
+import BugReporterAdapter from '../../../../../src/app/mysterium-tequilapi/adapters/bug-reporter-adapter'
 import type { HttpInterface } from '../../../../../src/libraries/mysterium-tequilapi/adapters/interface'
 import BugReporterMock from '../../../../helpers/bug-reporter-mock'
 import { captureAsyncError } from '../../../../helpers/utils'

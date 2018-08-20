@@ -17,9 +17,9 @@
 
 // @flow
 
-import type { HttpInterface, HttpQueryParams } from './interface'
-import type { BugReporter } from '../../../app/bug-reporting/interface'
-import { isHttpError } from '../client-error'
+import type { HttpInterface, HttpQueryParams } from '../../../libraries/mysterium-tequilapi/adapters/interface'
+import type { BugReporter } from '../../bug-reporting/interface'
+import { isHttpError } from '../../../libraries/mysterium-tequilapi/client-error'
 
 /**
  * Delegates to other 'HttpInterface' and captures errors to 'BugReporter'.

@@ -19,7 +19,7 @@
 
 import TequilapiClientFactory, { TEQUILAPI_URL } from '../../libraries/mysterium-tequilapi/tequilapi-client-factory'
 import type { HttpInterface } from '../../libraries/mysterium-tequilapi/adapters/interface'
-import BugReporterAdapter from '../../libraries/mysterium-tequilapi/adapters/bug-reporter-adapter'
+import BugReporterAdapter from './adapters/bug-reporter-adapter'
 import type { BugReporter } from '../../app/bug-reporting/interface'
 import { TIMEOUT_DEFAULT } from '../../libraries/mysterium-tequilapi/timeouts'
 
