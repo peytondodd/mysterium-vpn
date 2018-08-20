@@ -42,6 +42,7 @@ function factoryTequilapiManipulator () {
   let ipTimeout = false
   let connectFail = false
   let connectFailClosedRequest = false
+  let connectionCancelFail = false
 
   let errorMock = new Error('Mock error')
   const timeoutErrorMock = createMockTimeoutError()
@@ -68,6 +69,9 @@ function factoryTequilapiManipulator () {
     }
 
     async connectionCancel (): Promise<void> {
+      if (connectionCancelFail) {
+        throw errorMock
+      }
     }
 
     async connectionIP (): Promise<ConnectionIPDTO> {
@@ -106,6 +110,9 @@ function factoryTequilapiManipulator () {
     setConnectFailClosedRequest () {
       connectFailClosedRequest = true
     },
+    setConnectCancelFail () {
+      connectionCancelFail = true
+    },
     getFakeError (): Error {
       return errorMock
     },
@@ -115,17 +122,23 @@ function factoryTequilapiManipulator () {
   }
 }
 
-function createMockTimeoutError (): Object {
+function createMockTimeoutError (): Error {
   const error = new Error('Mock timeout error')
   const object = (error: Object)
   object.code = 'ECONNABORTED'
   return error
 }
 
-function createMockRequestClosedError (): Object {
+function createMockRequestClosedError (): Error {
   const error = new Error('Mock closed request error')
   const object = (error: Object)
   object.response = { status: 499 }
+  return error
+}
+
+function createMockHttpError (): Error {
+  const error = new Error('Mock http error')
+  markErrorAsHttp(error)
   return error
 }
 
@@ -558,13 +571,11 @@ describe('connection', () => {
         })
 
         it('does not capture http error', async () => {
-          const httpError = new Error('Mock http error')
-          markErrorAsHttp(httpError)
-          fakeTequilapi.setFakeError(httpError)
+          fakeTequilapi.setFakeError(createMockHttpError())
 
           await executeAction(type.CONNECT, state)
 
-          expect(bugReporterMock.infoExceptions.length).to.eql(0)
+          expect(bugReporterMock.infoExceptions).to.be.empty
         })
       })
 
@@ -587,14 +598,35 @@ describe('connection', () => {
     })
 
     describe('DISCONNECT', () => {
+      const state = {
+        actionLoopers: {}
+      }
+
       it('marks disconnecting status', async () => {
-        const state = {
-          actionLoopers: {}
-        }
         const committed = await executeAction(type.DISCONNECT, state)
         expect(committed[0]).to.eql({
           key: type.SET_CONNECTION_STATUS,
           value: ConnectionStatusEnum.DISCONNECTING
+        })
+      })
+
+      describe('when disconnecting fails', () => {
+        beforeEach(() => {
+          fakeTequilapi.setConnectCancelFail()
+        })
+
+        it('captures unknown error', async () => {
+          await executeAction(type.DISCONNECT, state)
+
+          expect(bugReporterMock.infoExceptions.length).to.eql(1)
+        })
+
+        it('does not capture http error', async () => {
+          fakeTequilapi.setFakeError(createMockHttpError())
+
+          await executeAction(type.DISCONNECT, state)
+
+          expect(bugReporterMock.infoExceptions).to.be.empty
         })
       })
     })

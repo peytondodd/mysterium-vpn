@@ -264,7 +264,9 @@ function actionsFactory (
         } catch (err) {
           commit(type.SHOW_ERROR, err)
           logger.info('Connection cancelling failed:', err)
-          bugReporter.captureInfoException(err)
+          if (!isHttpError(err)) {
+            bugReporter.captureInfoException(err)
+          }
         }
         dispatch(type.FETCH_CONNECTION_STATUS)
         dispatch(type.CONNECTION_IP)
