@@ -31,11 +31,13 @@ const SERVICE_STATE = {
 }
 type ServiceState = $Values<typeof SERVICE_STATE>
 
+type ServiceManagerOperation = 'start' | 'stop' | 'install' | 'uninstall' | 'restart'
+
 export { SERVICE_STATE }
 export type { ServiceState }
 
 const parseServiceState = (serviceInfo: string): ServiceState => {
-  const isInstalled: boolean = serviceInfo.indexOf(`SERVICE_NAME: ${SERVICE_NAME}`) > -1
+  const isInstalled: boolean = serviceInfo.includes(`SERVICE_NAME: ${SERVICE_NAME}`)
   if (!isInstalled) {
     return SERVICE_STATE.UNKNOWN
   }
@@ -68,6 +70,10 @@ const parseServiceState = (serviceInfo: string): ServiceState => {
   return (state: ServiceState)
 }
 
+const needReinstall = (e: Error): boolean => {
+  return e.message.includes('Command failed')
+}
+
 export default class ServiceManager {
   _path: string
   _system: System
@@ -82,11 +88,20 @@ export default class ServiceManager {
   }
 
   async install (): Promise<string> {
-    return this._execCommands('install', 'start')
+    return this._execOperations('install', 'start')
+  }
+
+  async reinstall (): Promise<string> {
+    const commands = ['uninstall', 'install', 'start']
+    const state = this.getServiceState()
+    if (state === SERVICE_STATE.RUNNING) {
+      commands.unshift('stop')
+    }
+    return this._execOperations(...commands)
   }
 
   async start (): Promise<ServiceState> {
-    return this._execAndGetState('start')
+    return this._execAndGetState('start', true)
   }
 
   async stop (): Promise<ServiceState> {
@@ -94,7 +109,7 @@ export default class ServiceManager {
   }
 
   async restart (): Promise<ServiceState> {
-    return this._execAndGetState('restart')
+    return this._execAndGetState('restart', true)
   }
 
   async getServiceState (): Promise<ServiceState> {
@@ -111,27 +126,37 @@ export default class ServiceManager {
     return parseServiceState(stdout)
   }
 
-  async _execCommands (...commandNames: string[]): Promise<string> {
-    return this._sudoExec(...commandNames.map(c => this._createCommand(c)))
+  async _execOperations (...operations: ServiceManagerOperation[]): Promise<string> {
+    return this._sudoExec(...operations.map(c => this._createCommandFromOperation(c)))
   }
 
-  async _execAndGetState (commandName: string): Promise<ServiceState> {
-    const result = await this._execCommands(commandName)
-    return parseServiceState(result)
+  _createCommandFromOperation (operation: ServiceManagerOperation): Command {
+    return {
+      path: this._path,
+      args: [`--do=${operation}`]
+    }
+  }
+
+  async _execAndGetState (operation: ServiceManagerOperation, reinstallOnError: boolean = false): Promise<ServiceState> {
+    try {
+      const result = await this._execOperations(operation)
+      return parseServiceState(result)
+    } catch (e) {
+      if (e instanceof Error && reinstallOnError && needReinstall(e)) {
+        await this.reinstall()
+        return SERVICE_STATE.START_PENDING
+      } else {
+        throw e
+      }
+    }
   }
 
   async _sudoExec (...commands: Command[]): Promise<string> {
     try {
+      logger.info('Execute sudo', JSON.stringify(commands))
       return await this._system.sudoExec(...commands)
     } catch (e) {
       throw new Error(`Unable to execute [${JSON.stringify(commands)}]. ${e}`)
-    }
-  }
-
-  _createCommand (commandName: string): Command {
-    return {
-      path: this._path,
-      args: [`--do=${commandName}`]
     }
   }
 }
