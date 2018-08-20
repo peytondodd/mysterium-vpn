@@ -79,6 +79,10 @@ class MainMessageBusCommunication implements MainCommunication, MapSyncCommunica
     this._send(messages.COUNTRY_UPDATE, countries)
   }
 
+  sendRegistration (registered: string) {
+    this._send(messages.IDENTITY_REGISTERED, registered)
+  }
+
   sendConnectionCancelRequest () {
     this._send(messages.CONNECTION_CANCEL)
   }

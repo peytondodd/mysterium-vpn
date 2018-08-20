@@ -47,7 +47,9 @@ class TequilapiRegistrationFetcher implements RegistrationFetcher {
    */
   start (identityId: string): void {
     this._identityId = identityId
-    this._loop.start()
+    if (!this._loop.isRunning()) {
+      this._loop.start()
+    }
   }
 
   /**
