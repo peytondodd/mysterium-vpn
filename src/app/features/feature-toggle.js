@@ -18,18 +18,35 @@
 // @flow
 
 type Features = {
-  payments: boolean
+  payments: ?boolean
 }
 
 class FeatureToggle {
-  _features: Features
+  _features: ?Features
 
-  constructor (features: Features) {
+  constructor (features: ?Features) {
     this._features = features
   }
 
-  paymentsAreEnabled () {
-    return this._features.payments
+  paymentsAreEnabled (): boolean {
+    return this._getFeatureState('payments', false)
+  }
+
+  _getFeatureState (key: string, defaultValue: boolean): boolean {
+    if (typeof this._features !== 'object') {
+      return defaultValue
+    }
+
+    const features = this._features
+    if (features == null) {
+      return defaultValue
+    }
+
+    if (typeof features[key] === 'undefined') {
+      return defaultValue
+    }
+
+    return features[key]
   }
 }
 

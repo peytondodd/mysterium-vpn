@@ -19,6 +19,7 @@
 import { Container } from '../../../app/di'
 import RendererCommunication from '../../../app/communication/renderer-communication'
 import RendererIpc from '../../../app/communication/ipc/renderer-ipc'
+import type { Features } from '../../../app/features/feature-toggle'
 import FeatureToggle from '../../../app/features/feature-toggle'
 import { remote } from 'electron'
 import VpnInitializer from '../../../app/vpn-initializer'
@@ -44,7 +45,7 @@ function bootstrap (container: Container) {
     'featureToggle',
     [],
     () => {
-      declare var FEATURES: { [string]: boolean }
+      declare var FEATURES: Features
 
       return new FeatureToggle(FEATURES)
     }
