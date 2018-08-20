@@ -50,7 +50,7 @@ class IdentityManager {
       return await this._tequilapi.identityCreate(PASSWORD)
     } catch (err) {
       commit(types.SHOW_ERROR, err)
-      throw (err)
+      throw err
     }
   }
 
