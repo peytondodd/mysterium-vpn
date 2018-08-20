@@ -39,7 +39,6 @@ import { markErrorAsHttp } from '../../../../../src/libraries/mysterium-tequilap
 function factoryTequilapiManipulator () {
   let statusFail = false
   let statisticsFail = false
-  let ipFail = false
   let ipTimeout = false
   let connectFail = false
   let connectFailClosedRequest = false
@@ -75,9 +74,6 @@ function factoryTequilapiManipulator () {
       if (ipTimeout) {
         throw timeoutErrorMock
       }
-      if (ipFail) {
-        throw errorMock
-      }
       return new ConnectionIPDTO({
         ip: 'mock ip'
       })
@@ -95,31 +91,20 @@ function factoryTequilapiManipulator () {
     getFakeApi () {
       return new ConnectionTequilapiClientMock()
     },
-    cleanup () {
-      this.setStatusFail(false)
-      this.setStatisticsFail(false)
-      this.setIpFail(false)
-      this.setIpTimeout(false)
-      this.setConnectFail(false)
-      this.setConnectFailClosedRequest(false)
+    setStatusFail () {
+      statusFail = true
     },
-    setStatusFail (value: boolean) {
-      statusFail = value
+    setStatisticsFail () {
+      statisticsFail = true
     },
-    setStatisticsFail (value: boolean) {
-      statisticsFail = value
+    setIpTimeout () {
+      ipTimeout = true
     },
-    setIpTimeout (value: boolean) {
-      ipTimeout = value
+    setConnectFail () {
+      connectFail = true
     },
-    setIpFail (value: boolean) {
-      ipFail = value
-    },
-    setConnectFail (value: boolean) {
-      connectFail = value
-    },
-    setConnectFailClosedRequest (value: boolean) {
-      connectFailClosedRequest = value
+    setConnectFailClosedRequest () {
+      connectFailClosedRequest = true
     },
     getFakeError (): Error {
       return errorMock
@@ -142,32 +127,6 @@ function createMockRequestClosedError (): Object {
   const object = (error: Object)
   object.response = { status: 499 }
   return error
-}
-
-const fakeTequilapi = factoryTequilapiManipulator()
-const fakeMessageBus = new FakeMessageBus()
-const rendererCommunication = new RendererCommunication(fakeMessageBus)
-
-let fakeEventSender: MockEventSender
-
-let bugReporterMock: BugReporterMock
-
-async function executeAction (action, state = {}, payload = {}, getters = {}) {
-  const mutations = []
-  const commit = (key, value) => {
-    mutations.push({ key, value })
-  }
-
-  const dispatch = (action, payload = {}) => {
-    const context = { commit, dispatch, state, getters }
-    const actions =
-      actionsFactory(fakeTequilapi.getFakeApi(), rendererCommunication, fakeEventSender, bugReporterMock)
-
-    return actions[action](context, payload)
-  }
-
-  await dispatch(action, payload)
-  return mutations
 }
 
 describe('connection', () => {
@@ -252,8 +211,35 @@ describe('connection', () => {
   })
 
   describe('actions', () => {
+    let fakeTequilapi = factoryTequilapiManipulator()
+    let fakeMessageBus = new FakeMessageBus()
+    let rendererCommunication = new RendererCommunication(fakeMessageBus)
+
+    let fakeEventSender: MockEventSender
+    let bugReporterMock: BugReporterMock
+
+    async function executeAction (action, state = {}, payload = {}, getters = {}) {
+      const mutations = []
+      const commit = (key, value) => {
+        mutations.push({ key, value })
+      }
+
+      const dispatch = (action, payload = {}) => {
+        const context = { commit, dispatch, state, getters }
+        const actions =
+          actionsFactory(fakeTequilapi.getFakeApi(), rendererCommunication, fakeEventSender, bugReporterMock)
+
+        return actions[action](context, payload)
+      }
+
+      await dispatch(action, payload)
+      return mutations
+    }
+
     beforeEach(() => {
-      fakeTequilapi.cleanup()
+      fakeTequilapi = factoryTequilapiManipulator()
+      fakeMessageBus = new FakeMessageBus()
+      rendererCommunication = new RendererCommunication(fakeMessageBus)
 
       fakeEventSender = new MockEventSender()
       bugReporterMock = new BugReporterMock()
@@ -341,7 +327,7 @@ describe('connection', () => {
       })
 
       it('ignores errors', async () => {
-        fakeTequilapi.setIpTimeout(true)
+        fakeTequilapi.setIpTimeout()
         const committed = await executeAction(type.CONNECTION_IP)
         expect(committed).to.eql([])
       })
@@ -357,7 +343,7 @@ describe('connection', () => {
       })
 
       it('commits error when api fails', async () => {
-        fakeTequilapi.setStatusFail(true)
+        fakeTequilapi.setStatusFail()
         const committed = await executeAction(type.FETCH_CONNECTION_STATUS)
         expect(committed).to.eql([{
           key: type.SHOW_ERROR,
@@ -470,7 +456,7 @@ describe('connection', () => {
       })
 
       it('commits error when api fails', async () => {
-        fakeTequilapi.setStatisticsFail(true)
+        fakeTequilapi.setStatisticsFail()
         const committed = await executeAction(type.CONNECTION_STATISTICS)
         expect(committed).to.eql([{
           key: type.SHOW_ERROR,
@@ -539,7 +525,7 @@ describe('connection', () => {
 
       describe('when connection fails', () => {
         beforeEach(() => {
-          fakeTequilapi.setConnectFail(true)
+          fakeTequilapi.setConnectFail()
         })
 
         const state = {
@@ -584,7 +570,7 @@ describe('connection', () => {
 
       describe('when connection was cancelled', () => {
         beforeEach(() => {
-          fakeTequilapi.setConnectFailClosedRequest(true)
+          fakeTequilapi.setConnectFailClosedRequest()
         })
 
         it('does not throw error and does not show error', async () => {
