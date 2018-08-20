@@ -16,7 +16,7 @@
  */
 
 // @flow
-import TequilapiClient from '../mysterium-tequilapi/client'
+import type { TequilapiClient } from '../mysterium-tequilapi/client'
 
 const healthCheckInterval = 1500
 const healthCheckTimeout = 500

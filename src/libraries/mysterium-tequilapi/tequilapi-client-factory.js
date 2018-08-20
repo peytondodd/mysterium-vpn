@@ -21,24 +21,35 @@ import axios from 'axios'
 import AxiosAdapter from './adapters/axios-adapter'
 import { TIMEOUT_DEFAULT } from './timeouts'
 import HttpTequilapiClient from './client'
-import BugReporterAdapter from './adapters/bug-reporter-adapter'
-import type { BugReporter } from '../../app/bug-reporting/interface'
+import type { TequilapiClient } from './client'
+import type { HttpInterface } from './adapters/interface'
 
 const TEQUILAPI_URL = 'http://127.0.0.1:4050'
 
-function tequilapiClientFactory (
-  bugReporter: BugReporter,
-  baseUrl: string = TEQUILAPI_URL,
-  defaultTimeout: number = TIMEOUT_DEFAULT): HttpTequilapiClient {
-  const axiosInstance = axios.create({
-    baseURL: baseUrl,
-    headers: {
-      'Cache-Control': 'no-cache, no-store'
-    }
-  })
-  const axiosAdapter = new AxiosAdapter(axiosInstance, defaultTimeout)
-  const adapter = new BugReporterAdapter(axiosAdapter, bugReporter)
-  return new HttpTequilapiClient(adapter)
+class TequilapiClientFactory {
+  _baseUrl: string
+  _defaultTimeout: number
+
+  constructor (baseUrl: string = TEQUILAPI_URL, defaultTimeout: number = TIMEOUT_DEFAULT) {
+    this._baseUrl = baseUrl
+    this._defaultTimeout = defaultTimeout
+  }
+
+  build (): TequilapiClient {
+    const adapter = this._buildAdapter()
+    return new HttpTequilapiClient(adapter)
+  }
+
+  _buildAdapter (): HttpInterface {
+    const axiosInstance = axios.create({
+      baseURL: this._baseUrl,
+      headers: {
+        'Cache-Control': 'no-cache, no-store'
+      }
+    })
+    return new AxiosAdapter(axiosInstance, this._defaultTimeout)
+  }
 }
 
-export default tequilapiClientFactory
+export { TEQUILAPI_URL }
+export default TequilapiClientFactory
