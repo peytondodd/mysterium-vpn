@@ -455,13 +455,18 @@ class Mysterion {
 
   _subscribeProposals () {
     this._countryList.onUpdate((countries) => this._communication.sendCountries(countries))
-    this._communication.onProposalUpdateRequest(() => {
-      this._proposalFetcher.fetch()
-    })
-    this._proposalFetcher.onFetchingError((error: Error) => {
+
+    const handleProposalFetchError = (error: Error) => {
       logException('Proposal fetching failed', error)
-      this._bugReporter.captureErrorException(error)
+    }
+    this._communication.onProposalUpdateRequest(() => {
+      try {
+        this._proposalFetcher.fetch()
+      } catch (error) {
+        handleProposalFetchError(error)
+      }
     })
+    this._proposalFetcher.onFetchingError(handleProposalFetchError)
 
     this._monitoring.onStatusUp(() => {
       logInfo('Starting proposal fetcher')
