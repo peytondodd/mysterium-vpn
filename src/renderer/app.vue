@@ -20,7 +20,6 @@
     id="app"
     class="app">
     <div id="content">
-      <div class="control__version">{{ version }}</div>
       <app-modal
         v-if="overlayError"
         :close="false">
@@ -51,7 +50,6 @@ import AppNav from '@/partials/app-nav'
 import AppError from '@/partials/app-error'
 import AppModal from '@/partials/app-modal'
 import logger from '../app/logger'
-import { getVersionLabel } from '../libraries/version'
 
 export default {
   name: 'App',
@@ -61,12 +59,9 @@ export default {
     AppError,
     AppModal
   },
-  dependencies: ['mysterionReleaseID', 'rendererCommunication', 'syncCommunication', 'logger', 'bugReporterMetrics'],
+  dependencies: ['rendererCommunication', 'syncCommunication', 'logger', 'bugReporterMetrics'],
   computed: {
-    ...mapGetters(['navVisible', 'loading', 'visual', 'overlayError', 'clientVersion']),
-    version () {
-      return getVersionLabel(this.mysterionReleaseID, this.clientVersion)
-    }
+    ...mapGetters(['navVisible', 'loading', 'visual', 'overlayError'])
   },
   async mounted () {
     this.bugReporterMetrics.startSyncing(this.rendererCommunication)
