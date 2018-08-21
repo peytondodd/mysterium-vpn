@@ -19,15 +19,11 @@
 import { Container } from '../../../app/di'
 import RendererCommunication from '../../../app/communication/renderer-communication'
 import RendererIpc from '../../../app/communication/ipc/renderer-ipc'
-import type { Features } from '../../../app/features/feature-toggle'
-import FeatureToggle from '../../../app/features/feature-toggle'
 import { remote } from 'electron'
 import VpnInitializer from '../../../app/vpn-initializer'
 import type { TequilapiClient } from '../../../libraries/mysterium-tequilapi/client'
 import realSleep from '../../../libraries/sleep'
 import IpcMessageBus from '../../../app/communication/ipc-message-bus'
-
-declare var FEATURES: ?Features
 
 function bootstrap (container: Container) {
   const mysterionReleaseID = remote.getGlobal('__mysterionReleaseID')
@@ -40,14 +36,6 @@ function bootstrap (container: Container) {
       const ipc = new RendererIpc()
       const messageBus = new IpcMessageBus(ipc)
       return new RendererCommunication(messageBus)
-    }
-  )
-
-  container.service(
-    'featureToggle',
-    [],
-    () => {
-      return new FeatureToggle(FEATURES)
     }
   )
 

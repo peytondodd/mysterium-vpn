@@ -19,6 +19,7 @@
 import DIContainer from '../../app/di/jpex-container'
 import mysterionBootstrap from './modules/application'
 import bugReportingConfigBootstrap from '../../dependencies/bug-reporting'
+import featureToggleBootstrap from '../../dependencies/feature-toggle'
 import bugReportingBootstrap from './modules/bug-reporting'
 import eventsBootstrap from '../../dependencies/statistics'
 import mysteriumClientBootstrap from './modules/mysterium-client'
@@ -32,6 +33,8 @@ import disconnectNotificationsBootstrap from './modules/disconnect-notification'
  */
 function bootstrap (): DIContainer {
   const container = new DIContainer()
+
+  featureToggleBootstrap(container)
   mysterionBootstrap(container)
   bugReportingConfigBootstrap(container)
   bugReportingBootstrap(container)

@@ -18,16 +18,12 @@
 // @flow
 import { app, BrowserWindow } from 'electron'
 import type { Container } from '../../../app/di'
-import type { Features } from '../../../app/features/feature-toggle'
-import FeatureToggle from '../../../app/features/feature-toggle'
 import Mysterion from '../../../app/mysterion'
 import type { MysterionConfig } from '../../../app/mysterion-config'
 import path from 'path'
 import Window from '../../../app/window'
 import Terms from '../../../app/terms'
 import StartupEventTracker from '../../../app/statistics/startup-event-tracker'
-
-declare var FEATURES: ?Features
 
 function bootstrap (container: Container) {
   const version = process.env.MYSTERION_VERSION || ''
@@ -69,14 +65,6 @@ function bootstrap (container: Container) {
           app: { width: 650, height: 650 }
         }
       }
-    }
-  )
-
-  container.service(
-    'featureToggle',
-    [],
-    () => {
-      return new FeatureToggle(FEATURES)
     }
   )
 
