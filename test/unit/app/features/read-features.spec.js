@@ -43,12 +43,12 @@ describe('.readFeatures', () => {
       writeFileSync(filename, 'some text')
     })
 
-    it('returns null', () => {
+    it('throws error when json is invalid', () => {
       expect(() => readFeatures(filename)).to.throw
     })
   })
 
-  it('returns null when file does not exist', () => {
+  it('throws error when file does not exist', () => {
     expect(() => readFeatures('does-not-exist')).to.throw
   })
 })
