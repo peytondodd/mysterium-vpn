@@ -17,6 +17,8 @@
 
 // @flow
 
+import TequilapiError from './tequilapi-error'
+
 const errorCodes = {
   CONNECTION_ABORTED_ERROR_CODE: 'ECONNABORTED'
 }
@@ -32,14 +34,9 @@ type AxiosError = {
   code?: string
 }
 
-function markErrorAsHttp (error: Error) {
-  const errorObj = (error: Object)
-  errorObj.isHttpError = true
-}
-
+// TODO: remove this function
 function isHttpError (error: Error): boolean {
-  const errorObj = (error: Object)
-  return errorObj.isHttpError === true
+  return error instanceof TequilapiError
 }
 
 function isTimeoutError (error: Error): boolean {
@@ -67,4 +64,5 @@ function hasHttpStatus (error: Error, expectedStatus: number): boolean {
   return axiosError.response.status === expectedStatus
 }
 
-export { isHttpError, markErrorAsHttp, isTimeoutError, isRequestClosedError, isServiceUnavailableError }
+export { isHttpError, isTimeoutError, isRequestClosedError, isServiceUnavailableError }
+export type { AxiosError }

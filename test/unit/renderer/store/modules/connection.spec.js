@@ -34,7 +34,7 @@ import ConnectionIPDTO from '../../../../../src/libraries/mysterium-tequilapi/dt
 import BugReporterMock from '../../../../helpers/bug-reporter-mock'
 import ConnectionRequestDTO from '../../../../../src/libraries/mysterium-tequilapi/dto/connection-request'
 import MockEventSender from '../../../../helpers/statistics/mock-event-sender'
-import { markErrorAsHttp } from '../../../../../src/libraries/mysterium-tequilapi/client-error'
+import TequilapiError from '../../../../../src/libraries/mysterium-tequilapi/tequilapi-error'
 
 function factoryTequilapiManipulator () {
   let statusFail = false
@@ -138,8 +138,7 @@ function createMockRequestClosedError (): Error {
 
 function createMockHttpError (): Error {
   const error = new Error('Mock http error')
-  markErrorAsHttp(error)
-  return error
+  return new TequilapiError(error, 'mock-path')
 }
 
 describe('connection', () => {

@@ -82,7 +82,7 @@ describe('TequilapiClient AxiosAdapter', () => {
     expect(err).to.be.instanceOf(Error)
     expect(isTimeoutError(err)).to.be.true
     expect(isHttpError(err)).to.be.true
-    expect(err.toString()).to.eql('Tequilapi error: timeout of 1ms exceeded (path="test-url")')
+    expect(err.toString()).to.eql('TequilapiError: timeout of 1ms exceeded (path="test-url")')
   })
 
   it('returns 404 response error', async () => {
