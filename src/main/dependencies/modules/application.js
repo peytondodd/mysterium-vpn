@@ -76,6 +76,7 @@ function bootstrap (container: Container) {
       'mysteriumClientProcess',
       'mysteriumClientMonitoring',
       'proposalFetcher',
+      'registrationFetcher',
       'countryList',
       'bugReporter',
       'environmentCollector',
@@ -85,6 +86,7 @@ function bootstrap (container: Container) {
       'bugReporterMetrics',
       'userSettingsStore',
       'disconnectNotification',
+      'featureToggle',
       'eventSender'
     ],
     (
@@ -93,6 +95,7 @@ function bootstrap (container: Container) {
       mysteriumClientProcess,
       mysteriumClientMonitoring,
       proposalFetcher,
+      registrationFetcher,
       countryList,
       bugReporter,
       environmentCollector,
@@ -102,6 +105,7 @@ function bootstrap (container: Container) {
       bugReporterMetrics,
       userSettingsStore,
       disconnectNotification,
+      featureToggle,
       eventSender
     ) => {
       const startupEventTracker = new StartupEventTracker(eventSender)
@@ -114,6 +118,7 @@ function bootstrap (container: Container) {
         process: mysteriumClientProcess,
         monitoring: mysteriumClientMonitoring,
         proposalFetcher: proposalFetcher,
+        registrationFetcher: registrationFetcher,
         countryList: countryList,
         bugReporter: bugReporter,
         environmentCollector,
@@ -123,6 +128,7 @@ function bootstrap (container: Container) {
         mysteriumProcessLogCache,
         userSettingsStore,
         disconnectNotification,
+        featureToggle,
         startupEventTracker
       })
     }

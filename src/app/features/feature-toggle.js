@@ -17,39 +17,35 @@
 
 // @flow
 
-class PublicKeyDTO {
-  part1: string
-  part2: string
+type Features = {
+  payments: ?boolean
+}
 
-  constructor (data: Object) {
-    this.part1 = data.part1
-    this.part2 = data.part2
+class FeatureToggle {
+  _features: ?Features
+
+  constructor (features: ?Features) {
+    this._features = features
+  }
+
+  paymentsAreEnabled (): boolean {
+    return this._getFeatureState('payments', false)
+  }
+
+  _getFeatureState (key: string, defaultValue: boolean): boolean {
+    const features = this._features
+
+    if (!features) {
+      return defaultValue
+    }
+
+    if (!features[key]) {
+      return defaultValue
+    }
+
+    return features[key]
   }
 }
 
-class SignatureDTO {
-  r: string
-  s: string
-  v: string
-
-  constructor (data: Object) {
-    this.r = data.r
-    this.s = data.s
-    this.v = data.v
-  }
-}
-
-class IdentityRegistrationDTO {
-  registered: boolean
-  publicKey: PublicKeyDTO
-  signature: SignatureDTO
-
-  constructor (data: Object) {
-    this.registered = data.registered
-    this.publicKey = new PublicKeyDTO(data.publicKey || {})
-    this.signature = new SignatureDTO(data.signature || {})
-  }
-}
-
-export type { PublicKeyDTO, SignatureDTO }
-export default IdentityRegistrationDTO
+export default FeatureToggle
+export type { Features }

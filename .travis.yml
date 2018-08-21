@@ -22,7 +22,6 @@ install:
 - MYSTERIUM_CLIENT_PREVENT_LOCAL_INSTALL=true yarn
 script:
 - yarn ci
-- util_scripts/check-headers.sh
 before_deploy:
 - bash util_scripts/travis-number.sh
 - mkdir binaries && mkdir releases
