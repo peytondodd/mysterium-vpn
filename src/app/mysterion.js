@@ -52,6 +52,8 @@ import logger from './logger'
 import MainIpc from './communication/ipc/main-ipc'
 import IpcMessageBus from './communication/ipc-message-bus'
 import StartupEventTracker from './statistics/startup-event-tracker'
+import TequilapiRegistrationFetcher from './data-fetchers/tequilapi-registration-fetcher'
+import IdentityRegistrationDTO from '../libraries/mysterium-tequilapi/dto/identity-registration'
 
 type MysterionParams = {
   browserWindowFactory: () => BrowserWindow,
@@ -62,6 +64,7 @@ type MysterionParams = {
   monitoring: ProcessMonitoring,
   process: Process,
   proposalFetcher: TequilapiProposalFetcher,
+  registrationFetcher: TequilapiRegistrationFetcher,
   countryList: CountryList,
   bugReporter: BugReporter,
   environmentCollector: EnvironmentCollector,
@@ -87,6 +90,7 @@ class Mysterion {
   _monitoring: ProcessMonitoring
   _process: Process
   _proposalFetcher: TequilapiProposalFetcher
+  _registrationFetcher: TequilapiRegistrationFetcher
   _countryList: CountryList
   _bugReporter: BugReporter
   _environmentCollector: EnvironmentCollector
@@ -112,6 +116,7 @@ class Mysterion {
     this._monitoring = params.monitoring
     this._process = params.process
     this._proposalFetcher = params.proposalFetcher
+    this._registrationFetcher = params.registrationFetcher
     this._countryList = params.countryList
     this._bugReporter = params.bugReporter
     this._environmentCollector = params.environmentCollector
@@ -195,6 +200,9 @@ class Mysterion {
     this._communication.onCurrentIdentityChange((identityChange: CurrentIdentityChangeDTO) => {
       const identity = new IdentityDTO({ id: identityChange.id })
       this._bugReporter.setUser(identity)
+
+      this._registrationFetcher.start(identity.id)
+      logInfo(`Registration fetcher started with ID ${identity.id}`)
     })
     this._bugReporterMetrics.startSyncing(this._communication)
     this._bugReporterMetrics.setWithCurrentDateTime(METRICS.START_TIME)
@@ -218,6 +226,7 @@ class Mysterion {
     })
 
     this._subscribeProposals()
+    this._subscribeRegistration()
 
     syncFavorites(this._userSettingsStore, this._communication)
     syncShowDisconnectNotifications(this._userSettingsStore, this._communication)
@@ -473,6 +482,16 @@ class Mysterion {
     })
     this._monitoring.onStatusDown(() => {
       this._proposalFetcher.stop()
+    })
+  }
+
+  _subscribeRegistration () {
+    this._registrationFetcher.onFetchedRegistration((registration: IdentityRegistrationDTO) => {
+      this._communication.sendRegistration(registration.registered)
+    })
+    this._registrationFetcher.onFetchingError((error: Error) => {
+      logException('Identity registration fetching failed', error)
+      this._bugReporter.captureErrorException(error)
     })
   }
 

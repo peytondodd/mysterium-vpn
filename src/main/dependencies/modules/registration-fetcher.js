@@ -17,39 +17,23 @@
 
 // @flow
 
-class PublicKeyDTO {
-  part1: string
-  part2: string
+import type { Container } from '../../../app/di'
+import TequilapiRegistrationFetcher from '../../../app/data-fetchers/tequilapi-registration-fetcher'
 
-  constructor (data: Object) {
-    this.part1 = data.part1
-    this.part2 = data.part2
-  }
+function bootstrap (container: Container) {
+  container.constant(
+    'registrationFetcher.config',
+    {
+      'interval': 5000
+    }
+  )
+  container.service(
+    'registrationFetcher',
+    ['tequilapiClient', 'registrationFetcher.config'],
+    (tequilapiClient, config: any) => {
+      return new TequilapiRegistrationFetcher(tequilapiClient, config.interval)
+    }
+  )
 }
 
-class SignatureDTO {
-  r: string
-  s: string
-  v: string
-
-  constructor (data: Object) {
-    this.r = data.r
-    this.s = data.s
-    this.v = data.v
-  }
-}
-
-class IdentityRegistrationDTO {
-  registered: boolean
-  publicKey: PublicKeyDTO
-  signature: SignatureDTO
-
-  constructor (data: Object) {
-    this.registered = data.registered
-    this.publicKey = new PublicKeyDTO(data.publicKey || {})
-    this.signature = new SignatureDTO(data.signature || {})
-  }
-}
-
-export type { PublicKeyDTO, SignatureDTO }
-export default IdentityRegistrationDTO
+export default bootstrap

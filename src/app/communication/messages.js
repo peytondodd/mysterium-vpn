@@ -42,6 +42,8 @@ export default {
   PROPOSALS_UPDATE: 'proposals.update',
   COUNTRY_UPDATE: 'country.update',
 
+  IDENTITY_REGISTERED: 'identity.registered',
+
   TOGGLE_FAVORITE_PROVIDER: 'toggle.favorite.provider',
   SHOW_DISCONNECT_NOTIFICATION: 'show.disconnect.notification',
 
