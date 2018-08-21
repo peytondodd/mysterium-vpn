@@ -19,7 +19,7 @@ const fs = require('fs')
 
 function readFeatures (path) {
   if (!fs.existsSync(path)) {
-    return null
+    throw new Error(`Feature file doesn't exist in "${path}"`)
   }
 
   try {
@@ -27,7 +27,7 @@ function readFeatures (path) {
   } catch (e) {
   }
 
-  return null
+  throw new Error('Unable to parse "' + path + '" feature file')
 }
 
 module.exports = readFeatures

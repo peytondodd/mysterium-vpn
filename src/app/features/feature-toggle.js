@@ -33,16 +33,13 @@ class FeatureToggle {
   }
 
   _getFeatureState (key: string, defaultValue: boolean): boolean {
-    if (typeof this._features !== 'object') {
-      return defaultValue
-    }
-
     const features = this._features
-    if (features == null) {
+
+    if (!features) {
       return defaultValue
     }
 
-    if (typeof features[key] === 'undefined') {
+    if (!features[key]) {
       return defaultValue
     }
 

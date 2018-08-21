@@ -20,21 +20,23 @@
 import FeatureToggle from '../../../../src/app/features/feature-toggle'
 import { describe, expect, it } from '../../../helpers/dependencies'
 
-describe('.paymentsAreEnabled', () => {
-  it('returns true when payments are set to true', () => {
-    const features = { payments: true }
-    const featureToggle = new FeatureToggle(features)
-    expect(featureToggle.paymentsAreEnabled()).to.be.true
-  })
+describe('FeatureToggle', () => {
+  describe('.paymentsAreEnabled', () => {
+    it('returns true when payments are set to true', () => {
+      const features = { payments: true }
+      const featureToggle = new FeatureToggle(features)
+      expect(featureToggle.paymentsAreEnabled()).to.be.true
+    })
 
-  it('returns false when payments are set to false', () => {
-    const features = { payments: false }
-    const featureToggle = new FeatureToggle(features)
-    expect(featureToggle.paymentsAreEnabled()).to.be.false
-  })
+    it('returns false when payments are set to false', () => {
+      const features = { payments: false }
+      const featureToggle = new FeatureToggle(features)
+      expect(featureToggle.paymentsAreEnabled()).to.be.false
+    })
 
-  it('defaults to false', () => {
-    const featureToggle = new FeatureToggle()
-    expect(featureToggle.paymentsAreEnabled()).to.be.false
+    it('defaults to false', () => {
+      const featureToggle = new FeatureToggle()
+      expect(featureToggle.paymentsAreEnabled()).to.be.false
+    })
   })
 })

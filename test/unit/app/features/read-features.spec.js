@@ -44,11 +44,11 @@ describe('.readFeatures', () => {
     })
 
     it('returns null', () => {
-      expect(readFeatures(filename)).to.be.null
+      expect(() => readFeatures(filename)).to.throw
     })
   })
 
   it('returns null when file does not exist', () => {
-    expect(readFeatures('does-not-exist')).to.be.null
+    expect(() => readFeatures('does-not-exist')).to.throw
   })
 })

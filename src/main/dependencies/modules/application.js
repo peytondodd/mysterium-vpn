@@ -74,7 +74,7 @@ function bootstrap (container: Container) {
     'featureToggle',
     [],
     () => {
-      declare var FEATURES: Features
+      declare var FEATURES: ?Features
 
       return new FeatureToggle(FEATURES)
     }
