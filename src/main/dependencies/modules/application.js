@@ -27,6 +27,8 @@ import Window from '../../../app/window'
 import Terms from '../../../app/terms'
 import StartupEventTracker from '../../../app/statistics/startup-event-tracker'
 
+declare var FEATURES: ?Features
+
 function bootstrap (container: Container) {
   const version = process.env.MYSTERION_VERSION || ''
   const build = process.env.BUILD_NUMBER || ''
@@ -74,8 +76,6 @@ function bootstrap (container: Container) {
     'featureToggle',
     [],
     () => {
-      declare var FEATURES: ?Features
-
       return new FeatureToggle(FEATURES)
     }
   )

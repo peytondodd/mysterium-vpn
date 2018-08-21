@@ -25,9 +25,8 @@ function readFeatures (path) {
   try {
     return JSON.parse(fs.readFileSync(path).toString())
   } catch (e) {
+    throw new Error('Unable to parse "' + path + '" feature file')
   }
-
-  throw new Error('Unable to parse "' + path + '" feature file')
 }
 
 module.exports = readFeatures

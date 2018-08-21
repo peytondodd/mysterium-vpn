@@ -27,6 +27,8 @@ import type { TequilapiClient } from '../../../libraries/mysterium-tequilapi/cli
 import realSleep from '../../../libraries/sleep'
 import IpcMessageBus from '../../../app/communication/ipc-message-bus'
 
+declare var FEATURES: ?Features
+
 function bootstrap (container: Container) {
   const mysterionReleaseID = remote.getGlobal('__mysterionReleaseID')
   container.constant('mysterionReleaseID', mysterionReleaseID)
@@ -45,8 +47,6 @@ function bootstrap (container: Container) {
     'featureToggle',
     [],
     () => {
-      declare var FEATURES: ?Features
-
       return new FeatureToggle(FEATURES)
     }
   )
