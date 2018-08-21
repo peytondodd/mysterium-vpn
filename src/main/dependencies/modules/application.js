@@ -85,6 +85,7 @@ function bootstrap (container: Container) {
       'bugReporterMetrics',
       'userSettingsStore',
       'disconnectNotification',
+      'featureToggle',
       'eventSender'
     ],
     (
@@ -102,6 +103,7 @@ function bootstrap (container: Container) {
       bugReporterMetrics,
       userSettingsStore,
       disconnectNotification,
+      featureToggle,
       eventSender
     ) => {
       const startupEventTracker = new StartupEventTracker(eventSender)
@@ -123,6 +125,7 @@ function bootstrap (container: Container) {
         mysteriumProcessLogCache,
         userSettingsStore,
         disconnectNotification,
+        featureToggle,
         startupEventTracker
       })
     }
