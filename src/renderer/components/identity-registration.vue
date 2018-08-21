@@ -36,8 +36,8 @@ export default {
     }
   },
   mounted () {
-    this.rendererCommunication.onRegistrationUpdate(r => {
-      this.registered = r
+    this.rendererCommunication.onRegistrationUpdate(isRegistered => {
+      this.registered = isRegistered
     })
   }
 }
