@@ -19,6 +19,7 @@
 import Vue from 'vue'
 import DIContainer from '../../app/di/vue-container'
 import bugReportingConfigBootstrap from '../../dependencies/bug-reporting'
+import featureToggleBootstrap from '../../dependencies/feature-toggle'
 import bugReportingBootstrap from './modules/bug-reporting'
 import eventsBootstrap from '../../dependencies/statistics'
 import vueBootstrap from './modules/vue'
@@ -30,6 +31,8 @@ import mysteriumTequilapiBootstrap from '../../dependencies/mysterium-tequilapi'
  */
 function bootstrap (): DIContainer {
   const container = new DIContainer(Vue)
+
+  featureToggleBootstrap(container)
   bugReportingConfigBootstrap(container)
   bugReportingBootstrap(container)
   eventsBootstrap(container)
