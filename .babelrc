@@ -28,6 +28,12 @@
           "modules": false
         }],
         "stage-0"
+      ],
+      "plugins": [
+        ["babel-plugin-transform-builtin-extend", {
+          "globals": ["Error"]
+        }],
+        "transform-runtime"
       ]
     },
     "web": {
@@ -36,6 +42,12 @@
           "modules": false
         }],
         "stage-0"
+      ],
+      "plugins": [
+        ["babel-plugin-transform-builtin-extend", {
+          "globals": ["Error"]
+        }],
+        "transform-runtime"
       ]
     }
   },
