@@ -30,12 +30,10 @@ import ConnectionStatisticsDTO from '../../../libraries/mysterium-tequilapi/dto/
 import ConnectionRequestDTO from '../../../libraries/mysterium-tequilapi/dto/connection-request'
 import ConsumerLocationDTO from '../../../libraries/mysterium-tequilapi/dto/consumer-location'
 import type { BugReporter } from '../../../app/bug-reporting/interface'
-import {
-  isRequestClosedError,
-  isHttpError
-} from '../../../libraries/mysterium-tequilapi/client-error'
+import { isRequestClosedError } from '../../../libraries/mysterium-tequilapi/client-error'
 import logger from '../../../app/logger'
 import type { EventSender } from '../../../app/statistics/event-sender'
+import TequilapiError from '../../../libraries/mysterium-tequilapi/tequilapi-error'
 
 type ConnectionStore = {
   ip: ?string,
@@ -132,7 +130,7 @@ function actionsFactory (
         const locationDto = await tequilapi.location(config.locationUpdateTimeout)
         commit(type.LOCATION, locationDto)
       } catch (err) {
-        if (isHttpError(err)) {
+        if (err instanceof TequilapiError) {
           return
         }
         bugReporter.captureErrorException(err)
@@ -143,7 +141,7 @@ function actionsFactory (
         const ipModel = await tequilapi.connectionIP(config.ipUpdateTimeout)
         commit(type.CONNECTION_IP, ipModel.ip)
       } catch (err) {
-        if (isHttpError(err)) {
+        if (err instanceof TequilapiError) {
           return
         }
         bugReporter.captureErrorException(err)
@@ -241,7 +239,7 @@ function actionsFactory (
 
         eventTracker.connectEnded('Error: Connection to node failed.')
 
-        if (!isHttpError(err)) {
+        if (!(err instanceof TequilapiError)) {
           bugReporter.captureInfoException(err)
         }
       } finally {
@@ -264,7 +262,7 @@ function actionsFactory (
         } catch (err) {
           commit(type.SHOW_ERROR, err)
           logger.info('Connection cancelling failed:', err)
-          if (!isHttpError(err)) {
+          if (!(err instanceof TequilapiError)) {
             bugReporter.captureInfoException(err)
           }
         }

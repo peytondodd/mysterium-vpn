@@ -19,24 +19,11 @@
 import {
   isTimeoutError,
   isRequestClosedError,
-  isServiceUnavailableError,
-  isHttpError
+  isServiceUnavailableError
 } from '../../../../src/libraries/mysterium-tequilapi/client-error'
 import { describe, it, expect } from '../../../helpers/dependencies'
-import TequilapiError from '../../../../src/libraries/mysterium-tequilapi/tequilapi-error'
 
 describe('errors', () => {
-  // TODO: remove or rename described label
-  describe('isHttpError', () => {
-    it('indicates marked errors as http error', () => {
-      const error = new Error('Mock error')
-      expect(isHttpError(error)).to.eql(false)
-
-      const tequilapiError = new TequilapiError(error, 'mock path')
-      expect(isHttpError(tequilapiError)).to.eql(true)
-    })
-  })
-
   describe('isTimeoutError()', () => {
     it('indicates timeout error', () => {
       let error = (new Error(): Object)

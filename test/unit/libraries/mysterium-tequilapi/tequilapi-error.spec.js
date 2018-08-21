@@ -28,7 +28,11 @@ describe('TequilapiError', () => {
   it('is instance of TequilapiError', () => {
     // seems like redundant spec, but it's valuable, because this doesn't work by default:
     // "babel-plugin-transform-builtin-extend" plugin was used to make this work
-    expect(tequilapiError instanceof TequilapiError).to.be.true
+    expect(tequilapiError).to.be.instanceOf(TequilapiError)
+  })
+
+  it('is instance of Error', () => {
+    expect(tequilapiError).to.be.instanceOf(Error)
   })
 
   describe('.name', () => {
@@ -54,11 +58,11 @@ describe('TequilapiError', () => {
       it('returns code of original error', () => {
         const error = new Error('test error')
         const errorObj: AxiosError = error
-        errorObj.code = '500'
+        errorObj.code = 'ECONNABORTED'
 
         const tequilapiError = new TequilapiError(error, 'test path')
 
-        expect(tequilapiError.code).to.eql('500')
+        expect(tequilapiError.code).to.eql('ECONNABORTED')
       })
     })
   })
