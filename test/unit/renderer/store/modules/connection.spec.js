@@ -40,6 +40,7 @@ function factoryTequilapiManipulator () {
   let statusFail = false
   let statisticsFail = false
   let ipTimeout = false
+  let ipFail = false
   let connectFail = false
   let connectFailClosedRequest = false
   let connectionCancelFail = false
@@ -78,6 +79,9 @@ function factoryTequilapiManipulator () {
       if (ipTimeout) {
         throw timeoutErrorMock
       }
+      if (ipFail) {
+        throw errorMock
+      }
       return new ConnectionIPDTO({
         ip: 'mock ip'
       })
@@ -104,6 +108,9 @@ function factoryTequilapiManipulator () {
     setIpTimeout () {
       ipTimeout = true
     },
+    setIpFail () {
+      ipFail = true
+    },
     setConnectFail () {
       connectFail = true
     },
@@ -126,14 +133,15 @@ function createMockTimeoutError (): Error {
   const error = new Error('Mock timeout error')
   const object = (error: Object)
   object.code = 'ECONNABORTED'
-  return error
+  return new TequilapiError(error, 'mock-path')
 }
 
 function createMockRequestClosedError (): Error {
   const error = new Error('Mock closed request error')
   const object = (error: Object)
   object.response = { status: 499 }
-  return error
+
+  return new TequilapiError(error, 'mock-path')
 }
 
 function createMockHttpError (): Error {
@@ -342,6 +350,18 @@ describe('connection', () => {
         fakeTequilapi.setIpTimeout()
         const committed = await executeAction(type.CONNECTION_IP)
         expect(committed).to.eql([])
+      })
+
+      it('captures unknown errors', async () => {
+        fakeTequilapi.setIpFail()
+        await executeAction(type.CONNECTION_IP)
+        expect(bugReporterMock.errorExceptions.length).to.eql(1)
+      })
+
+      it('does not capture http errors', async () => {
+        fakeTequilapi.setIpTimeout()
+        await executeAction(type.CONNECTION_IP)
+        expect(bugReporterMock.errorExceptions).to.be.empty
       })
     })
 

@@ -54,7 +54,6 @@ import IpcMessageBus from './communication/ipc-message-bus'
 import StartupEventTracker from './statistics/startup-event-tracker'
 import TequilapiRegistrationFetcher from './data-fetchers/tequilapi-registration-fetcher'
 import IdentityRegistrationDTO from '../libraries/mysterium-tequilapi/dto/identity-registration'
-// import TequilapiError from '../libraries/mysterium-tequilapi/adapters/tequilapi-error'
 
 type MysterionParams = {
   browserWindowFactory: () => BrowserWindow,
@@ -171,15 +170,6 @@ class Mysterion {
     app.on('before-quit', () => {
       this._window.willQuitApp = true
     })
-    // const tError = new TequilapiError(new Error('test error'), 'mock path')
-    // console.log('before backend type', tError instanceof TequilapiError)
-    // console.log('before backend message', tError.toString())
-    // try {
-    //   throw tError
-    // } catch (err) {
-    //   console.log('after backend type', err instanceof TequilapiError)
-    //   console.log('after backend message', err.toString())
-    // }
   }
 
   _initializeSyncCallbacks () {

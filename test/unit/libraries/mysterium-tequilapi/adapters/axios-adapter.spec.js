@@ -19,7 +19,6 @@ import axios from 'axios/index'
 import AxiosAdapter from '../../../../../src/libraries/mysterium-tequilapi/adapters/axios-adapter'
 import MockAdapter from 'axios-mock-adapter'
 import { capturePromiseError } from '../../../../helpers/utils'
-import { isTimeoutError } from '../../../../../src/libraries/mysterium-tequilapi/client-error'
 import TequilapiError from '../../../../../src/libraries/mysterium-tequilapi/tequilapi-error'
 
 describe('TequilapiClient AxiosAdapter', () => {
@@ -77,7 +76,7 @@ describe('TequilapiClient AxiosAdapter', () => {
 
     const err = await capturePromiseError(adapter.get('test-url'))
     expect(err).to.be.instanceOf(TequilapiError)
-    expect(isTimeoutError(err)).to.be.true
+    expect(err.isTimeoutError()).to.be.true
     expect(err.toString()).to.eql('TequilapiError: timeout of 1ms exceeded (path="test-url")')
   })
 

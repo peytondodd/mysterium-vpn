@@ -52,7 +52,6 @@ import AppNav from '@/partials/app-nav'
 import AppError from '@/partials/app-error'
 import AppModal from '@/partials/app-modal'
 import logger from '../app/logger'
-// import TequilapiError from '../libraries/mysterium-tequilapi/adapters/tequilapi-error'
 
 export default {
   name: 'App',
@@ -134,15 +133,6 @@ export default {
         })
       }
     })
-    // const tError = new TequilapiError(new Error('test error'), 'mock path')
-    // console.log('before frontend type', tError instanceof TequilapiError)
-    // console.log('before frontend message', tError.toString())
-    // try {
-    //   throw tError
-    // } catch (err) {
-    //   console.log('after frontend type', err instanceof TequilapiError)
-    //   console.log('after frontend message', err.toString())
-    // }
   }
 }
 </script>

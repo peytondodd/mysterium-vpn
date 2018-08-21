@@ -30,7 +30,6 @@ import ConnectionStatisticsDTO from '../../../libraries/mysterium-tequilapi/dto/
 import ConnectionRequestDTO from '../../../libraries/mysterium-tequilapi/dto/connection-request'
 import ConsumerLocationDTO from '../../../libraries/mysterium-tequilapi/dto/consumer-location'
 import type { BugReporter } from '../../../app/bug-reporting/interface'
-import { isRequestClosedError } from '../../../libraries/mysterium-tequilapi/client-error'
 import logger from '../../../app/logger'
 import type { EventSender } from '../../../app/statistics/event-sender'
 import TequilapiError from '../../../libraries/mysterium-tequilapi/tequilapi-error'
@@ -230,7 +229,7 @@ function actionsFactory (
         eventTracker.connectEnded()
         commit(type.HIDE_ERROR)
       } catch (err) {
-        if (isRequestClosedError(err)) {
+        if (err instanceof TequilapiError && err.isRequestClosedError()) {
           eventTracker.connectCanceled()
           return
         }

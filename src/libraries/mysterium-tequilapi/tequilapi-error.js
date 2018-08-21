@@ -17,18 +17,56 @@
 
 // @flow
 
-import type { AxiosError } from './client-error'
-
 class TequilapiError extends Error {
   name: string = 'TequilapiError'
-  code: ?string
 
-  constructor (originalError: AxiosError, path: string) {
+  _originalError: AxiosError
+
+  constructor (originalError: Error, path: string) {
     const message = `${originalError.message} (path="${path}")`
     super(message)
-    this.code = originalError.code || null
-    // TODO: stack-trace
+
+    this._originalError = originalError
+  }
+
+  get code (): ?string {
+    return this._originalError.code || null
+  }
+
+  isTimeoutError (): boolean {
+    return this.code === errorCodes.CONNECTION_ABORTED_ERROR_CODE
+  }
+
+  isRequestClosedError (): boolean {
+    return this._hasHttpStatus(httpResponseCodes.CLIENT_CLOSED_REQUEST)
+  }
+
+  isServiceUnavailableError (): boolean {
+    return this._hasHttpStatus(httpResponseCodes.SERVICE_UNAVAILABLE)
+  }
+
+  _hasHttpStatus (expectedStatus: number): boolean {
+    if (!this._originalError.response) {
+      return false
+    }
+    return this._originalError.response.status === expectedStatus
   }
 }
 
+type AxiosError = {
+  message: string,
+  response?: { status: number },
+  code?: string
+}
+
+const httpResponseCodes = {
+  CLIENT_CLOSED_REQUEST: 499,
+  SERVICE_UNAVAILABLE: 503
+}
+
+const errorCodes = {
+  CONNECTION_ABORTED_ERROR_CODE: 'ECONNABORTED'
+}
+
+export type { AxiosError }
 export default TequilapiError
