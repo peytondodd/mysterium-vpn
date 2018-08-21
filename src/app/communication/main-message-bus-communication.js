@@ -79,7 +79,7 @@ class MainMessageBusCommunication implements MainCommunication, MapSyncCommunica
     this._send(messages.COUNTRY_UPDATE, countries)
   }
 
-  sendRegistration (registered: string) {
+  sendRegistration (registered: boolean) {
     this._send(messages.IDENTITY_REGISTERED, registered)
   }
 

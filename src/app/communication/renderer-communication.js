@@ -125,7 +125,7 @@ class RendererCommunication implements MapSyncCommunication<Metric> {
     this._removeCallback(messages.COUNTRY_UPDATE, callback)
   }
 
-  onRegistrationUpdate (callback: string => void) {
+  onRegistrationUpdate (callback: boolean => void) {
     this._on(messages.IDENTITY_REGISTERED, callback)
   }
 

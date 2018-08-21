@@ -20,6 +20,8 @@
     id="app"
     class="app">
     <div id="content">
+      <IdentityRegistration/>
+
       <app-modal
         v-if="overlayError"
         :close="false">
@@ -44,9 +46,9 @@
 <script>
 import { mapGetters } from 'vuex'
 import type from '@/store/types'
+import IdentityRegistration from './components/identity-registration'
 import AppVisual from '@/partials/app-visual'
 import AppNav from '@/partials/app-nav'
-
 import AppError from '@/partials/app-error'
 import AppModal from '@/partials/app-modal'
 import logger from '../app/logger'
@@ -57,7 +59,8 @@ export default {
     AppVisual,
     AppNav,
     AppError,
-    AppModal
+    AppModal,
+    IdentityRegistration
   },
   dependencies: ['rendererCommunication', 'syncCommunication', 'logger', 'bugReporterMetrics'],
   computed: {

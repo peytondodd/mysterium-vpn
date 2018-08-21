@@ -40,7 +40,7 @@ class SignatureDTO {
 }
 
 class IdentityRegistrationDTO {
-  registered: string
+  registered: boolean
   publicKey: PublicKeyDTO
   signature: SignatureDTO
 

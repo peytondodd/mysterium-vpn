@@ -78,7 +78,7 @@ class FakeMainCommunication implements MainCommunication {
     this._registerMethod(this.sendCountries)
   }
 
-  sendRegistration (registered: string): void {
+  sendRegistration (registered: boolean): void {
     this._registerMethod(this.sendRegistration)
   }
 
