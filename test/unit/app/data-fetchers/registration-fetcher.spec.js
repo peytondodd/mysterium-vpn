@@ -93,7 +93,11 @@ describe('DataFetchers', () => {
         let counter = 0
 
         fetcher.onFetchedRegistration(() => counter++)
+
+        expect(counter).to.equal(0)
         fetcher.start(IDENTITY_ID)
+        await nextTick()
+        expect(counter).to.equal(1)
 
         await tickWithDelay(1000)
         expect(counter).to.equal(1)
