@@ -16,13 +16,48 @@
   -->
 
 <template>
-  <div
-    class="identity-registration"
-    :class="{'identity-registered': registered, 'identity-unregistered': !registered}">
-    <div class="identity-text">ID</div>
+  <div>
     <div
-      class="identity-tooltip"
-      v-if="!registered">Please activate your ID</div>
+      class="identity-registration"
+      :class="{'identity-registered': registered, 'identity-unregistered': !registered}"
+      @click="showInstructions = true">
+      <div class="identity-text">ID</div>
+      <div
+        class="identity-tooltip"
+        v-if="!registered">Please activate your ID</div>
+    </div>
+
+    <div
+      class="app__nav nav is-open"
+      id="registration-instructions"
+      v-if="showInstructions">
+      <div class="nav__burger burger" @click="showInstructions = false">
+        <i class="burger__bar burger__bar--1"/>
+        <i class="burger__bar burger__bar--2"/>
+        <i class="burger__bar burger__bar--3"/>
+      </div>
+
+      <h2>Activate your ID</h2>
+      <p>
+        In order to use Mysterium VPN you need to have registered ID in Mysterium Blockchain
+        by staking your MYST tokens on it (i.e. paying for it).
+      </p>
+      <p>
+        To pay for the ID we suggest to use MetaMask wallet. Please follow below instructions to proceed further:
+      </p>
+      <ul>
+        <li>1. Click on the “Register Your ID” button</li>
+        <li>2. Claim MYST and ETH test tokens</li>
+        <li>3. Allow Mysterium SmartContract to reserve MYST tokens</li>
+        <li>4. Register your ID by clicking on “Pay & Register For ID”</li>
+        <li>5. Wait for few minutes until the payment is processed</li>
+      </ul>
+      <div class="btn">Copy Wallet Address</div>
+    </div>
+    <div
+      v-if="showInstructions"
+      class="nav__backdrop"
+      style="z-index: 2"/>
   </div>
 </template>
 
@@ -32,7 +67,8 @@ export default {
   dependencies: ['rendererCommunication'],
   data () {
     return {
-      registered: null
+      registered: null,
+      showInstructions: false
     }
   },
   mounted () {
