@@ -17,6 +17,13 @@
 
 // @flow
 
+const getPaymentLink = (registration: IdentityRegistrationDTO): string => {
+  const { publicKey, signature } = registration
+  return `http://walletx.mysterium.network/` +
+    `?part1=${publicKey.part1}&part2=${publicKey.part2}` +
+    `&r=${signature.r}&s=${signature.s}&v=${signature.v}`
+}
+
 class PublicKeyDTO {
   part1: string
   part2: string
@@ -49,7 +56,12 @@ class IdentityRegistrationDTO {
     this.publicKey = new PublicKeyDTO(data.publicKey || {})
     this.signature = new SignatureDTO(data.signature || {})
   }
+
+  get paymentLink (): string {
+    return getPaymentLink(this)
+  }
 }
 
 export type { PublicKeyDTO, SignatureDTO }
+export { getPaymentLink }
 export default IdentityRegistrationDTO

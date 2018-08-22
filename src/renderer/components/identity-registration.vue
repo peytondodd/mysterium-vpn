@@ -56,8 +56,8 @@
       </ul>
       <div
         class="btn"
-        v-if="paymentLink"
-        @click="openRemoteLink(paymentLink)">
+        v-if="registration"
+        @click="openPaymentsUrl()">
         Copy Wallet Address
       </div>
     </div>
@@ -71,30 +71,34 @@
 <script>
 
 import { shell } from 'electron'
+import { getPaymentLink } from '../../libraries/mysterium-tequilapi/dto/identity-registration'
 
 export default {
   name: 'IdentityRegistration',
   dependencies: ['rendererCommunication'],
   data () {
     return {
-      registered: null,
-      paymentLink: null,
+      registration: null,
       showInstructions: false
     }
   },
   methods: {
-    openRemoteLink (url) {
+    openPaymentsUrl () {
+      const url = getPaymentLink(this.registration)
       shell.openExternal(url)
+    }
+  },
+  computed: {
+    registered () {
+      if (!this.registration) {
+        return null
+      }
+      return this.registration.registered
     }
   },
   mounted () {
     this.rendererCommunication.onRegistrationUpdate(registration => {
-      this.registered = registration.registered
-
-      const { publicKey, signature } = registration
-      this.paymentLink = `http://walletx.mysterium.network/` +
-        `?part1=${publicKey.part1}&part2=${publicKey.part2}` +
-        `&r=${signature.r}&s=${signature.s}&v=${signature.v}`
+      this.registration = registration
     })
   }
 }
