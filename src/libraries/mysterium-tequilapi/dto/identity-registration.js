@@ -17,9 +17,9 @@
 
 // @flow
 
-const getPaymentLink = (registration: IdentityRegistrationDTO): string => {
+const getPaymentLink = (paymentBaseUrl: string, registration: IdentityRegistrationDTO): string => {
   const { publicKey, signature } = registration
-  return `http://walletx.mysterium.network/` +
+  return paymentBaseUrl +
     `?part1=${publicKey.part1}&part2=${publicKey.part2}` +
     `&r=${signature.r}&s=${signature.s}&v=${signature.v}`
 }
@@ -57,8 +57,8 @@ class IdentityRegistrationDTO {
     this.signature = new SignatureDTO(data.signature || {})
   }
 
-  get paymentLink (): string {
-    return getPaymentLink(this)
+  getPaymentLink (paymentBaseUrl: string): string {
+    return getPaymentLink(paymentBaseUrl, this)
   }
 }
 

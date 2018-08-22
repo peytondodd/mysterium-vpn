@@ -78,7 +78,7 @@ describe('TequilapiClient DTO', () => {
           v: 28
         }
       })
-      const link = identity.paymentLink
+      const link = identity.getPaymentLink('http://walletx.mysterium.network/')
       expect(link).to.be.eql(
         'http://walletx.mysterium.network/' +
         '?part1=0xfb22c62ed2ddc65eb2994a8af5b1094b239aacc04a6505fd2bc581f55547175a' +

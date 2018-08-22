@@ -75,7 +75,7 @@ import { getPaymentLink } from '../../libraries/mysterium-tequilapi/dto/identity
 
 export default {
   name: 'IdentityRegistration',
-  dependencies: ['rendererCommunication'],
+  dependencies: ['rendererCommunication', 'paymentBaseUrl'],
   data () {
     return {
       registration: null,
@@ -84,7 +84,7 @@ export default {
   },
   methods: {
     openPaymentsUrl () {
-      const url = getPaymentLink(this.registration)
+      const url = getPaymentLink(this.paymentBaseUrl, this.registration)
       shell.openExternal(url)
     }
   },
