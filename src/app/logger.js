@@ -19,6 +19,10 @@
 
 import type { StringLogger } from './logging/string-logger'
 
+const stringifyArgs = (data: Array<any>) => {
+  return data.map(d => JSON.stringify(d)).join(' ')
+}
+
 class Logger {
   _logger: StringLogger = console
 
@@ -28,11 +32,11 @@ class Logger {
   }
 
   info (...data: Array<any>): void {
-    this._logger.info(data.join(' '))
+    this._logger.info(stringifyArgs(data))
   }
 
   error (...data: Array<any>): void {
-    this._logger.error(data.join(' '))
+    this._logger.error(stringifyArgs(data))
   }
 }
 
