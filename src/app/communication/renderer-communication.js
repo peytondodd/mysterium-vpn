@@ -33,6 +33,7 @@ import type {
 import type { UserSettings } from '../user-settings/user-settings'
 import type { Metric } from '../bug-reporting/bug-reporter-metrics'
 import type { MapSyncCommunication, MapSyncDTO } from '../../libraries/map-sync'
+import IdentityRegistrationDTO from '../../libraries/mysterium-tequilapi/dto/identity-registration'
 
 /**
  * This allows renderer process communicating with main process.
@@ -125,7 +126,7 @@ class RendererCommunication implements MapSyncCommunication<Metric> {
     this._removeCallback(messages.COUNTRY_UPDATE, callback)
   }
 
-  onRegistrationUpdate (callback: boolean => void) {
+  onRegistrationUpdate (callback: IdentityRegistrationDTO => void) {
     this._on(messages.IDENTITY_REGISTERED, callback)
   }
 

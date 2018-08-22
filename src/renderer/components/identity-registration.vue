@@ -31,7 +31,9 @@
       class="app__nav nav is-open"
       id="registration-instructions"
       v-if="showInstructions">
-      <div class="nav__burger burger" @click="showInstructions = false">
+      <div
+        class="nav__burger burger"
+        @click="showInstructions = false">
         <i class="burger__bar burger__bar--1"/>
         <i class="burger__bar burger__bar--2"/>
         <i class="burger__bar burger__bar--3"/>
@@ -52,7 +54,12 @@
         <li>4. Register your ID by clicking on “Pay & Register For ID”</li>
         <li>5. Wait for few minutes until the payment is processed</li>
       </ul>
-      <div class="btn">Copy Wallet Address</div>
+      <div
+        class="btn"
+        v-if="paymentLink"
+        @click="openRemoteLink(paymentLink)">
+        Copy Wallet Address
+      </div>
     </div>
     <div
       v-if="showInstructions"
@@ -62,18 +69,32 @@
 </template>
 
 <script>
+
+import { shell } from 'electron'
+
 export default {
   name: 'IdentityRegistration',
   dependencies: ['rendererCommunication'],
   data () {
     return {
       registered: null,
+      paymentLink: null,
       showInstructions: false
     }
   },
+  methods: {
+    openRemoteLink (url) {
+      shell.openExternal(url)
+    }
+  },
   mounted () {
-    this.rendererCommunication.onRegistrationUpdate(isRegistered => {
-      this.registered = isRegistered
+    this.rendererCommunication.onRegistrationUpdate(registration => {
+      this.registered = registration.registered
+
+      const { publicKey, signature } = registration
+      this.paymentLink = `http://walletx.mysterium.network/` +
+        `?part1=${publicKey.part1}&part2=${publicKey.part2}` +
+        `&r=${signature.r}&s=${signature.s}&v=${signature.v}`
     })
   }
 }

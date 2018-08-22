@@ -33,6 +33,7 @@ import type { MainCommunication } from './main-communication'
 import type { UserSettings } from '../user-settings/user-settings'
 import type { MapSyncCommunication, MapSyncDTO } from '../../libraries/map-sync'
 import type { Metric } from '../bug-reporting/bug-reporter-metrics'
+import IdentityRegistrationDTO from '../../libraries/mysterium-tequilapi/dto/identity-registration'
 
 /**
  * This allows main process communicating with renderer process.
@@ -79,8 +80,8 @@ class MainMessageBusCommunication implements MainCommunication, MapSyncCommunica
     this._send(messages.COUNTRY_UPDATE, countries)
   }
 
-  sendRegistration (registered: boolean) {
-    this._send(messages.IDENTITY_REGISTERED, registered)
+  sendRegistration (registration: IdentityRegistrationDTO) {
+    this._send(messages.IDENTITY_REGISTERED, registration)
   }
 
   sendConnectionCancelRequest () {

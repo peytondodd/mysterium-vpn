@@ -487,7 +487,7 @@ class Mysterion {
 
   _subscribeRegistration () {
     this._registrationFetcher.onFetchedRegistration((registration: IdentityRegistrationDTO) => {
-      this._communication.sendRegistration(registration.registered)
+      this._communication.sendRegistration(registration)
     })
     this._registrationFetcher.onFetchingError((error: Error) => {
       logException('Identity registration fetching failed', error)

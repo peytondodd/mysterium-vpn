@@ -24,6 +24,7 @@ import type {
   RequestTermsDTO, TermsAnsweredDTO
 } from '../../src/app/communication/dto'
 import type { UserSettings } from '../../src/app/user-settings/user-settings'
+import IdentityRegistrationDTO from '../../src/libraries/mysterium-tequilapi/dto/identity-registration'
 
 /**
  * Allows tracking method invocations.
@@ -78,7 +79,7 @@ class FakeMainCommunication implements MainCommunication {
     this._registerMethod(this.sendCountries)
   }
 
-  sendRegistration (registered: boolean): void {
+  sendRegistration (registration: IdentityRegistrationDTO): void {
     this._registerMethod(this.sendRegistration)
   }
 
