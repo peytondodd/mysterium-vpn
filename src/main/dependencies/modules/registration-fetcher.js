@@ -17,22 +17,23 @@
 
 // @flow
 
-import axios from 'axios'
-import AxiosAdapter from './adapters/axios-adapter'
-import { TIMEOUT_DEFAULT } from './timeouts'
-import HttpTequilapiClient from './client'
+import type { Container } from '../../../app/di'
+import TequilapiRegistrationFetcher from '../../../app/data-fetchers/tequilapi-registration-fetcher'
 
-const TEQUILAPI_URL = 'http://127.0.0.1:4050'
-
-function tequilapiClientFactory (baseUrl: string = TEQUILAPI_URL, defaultTimeout: number = TIMEOUT_DEFAULT): HttpTequilapiClient {
-  const axiosInstance = axios.create({
-    baseURL: baseUrl,
-    headers: {
-      'Cache-Control': 'no-cache, no-store'
+function bootstrap (container: Container) {
+  container.constant(
+    'registrationFetcher.config',
+    {
+      'interval': 5000
     }
-  })
-  const axiosAdapter = new AxiosAdapter(axiosInstance, defaultTimeout)
-  return new HttpTequilapiClient(axiosAdapter)
+  )
+  container.service(
+    'registrationFetcher',
+    ['tequilapiClient', 'registrationFetcher.config'],
+    (tequilapiClient, config: any) => {
+      return new TequilapiRegistrationFetcher(tequilapiClient, config.interval)
+    }
+  )
 }
 
-export default tequilapiClientFactory
+export default bootstrap

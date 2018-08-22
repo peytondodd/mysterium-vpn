@@ -19,11 +19,13 @@
 import DIContainer from '../../app/di/jpex-container'
 import mysterionBootstrap from './modules/application'
 import bugReportingConfigBootstrap from '../../dependencies/bug-reporting'
+import featureToggleBootstrap from '../../dependencies/feature-toggle'
 import bugReportingBootstrap from './modules/bug-reporting'
 import eventsBootstrap from '../../dependencies/statistics'
 import mysteriumClientBootstrap from './modules/mysterium-client'
 import mysteriumTequilapiBootstrap from '../../dependencies/mysterium-tequilapi'
 import proposalFetcherBootstrap from './modules/proposal-fetcher'
+import registrationFetcherBootstrap from './modules/registration-fetcher'
 import userSettingsBootstrap from './modules/user-settings'
 import disconnectNotificationsBootstrap from './modules/disconnect-notification'
 
@@ -32,6 +34,8 @@ import disconnectNotificationsBootstrap from './modules/disconnect-notification'
  */
 function bootstrap (): DIContainer {
   const container = new DIContainer()
+
+  featureToggleBootstrap(container)
   mysterionBootstrap(container)
   bugReportingConfigBootstrap(container)
   bugReportingBootstrap(container)
@@ -39,6 +43,7 @@ function bootstrap (): DIContainer {
   mysteriumClientBootstrap(container)
   mysteriumTequilapiBootstrap(container)
   proposalFetcherBootstrap(container)
+  registrationFetcherBootstrap(container)
   userSettingsBootstrap(container)
   disconnectNotificationsBootstrap(container)
 

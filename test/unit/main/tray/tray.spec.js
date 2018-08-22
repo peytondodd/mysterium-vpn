@@ -58,7 +58,7 @@ describe('tray', () => {
     }
 
     describe('.build', () => {
-      it('calls electron tray tequilapiClientFactory', () => {
+      it('calls electron tray factory', () => {
         let called = false
 
         const factory = fakeTrayFactoryBuilder(() => {

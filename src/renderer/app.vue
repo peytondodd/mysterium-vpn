@@ -20,7 +20,8 @@
     id="app"
     class="app">
     <div id="content">
-      <div class="control__version">{{ version }}</div>
+      <IdentityRegistration/>
+
       <app-modal
         v-if="overlayError"
         :close="false">
@@ -45,13 +46,12 @@
 <script>
 import { mapGetters } from 'vuex'
 import type from '@/store/types'
+import IdentityRegistration from './components/identity-registration'
 import AppVisual from '@/partials/app-visual'
 import AppNav from '@/partials/app-nav'
-
 import AppError from '@/partials/app-error'
 import AppModal from '@/partials/app-modal'
 import logger from '../app/logger'
-import { getVersionLabel } from '../libraries/version'
 
 export default {
   name: 'App',
@@ -59,14 +59,12 @@ export default {
     AppVisual,
     AppNav,
     AppError,
-    AppModal
+    AppModal,
+    IdentityRegistration
   },
-  dependencies: ['mysterionReleaseID', 'rendererCommunication', 'syncCommunication', 'logger', 'bugReporterMetrics'],
+  dependencies: ['rendererCommunication', 'syncCommunication', 'logger', 'bugReporterMetrics'],
   computed: {
-    ...mapGetters(['navVisible', 'loading', 'visual', 'overlayError', 'clientVersion']),
-    version () {
-      return getVersionLabel(this.mysterionReleaseID, this.clientVersion)
-    }
+    ...mapGetters(['navVisible', 'loading', 'visual', 'overlayError'])
   },
   async mounted () {
     this.bugReporterMetrics.startSyncing(this.rendererCommunication)

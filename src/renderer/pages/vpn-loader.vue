@@ -25,6 +25,7 @@ import messages from '../../app/messages'
 import logger from '../../app/logger'
 import DelayedRetrier from '../../app/delayed-retrier'
 import config from '../config'
+import { isHttpError } from '../../libraries/mysterium-tequilapi/client-error'
 
 export default {
   dependencies: ['bugReporter', 'vpnInitializer', 'sleeper'],
@@ -50,7 +51,9 @@ export default {
     } catch (err) {
       err.message = `Application loading failed: ${err.message}`
       logger.error(err)
-      this.bugReporter.captureErrorException(err)
+      if (!isHttpError(err)) {
+        this.bugReporter.captureErrorException(err)
+      }
 
       commit(type.INIT_FAIL)
       commit(type.OVERLAY_ERROR, messages.initializationError)

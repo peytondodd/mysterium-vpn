@@ -20,6 +20,7 @@
     class="nav"
     :class="{'is-open':navOpen}">
     <div class="nav__content">
+      <div class="control__version">{{ version }}</div>
       <div
         class="nav__navicon"
         @click="switchNav(!navOpen)">
@@ -78,10 +79,11 @@ import IconIssue from '@/assets/img/icon--issue.svg'
 import IconEye from '@/assets/img/icon--eye.svg'
 import IconQuit from '@/assets/img/icon--quit.svg'
 import DisconnectNotificationSettings from '@/components/disconnect-notification-setting'
+import { getVersionLabel } from '../../libraries/version'
 
 export default {
   name: 'AppNav',
-  dependencies: ['feedbackForm'],
+  dependencies: ['mysterionReleaseID', 'feedbackForm'],
   components: {
     IconEye,
     IconIssue,
@@ -90,7 +92,10 @@ export default {
   },
   computed: {
     // mix the getters into computed with object spread operator
-    ...mapGetters(['navOpen'])
+    ...mapGetters(['navOpen', 'clientVersion']),
+    version () {
+      return getVersionLabel(this.mysterionReleaseID, this.clientVersion)
+    }
   },
   methods: {
     ...mapActions(['switchNav']),

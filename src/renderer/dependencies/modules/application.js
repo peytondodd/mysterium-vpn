@@ -31,12 +31,11 @@ function bootstrap (container: Container) {
 
   container.service(
     'rendererCommunication',
-    ['bugReporterMetrics'],
-    (bugReporterMetrics) => {
+    [],
+    () => {
       const ipc = new RendererIpc()
       const messageBus = new IpcMessageBus(ipc)
-      const communication = new RendererCommunication(messageBus)
-      return communication
+      return new RendererCommunication(messageBus)
     }
   )
 

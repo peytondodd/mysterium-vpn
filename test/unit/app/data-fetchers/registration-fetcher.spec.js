@@ -18,27 +18,41 @@
 // @flow
 import { describe, it, expect, before, beforeEach, after } from '../../../helpers/dependencies'
 import lolex from 'lolex'
-import TequilapiProposalFetcher from '../../../../src/app/data-fetchers/tequilapi-proposal-fetcher'
-import ProposalDTO from '../../../../src/libraries/mysterium-tequilapi/dto/proposal'
 import { nextTick } from '../../../helpers/utils'
 import EmptyTequilapiClientMock from '../../renderer/store/modules/empty-tequilapi-client-mock'
 import logger from '../../../../src/app/logger'
+import IdentityRegistrationDTO from '../../../../src/libraries/mysterium-tequilapi/dto/identity-registration'
+import TequilapiRegistrationFetcher from '../../../../src/app/data-fetchers/tequilapi-registration-fetcher'
+
+const IDENTITY_ID = 'identity-id-123'
+const REGISTRATION = {
+  registered: true,
+  publicKey: {
+    part1: '0xfb22c62ed2ddc65eb2994a8af5b1094b239aacc04a6505fd2bc581f55547175a',
+    part2: '0xef3156a0d95c3832b191c03c272a5900e3e30484b9c8a65a0387f1f8d436867f'
+  },
+  signature: {
+    r: '0xb48616d33aba008f687d500cac9e9f2ca2b3c275fab6fc21318b81e09571d993',
+    s: '0x49c0d7e1445389dbc805275f0aeb0b7f23e50e26a772b5a3bc4b2cc39f1bb3aa',
+    v: 28
+  }
+}
 
 class IdentityTequilapiClientMock extends EmptyTequilapiClientMock {
   mockError: Error = new Error('Mock error')
-  _proposals: Array<ProposalDTO>
+  _registration: IdentityRegistrationDTO
   _willFail: boolean = false
 
-  constructor (proposals: Array<ProposalDTO>) {
+  constructor (registration: IdentityRegistrationDTO) {
     super()
-    this._proposals = proposals
+    this._registration = registration
   }
 
-  async findProposals (_filter): Promise<Array<ProposalDTO>> {
+  async identityRegistration (id: string): Promise<IdentityRegistrationDTO> {
     if (this._willFail) {
       throw this.mockError
     }
-    return this._proposals
+    return this._registration
   }
 
   markToFail () {
@@ -51,14 +65,11 @@ class IdentityTequilapiClientMock extends EmptyTequilapiClientMock {
 }
 
 describe('DataFetchers', () => {
-  describe('ProposalFetcher', () => {
+  describe('RegistrationFetcher', () => {
     let clock
     const interval = 1001
-    const tequilapi = new IdentityTequilapiClientMock([
-      new ProposalDTO({ id: '0x1' }),
-      new ProposalDTO({ id: '0x2' })
-    ])
-    let fetcher
+    const tequilapi = new IdentityTequilapiClientMock(new IdentityRegistrationDTO(REGISTRATION))
+    let fetcher: TequilapiRegistrationFetcher
 
     before(() => {
       clock = lolex.install()
@@ -69,7 +80,7 @@ describe('DataFetchers', () => {
     })
 
     beforeEach(() => {
-      fetcher = new TequilapiProposalFetcher(tequilapi, interval)
+      fetcher = new TequilapiRegistrationFetcher(tequilapi, interval)
     })
 
     async function tickWithDelay (duration) {
@@ -81,8 +92,12 @@ describe('DataFetchers', () => {
       it('triggers subscriber callbacks', async () => {
         let counter = 0
 
-        fetcher.onFetchedProposals(() => counter++)
-        fetcher.start()
+        fetcher.onFetchedRegistration(() => counter++)
+
+        expect(counter).to.equal(0)
+        fetcher.start(IDENTITY_ID)
+        await nextTick()
+        expect(counter).to.equal(1)
 
         await tickWithDelay(1000)
         expect(counter).to.equal(1)
@@ -91,20 +106,18 @@ describe('DataFetchers', () => {
         expect(counter).to.equal(2)
       })
 
-      it('triggers subscriber callbacks with proposals', async () => {
-        let proposals = []
+      it('triggers subscriber callbacks with registration', async () => {
+        let registration = []
 
-        fetcher.onFetchedProposals((fetchedProposals) => {
-          proposals = fetchedProposals
+        fetcher.onFetchedRegistration((fetchedRegistration) => {
+          registration = fetchedRegistration
         })
 
-        fetcher.start()
+        fetcher.start(IDENTITY_ID)
 
         await tickWithDelay(1000)
 
-        expect(proposals.length).to.equal(2)
-        expect(proposals[0]).to.deep.equal(new ProposalDTO({ id: '0x1' }))
-        expect(proposals[1]).to.deep.equal(new ProposalDTO({ id: '0x2' }))
+        expect(registration).to.deep.equal(REGISTRATION)
       })
 
       describe('when proposal fetching fails', () => {
@@ -123,7 +136,7 @@ describe('DataFetchers', () => {
             error = err
           })
 
-          fetcher.start()
+          fetcher.start(IDENTITY_ID)
 
           await tickWithDelay(1001)
           expect(error).to.eql(tequilapi.mockError)
@@ -132,11 +145,11 @@ describe('DataFetchers', () => {
     })
 
     describe('.stop', () => {
-      it('stops fetching of proposals', async () => {
+      it('stops fetching of registration', async () => {
         let counter = 0
 
-        fetcher.onFetchedProposals(() => counter++)
-        fetcher.start()
+        fetcher.onFetchedRegistration(() => counter++)
+        fetcher.start(IDENTITY_ID)
 
         await tickWithDelay(1000)
         expect(counter).to.equal(1)
@@ -154,12 +167,9 @@ describe('DataFetchers', () => {
     })
 
     describe('.fetch', () => {
-      it('returns proposals', async () => {
-        const proposals = await fetcher.fetch()
-
-        expect(proposals.length).to.equal(2)
-        expect(proposals[0]).to.deep.equal(new ProposalDTO({ id: '0x1' }))
-        expect(proposals[1]).to.deep.equal(new ProposalDTO({ id: '0x2' }))
+      it('returns registration', async () => {
+        const registration = await fetcher.fetch()
+        expect(registration).to.deep.equal(REGISTRATION)
       })
     })
   })

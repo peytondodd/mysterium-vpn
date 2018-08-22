@@ -43,6 +43,8 @@ interface MainCommunication {
 
   sendCountries (countries: CountriesDTO): void,
 
+  sendRegistration (registered: boolean): void,
+
   sendConnectionCancelRequest (): void,
 
   sendConnectionRequest (data: RequestConnectionDTO): void,
