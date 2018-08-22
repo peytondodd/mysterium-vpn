@@ -56,9 +56,9 @@ describe('Logger', () => {
     })
 
     it('logs number as string', () => {
-      const str = 123.45
-      logger.info(str)
-      expect(stringLogger.infoText).to.be.eql(str.toString())
+      const num = 123.45
+      logger.info(num)
+      expect(stringLogger.infoText).to.be.eql(num.toString())
     })
 
     it('logs complex object', () => {
@@ -93,9 +93,9 @@ describe('Logger', () => {
     })
 
     it('logs number as string', () => {
-      const str = 0.45
-      logger.error(str)
-      expect(stringLogger.errorText).to.be.eql(str.toString())
+      const num = 0.45
+      logger.error(num)
+      expect(stringLogger.errorText).to.be.eql(num.toString())
     })
 
     it('logs complex object', () => {
