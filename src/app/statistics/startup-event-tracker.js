@@ -19,6 +19,7 @@
 
 import os from 'os'
 import type { EventSender } from './event-sender'
+import osName from 'os-name'
 
 const STARTUP_EVENT_NAME = 'startup'
 
@@ -32,8 +33,13 @@ class StartupEventTracker {
     this._eventSender = eventSender
   }
 
-  async sendEvent () {
-    const context = { platform: os.platform() }
+  async sendEvent (uid: string) {
+    const context = {
+      platform: os.platform(),
+      osName: osName(os.platform(), os.release()),
+      release: os.release(),
+      identity: uid
+    }
     await this._eventSender.send(STARTUP_EVENT_NAME, context)
   }
 }
