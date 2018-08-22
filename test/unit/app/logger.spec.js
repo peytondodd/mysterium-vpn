@@ -113,7 +113,7 @@ describe('Logger', () => {
       const arg2 = 2.7182818
       const arg3 = { x: '1', y: 2 }
       logger.error(arg1, arg2, arg3)
-      expect(stringLogger.errorText).to.be.eql('"a b c" 3.14159265 {"x":"1","y":2}')
+      expect(stringLogger.errorText).to.be.eql('"a b c" 2.7182818 {"x":"1","y":2}')
     })
   })
 })
