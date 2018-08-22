@@ -33,6 +33,9 @@ describe('StartupEventTracker', () => {
       const event = mockSender.events[0]
       expect(event.eventName).to.eql('startup')
       expect(event.context.platform).to.be.a('string')
+      expect(event.context.osName).to.be.a('string')
+      expect(event.context.osRelease).to.be.a('string')
+      expect(event.context.identity).to.eql('0x1D')
     })
   })
 })

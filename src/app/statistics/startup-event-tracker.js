@@ -33,12 +33,12 @@ class StartupEventTracker {
     this._eventSender = eventSender
   }
 
-  async sendEvent (uid: string) {
+  async sendEvent (identity: string) {
     const context = {
       platform: os.platform(),
       osName: osName(os.platform(), os.release()),
-      release: os.release(),
-      identity: uid
+      osRelease: os.release(),
+      identity
     }
     await this._eventSender.send(STARTUP_EVENT_NAME, context)
   }
