@@ -22,10 +22,7 @@ import type { StringLogger } from './logging/string-logger'
 const stringifyArgs = (data: Array<any>) => {
   return data.map(d => {
     if (d instanceof Error) {
-      d = {
-        message: d.message,
-        stack: d.stack
-      }
+      return d.toString()
     }
 
     // http://stackoverflow.com/questions/11616630/json-stringify-avoid-typeerror-converting-circular-structure-to-json/11616993#11616993

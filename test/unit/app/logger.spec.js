@@ -130,7 +130,7 @@ describe('Logger', () => {
       const error = new Error('ERROR_MESSAGE')
       error.stack = 'MOCKED_STACK'
       logger.error(error)
-      expect(stringLogger.errorText).to.be.eql('{"message":"ERROR_MESSAGE","stack":"MOCKED_STACK"}')
+      expect(stringLogger.errorText).to.be.eql('Error: ERROR_MESSAGE')
     })
   })
 })
