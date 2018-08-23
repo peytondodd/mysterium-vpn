@@ -45,8 +45,7 @@ class MainIpc implements Ipc {
   }
 
   removeCallback (channel: string, listener: EventListener): void {
-    // TODO: implement
-    throw new Error('Not implemented')
+    ipcMain.removeListener(channel, listener)
   }
 }
 
