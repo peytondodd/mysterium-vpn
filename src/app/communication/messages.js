@@ -42,7 +42,7 @@ export default {
   PROPOSALS_UPDATE: 'proposals.update',
   COUNTRY_UPDATE: 'country.update',
 
-  IDENTITY_REGISTRATION: 'identity.registered',
+  IDENTITY_REGISTRATION: 'identity.registration',
 
   TOGGLE_FAVORITE_PROVIDER: 'toggle.favorite.provider',
   SHOW_DISCONNECT_NOTIFICATION: 'show.disconnect.notification',
