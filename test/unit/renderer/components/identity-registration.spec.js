@@ -28,7 +28,7 @@ class FakeRendererCommunication {
     this.callback = callback
   }
 
-  sendRegistationUpdate (registration: IdentityRegistration) {
+  sendRegistrationUpdate (registration: IdentityRegistration) {
     if (this.callback) {
       this.callback(registration)
     }
