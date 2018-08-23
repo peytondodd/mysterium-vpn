@@ -16,11 +16,13 @@
   -->
 
 <template>
-  <div
-    class="favorite-button"
-    v-bind="country"
-    @click="toggleFavorite(country)"
-    v-text="buttonText"/>
+  <div class="favorite-button">
+    <div
+      class="favorite-button__icon"
+      v-bind="country"
+      @click="toggleFavorite(country)"
+      v-text="buttonText"/>
+  </div>
 </template>
 
 <script>
