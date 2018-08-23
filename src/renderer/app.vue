@@ -20,7 +20,7 @@
     id="app"
     class="app">
     <div id="content">
-      <IdentityRegistration/>
+      <IdentityRegistration v-if="paymentsAreEnabled"/>
 
       <app-modal
         v-if="overlayError"
@@ -62,9 +62,12 @@ export default {
     AppModal,
     IdentityRegistration
   },
-  dependencies: ['rendererCommunication', 'syncCommunication', 'logger', 'bugReporterMetrics'],
+  dependencies: ['rendererCommunication', 'syncCommunication', 'logger', 'bugReporterMetrics', 'featureToggle'],
   computed: {
-    ...mapGetters(['navVisible', 'loading', 'visual', 'overlayError'])
+    ...mapGetters(['navVisible', 'loading', 'visual', 'overlayError']),
+    paymentsAreEnabled () {
+      return this.featureToggle.paymentsAreEnabled()
+    }
   },
   async mounted () {
     this.bugReporterMetrics.startSyncing(this.rendererCommunication)
