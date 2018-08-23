@@ -78,6 +78,16 @@ describe('Logger', () => {
       logger.info(arg1, arg2, arg3)
       expect(stringLogger.infoText).to.be.eql('"abc" 3.14159265 {"x":1,"y":2}')
     })
+
+    it('logs object with circular reference', () => {
+      const object = {
+        str: 'any string',
+        child: {}
+      }
+      object['child'] = object
+      logger.info(object)
+      expect(stringLogger.infoText).to.be.eql('{"str":"any string"}')
+    })
   })
 
   describe('.error', () => {
@@ -114,6 +124,13 @@ describe('Logger', () => {
       const arg3 = { x: '1', y: 2 }
       logger.error(arg1, arg2, arg3)
       expect(stringLogger.errorText).to.be.eql('"a b c" 2.7182818 {"x":"1","y":2}')
+    })
+
+    it('logs custom Error', () => {
+      const error = new Error('ERROR_MESSAGE')
+      error.stack = 'MOCKED_STACK'
+      logger.error(error)
+      expect(stringLogger.errorText).to.be.eql('{"message":"ERROR_MESSAGE","stack":"MOCKED_STACK"}')
     })
   })
 })
