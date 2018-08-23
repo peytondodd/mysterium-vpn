@@ -204,7 +204,10 @@ class Mysterion {
       const identity = new IdentityDTO({ id: identityChange.id })
       this._bugReporter.setUser(identity)
 
-      this._registrationFetcher.start(identity.id)
+      if (this._featureToggle.paymentsAreEnabled()) {
+        this._registrationFetcher.start(identity.id)
+      }
+
       logInfo(`Registration fetcher started with ID ${identity.id}`)
     })
     this._bugReporterMetrics.startSyncing(this._communication)
@@ -229,7 +232,10 @@ class Mysterion {
     })
 
     this._subscribeProposals()
-    this._subscribeRegistration()
+
+    if (this._featureToggle.paymentsAreEnabled()) {
+      this._subscribeRegistration()
+    }
 
     syncFavorites(this._userSettingsStore, this._communication)
     syncShowDisconnectNotifications(this._userSettingsStore, this._communication)
