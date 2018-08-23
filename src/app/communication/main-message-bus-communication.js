@@ -81,7 +81,7 @@ class MainMessageBusCommunication implements MainCommunication, MapSyncCommunica
   }
 
   sendRegistration (registration: IdentityRegistrationDTO) {
-    this._send(messages.IDENTITY_REGISTERED, registration)
+    this._send(messages.IDENTITY_REGISTRATION, registration)
   }
 
   sendConnectionCancelRequest () {

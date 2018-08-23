@@ -127,7 +127,7 @@ class RendererCommunication implements MapSyncCommunication<Metric> {
   }
 
   onRegistrationUpdate (callback: IdentityRegistrationDTO => void) {
-    this._on(messages.IDENTITY_REGISTERED, callback)
+    this._on(messages.IDENTITY_REGISTRATION, callback)
   }
 
   onMysteriumClientIsReady (callback: () => void) {

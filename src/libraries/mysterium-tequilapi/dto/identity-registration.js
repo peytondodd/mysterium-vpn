@@ -56,10 +56,6 @@ class IdentityRegistrationDTO {
     this.publicKey = new PublicKeyDTO(data.publicKey || {})
     this.signature = new SignatureDTO(data.signature || {})
   }
-
-  getPaymentLink (paymentBaseUrl: string): string {
-    return getPaymentLink(paymentBaseUrl, this)
-  }
 }
 
 export type { PublicKeyDTO, SignatureDTO }
