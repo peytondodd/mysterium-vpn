@@ -32,6 +32,8 @@ import ConsumerLocationDTO from './dto/consumer-location'
 import IdentityRegistrationDTO from './dto/identity-registration'
 import { TIMEOUT_DISABLED } from './timeouts'
 
+// TODO: move TequilapiClient and HttpTequilapiClient to 'tequilapi-client.js' and 'http-tequilapi-client.js'
+
 interface TequilapiClient {
   healthCheck (timeout: ?number): Promise<NodeHealthcheckDTO>,
   stop (): Promise<void>,

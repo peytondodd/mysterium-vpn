@@ -21,10 +21,10 @@ import sleep from '../../../../../src/libraries/sleep'
 import Process from '../../../../../src/libraries/mysterium-client/standalone/standalone-client-process'
 import Monitoring from '../../../../../src/libraries/mysterium-client/monitoring'
 import processLogLevels from '../../../../../src/libraries/mysterium-client/log-levels'
-import tequilapiClientFactory from '../../../../../src/libraries/mysterium-tequilapi/client-factory'
 import { describe, xdescribe, it, before, after, expect } from '../../../../helpers/dependencies'
 import path from 'path'
 import os from 'os'
+import TequilapiClientFactory from '../../../../../src/libraries/mysterium-tequilapi/tequilapi-client-factory'
 
 xdescribe('Standalone Process', () => {
   let process, tequilapi
@@ -49,7 +49,7 @@ xdescribe('Standalone Process', () => {
     process.start()
     process.onLog(processLogLevels.INFO, data => logs.push(data))
 
-    tequilapi = tequilapiClientFactory(`http://127.0.0.1:${tequilapiPort}`)
+    tequilapi = new TequilapiClientFactory(`http://127.0.0.1:${tequilapiPort}`).build()
 
     await sleep(100)
   })

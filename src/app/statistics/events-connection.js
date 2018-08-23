@@ -51,7 +51,7 @@ class ConnectEventTracker {
     this._connectStarted = true
   }
 
-  async connectEnded (error?: any): Promise<any> {
+  async connectEnded (error?: string): Promise<any> {
     this._checkConnectStarted()
     this._insertEndTimesIntoEventDetails()
     if (error) {

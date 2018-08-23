@@ -236,11 +236,14 @@ function actionsFactory (
           eventTracker.connectCanceled()
           return
         }
+
         commit(type.SHOW_ERROR_MESSAGE, messages.connectFailed)
-        const error: Object = new Error('Connection to node failed.')
-        error.original = err
-        eventTracker.connectEnded(error.toString())
-        bugReporter.captureInfoException(err)
+
+        eventTracker.connectEnded('Error: Connection to node failed.')
+
+        if (!isHttpError(err)) {
+          bugReporter.captureInfoException(err)
+        }
       } finally {
         if (looper) {
           looper.start()
@@ -261,7 +264,9 @@ function actionsFactory (
         } catch (err) {
           commit(type.SHOW_ERROR, err)
           logger.info('Connection cancelling failed:', err)
-          bugReporter.captureInfoException(err)
+          if (!isHttpError(err)) {
+            bugReporter.captureInfoException(err)
+          }
         }
         dispatch(type.FETCH_CONNECTION_STATUS)
         dispatch(type.CONNECTION_IP)

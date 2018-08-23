@@ -39,6 +39,7 @@ import type { BugReporter } from '../../../../src/app/bug-reporting/interface'
 import { nextTick } from '../../../helpers/utils'
 import RendererCommunication from '../../../../src/app/communication/renderer-communication'
 import FakeMessageBus from '../../../helpers/fake-message-bus'
+import { markErrorAsHttp } from '../../../../src/libraries/mysterium-tequilapi/client-error'
 
 describe('VpnLoader', () => {
   const tequilapi: TequilapiClient = tequilapiMockCreate()
@@ -138,28 +139,46 @@ describe('VpnLoader', () => {
   describe('when initialization fails always', () => {
     let vm
 
-    beforeEach(async () => {
+    async function initializeWithError (error: Error) {
       const vpnInitializer = {
         async initialize (..._args: Array<any>): Promise<void> {
-          throw new Error('Mock initialization error')
+          throw error
         }
       }
 
       vm = await mountComponent(tequilapi, vpnInitializer, bugReporter)
       await nextTick() // wait for mount hook to complete
-    })
+    }
 
-    it('notifies user with an overlay', () => {
-      expect(vm.$store.getters.overlayError).to.eql({
-        message: messages.initializationError.message
+    describe('with unknown error', () => {
+      beforeEach(async () => {
+        await initializeWithError(new Error('Mock initialization error'))
+      })
+
+      it('notifies user with an overlay', () => {
+        expect(vm.$store.getters.overlayError).to.eql({
+          message: messages.initializationError.message
+        })
+      })
+
+      it('reports error', () => {
+        expect(bugReporter.errorExceptions.length).to.eql(1)
+        const error = bugReporter.errorExceptions[0].error
+        expect(error).to.be.an('error')
+        expect(error.message).to.eql('Application loading failed: Mock initialization error')
       })
     })
 
-    it('reports error', () => {
-      expect(bugReporter.errorExceptions.length).to.eql(1)
-      const error = bugReporter.errorExceptions[0].error
-      expect(error).to.be.an('error')
-      expect(error.message).to.eql('Application loading failed: Mock initialization error')
+    describe('with http error', () => {
+      beforeEach(async () => {
+        const error = new Error('Mock initialization error')
+        markErrorAsHttp(error)
+        await initializeWithError(error)
+      })
+
+      it('does not report error', () => {
+        expect(bugReporter.errorExceptions).to.be.empty
+      })
     })
   })
 })

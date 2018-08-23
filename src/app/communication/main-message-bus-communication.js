@@ -124,6 +124,14 @@ class MainMessageBusCommunication implements MainCommunication, MapSyncCommunica
     this._on(messages.CURRENT_IDENTITY_CHANGED, callback)
   }
 
+  onCurrentIdentityChangeOnce (callback: (CurrentIdentityChangeDTO) => void) {
+    let cb = (currentIdentityChange: CurrentIdentityChangeDTO) => {
+      callback(currentIdentityChange)
+      this._messageBus.removeCallback(messages.CURRENT_IDENTITY_CHANGED, cb)
+    }
+    this._on(messages.CURRENT_IDENTITY_CHANGED, cb)
+  }
+
   onProposalUpdateRequest (callback: () => void) {
     this._on(messages.PROPOSALS_UPDATE, callback)
   }

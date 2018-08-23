@@ -27,12 +27,15 @@ describe('StartupEventTracker', () => {
 
   describe('.sendEvent', () => {
     it('collects startup event', async () => {
-      await tracker.sendEvent()
+      await tracker.sendEvent('0x1D')
 
       expect(mockSender.events.length).to.eql(1)
       const event = mockSender.events[0]
       expect(event.eventName).to.eql('startup')
       expect(event.context.platform).to.be.a('string')
+      expect(event.context.osName).to.be.a('string')
+      expect(event.context.osRelease).to.be.a('string')
+      expect(event.context.identity).to.eql('0x1D')
     })
   })
 })
