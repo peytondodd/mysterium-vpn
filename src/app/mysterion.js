@@ -186,8 +186,6 @@ class Mysterion {
   }
 
   async bootstrap () {
-    this._startupEventTracker.sendEvent()
-
     const showTerms = !this._areTermsAccepted()
     const browserWindow = this._createBrowserWindow()
     const windowSize = this._getWindowSize(showTerms)
@@ -197,6 +195,11 @@ class Mysterion {
     const ipc = new MainIpc(send, this._bugReporter.captureErrorException)
     this._messageBus = new IpcMessageBus(ipc)
     this._communication = new MainMessageBusCommunication(this._messageBus)
+
+    this._communication.onCurrentIdentityChangeOnce((identityChange: CurrentIdentityChangeDTO) => {
+      this._startupEventTracker.sendEvent(identityChange.id)
+    })
+
     this._communication.onCurrentIdentityChange((identityChange: CurrentIdentityChangeDTO) => {
       const identity = new IdentityDTO({ id: identityChange.id })
       this._bugReporter.setUser(identity)

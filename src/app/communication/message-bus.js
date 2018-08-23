@@ -17,7 +17,7 @@
 
 // @flow
 
-type MessageBusCallback = (data?: mixed) => void
+type MessageBusCallback = (data: any) => void
 
 export interface MessageBus {
   send (channel: string, data?: mixed): void,
