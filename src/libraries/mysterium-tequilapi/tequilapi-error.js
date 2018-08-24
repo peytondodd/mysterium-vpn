@@ -33,15 +33,15 @@ class TequilapiError extends Error {
     return this._originalError.code
   }
 
-  isTimeoutError (): boolean {
+  get isTimeoutError (): boolean {
     return this.code === errorCodes.CONNECTION_ABORTED_ERROR_CODE
   }
 
-  isRequestClosedError (): boolean {
+  get isRequestClosedError (): boolean {
     return this._hasHttpStatus(httpResponseCodes.CLIENT_CLOSED_REQUEST)
   }
 
-  isServiceUnavailableError (): boolean {
+  get isServiceUnavailableError (): boolean {
     return this._hasHttpStatus(httpResponseCodes.SERVICE_UNAVAILABLE)
   }
 

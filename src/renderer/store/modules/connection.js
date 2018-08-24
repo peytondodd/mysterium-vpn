@@ -229,7 +229,7 @@ function actionsFactory (
         eventTracker.connectEnded()
         commit(type.HIDE_ERROR)
       } catch (err) {
-        if (err instanceof TequilapiError && err.isRequestClosedError()) {
+        if (err instanceof TequilapiError && err.isRequestClosedError) {
           eventTracker.connectCanceled()
           return
         }

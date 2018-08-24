@@ -74,34 +74,34 @@ describe('TequilapiError', () => {
 
   describe('.isTimeoutError', () => {
     it('returns false for simple error', () => {
-      expect(simpleTequilapiError.isTimeoutError()).to.be.false
+      expect(simpleTequilapiError.isTimeoutError).to.be.false
     })
 
     it('returns true for errors with timeout code', () => {
       const tequilapiError = createTequilapiErrorWithCode('ECONNABORTED')
-      expect(tequilapiError.isTimeoutError()).to.be.true
+      expect(tequilapiError.isTimeoutError).to.be.true
     })
   })
 
   describe('.isRequestClosedError', () => {
     it('returns false for simple error', () => {
-      expect(simpleTequilapiError.isRequestClosedError()).to.be.false
+      expect(simpleTequilapiError.isRequestClosedError).to.be.false
     })
 
     it('returns true for errors with request closed status', () => {
       const tequilapiError = createTequilapiErrorWithResponseStatus(499)
-      expect(tequilapiError.isRequestClosedError()).to.be.true
+      expect(tequilapiError.isRequestClosedError).to.be.true
     })
   })
 
   describe('.isServiceUnavailableError', () => {
     it('returns false for simple error', () => {
-      expect(simpleTequilapiError.isServiceUnavailableError()).to.be.false
+      expect(simpleTequilapiError.isServiceUnavailableError).to.be.false
     })
 
     it('returns true for errors with request closed status', () => {
       const tequilapiError = createTequilapiErrorWithResponseStatus(503)
-      expect(tequilapiError.isServiceUnavailableError()).to.be.true
+      expect(tequilapiError.isServiceUnavailableError).to.be.true
     })
   })
 

@@ -76,7 +76,7 @@ describe('TequilapiClient AxiosAdapter', () => {
 
     const err = await capturePromiseError(adapter.get('test-url'))
     expect(err).to.be.instanceOf(TequilapiError)
-    expect(err.isTimeoutError()).to.be.true
+    expect(err.isTimeoutError).to.be.true
     expect(err.toString()).to.eql('TequilapiError: timeout of 1ms exceeded (path="test-url")')
   })
 
