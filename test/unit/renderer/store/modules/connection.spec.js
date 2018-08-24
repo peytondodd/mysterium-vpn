@@ -35,6 +35,7 @@ import BugReporterMock from '../../../../helpers/bug-reporter-mock'
 import ConnectionRequestDTO from '../../../../../src/libraries/mysterium-tequilapi/dto/connection-request'
 import MockEventSender from '../../../../helpers/statistics/mock-event-sender'
 import TequilapiError from '../../../../../src/libraries/mysterium-tequilapi/tequilapi-error'
+import ConnectionManager from '../../../../../src/renderer/store/connection-manager'
 
 function factoryTequilapiManipulator () {
   let statusFail = false
@@ -246,8 +247,9 @@ describe('connection', () => {
 
       const dispatch = (action, payload = {}) => {
         const context = { commit, dispatch, state, getters }
+        const connectionManager = new ConnectionManager(fakeEventSender, bugReporterMock, fakeTequilapi.getFakeApi())
         const actions =
-          actionsFactory(fakeTequilapi.getFakeApi(), rendererCommunication, fakeEventSender, bugReporterMock)
+          actionsFactory(fakeTequilapi.getFakeApi(), rendererCommunication, bugReporterMock, connectionManager)
 
         return actions[action](context, payload)
       }

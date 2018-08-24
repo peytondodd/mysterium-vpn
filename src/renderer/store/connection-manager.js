@@ -29,6 +29,9 @@ import TequilapiError from '../../libraries/mysterium-tequilapi/tequilapi-error'
 import messages from '../../app/messages'
 import logger from '../../app/logger'
 
+/**
+ * Allows connecting and disconnecting to provider.
+ */
 class ConnectionManager {
   _eventSender: EventSender
   _bugReporter: BugReporter

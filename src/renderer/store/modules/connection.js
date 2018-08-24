@@ -29,7 +29,6 @@ import ConnectionRequestDTO from '../../../libraries/mysterium-tequilapi/dto/con
 import ConsumerLocationDTO from '../../../libraries/mysterium-tequilapi/dto/consumer-location'
 import type { BugReporter } from '../../../app/bug-reporting/interface'
 import logger from '../../../app/logger'
-import type { EventSender } from '../../../app/statistics/event-sender'
 import TequilapiError from '../../../libraries/mysterium-tequilapi/tequilapi-error'
 import ConnectionManager from '../connection-manager'
 
@@ -121,10 +120,9 @@ const mutations = {
 function actionsFactory (
   tequilapi: TequilapiClient,
   rendererCommunication: RendererCommunication,
-  eventSender: EventSender,
-  bugReporter: BugReporter
+  bugReporter: BugReporter,
+  connectionManager: ConnectionManager
 ) {
-  const connectionManager = new ConnectionManager(eventSender, bugReporter, tequilapi)
   return {
     async [type.LOCATION] ({ commit }) {
       try {
