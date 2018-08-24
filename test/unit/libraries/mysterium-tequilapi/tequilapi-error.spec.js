@@ -62,8 +62,8 @@ describe('TequilapiError', () => {
   })
 
   describe('.code', () => {
-    it('returns null for simple error', () => {
-      expect(simpleTequilapiError.code).to.be.null
+    it('returns undefined for simple error', () => {
+      expect(simpleTequilapiError.code).to.be.undefined
     })
 
     it('returns code of original error for error with code', () => {

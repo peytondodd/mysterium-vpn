@@ -30,7 +30,7 @@ class TequilapiError extends Error {
   }
 
   get code (): ?string {
-    return this._originalError.code || null
+    return this._originalError.code
   }
 
   isTimeoutError (): boolean {
