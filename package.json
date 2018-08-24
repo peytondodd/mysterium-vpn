@@ -39,6 +39,7 @@
       "dist/electron/**/*"
     ],
     "extraResources": [
+      "./static/icons/notification.png",
       "./static/icons/trayActiveTemplate.png",
       "./static/icons/trayActiveTemplate@2x.png",
       "./static/icons/trayPassiveTemplate.png",
