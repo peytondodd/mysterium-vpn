@@ -19,26 +19,26 @@
 
 import type { StringLogger } from './logging/string-logger'
 
-const stringifyArgs = (data: Array<any>) => {
-  return data.map(d => {
-    if (d instanceof Error) {
-      return d.toString()
-    }
+const stringifyArg = (arg: any) => {
+  if (arg instanceof Error) {
+    return arg.toString()
+  }
 
-    // http://stackoverflow.com/questions/11616630/json-stringify-avoid-typeerror-converting-circular-structure-to-json/11616993#11616993
-    const cache = []
-    return JSON.stringify(d, (key, value) => {
-      if (typeof value === 'object' && value !== null) {
-        if (cache.indexOf(value) !== -1) {
-          // Circular reference found, discard key
-          return
-        }
-        // Store value in our collection
-        cache.push(value)
+  const cache = new Set()
+  return JSON.stringify(arg, (key, value) => {
+    if (typeof value === 'object' && value !== null) {
+      if (cache.has(value)) {
+        // Circular reference found, discard key
+        return
       }
-      return value
-    })
-  }).join(' ')
+      cache.add(value)
+    }
+    return value
+  })
+}
+
+const stringifyArgs = (data: Array<any>) => {
+  return data.map(stringifyArg).join(' ')
 }
 
 class Logger {

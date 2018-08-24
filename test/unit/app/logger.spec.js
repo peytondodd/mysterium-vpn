@@ -84,7 +84,7 @@ describe('Logger', () => {
         str: 'any string',
         child: {}
       }
-      object['child'] = object
+      object.child = object
       logger.info(object)
       expect(stringLogger.infoText).to.be.eql('{"str":"any string"}')
     })
@@ -128,7 +128,6 @@ describe('Logger', () => {
 
     it('logs custom Error', () => {
       const error = new Error('ERROR_MESSAGE')
-      error.stack = 'MOCKED_STACK'
       logger.error(error)
       expect(stringLogger.errorText).to.be.eql('Error: ERROR_MESSAGE')
     })
