@@ -37,7 +37,7 @@ function createTequilapiErrorWithResponseStatus (status: number): TequilapiError
 
 describe('TequilapiError', () => {
   const simpleError = new Error('test error')
-  const simpleTequilapiError = new TequilapiError(simpleError, 'test path')
+  const simpleTequilapiError = new TequilapiError(simpleError, 'test-path')
 
   it('is instance of TequilapiError', () => {
     // seems like redundant spec, but it's valuable, because this doesn't work by default:
@@ -57,7 +57,7 @@ describe('TequilapiError', () => {
 
   describe('.message', () => {
     it('returns extended message', () => {
-      expect(simpleTequilapiError.message).to.eql('test error (path="test path")')
+      expect(simpleTequilapiError.message).to.eql('test error (path="test-path")')
     })
   })
 
@@ -102,6 +102,12 @@ describe('TequilapiError', () => {
     it('returns true for errors with request closed status', () => {
       const tequilapiError = createTequilapiErrorWithResponseStatus(503)
       expect(tequilapiError.isServiceUnavailableError()).to.be.true
+    })
+  })
+
+  describe('.toString', () => {
+    it('returns error message with class name', () => {
+      expect(simpleTequilapiError.toString()).to.eql('TequilapiError: test error (path="test-path")')
     })
   })
 })
