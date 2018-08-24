@@ -125,6 +125,7 @@ function actionsFactory (
   eventSender: EventSender,
   bugReporter: BugReporter
 ) {
+  const connectionManager = new ConnectionManager(eventSender, bugReporter, tequilapi)
   return {
     async [type.LOCATION] ({ commit }) {
       try {
@@ -211,75 +212,102 @@ function actionsFactory (
       dispatch(type.CONNECT, new ConnectionRequestDTO(getters.currentIdentity, getters.lastConnectionAttemptProvider))
     },
     async [type.CONNECT] ({ commit, dispatch, state }, connectionRequest: ConnectionRequestDTO) {
-      const eventTracker = new ConnectEventTracker(eventSender, currentUserTime)
-      let originalCountry = ''
-      if (state.location != null && state.location.originalCountry != null) {
-        originalCountry = state.location.originalCountry
-      }
-      eventTracker.connectStarted(
-        {
-          consumerId: connectionRequest.consumerId,
-          providerId: connectionRequest.providerId
-        },
-        originalCountry
-      )
-      const looper = state.actionLoopers[type.FETCH_CONNECTION_STATUS]
-      if (looper) {
-        await looper.stop()
-      }
-      await dispatch(type.SET_CONNECTION_STATUS, ConnectionStatusEnum.CONNECTING)
-      commit(type.CONNECTION_STATISTICS_RESET)
-      commit(type.SET_LAST_CONNECTION_PROVIDER, connectionRequest.providerId)
-      try {
-        await tequilapi.connectionCreate(connectionRequest)
-        eventTracker.connectEnded()
-        commit(type.HIDE_ERROR)
-      } catch (err) {
-        if (err instanceof TequilapiError && err.isRequestClosedError) {
-          eventTracker.connectCanceled()
-          return
-        }
-
-        commit(type.SHOW_ERROR_MESSAGE, messages.connectFailed)
-
-        eventTracker.connectEnded('Error: Connection to node failed.')
-
-        if (!(err instanceof TequilapiError)) {
-          bugReporter.captureInfoException(err)
-        }
-      } finally {
-        if (looper) {
-          looper.start()
-        }
-      }
+      await connectionManager.connect(connectionRequest, commit, dispatch, state)
     },
-    async [type.DISCONNECT] ({ commit, dispatch }) {
-      const looper = state.actionLoopers[type.FETCH_CONNECTION_STATUS]
-      if (looper) {
-        await looper.stop()
+    async [type.DISCONNECT] ({ commit, dispatch, state }) {
+      await connectionManager.disconnect(commit, dispatch, state)
+    }
+  }
+}
+
+type CommitFunction = (string, any) => void
+type DispatchFunction = (string, ...Array<any>) => Promise<void>
+
+class ConnectionManager {
+  _eventSender: EventSender
+  _bugReporter: BugReporter
+  _tequilapi: TequilapiClient
+
+  constructor (eventSender: EventSender, bugReporter: BugReporter, tequilapi: TequilapiClient) {
+    this._eventSender = eventSender
+    this._bugReporter = bugReporter
+    this._tequilapi = tequilapi
+  }
+
+  async connect (
+    connectionRequest: ConnectionRequestDTO,
+    commit: CommitFunction,
+    dispatch: DispatchFunction,
+    state: ConnectionStore) {
+    const eventTracker = new ConnectEventTracker(this._eventSender, currentUserTime)
+    let originalCountry = ''
+    if (state.location != null && state.location.originalCountry != null) {
+      originalCountry = state.location.originalCountry
+    }
+    eventTracker.connectStarted(
+      {
+        consumerId: connectionRequest.consumerId,
+        providerId: connectionRequest.providerId
+      },
+      originalCountry
+    )
+    const looper = state.actionLoopers[type.FETCH_CONNECTION_STATUS]
+    if (looper) {
+      await looper.stop()
+    }
+    await dispatch(type.SET_CONNECTION_STATUS, ConnectionStatusEnum.CONNECTING)
+    commit(type.CONNECTION_STATISTICS_RESET)
+    commit(type.SET_LAST_CONNECTION_PROVIDER, connectionRequest.providerId)
+    try {
+      await this._tequilapi.connectionCreate(connectionRequest)
+      eventTracker.connectEnded()
+      commit(type.HIDE_ERROR)
+    } catch (err) {
+      if (err instanceof TequilapiError && err.isRequestClosedError) {
+        eventTracker.connectCanceled()
+        return
       }
 
-      try {
-        await dispatch(type.SET_CONNECTION_STATUS, ConnectionStatusEnum.DISCONNECTING)
+      commit(type.SHOW_ERROR_MESSAGE, messages.connectFailed)
 
-        try {
-          await tequilapi.connectionCancel()
-        } catch (err) {
-          commit(type.SHOW_ERROR, err)
-          logger.info('Connection cancelling failed:', err)
-          if (!(err instanceof TequilapiError)) {
-            bugReporter.captureInfoException(err)
-          }
-        }
-        dispatch(type.FETCH_CONNECTION_STATUS)
-        dispatch(type.CONNECTION_IP)
+      eventTracker.connectEnded('Error: Connection to node failed.')
+
+      if (!(err instanceof TequilapiError)) {
+        this._bugReporter.captureInfoException(err)
+      }
+    } finally {
+      if (looper) {
+        looper.start()
+      }
+    }
+  }
+
+  async disconnect (commit: CommitFunction, dispatch: DispatchFunction, state: ConnectionStore) {
+    const looper = state.actionLoopers[type.FETCH_CONNECTION_STATUS]
+    if (looper) {
+      await looper.stop()
+    }
+
+    try {
+      await dispatch(type.SET_CONNECTION_STATUS, ConnectionStatusEnum.DISCONNECTING)
+
+      try {
+        await this._tequilapi.connectionCancel()
       } catch (err) {
         commit(type.SHOW_ERROR, err)
-        throw (err)
-      } finally {
-        if (looper) {
-          looper.start()
+        logger.info('Connection cancelling failed:', err)
+        if (!(err instanceof TequilapiError)) {
+          this._bugReporter.captureInfoException(err)
         }
+      }
+      dispatch(type.FETCH_CONNECTION_STATUS)
+      dispatch(type.CONNECTION_IP)
+    } catch (err) {
+      commit(type.SHOW_ERROR, err)
+      throw (err)
+    } finally {
+      if (looper) {
+        looper.start()
       }
     }
   }
