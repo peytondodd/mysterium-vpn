@@ -200,10 +200,11 @@ class Mysterion {
 
       if (this._featureToggle.paymentsAreEnabled()) {
         this._registrationFetcher.start(identity.id)
-      }
 
-      logInfo(`Registration fetcher started with ID ${identity.id}`)
+        logInfo(`Registration fetcher started with ID ${identity.id}`)
+      }
     })
+
     this._bugReporterMetrics.startSyncing(this._communication)
     this._bugReporterMetrics.setWithCurrentDateTime(METRICS.START_TIME)
 
