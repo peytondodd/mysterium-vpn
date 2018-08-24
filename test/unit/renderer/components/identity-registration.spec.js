@@ -20,18 +20,18 @@ import { beforeEach, describe, expect, it } from '../../../helpers/dependencies'
 import DIContainer from '../../../../src/app/di/vue-container'
 import IdentityRegistration from '@/components/identity-registration'
 import { createLocalVue, mount } from '@vue/test-utils'
+import RendererCommunication from '../../../../src/app/communication/renderer-communication'
+import DirectMessageBus from '../../../helpers/direct-message-bus'
 
-class FakeRendererCommunication {
+class FakeRendererCommunication extends RendererCommunication {
   callback: IdentityRegistration => void
+
+  constructor () {
+    super(new DirectMessageBus())
+  }
 
   onRegistrationUpdate (callback: IdentityRegistration => void) {
     this.callback = callback
-  }
-
-  sendRegistrationUpdate (registration: IdentityRegistration) {
-    if (this.callback) {
-      this.callback(registration)
-    }
   }
 }
 
@@ -50,28 +50,28 @@ describe('IdentityRegistration', () => {
     })
   })
 
-  describe('renders', () => {
-    it('no ID icon until registration state comes from communication', () => {
+  describe('HTML rendering', () => {
+    it('renders no ID icon until registration state comes from communication', () => {
       expect(vue.findAll('.identity-registration')).to.have.lengthOf(0)
       rendererCommunication.callback({ registered: true })
       expect(vue.findAll('.identity-registration')).to.have.lengthOf(1)
     })
 
-    it('ID icon when identity becomes registered', () => {
+    it('renders ID icon when identity becomes registered', () => {
       rendererCommunication.callback({ registered: true })
       expect(vue.findAll('.identity-registration')).to.have.lengthOf(1)
       expect(vue.findAll('.identity-registered')).to.have.lengthOf(1)
       expect(vue.findAll('.identity-unregistered')).to.have.lengthOf(0)
     })
 
-    it('ID icon when identity becomes registered', () => {
+    it('renders ID icon when identity becomes unregistered', () => {
       rendererCommunication.callback({ registered: false })
       expect(vue.findAll('.identity-registration')).to.have.lengthOf(1)
       expect(vue.findAll('.identity-registered')).to.have.lengthOf(0)
       expect(vue.findAll('.identity-unregistered')).to.have.lengthOf(1)
     })
 
-    it('instructions on unregistered ID click', () => {
+    it('renders instructions on unregistered ID click', () => {
       rendererCommunication.callback({ registered: false })
       expect(vue.findAll('#registration-instructions.is-open')).to.have.lengthOf(0)
       vue.findAll('.identity-registration').trigger('click')
