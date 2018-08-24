@@ -34,12 +34,13 @@ import ConnectionIPDTO from '../../../../../src/libraries/mysterium-tequilapi/dt
 import BugReporterMock from '../../../../helpers/bug-reporter-mock'
 import ConnectionRequestDTO from '../../../../../src/libraries/mysterium-tequilapi/dto/connection-request'
 import MockEventSender from '../../../../helpers/statistics/mock-event-sender'
-import { markErrorAsHttp } from '../../../../../src/libraries/mysterium-tequilapi/client-error'
+import TequilapiError from '../../../../../src/libraries/mysterium-tequilapi/tequilapi-error'
 
 function factoryTequilapiManipulator () {
   let statusFail = false
   let statisticsFail = false
   let ipTimeout = false
+  let ipFail = false
   let connectFail = false
   let connectFailClosedRequest = false
   let connectionCancelFail = false
@@ -78,6 +79,9 @@ function factoryTequilapiManipulator () {
       if (ipTimeout) {
         throw timeoutErrorMock
       }
+      if (ipFail) {
+        throw errorMock
+      }
       return new ConnectionIPDTO({
         ip: 'mock ip'
       })
@@ -104,6 +108,9 @@ function factoryTequilapiManipulator () {
     setIpTimeout () {
       ipTimeout = true
     },
+    setIpFail () {
+      ipFail = true
+    },
     setConnectFail () {
       connectFail = true
     },
@@ -126,20 +133,20 @@ function createMockTimeoutError (): Error {
   const error = new Error('Mock timeout error')
   const object = (error: Object)
   object.code = 'ECONNABORTED'
-  return error
+  return new TequilapiError(error, 'mock-path')
 }
 
 function createMockRequestClosedError (): Error {
   const error = new Error('Mock closed request error')
   const object = (error: Object)
   object.response = { status: 499 }
-  return error
+
+  return new TequilapiError(error, 'mock-path')
 }
 
 function createMockHttpError (): Error {
   const error = new Error('Mock http error')
-  markErrorAsHttp(error)
-  return error
+  return new TequilapiError(error, 'mock-path')
 }
 
 describe('connection', () => {
@@ -269,7 +276,7 @@ describe('connection', () => {
           new ActionLooperConfig(type.CONNECTION_STATISTICS, 1000)
         )
 
-        expect(committed.length).to.eql(2)
+        expect(committed).to.have.lengthOf(2)
 
         expect(committed[0].key).to.eql(type.SET_ACTION_LOOPER)
         const { action, looper } = committed[0].value
@@ -344,6 +351,18 @@ describe('connection', () => {
         const committed = await executeAction(type.CONNECTION_IP)
         expect(committed).to.eql([])
       })
+
+      it('captures unknown errors', async () => {
+        fakeTequilapi.setIpFail()
+        await executeAction(type.CONNECTION_IP)
+        expect(bugReporterMock.errorExceptions).to.have.lengthOf(1)
+      })
+
+      it('does not capture http errors', async () => {
+        fakeTequilapi.setIpTimeout()
+        await executeAction(type.CONNECTION_IP)
+        expect(bugReporterMock.errorExceptions).to.be.empty
+      })
     })
 
     describe('FETCH_CONNECTION_STATUS', () => {
@@ -403,7 +422,7 @@ describe('connection', () => {
           actionLoopers: {}
         }
         const committed = await executeAction(type.SET_CONNECTION_STATUS, state, ConnectionStatusEnum.CONNECTED)
-        expect(committed.length).to.eql(3)
+        expect(committed).to.have.lengthOf(3)
         expect(committed[0]).to.eql({
           key: type.SET_CONNECTION_STATUS,
           value: ConnectionStatusEnum.CONNECTED
@@ -558,7 +577,7 @@ describe('connection', () => {
         it('sends error event', async () => {
           await executeAction(type.CONNECT, state)
 
-          expect(fakeEventSender.events.length).to.eql(1)
+          expect(fakeEventSender.events).to.have.lengthOf(1)
           const event = fakeEventSender.events[0]
           expect(event.eventName).to.eql('connect_failed')
           expect(event.context.error).to.eql('Error: Connection to node failed.')
@@ -567,7 +586,7 @@ describe('connection', () => {
         it('captures unknown error', async () => {
           await executeAction(type.CONNECT, state)
 
-          expect(bugReporterMock.infoExceptions.length).to.eql(1)
+          expect(bugReporterMock.infoExceptions).to.have.lengthOf(1)
         })
 
         it('does not capture http error', async () => {
@@ -618,7 +637,7 @@ describe('connection', () => {
         it('captures unknown error', async () => {
           await executeAction(type.DISCONNECT, state)
 
-          expect(bugReporterMock.infoExceptions.length).to.eql(1)
+          expect(bugReporterMock.infoExceptions).to.have.lengthOf(1)
         })
 
         it('does not capture http error', async () => {
