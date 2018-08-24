@@ -143,7 +143,6 @@ class Mysterion {
       try {
         logInfo('Application launch')
         await this.bootstrap()
-        this._buildTray()
       } catch (e) {
         logException('Application launch failed', e)
         this._bugReporter.captureErrorException(e)
@@ -157,10 +156,6 @@ class Mysterion {
     app.on('activate', () => {
       try {
         logInfo('Application activation')
-        if (!this._window.exists()) {
-          this.bootstrap()
-          return
-        }
         this._window.show()
       } catch (e) {
         logException('Application activation failed', e)
@@ -190,7 +185,6 @@ class Mysterion {
     const browserWindow = this._createBrowserWindow()
     const windowSize = this._getWindowSize(showTerms)
     this._window = this._createWindow(windowSize)
-
     const send = this._getSendFunction(browserWindow)
     const ipc = new MainIpc(send, this._bugReporter.captureErrorException)
     this._messageBus = new IpcMessageBus(ipc)
@@ -223,6 +217,8 @@ class Mysterion {
       }
       this._window.resize(this._getWindowSize(false))
     }
+
+    this._buildTray()
 
     await this._ensureDaemonInstallation()
     this._startProcess()
