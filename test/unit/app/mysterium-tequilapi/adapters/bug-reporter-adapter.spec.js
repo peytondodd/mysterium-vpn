@@ -22,8 +22,8 @@ import BugReporterAdapter from '../../../../../src/app/mysterium-tequilapi/adapt
 import type { HttpInterface } from '../../../../../src/libraries/mysterium-tequilapi/adapters/interface'
 import BugReporterMock from '../../../../helpers/bug-reporter-mock'
 import { captureAsyncError } from '../../../../helpers/utils'
-import { markErrorAsHttp } from '../../../../../src/libraries/mysterium-tequilapi/client-error'
 import MockHttpAdapter from '../../../../helpers/adapters/MockHttpAdapter'
+import TequilapiError from '../../../../../src/libraries/mysterium-tequilapi/tequilapi-error'
 
 describe('BugReporterAdapter', () => {
   let adapter: HttpInterface
@@ -49,8 +49,7 @@ describe('BugReporterAdapter', () => {
     })
 
     it('captures and re-throws http error', async () => {
-      const mockError = new Error('mock error')
-      markErrorAsHttp(mockError)
+      const mockError = new TequilapiError(new Error('mock error'), 'mock-path')
       mockAdapter.mockError = mockError
 
       const err = await captureAsyncError(() => adapter.get('path'))
@@ -86,8 +85,7 @@ describe('BugReporterAdapter', () => {
     })
 
     it('captures and re-throws http error', async () => {
-      const mockError = new Error('mock error')
-      markErrorAsHttp(mockError)
+      const mockError = new TequilapiError(new Error('mock error'), 'mock-path')
       mockAdapter.mockError = mockError
 
       const err = await captureAsyncError(() => adapter.post('path'))
@@ -122,8 +120,7 @@ describe('BugReporterAdapter', () => {
     })
 
     it('captures and re-throws http error', async () => {
-      const mockError = new Error('mock error')
-      markErrorAsHttp(mockError)
+      const mockError = new TequilapiError(new Error('mock error'), 'mock-path')
       mockAdapter.mockError = mockError
 
       const err = await captureAsyncError(() => adapter.delete('path'))
@@ -159,8 +156,7 @@ describe('BugReporterAdapter', () => {
     })
 
     it('captures and re-throws http error', async () => {
-      const mockError = new Error('mock error')
-      markErrorAsHttp(mockError)
+      const mockError = new TequilapiError(new Error('mock error'), 'mock-path')
       mockAdapter.mockError = mockError
 
       const err = await captureAsyncError(() => adapter.put('path'))

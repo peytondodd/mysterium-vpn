@@ -19,7 +19,7 @@
 
 import type { HttpInterface, HttpQueryParams } from '../../../libraries/mysterium-tequilapi/adapters/interface'
 import type { BugReporter } from '../../bug-reporting/interface'
-import { isHttpError } from '../../../libraries/mysterium-tequilapi/client-error'
+import TequilapiError from '../../../libraries/mysterium-tequilapi/tequilapi-error'
 
 /**
  * Delegates to other 'HttpInterface' and captures errors to 'BugReporter'.
@@ -57,7 +57,7 @@ class BugReporterAdapter implements HttpInterface {
     try {
       return await func()
     } catch (err) {
-      if (isHttpError(err)) {
+      if (err instanceof TequilapiError) {
         this._bugReporter.captureInfoException(err)
       }
       throw err

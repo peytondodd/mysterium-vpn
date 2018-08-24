@@ -19,10 +19,7 @@ import axios from 'axios/index'
 import AxiosAdapter from '../../../../../src/libraries/mysterium-tequilapi/adapters/axios-adapter'
 import MockAdapter from 'axios-mock-adapter'
 import { capturePromiseError } from '../../../../helpers/utils'
-import {
-  isHttpError,
-  isTimeoutError
-} from '../../../../../src/libraries/mysterium-tequilapi/client-error'
+import TequilapiError from '../../../../../src/libraries/mysterium-tequilapi/tequilapi-error'
 
 describe('TequilapiClient AxiosAdapter', () => {
   let adapter
@@ -71,18 +68,16 @@ describe('TequilapiClient AxiosAdapter', () => {
     mock.onGet('test-url').networkError()
 
     const err = await capturePromiseError(adapter.get('test-url'))
-    expect(err).to.be.instanceOf(Error)
-    expect(isHttpError(err)).to.be.true
+    expect(err).to.be.instanceOf(TequilapiError)
   })
 
   it('returns timeout error', async () => {
     mock.onGet('test-url').timeout()
 
     const err = await capturePromiseError(adapter.get('test-url'))
-    expect(err).to.be.instanceOf(Error)
-    expect(isTimeoutError(err)).to.be.true
-    expect(isHttpError(err)).to.be.true
-    expect(err.toString()).to.eql('Tequilapi error: timeout of 1ms exceeded (path="test-url")')
+    expect(err).to.be.instanceOf(TequilapiError)
+    expect(err.isTimeoutError).to.be.true
+    expect(err.toString()).to.eql('TequilapiError: timeout of 1ms exceeded (path="test-url")')
   })
 
   it('returns 404 response error', async () => {
