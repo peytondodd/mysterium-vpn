@@ -25,6 +25,10 @@ describe('.getVersionLabel', () => {
     expect(getVersionLabel('0.0.1(123)', '1.0.0')).to.eql('v0.0.1(123)-1.0.0')
   })
 
+  it('returns label without worker ID', () => {
+    expect(getVersionLabel('0.0.1(123.456)', '1.0.0')).to.eql('v0.0.1(123)-1.0.0')
+  })
+
   it('returns label without client version', () => {
     expect(getVersionLabel('0.0.1(123)', null)).to.eql('v0.0.1(123)')
   })
