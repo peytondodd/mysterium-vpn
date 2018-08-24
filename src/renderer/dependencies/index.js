@@ -22,6 +22,7 @@ import bugReportingConfigBootstrap from '../../dependencies/bug-reporting'
 import featureToggleBootstrap from '../../dependencies/feature-toggle'
 import bugReportingBootstrap from './modules/bug-reporting'
 import eventsBootstrap from '../../dependencies/statistics'
+import paymentsBootstrap from '../../dependencies/payments'
 import vueBootstrap from './modules/vue'
 import applicationBootstrap from './modules/application'
 import mysteriumTequilapiBootstrap from '../../dependencies/mysterium-tequilapi'
@@ -36,6 +37,7 @@ function bootstrap (): DIContainer {
   bugReportingConfigBootstrap(container)
   bugReportingBootstrap(container)
   eventsBootstrap(container)
+  paymentsBootstrap(container)
   vueBootstrap(container)
   applicationBootstrap(container)
   mysteriumTequilapiBootstrap(container)

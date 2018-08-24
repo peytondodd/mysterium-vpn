@@ -17,6 +17,13 @@
 
 // @flow
 
+const getPaymentLink = (paymentBaseUrl: string, registration: IdentityRegistrationDTO): string => {
+  const { publicKey, signature } = registration
+  return paymentBaseUrl +
+    `?part1=${publicKey.part1}&part2=${publicKey.part2}` +
+    `&r=${signature.r}&s=${signature.s}&v=${signature.v}`
+}
+
 class PublicKeyDTO {
   part1: string
   part2: string
@@ -52,4 +59,5 @@ class IdentityRegistrationDTO {
 }
 
 export type { PublicKeyDTO, SignatureDTO }
+export { getPaymentLink }
 export default IdentityRegistrationDTO

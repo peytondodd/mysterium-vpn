@@ -27,6 +27,7 @@ import type {
   AppErrorDTO
 } from './dto'
 import type { UserSettings } from '../user-settings/user-settings'
+import IdentityRegistrationDTO from '../../libraries/mysterium-tequilapi/dto/identity-registration'
 
 interface MainCommunication {
   onRendererBooted (callback: () => void): void,
@@ -43,7 +44,7 @@ interface MainCommunication {
 
   sendCountries (countries: CountriesDTO): void,
 
-  sendRegistration (registered: boolean): void,
+  sendRegistration (registered: IdentityRegistrationDTO): void,
 
   sendConnectionCancelRequest (): void,
 

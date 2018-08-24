@@ -19,6 +19,28 @@
 
 import type { StringLogger } from './logging/string-logger'
 
+const stringifyArg = (arg: any) => {
+  if (arg instanceof Error) {
+    return arg.toString()
+  }
+
+  const cache = new Set()
+  return JSON.stringify(arg, (key, value) => {
+    if (typeof value === 'object' && value !== null) {
+      if (cache.has(value)) {
+        // Circular reference found, discard key
+        return
+      }
+      cache.add(value)
+    }
+    return value
+  })
+}
+
+const stringifyArgs = (data: Array<any>) => {
+  return data.map(stringifyArg).join(' ')
+}
+
 class Logger {
   _logger: StringLogger = console
 
@@ -28,11 +50,11 @@ class Logger {
   }
 
   info (...data: Array<any>): void {
-    this._logger.info(data.join(' '))
+    this._logger.info(stringifyArgs(data))
   }
 
   error (...data: Array<any>): void {
-    this._logger.error(data.join(' '))
+    this._logger.error(stringifyArgs(data))
   }
 }
 

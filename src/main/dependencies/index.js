@@ -22,6 +22,7 @@ import bugReportingConfigBootstrap from '../../dependencies/bug-reporting'
 import featureToggleBootstrap from '../../dependencies/feature-toggle'
 import bugReportingBootstrap from './modules/bug-reporting'
 import eventsBootstrap from '../../dependencies/statistics'
+import paymentsBootstrap from '../../dependencies/payments'
 import mysteriumClientBootstrap from './modules/mysterium-client'
 import mysteriumTequilapiBootstrap from '../../dependencies/mysterium-tequilapi'
 import proposalFetcherBootstrap from './modules/proposal-fetcher'
@@ -40,6 +41,7 @@ function bootstrap (): DIContainer {
   bugReportingConfigBootstrap(container)
   bugReportingBootstrap(container)
   eventsBootstrap(container)
+  paymentsBootstrap(container)
   mysteriumClientBootstrap(container)
   mysteriumTequilapiBootstrap(container)
   proposalFetcherBootstrap(container)
