@@ -43,18 +43,8 @@ body,
   position: relative;
   font-weight: 300;
   font-family: 'Ubuntu', sans-serif;
-  ::-webkit-selection {
-    color: @white;
-    background-color: @main;
-  }
-  :-moz-selection {
-    color: @white;
-    background-color: @main;
-  }
-  ::selection {
-    color: @white;
-    background-color: @main;
-  }
+  user-select: none;
+  
   ::-webkit-input-placeholder,
   :-moz-placeholder,
   :-ms-input-placeholder {
