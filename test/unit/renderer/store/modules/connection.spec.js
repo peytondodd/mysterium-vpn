@@ -276,7 +276,7 @@ describe('connection', () => {
           new ActionLooperConfig(type.CONNECTION_STATISTICS, 1000)
         )
 
-        expect(committed.length).to.eql(2)
+        expect(committed).to.have.lengthOf(2)
 
         expect(committed[0].key).to.eql(type.SET_ACTION_LOOPER)
         const { action, looper } = committed[0].value
@@ -355,7 +355,7 @@ describe('connection', () => {
       it('captures unknown errors', async () => {
         fakeTequilapi.setIpFail()
         await executeAction(type.CONNECTION_IP)
-        expect(bugReporterMock.errorExceptions.length).to.eql(1)
+        expect(bugReporterMock.errorExceptions).to.have.lengthOf(1)
       })
 
       it('does not capture http errors', async () => {
@@ -422,7 +422,7 @@ describe('connection', () => {
           actionLoopers: {}
         }
         const committed = await executeAction(type.SET_CONNECTION_STATUS, state, ConnectionStatusEnum.CONNECTED)
-        expect(committed.length).to.eql(3)
+        expect(committed).to.have.lengthOf(3)
         expect(committed[0]).to.eql({
           key: type.SET_CONNECTION_STATUS,
           value: ConnectionStatusEnum.CONNECTED
@@ -577,7 +577,7 @@ describe('connection', () => {
         it('sends error event', async () => {
           await executeAction(type.CONNECT, state)
 
-          expect(fakeEventSender.events.length).to.eql(1)
+          expect(fakeEventSender.events).to.have.lengthOf(1)
           const event = fakeEventSender.events[0]
           expect(event.eventName).to.eql('connect_failed')
           expect(event.context.error).to.eql('Error: Connection to node failed.')
@@ -586,7 +586,7 @@ describe('connection', () => {
         it('captures unknown error', async () => {
           await executeAction(type.CONNECT, state)
 
-          expect(bugReporterMock.infoExceptions.length).to.eql(1)
+          expect(bugReporterMock.infoExceptions).to.have.lengthOf(1)
         })
 
         it('does not capture http error', async () => {
@@ -637,7 +637,7 @@ describe('connection', () => {
         it('captures unknown error', async () => {
           await executeAction(type.DISCONNECT, state)
 
-          expect(bugReporterMock.infoExceptions.length).to.eql(1)
+          expect(bugReporterMock.infoExceptions).to.have.lengthOf(1)
         })
 
         it('does not capture http error', async () => {
