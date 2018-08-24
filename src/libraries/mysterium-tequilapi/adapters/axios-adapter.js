@@ -20,7 +20,7 @@
 import axios from 'axios'
 import type { HttpInterface, HttpQueryParams } from './interface'
 import { TIMEOUT_DEFAULT } from '../timeouts'
-import { markErrorAsHttp } from '../client-error'
+import TequilapiError from '../tequilapi-error'
 
 class AxiosAdapter implements HttpInterface {
   _axios: axios.Axios
@@ -74,10 +74,7 @@ async function decorateResponse (promise: Promise<Object>, path: string): Promis
   try {
     response = await promise
   } catch (err) {
-    markErrorAsHttp(err)
-    err.name = 'Tequilapi error'
-    err.message = `${err.message} (path="${path}")`
-    throw err
+    throw new TequilapiError(err, path)
   }
   return response.data
 }
