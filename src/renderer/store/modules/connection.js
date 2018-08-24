@@ -31,6 +31,7 @@ import type { BugReporter } from '../../../app/bug-reporting/interface'
 import logger from '../../../app/logger'
 import TequilapiError from '../../../libraries/mysterium-tequilapi/tequilapi-error'
 import ConnectionManager from '../connection-manager'
+import type { ConnectionActions } from '../connection-manager'
 
 type ConnectionStore = {
   ip: ?string,
@@ -206,13 +207,15 @@ function actionsFactory (
       }
     },
     async [type.RECONNECT] ({ dispatch, getters }) {
-      dispatch(type.CONNECT, new ConnectionRequestDTO(getters.currentIdentity, getters.lastConnectionAttemptProvider))
+      await dispatch(type.CONNECT, new ConnectionRequestDTO(getters.currentIdentity, getters.lastConnectionAttemptProvider))
     },
     async [type.CONNECT] ({ commit, dispatch, state }, connectionRequest: ConnectionRequestDTO) {
-      await connectionManager.connect(connectionRequest, commit, dispatch, state)
+      const connectionActions = new VueConnectionActions(commit, dispatch)
+      await connectionManager.connect(connectionRequest, connectionActions, state)
     },
     async [type.DISCONNECT] ({ commit, dispatch, state }) {
-      await connectionManager.disconnect(commit, dispatch, state)
+      const connectionActions = new VueConnectionActions(commit, dispatch)
+      await connectionManager.disconnect(connectionActions, state)
     }
   }
 }
@@ -234,5 +237,51 @@ export {
   getters,
   actionsFactory
 }
+
+class VueConnectionActions implements ConnectionActions {
+  _commit: CommitFunction
+  _dispatch: DispatchFunction
+
+  constructor (commit: CommitFunction, dispatch: DispatchFunction) {
+    this._commit = commit
+    this._dispatch = dispatch
+  }
+
+  resetStatistics () {
+    this._commit(type.CONNECTION_STATISTICS_RESET)
+  }
+
+  setLastConnectionProvider (providerId: string) {
+    this._commit(type.SET_LAST_CONNECTION_PROVIDER, providerId)
+  }
+
+  hideError () {
+    this._commit(type.HIDE_ERROR)
+  }
+
+  showError (error: Error) {
+    this._commit(type.SHOW_ERROR, error)
+  }
+
+  showErrorMessage (message: string) {
+    this._commit(type.SHOW_ERROR_MESSAGE, message)
+  }
+
+  async setConnectionStatus (status: ConnectionStatus) {
+    await this._dispatch(type.SET_CONNECTION_STATUS, status)
+  }
+
+  async fetchConnectionStatus () {
+    await this._dispatch(type.FETCH_CONNECTION_STATUS)
+  }
+
+  async fetchConnectionIp () {
+    await this._dispatch(type.CONNECTION_IP)
+  }
+}
+
+type CommitFunction = (string, any) => void
+type DispatchFunction = (string, ...Array<any>) => Promise<void>
+
 export type { ConnectionStore }
 export default factory

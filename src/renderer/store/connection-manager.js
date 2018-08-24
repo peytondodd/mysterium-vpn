@@ -28,6 +28,7 @@ import ConnectionStatusEnum from '../../libraries/mysterium-tequilapi/dto/connec
 import TequilapiError from '../../libraries/mysterium-tequilapi/tequilapi-error'
 import messages from '../../app/messages'
 import logger from '../../app/logger'
+import type { ConnectionStatus } from '../../libraries/mysterium-tequilapi/dto/connection-status-enum'
 
 /**
  * Allows connecting and disconnecting to provider.
@@ -43,11 +44,7 @@ class ConnectionManager {
     this._tequilapi = tequilapi
   }
 
-  async connect (
-    connectionRequest: ConnectionRequestDTO,
-    commit: CommitFunction,
-    dispatch: DispatchFunction,
-    state: ConnectionStore) {
+  async connect (request: ConnectionRequestDTO, actions: ConnectionActions, state: ConnectionStore) {
     const eventTracker = new ConnectEventTracker(this._eventSender, currentUserTime)
     let originalCountry = ''
     if (state.location != null && state.location.originalCountry != null) {
@@ -55,8 +52,8 @@ class ConnectionManager {
     }
     eventTracker.connectStarted(
       {
-        consumerId: connectionRequest.consumerId,
-        providerId: connectionRequest.providerId
+        consumerId: request.consumerId,
+        providerId: request.providerId
       },
       originalCountry
     )
@@ -64,20 +61,20 @@ class ConnectionManager {
     if (looper) {
       await looper.stop()
     }
-    await dispatch(type.SET_CONNECTION_STATUS, ConnectionStatusEnum.CONNECTING)
-    commit(type.CONNECTION_STATISTICS_RESET)
-    commit(type.SET_LAST_CONNECTION_PROVIDER, connectionRequest.providerId)
+    await actions.setConnectionStatus(ConnectionStatusEnum.CONNECTING)
+    actions.resetStatistics()
+    actions.setLastConnectionProvider(request.providerId)
     try {
-      await this._tequilapi.connectionCreate(connectionRequest)
+      await this._tequilapi.connectionCreate(request)
       eventTracker.connectEnded()
-      commit(type.HIDE_ERROR)
+      actions.hideError()
     } catch (err) {
       if (err instanceof TequilapiError && err.isRequestClosedError) {
         eventTracker.connectCanceled()
         return
       }
 
-      commit(type.SHOW_ERROR_MESSAGE, messages.connectFailed)
+      actions.showErrorMessage(messages.connectFailed)
 
       eventTracker.connectEnded('Error: Connection to node failed.')
 
@@ -91,28 +88,28 @@ class ConnectionManager {
     }
   }
 
-  async disconnect (commit: CommitFunction, dispatch: DispatchFunction, state: ConnectionStore) {
+  async disconnect (actions: ConnectionActions, state: ConnectionStore) {
     const looper = state.actionLoopers[type.FETCH_CONNECTION_STATUS]
     if (looper) {
       await looper.stop()
     }
 
     try {
-      await dispatch(type.SET_CONNECTION_STATUS, ConnectionStatusEnum.DISCONNECTING)
+      await actions.setConnectionStatus(ConnectionStatusEnum.DISCONNECTING)
 
       try {
         await this._tequilapi.connectionCancel()
       } catch (err) {
-        commit(type.SHOW_ERROR, err)
+        actions.showError(err)
         logger.info('Connection cancelling failed:', err)
         if (!(err instanceof TequilapiError)) {
           this._bugReporter.captureInfoException(err)
         }
       }
-      dispatch(type.FETCH_CONNECTION_STATUS)
-      dispatch(type.CONNECTION_IP)
+      actions.fetchConnectionStatus()
+      actions.fetchConnectionIp()
     } catch (err) {
-      commit(type.SHOW_ERROR, err)
+      actions.showError(err)
       throw (err)
     } finally {
       if (looper) {
@@ -122,7 +119,16 @@ class ConnectionManager {
   }
 }
 
-type CommitFunction = (string, any) => void
-type DispatchFunction = (string, ...Array<any>) => Promise<void>
+interface ConnectionActions {
+  resetStatistics (): void,
+  setLastConnectionProvider (providerId: string): void,
+  hideError (): void,
+  showError (error: Error): void,
+  showErrorMessage (message: string): void,
+  setConnectionStatus (status: ConnectionStatus): Promise<void>,
+  fetchConnectionStatus (): Promise<void>,
+  fetchConnectionIp (): Promise<void>
+}
 
+export type { ConnectionActions }
 export default ConnectionManager
