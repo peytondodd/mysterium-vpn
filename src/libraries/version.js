@@ -17,27 +17,28 @@
 
 // @flow
 
-function excludeWorkerId (mysterionReleaseId: string): string {
-  const buildStart = mysterionReleaseId.indexOf('(')
-  if (buildStart < 0) {
-    return mysterionReleaseId
-  }
-
-  const workerIdStart = mysterionReleaseId.indexOf('.', buildStart)
-  if (workerIdStart < 0) {
-    return mysterionReleaseId
-  }
-
-  mysterionReleaseId = mysterionReleaseId.substr(0, workerIdStart) + ')'
-  return mysterionReleaseId
-}
-
 function getVersionLabel (mysterionReleaseId: string, clientVersion: ?string): string {
-  mysterionReleaseId = excludeWorkerId(mysterionReleaseId)
   if (!clientVersion) {
     return `v${mysterionReleaseId}`
   }
   return `v${mysterionReleaseId}-${clientVersion}`
 }
 
-export { getVersionLabel }
+function getMysterionReleaseId (version: ?string, build: ?string): string {
+  version = version || ''
+  if (build == null) {
+    return version
+  }
+  build = minifyBuildNumber(build)
+  return `${version}(${build})`
+}
+
+function minifyBuildNumber (build: string): string {
+  const workerIdStart = build.indexOf('.')
+  if (workerIdStart < 0) {
+    return build
+  }
+  return build.substr(0, workerIdStart)
+}
+
+export { getVersionLabel, getMysterionReleaseId }

@@ -24,11 +24,12 @@ import path from 'path'
 import Window from '../../../app/window'
 import Terms from '../../../app/terms'
 import StartupEventTracker from '../../../app/statistics/startup-event-tracker'
+import { getMysterionReleaseId } from '../../../libraries/version'
 
 function bootstrap (container: Container) {
-  const version = process.env.MYSTERION_VERSION || ''
-  const build = process.env.BUILD_NUMBER || ''
-  const mysterionReleaseID = `${version}(${build})`
+  const version = process.env.MYSTERION_VERSION
+  const build = process.env.BUILD_NUMBER
+  const mysterionReleaseID = getMysterionReleaseId(version, build)
   global.__mysterionReleaseID = mysterionReleaseID
 
   container.constant('mysterionReleaseID', mysterionReleaseID)
