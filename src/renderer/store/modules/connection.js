@@ -18,10 +18,8 @@
 // @flow
 import type from '../types'
 
-import messages from '../../../app/messages'
 import { FunctionLooper } from '../../../libraries/function-looper'
 import config from '@/config'
-import { ConnectEventTracker, currentUserTime } from '../../../app/statistics/events-connection'
 import RendererCommunication from '../../../app/communication/renderer-communication'
 import type { TequilapiClient } from '../../../libraries/mysterium-tequilapi/client'
 import type { ConnectionStatus } from '../../../libraries/mysterium-tequilapi/dto/connection-status-enum'
@@ -33,6 +31,7 @@ import type { BugReporter } from '../../../app/bug-reporting/interface'
 import logger from '../../../app/logger'
 import type { EventSender } from '../../../app/statistics/event-sender'
 import TequilapiError from '../../../libraries/mysterium-tequilapi/tequilapi-error'
+import ConnectionManager from '../connection-manager'
 
 type ConnectionStore = {
   ip: ?string,
@@ -220,99 +219,6 @@ function actionsFactory (
   }
 }
 
-type CommitFunction = (string, any) => void
-type DispatchFunction = (string, ...Array<any>) => Promise<void>
-
-class ConnectionManager {
-  _eventSender: EventSender
-  _bugReporter: BugReporter
-  _tequilapi: TequilapiClient
-
-  constructor (eventSender: EventSender, bugReporter: BugReporter, tequilapi: TequilapiClient) {
-    this._eventSender = eventSender
-    this._bugReporter = bugReporter
-    this._tequilapi = tequilapi
-  }
-
-  async connect (
-    connectionRequest: ConnectionRequestDTO,
-    commit: CommitFunction,
-    dispatch: DispatchFunction,
-    state: ConnectionStore) {
-    const eventTracker = new ConnectEventTracker(this._eventSender, currentUserTime)
-    let originalCountry = ''
-    if (state.location != null && state.location.originalCountry != null) {
-      originalCountry = state.location.originalCountry
-    }
-    eventTracker.connectStarted(
-      {
-        consumerId: connectionRequest.consumerId,
-        providerId: connectionRequest.providerId
-      },
-      originalCountry
-    )
-    const looper = state.actionLoopers[type.FETCH_CONNECTION_STATUS]
-    if (looper) {
-      await looper.stop()
-    }
-    await dispatch(type.SET_CONNECTION_STATUS, ConnectionStatusEnum.CONNECTING)
-    commit(type.CONNECTION_STATISTICS_RESET)
-    commit(type.SET_LAST_CONNECTION_PROVIDER, connectionRequest.providerId)
-    try {
-      await this._tequilapi.connectionCreate(connectionRequest)
-      eventTracker.connectEnded()
-      commit(type.HIDE_ERROR)
-    } catch (err) {
-      if (err instanceof TequilapiError && err.isRequestClosedError) {
-        eventTracker.connectCanceled()
-        return
-      }
-
-      commit(type.SHOW_ERROR_MESSAGE, messages.connectFailed)
-
-      eventTracker.connectEnded('Error: Connection to node failed.')
-
-      if (!(err instanceof TequilapiError)) {
-        this._bugReporter.captureInfoException(err)
-      }
-    } finally {
-      if (looper) {
-        looper.start()
-      }
-    }
-  }
-
-  async disconnect (commit: CommitFunction, dispatch: DispatchFunction, state: ConnectionStore) {
-    const looper = state.actionLoopers[type.FETCH_CONNECTION_STATUS]
-    if (looper) {
-      await looper.stop()
-    }
-
-    try {
-      await dispatch(type.SET_CONNECTION_STATUS, ConnectionStatusEnum.DISCONNECTING)
-
-      try {
-        await this._tequilapi.connectionCancel()
-      } catch (err) {
-        commit(type.SHOW_ERROR, err)
-        logger.info('Connection cancelling failed:', err)
-        if (!(err instanceof TequilapiError)) {
-          this._bugReporter.captureInfoException(err)
-        }
-      }
-      dispatch(type.FETCH_CONNECTION_STATUS)
-      dispatch(type.CONNECTION_IP)
-    } catch (err) {
-      commit(type.SHOW_ERROR, err)
-      throw (err)
-    } finally {
-      if (looper) {
-        looper.start()
-      }
-    }
-  }
-}
-
 function factory (actions: Object) {
   return {
     state,
@@ -330,4 +236,5 @@ export {
   getters,
   actionsFactory
 }
+export type { ConnectionStore }
 export default factory
