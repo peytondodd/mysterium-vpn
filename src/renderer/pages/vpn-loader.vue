@@ -25,7 +25,7 @@ import messages from '../../app/messages'
 import logger from '../../app/logger'
 import DelayedRetrier from '../../app/delayed-retrier'
 import config from '../config'
-import { isHttpError } from '../../libraries/mysterium-tequilapi/client-error'
+import TequilapiError from '../../libraries/mysterium-tequilapi/tequilapi-error'
 
 export default {
   dependencies: ['bugReporter', 'vpnInitializer', 'sleeper'],
@@ -51,7 +51,7 @@ export default {
     } catch (err) {
       err.message = `Application loading failed: ${err.message}`
       logger.error(err)
-      if (!isHttpError(err)) {
+      if (!(err instanceof TequilapiError)) {
         this.bugReporter.captureErrorException(err)
       }
 

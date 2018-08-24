@@ -39,7 +39,7 @@ import type { BugReporter } from '../../../../src/app/bug-reporting/interface'
 import { nextTick } from '../../../helpers/utils'
 import RendererCommunication from '../../../../src/app/communication/renderer-communication'
 import FakeMessageBus from '../../../helpers/fake-message-bus'
-import { markErrorAsHttp } from '../../../../src/libraries/mysterium-tequilapi/client-error'
+import TequilapiError from '../../../../src/libraries/mysterium-tequilapi/tequilapi-error'
 
 describe('VpnLoader', () => {
   const tequilapi: TequilapiClient = tequilapiMockCreate()
@@ -171,8 +171,7 @@ describe('VpnLoader', () => {
 
     describe('with http error', () => {
       beforeEach(async () => {
-        const error = new Error('Mock initialization error')
-        markErrorAsHttp(error)
+        const error = new TequilapiError(new Error('Mock initialization error'), 'mock-path')
         await initializeWithError(error)
       })
 
