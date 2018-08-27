@@ -18,14 +18,39 @@
 // @flow
 
 import { describe, expect, it } from '../../helpers/dependencies'
-import { getVersionLabel } from '../../../src/libraries/version'
+import { getMysterionReleaseId, getVersionLabel } from '../../../src/libraries/version'
 
-describe('.getVersionLabel', () => {
-  it('returns label', () => {
-    expect(getVersionLabel('0.0.1(123)', '1.0.0')).to.eql('v0.0.1(123)-1.0.0')
+describe('versioning', () => {
+  describe('.getVersionLabel', () => {
+    it('returns label', () => {
+      expect(getVersionLabel('0.0.1(123)', '1.0.0')).to.eql('v0.0.1(123)-1.0.0')
+    })
+
+    it('returns label without client version', () => {
+      expect(getVersionLabel('0.0.1(123)', null)).to.eql('v0.0.1(123)')
+    })
   })
 
-  it('returns label without client version', () => {
-    expect(getVersionLabel('0.0.1(123)', null)).to.eql('v0.0.1(123)')
+  describe('getMysterionReleaseId', () => {
+    it('returns joined release label', () => {
+      expect(getMysterionReleaseId('0.0.1', '123')).to.eql('0.0.1(123)')
+    })
+
+    it('returns joined release label with compact build number', () => {
+      expect(getMysterionReleaseId('0.0.1', '123.1')).to.eql('0.0.1(123)')
+      expect(getMysterionReleaseId('0.0.1', '1.5')).to.eql('0.0.1(1)')
+    })
+
+    it('returns release label without build', () => {
+      expect(getMysterionReleaseId('0.0.1', null)).to.eql('0.0.1')
+    })
+
+    it('returns release label without version', () => {
+      expect(getMysterionReleaseId(null, '123')).to.eql('(123)')
+    })
+
+    it('returns empty label without version and build', () => {
+      expect(getMysterionReleaseId(null, null)).to.eql('')
+    })
   })
 })
