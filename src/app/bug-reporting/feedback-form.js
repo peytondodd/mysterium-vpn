@@ -18,19 +18,19 @@
 // @flow
 import RavenJs from 'raven-js'
 
-const FORM_EMAIL_VALUE = 'vpn.feedback@mysterium.network'
-
 class FeedbackForm {
-  raven: Object
+  _raven: Object
+  _email: string
 
-  constructor (raven: typeof RavenJs) {
-    this.raven = raven
+  constructor (raven: typeof RavenJs, email: string) {
+    this._raven = raven
+    this._email = email
   }
 
   show () {
-    this.raven.captureMessage('User opened issue report form.', { level: 'info' })
-    this.raven.setUserContext({ email: FORM_EMAIL_VALUE })
-    this.raven.showReportDialog()
+    this._raven.captureMessage('User opened issue report form.', { level: 'info' })
+    this._raven.setUserContext({ email: this._email })
+    this._raven.showReportDialog()
   }
 }
 
