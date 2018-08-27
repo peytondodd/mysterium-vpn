@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 The "MysteriumNetwork/mysterion" Authors.
+ * Copyright (C) 2018 The "MysteriumNetwork/mysterion" Authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,23 +15,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// @flow
-import RavenJs from 'raven-js'
-
-const FORM_EMAIL_VALUE = 'vpn.feedback@mysterium.network'
-
-class FeedbackForm {
-  raven: Object
-
-  constructor (raven: typeof RavenJs) {
-    this.raven = raven
-  }
-
-  show () {
-    this.raven.captureMessage('User opened issue report form.', { level: 'info' })
-    this.raven.setUserContext({ email: FORM_EMAIL_VALUE })
-    this.raven.showReportDialog()
+.sentry-error-embed-wrapper {
+  .form-content {
+    .form-field:nth-child(2) {
+      display: none;
+    }
   }
 }
-
-export { FeedbackForm }
