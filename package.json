@@ -1,6 +1,6 @@
 {
   "name": "mysterion",
-  "version": "0.1.0",
+  "version": "0.3.0",
   "author": "Andrej Novikov <jazzaiman@gmail.com>",
   "description": "Mysterion is desktop application to access Mysterion Network - decentralized VPN built on blockchain.",
   "license": "GPL-3.0",
@@ -39,6 +39,7 @@
       "dist/electron/**/*"
     ],
     "extraResources": [
+      "./static/icons/notification.png",
       "./static/icons/trayActiveTemplate.png",
       "./static/icons/trayActiveTemplate@2x.png",
       "./static/icons/trayPassiveTemplate.png",
@@ -72,6 +73,7 @@
     },
     "win": {
       "icon": "build/icons/icon.ico",
+      "requestedExecutionLevel": "requireAdministrator",
       "extraFiles": [
         "./bin/openvpn.exe",
         "./bin/mysterium_client.exe",
