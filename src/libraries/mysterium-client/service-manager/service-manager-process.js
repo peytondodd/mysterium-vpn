@@ -116,7 +116,8 @@ class ServiceManagerProcess implements Process {
 
   async _waitForHealthCheck (): Promise<void> {
     if (!this._monitoring.isStarted) {
-      throw new Error('Service-manager-process: monitoring should be started at this point')
+      await this._tequilapi.healthCheck()
+      return
     }
 
     let resolveAndClearTimer: ?StatusCallback
