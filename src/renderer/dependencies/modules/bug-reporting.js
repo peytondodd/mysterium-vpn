@@ -28,7 +28,6 @@ import SyncSenderRendererCommunication from '../../../app/communication/sync/syn
 import { SyncIpcSender } from '../../../app/communication/sync/sync-ipc'
 import type { SyncRendererCommunication } from '../../../app/communication/sync/sync-communication'
 import { createWinstonSyncComLogger } from '../../../app/logging/winston'
-import { BugReporterMetrics } from '../../../app/bug-reporting/bug-reporter-metrics'
 
 function bootstrap (container: Container) {
   container.constant('bugReporter.sentryURL', 'https://f1e63dd563c34c35a56e98aa02518d40@sentry.io/300978')
@@ -77,16 +76,18 @@ function bootstrap (container: Container) {
     ['mysterionReleaseID', 'syncCommunication'],
     (
       mysterionReleaseID: string,
-      syncCommunication: SyncRendererCommunication,
-      bugReporterMetrics: BugReporterMetrics): EnvironmentCollector => {
+      syncCommunication: SyncRendererCommunication): EnvironmentCollector => {
       return new RendererEnvironmentCollector(mysterionReleaseID, syncCommunication)
     }
   )
 
+  container.constant('feedbackForm.email', 'vpn.feedback@mysterium.network')
+
   container.service(
     'feedbackForm',
-    ['bugReporter.raven'],
-    (raven) => new FeedbackForm(raven))
+    ['bugReporter.raven', 'feedbackForm.email'],
+    (raven, email) => new FeedbackForm(raven, email)
+  )
 }
 
 export default bootstrap
