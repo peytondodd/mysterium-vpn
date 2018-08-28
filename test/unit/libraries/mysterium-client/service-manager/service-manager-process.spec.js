@@ -99,19 +99,19 @@ describe('ServiceManagerProcess', () => {
 
     systemMockManager.setMockCommand('sc.exe query "MysteriumClient"', getServiceInfo(SERVICE_STATE.STOPPED))
 
-    let startExecuted = false
+    let funcExecuted = false
     const promise = func()
     promise.then(() => {
-      startExecuted = true
+      funcExecuted = true
     })
 
-    expect(startExecuted).to.be.false
+    expect(funcExecuted).to.be.false
 
     tequilapiClient.healthCheckThrowsError = false
     await promise
 
     expect(tequilapiClient.healthCheckIsCalled).to.be.true
-    expect(startExecuted).to.be.true
+    expect(funcExecuted).to.be.true
   }
 
   async function tickWithDelay (duration) {
@@ -138,13 +138,24 @@ describe('ServiceManagerProcess', () => {
     monitoring = new Monitoring(tequilapiClient)
     serviceManager = new ServiceManager(SERVICE_MANAGER_PATH, system)
     process = new ServiceManagerProcess(tequilapiClient, clientLogSubscriber, serviceManager, system, monitoring)
-    monitoring.start()
   })
 
   describe('.start', () => {
-    it('does nothing with running service', async () => {
+    it('checks running service with healthcheck', async () => {
       await process.start()
       expect(systemMockManager.sudoExecCalledCommands).to.have.length(0)
+      expect(tequilapiClient.healthCheckIsCalled).to.be.true
+    })
+
+    it('restarts running service if healthcheck was failed', async () => {
+      tequilapiClient.healthCheckThrowsError = true
+      const startPromise = process.start()
+      await nextTick()
+      tequilapiClient.healthCheckThrowsError = false
+      await tickWithDelay(2000)
+      await startPromise
+      expect(systemMockManager.sudoExecCalledCommands).to.have.length(1)
+      expect(systemMockManager.sudoExecCalledCommands[0]).to.be.eql('"/service-manager/bin/servicemanager.exe" --do=restart')
     })
 
     it('starts stopped service and waits for healthcheck', async () => {
@@ -161,6 +172,12 @@ describe('ServiceManagerProcess', () => {
 
       expect(systemMockManager.sudoExecCalledCommands).to.have.length(1)
       expect(systemMockManager.sudoExecCalledCommands[0]).to.be.eql('"/service-manager/bin/servicemanager.exe" --do=restart')
+    })
+
+    it('starts monitoring to make healthcheck', async () => {
+      expect(monitoring.isStarted).to.be.false
+      await process.repair()
+      expect(monitoring.isStarted).to.be.true
     })
 
     it('starts stopped service and waits for healthcheck', async () => {
