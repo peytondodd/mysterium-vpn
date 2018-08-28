@@ -98,13 +98,25 @@ describe('TequilapiConnectionEstablisher', () => {
   describe('.connect', () => {
     const request = new ConnectionRequestDTO('consumer', 'provider id')
 
-    it('marks connecting status, resets statistics, hides error', async () => {
+    it('marks connecting status', async () => {
       await connectionEstablisher.connect(request, mockActions, state)
 
       expect(mockActions.connectionStatus).to.eql(ConnectionStatusEnum.CONNECTING)
+    })
+
+    it('resets statistics', async () => {
+      await connectionEstablisher.connect(request, mockActions, state)
       expect(mockActions.statisticsReset).to.be.true
-      expect(mockActions.lastConnectionProviderId).to.eql('provider id')
+    })
+
+    it('hides error', async () => {
+      await connectionEstablisher.connect(request, mockActions, state)
       expect(mockActions.errorHidden).to.be.true
+    })
+
+    it('persistes provider id', async () => {
+      await connectionEstablisher.connect(request, mockActions, state)
+      expect(mockActions.lastConnectionProviderId).to.eql('provider id')
     })
 
     describe('when connection fails', () => {
