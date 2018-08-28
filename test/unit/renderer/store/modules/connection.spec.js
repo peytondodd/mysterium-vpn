@@ -28,126 +28,23 @@ import RendererCommunication from '@/../app/communication/renderer-communication
 import FakeMessageBus from '../../../../helpers/fake-message-bus'
 import { ActionLooper, ActionLooperConfig } from '../../../../../src/renderer/store/modules/connection'
 import ConnectionStatisticsDTO from '../../../../../src/libraries/mysterium-tequilapi/dto/connection-statistics'
-import EmptyTequilapiClientMock from './empty-tequilapi-client-mock'
-import ConnectionStatusDTO from '../../../../../src/libraries/mysterium-tequilapi/dto/connection-status'
-import ConnectionIPDTO from '../../../../../src/libraries/mysterium-tequilapi/dto/connection-ip'
 import BugReporterMock from '../../../../helpers/bug-reporter-mock'
 import ConnectionRequestDTO from '../../../../../src/libraries/mysterium-tequilapi/dto/connection-request'
-import MockEventSender from '../../../../helpers/statistics/mock-event-sender'
-import TequilapiError from '../../../../../src/libraries/mysterium-tequilapi/tequilapi-error'
-import ConnectionManager from '../../../../../src/renderer/store/connection-manager'
+import factoryTequilapiManipulator from '../../../../helpers/mysterium-tequilapi/factory-tequilapi-manipulator'
+import type { ConnectionActions, ConnectionEstablisher } from '../../../../../src/renderer/store/connection-establisher'
+import type { ConnectionStore } from '../../../../../src/renderer/store/modules/connection'
 
-function factoryTequilapiManipulator () {
-  let statusFail = false
-  let statisticsFail = false
-  let ipTimeout = false
-  let ipFail = false
-  let connectFail = false
-  let connectFailClosedRequest = false
-  let connectionCancelFail = false
+class MockConnectionEstablisher implements ConnectionEstablisher {
+  connectParams: ?{ request: ConnectionRequestDTO, actions: ConnectionActions, state: ConnectionStore } = null
+  disconnectParams: ?{ actions: ConnectionActions, state: ConnectionStore }
 
-  let errorMock = new Error('Mock error')
-  const timeoutErrorMock = createMockTimeoutError()
-  const closedRequestErrorMock = createMockRequestClosedError()
-
-  class ConnectionTequilapiClientMock extends EmptyTequilapiClientMock {
-    async connectionCreate (): Promise<ConnectionStatusDTO> {
-      if (connectFailClosedRequest) {
-        throw closedRequestErrorMock
-      }
-      if (connectFail) {
-        throw errorMock
-      }
-      return new ConnectionStatusDTO({})
-    }
-
-    async connectionStatus (): Promise<ConnectionStatusDTO> {
-      if (statusFail) {
-        throw errorMock
-      }
-      return new ConnectionStatusDTO({
-        status: 'mock status'
-      })
-    }
-
-    async connectionCancel (): Promise<void> {
-      if (connectionCancelFail) {
-        throw errorMock
-      }
-    }
-
-    async connectionIP (): Promise<ConnectionIPDTO> {
-      if (ipTimeout) {
-        throw timeoutErrorMock
-      }
-      if (ipFail) {
-        throw errorMock
-      }
-      return new ConnectionIPDTO({
-        ip: 'mock ip'
-      })
-    }
-
-    async connectionStatistics (): Promise<ConnectionStatisticsDTO> {
-      if (statisticsFail) {
-        throw errorMock
-      }
-      return new ConnectionStatisticsDTO({ duration: 1 })
-    }
+  async connect (request: ConnectionRequestDTO, actions: ConnectionActions, state: ConnectionStore): Promise<void> {
+    this.connectParams = { request, actions, state }
   }
 
-  return {
-    getFakeApi () {
-      return new ConnectionTequilapiClientMock()
-    },
-    setStatusFail () {
-      statusFail = true
-    },
-    setStatisticsFail () {
-      statisticsFail = true
-    },
-    setIpTimeout () {
-      ipTimeout = true
-    },
-    setIpFail () {
-      ipFail = true
-    },
-    setConnectFail () {
-      connectFail = true
-    },
-    setConnectFailClosedRequest () {
-      connectFailClosedRequest = true
-    },
-    setConnectCancelFail () {
-      connectionCancelFail = true
-    },
-    getFakeError (): Error {
-      return errorMock
-    },
-    setFakeError (error: Error) {
-      errorMock = error
-    }
+  async disconnect (actions: ConnectionActions, state: ConnectionStore): Promise<void> {
+    this.disconnectParams = { actions, state }
   }
-}
-
-function createMockTimeoutError (): Error {
-  const error = new Error('Mock timeout error')
-  const object = (error: Object)
-  object.code = 'ECONNABORTED'
-  return new TequilapiError(error, 'mock-path')
-}
-
-function createMockRequestClosedError (): Error {
-  const error = new Error('Mock closed request error')
-  const object = (error: Object)
-  object.response = { status: 499 }
-
-  return new TequilapiError(error, 'mock-path')
-}
-
-function createMockHttpError (): Error {
-  const error = new Error('Mock http error')
-  return new TequilapiError(error, 'mock-path')
 }
 
 describe('connection', () => {
@@ -236,8 +133,8 @@ describe('connection', () => {
     let fakeMessageBus = new FakeMessageBus()
     let rendererCommunication = new RendererCommunication(fakeMessageBus)
 
-    let fakeEventSender: MockEventSender
     let bugReporterMock: BugReporterMock
+    let mockConnectionEstablisher: MockConnectionEstablisher
 
     async function executeAction (action, state = {}, payload = {}, getters = {}) {
       const mutations = []
@@ -247,9 +144,8 @@ describe('connection', () => {
 
       const dispatch = (action, payload = {}) => {
         const context = { commit, dispatch, state, getters }
-        const connectionManager = new ConnectionManager(fakeEventSender, bugReporterMock, fakeTequilapi.getFakeApi())
         const actions =
-          actionsFactory(fakeTequilapi.getFakeApi(), rendererCommunication, bugReporterMock, connectionManager)
+          actionsFactory(fakeTequilapi.getFakeApi(), rendererCommunication, bugReporterMock, mockConnectionEstablisher)
 
         return actions[action](context, payload)
       }
@@ -263,8 +159,8 @@ describe('connection', () => {
       fakeMessageBus = new FakeMessageBus()
       rendererCommunication = new RendererCommunication(fakeMessageBus)
 
-      fakeEventSender = new MockEventSender()
       bugReporterMock = new BugReporterMock()
+      mockConnectionEstablisher = new MockConnectionEstablisher()
     })
 
     describe('START_ACTION_LOOPING', () => {
@@ -517,121 +413,45 @@ describe('connection', () => {
     })
 
     describe('RECONNECT', () => {
-      it('calls to connect', async () => {
+      it('invokes connection establisher with last connection provider', async () => {
         const state = {
           actionLoopers: {},
           location: { originalCountry: '' }
         }
-        const committed = await executeAction(type.RECONNECT, state, null,
-          { currentIdentity: 'current',
-            lastConnectionAttemptProvider: 'lastConnectionProvider'
-          })
-        expect(committed).to.eql([
-          {
-            key: type.SET_CONNECTION_STATUS,
-            value: ConnectionStatusEnum.CONNECTING
-          },
-          {
-            key: type.CONNECTION_STATISTICS_RESET,
-            value: undefined
-          },
-          {
-            key: type.SET_LAST_CONNECTION_PROVIDER,
-            value: 'lastConnectionProvider'
-          },
-          {
-            key: type.HIDE_ERROR,
-            value: undefined
-          }
-        ])
+        await executeAction(type.RECONNECT, state, null, {
+          currentIdentity: 'current',
+          lastConnectionAttemptProvider: 'lastConnectionProvider'
+        })
+
+        const params = mockConnectionEstablisher.connectParams
+        expect(params).to.be.exist
+        if (params == null) {
+          throw new Error('Connection params missing')
+        }
+        expect(params.request.providerId).to.eql('lastConnectionProvider')
+        expect(params.request.consumerId).to.eql('current')
+        expect(params.state).to.eql(state)
+        expect(params.actions).to.exist
       })
     })
 
     describe('CONNECT', () => {
-      it('marks connecting status, resets statistics, hides error', async () => {
+      it('invokes connection establisher with given provider', async () => {
         const state = {
           actionLoopers: {},
           location: { originalCountry: '' }
         }
-        const committed = await executeAction(type.CONNECT, state, new ConnectionRequestDTO('consumer', 'provider'))
-        expect(committed).to.eql([
-          {
-            key: type.SET_CONNECTION_STATUS,
-            value: ConnectionStatusEnum.CONNECTING
-          },
-          {
-            key: type.CONNECTION_STATISTICS_RESET,
-            value: undefined
-          },
-          {
-            key: type.SET_LAST_CONNECTION_PROVIDER,
-            value: 'provider'
-          },
-          {
-            key: type.HIDE_ERROR,
-            value: undefined
-          }
-        ])
-      })
+        const request = new ConnectionRequestDTO('consumer', 'provider')
+        await executeAction(type.CONNECT, state, request)
 
-      describe('when connection fails', () => {
-        beforeEach(() => {
-          fakeTequilapi.setConnectFail()
-        })
-
-        const state = {
-          actionLoopers: {},
-          location: { originalCountry: '' }
+        const params = mockConnectionEstablisher.connectParams
+        expect(params).to.be.exist
+        if (params == null) {
+          throw new Error('Connection params missing')
         }
-
-        it('shows error', async () => {
-          const committed = await executeAction(type.CONNECT, state)
-
-          expect(committed[committed.length - 1]).to.eql({
-            key: 'SHOW_ERROR_MESSAGE',
-            value: 'Connection failed. Try another country'
-          })
-        })
-
-        it('sends error event', async () => {
-          await executeAction(type.CONNECT, state)
-
-          expect(fakeEventSender.events).to.have.lengthOf(1)
-          const event = fakeEventSender.events[0]
-          expect(event.eventName).to.eql('connect_failed')
-          expect(event.context.error).to.eql('Error: Connection to node failed.')
-        })
-
-        it('captures unknown error', async () => {
-          await executeAction(type.CONNECT, state)
-
-          expect(bugReporterMock.infoExceptions).to.have.lengthOf(1)
-        })
-
-        it('does not capture http error', async () => {
-          fakeTequilapi.setFakeError(createMockHttpError())
-
-          await executeAction(type.CONNECT, state)
-
-          expect(bugReporterMock.infoExceptions).to.be.empty
-        })
-      })
-
-      describe('when connection was cancelled', () => {
-        beforeEach(() => {
-          fakeTequilapi.setConnectFailClosedRequest()
-        })
-
-        it('does not throw error and does not show error', async () => {
-          const state = {
-            actionLoopers: {},
-            location: { originalCountry: '' }
-          }
-          const committed = await executeAction(type.CONNECT, state)
-          committed.forEach((action) => {
-            expect(action.key).not.to.eql('SHOW_ERROR_MESSAGE')
-          })
-        })
+        expect(params.request).to.eql(request)
+        expect(params.state).to.eql(state)
+        expect(params.actions).to.exist
       })
     })
 
@@ -640,32 +460,16 @@ describe('connection', () => {
         actionLoopers: {}
       }
 
-      it('marks disconnecting status', async () => {
-        const committed = await executeAction(type.DISCONNECT, state)
-        expect(committed[0]).to.eql({
-          key: type.SET_CONNECTION_STATUS,
-          value: ConnectionStatusEnum.DISCONNECTING
-        })
-      })
+      it('invokes connection establisher to disconnect', async () => {
+        await executeAction(type.DISCONNECT, state)
 
-      describe('when disconnecting fails', () => {
-        beforeEach(() => {
-          fakeTequilapi.setConnectCancelFail()
-        })
-
-        it('captures unknown error', async () => {
-          await executeAction(type.DISCONNECT, state)
-
-          expect(bugReporterMock.infoExceptions).to.have.lengthOf(1)
-        })
-
-        it('does not capture http error', async () => {
-          fakeTequilapi.setFakeError(createMockHttpError())
-
-          await executeAction(type.DISCONNECT, state)
-
-          expect(bugReporterMock.infoExceptions).to.be.empty
-        })
+        const params = mockConnectionEstablisher.disconnectParams
+        expect(params).to.be.exist
+        if (params == null) {
+          throw new Error('Connection params missing')
+        }
+        expect(params.state).to.eql(state)
+        expect(params.actions).to.exist
       })
     })
   })

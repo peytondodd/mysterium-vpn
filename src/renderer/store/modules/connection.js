@@ -30,8 +30,7 @@ import ConsumerLocationDTO from '../../../libraries/mysterium-tequilapi/dto/cons
 import type { BugReporter } from '../../../app/bug-reporting/interface'
 import logger from '../../../app/logger'
 import TequilapiError from '../../../libraries/mysterium-tequilapi/tequilapi-error'
-import ConnectionManager from '../connection-manager'
-import type { ConnectionActions } from '../connection-manager'
+import type { ConnectionActions, ConnectionEstablisher } from '../connection-establisher'
 
 type ConnectionStore = {
   ip: ?string,
@@ -122,7 +121,7 @@ function actionsFactory (
   tequilapi: TequilapiClient,
   rendererCommunication: RendererCommunication,
   bugReporter: BugReporter,
-  connectionManager: ConnectionManager
+  connectionEstablisher: ConnectionEstablisher
 ) {
   return {
     async [type.LOCATION] ({ commit }) {
@@ -211,11 +210,11 @@ function actionsFactory (
     },
     async [type.CONNECT] ({ commit, dispatch, state }, connectionRequest: ConnectionRequestDTO) {
       const connectionActions = new VueConnectionActions(commit, dispatch)
-      await connectionManager.connect(connectionRequest, connectionActions, state)
+      await connectionEstablisher.connect(connectionRequest, connectionActions, state)
     },
     async [type.DISCONNECT] ({ commit, dispatch, state }) {
       const connectionActions = new VueConnectionActions(commit, dispatch)
-      await connectionManager.disconnect(connectionActions, state)
+      await connectionEstablisher.disconnect(connectionActions, state)
     }
   }
 }

@@ -30,10 +30,26 @@ import messages from '../../app/messages'
 import logger from '../../app/logger'
 import type { ConnectionStatus } from '../../libraries/mysterium-tequilapi/dto/connection-status-enum'
 
+interface ConnectionActions {
+  resetStatistics (): void,
+  setLastConnectionProvider (providerId: string): void,
+  hideError (): void,
+  showError (error: Error): void,
+  showErrorMessage (message: string): void,
+  setConnectionStatus (status: ConnectionStatus): Promise<void>,
+  fetchConnectionStatus (): Promise<void>,
+  fetchConnectionIp (): Promise<void>
+}
+
+interface ConnectionEstablisher {
+  connect (request: ConnectionRequestDTO, actions: ConnectionActions, state: ConnectionStore): Promise<void>,
+  disconnect (actions: ConnectionActions, state: ConnectionStore): Promise<void>
+}
+
 /**
  * Allows connecting and disconnecting to provider.
  */
-class ConnectionManager {
+class TequilapiConnectionEstablisher implements ConnectionEstablisher {
   _eventSender: EventSender
   _bugReporter: BugReporter
   _tequilapi: TequilapiClient
@@ -119,16 +135,5 @@ class ConnectionManager {
   }
 }
 
-interface ConnectionActions {
-  resetStatistics (): void,
-  setLastConnectionProvider (providerId: string): void,
-  hideError (): void,
-  showError (error: Error): void,
-  showErrorMessage (message: string): void,
-  setConnectionStatus (status: ConnectionStatus): Promise<void>,
-  fetchConnectionStatus (): Promise<void>,
-  fetchConnectionIp (): Promise<void>
-}
-
-export type { ConnectionActions }
-export default ConnectionManager
+export type { ConnectionEstablisher, ConnectionActions }
+export default TequilapiConnectionEstablisher
