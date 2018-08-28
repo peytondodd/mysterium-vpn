@@ -50,14 +50,14 @@ interface ConnectionEstablisher {
  * Allows connecting and disconnecting to provider.
  */
 class TequilapiConnectionEstablisher implements ConnectionEstablisher {
+  _tequilapi: TequilapiClient
   _eventSender: EventSender
   _bugReporter: BugReporter
-  _tequilapi: TequilapiClient
 
-  constructor (eventSender: EventSender, bugReporter: BugReporter, tequilapi: TequilapiClient) {
+  constructor (tequilapi: TequilapiClient, eventSender: EventSender, bugReporter: BugReporter) {
+    this._tequilapi = tequilapi
     this._eventSender = eventSender
     this._bugReporter = bugReporter
-    this._tequilapi = tequilapi
   }
 
   async connect (request: ConnectionRequestDTO, actions: ConnectionActions, state: ConnectionStore) {

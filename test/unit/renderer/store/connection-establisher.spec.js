@@ -90,7 +90,8 @@ describe('TequilapiConnectionEstablisher', () => {
     fakeEventSender = new MockEventSender()
     bugReporterMock = new BugReporterMock()
 
-    connectionEstablisher = new TequilapiConnectionEstablisher(fakeEventSender, bugReporterMock, fakeTequilapi.getFakeApi())
+    const fakeApi = fakeTequilapi.getFakeApi()
+    connectionEstablisher = new TequilapiConnectionEstablisher(fakeApi, fakeEventSender, bugReporterMock)
     mockActions = new MockConnectionActions()
   })
 

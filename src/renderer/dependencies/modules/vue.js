@@ -33,9 +33,9 @@ import TequilapiConnectionEstablisher from '../../store/connection-establisher'
 function bootstrap (container: Container) {
   container.service(
     'connectionEstablisher',
-    ['eventSender', 'bugReporter', 'tequilapiClient'],
-    (eventSender, bugReporter, tequilapiClient) => {
-      return new TequilapiConnectionEstablisher(eventSender, bugReporter, tequilapiClient)
+    ['tequilapiClient', 'eventSender', 'bugReporter'],
+    (tequilapiClient, eventSender, bugReporter) => {
+      return new TequilapiConnectionEstablisher(tequilapiClient, eventSender, bugReporter)
     }
   )
   container.service(
