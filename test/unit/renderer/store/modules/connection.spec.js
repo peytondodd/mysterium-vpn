@@ -31,7 +31,7 @@ import ConnectionStatisticsDTO from '../../../../../src/libraries/mysterium-tequ
 import BugReporterMock from '../../../../helpers/bug-reporter-mock'
 import ConnectionRequestDTO from '../../../../../src/libraries/mysterium-tequilapi/dto/connection-request'
 import factoryTequilapiManipulator from '../../../../helpers/mysterium-tequilapi/factory-tequilapi-manipulator'
-import type { ConnectionActions, ConnectionEstablisher } from '../../../../../src/renderer/store/connection-establisher'
+import type { ConnectionActions, ConnectionEstablisher } from '../../../../../src/app/connection/connection-establisher'
 import type { ConnectionStore } from '../../../../../src/renderer/store/modules/connection'
 
 class MockConnectionEstablisher implements ConnectionEstablisher {

@@ -17,17 +17,17 @@
 
 // @flow
 
-import type { EventSender } from '../../app/statistics/event-sender'
-import type { BugReporter } from '../../app/bug-reporting/interface'
+import type { EventSender } from '../statistics/event-sender'
+import type { BugReporter } from '../bug-reporting/interface'
 import type { TequilapiClient } from '../../libraries/mysterium-tequilapi/client'
 import ConnectionRequestDTO from '../../libraries/mysterium-tequilapi/dto/connection-request'
-import type { ConnectionStore } from './modules/connection'
-import { ConnectEventTracker, currentUserTime } from '../../app/statistics/events-connection'
-import type from './types'
+import type { ConnectionStore } from '../../renderer/store/modules/connection'
+import { ConnectEventTracker, currentUserTime } from '../statistics/events-connection'
+import type from '../../renderer/store/types'
 import ConnectionStatusEnum from '../../libraries/mysterium-tequilapi/dto/connection-status-enum'
 import TequilapiError from '../../libraries/mysterium-tequilapi/tequilapi-error'
-import messages from '../../app/messages'
-import logger from '../../app/logger'
+import messages from '../messages'
+import logger from '../logger'
 import type { ConnectionStatus } from '../../libraries/mysterium-tequilapi/dto/connection-status-enum'
 
 interface ConnectionActions {
