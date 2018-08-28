@@ -138,6 +138,7 @@ describe('ServiceManagerProcess', () => {
     monitoring = new Monitoring(tequilapiClient)
     serviceManager = new ServiceManager(SERVICE_MANAGER_PATH, system)
     process = new ServiceManagerProcess(tequilapiClient, clientLogSubscriber, serviceManager, system, monitoring)
+    monitoring.start()
   })
 
   describe('.start', () => {
@@ -172,12 +173,6 @@ describe('ServiceManagerProcess', () => {
 
       expect(systemMockManager.sudoExecCalledCommands).to.have.length(1)
       expect(systemMockManager.sudoExecCalledCommands[0]).to.be.eql('"/service-manager/bin/servicemanager.exe" --do=restart')
-    })
-
-    it('starts monitoring to make healthcheck', async () => {
-      expect(monitoring.isStarted).to.be.false
-      await process.repair()
-      expect(monitoring.isStarted).to.be.true
     })
 
     it('starts stopped service and waits for healthcheck', async () => {

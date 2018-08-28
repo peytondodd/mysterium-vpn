@@ -221,7 +221,7 @@ class Mysterion {
     this._buildTray()
 
     await this._ensureDaemonInstallation()
-    this._startProcess()
+    await this._startProcess()
     this._startProcessMonitoring()
     this._onProcessReady(() => {
       logInfo(`Notify that 'mysterium_client' process is ready`)
@@ -405,13 +405,13 @@ class Mysterion {
     return true
   }
 
-  _startProcess () {
+  async _startProcess () {
     const cacheLogs = (level, data) => {
       this._mysteriumProcessLogCache.pushToLevel(level, data)
     }
 
     logInfo("Starting 'mysterium_client' process")
-    this._process.start()
+    await this._process.start()
       .then(() => { logInfo('mysterium_client start successful') })
       .catch((e) => { logException('mysterium_client start failed', e) })
 
