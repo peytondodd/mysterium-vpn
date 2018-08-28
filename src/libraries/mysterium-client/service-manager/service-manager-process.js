@@ -57,10 +57,17 @@ class ServiceManagerProcess implements Process {
 
   async start (): Promise<void> {
     const state = await this._serviceManager.getServiceState()
-    if (state === SERVICE_STATE.RUNNING) {
-      return
+    let healthCheckWorks = false
+    try {
+      await this._tequilapi.healthCheck()
+      healthCheckWorks = true
+    } catch (e) {
+      logger.error('Unable to healthcheck while starting process', e)
     }
 
+    if (state === SERVICE_STATE.RUNNING && healthCheckWorks) {
+      return
+    }
     await this._repair(state)
   }
 
@@ -108,6 +115,10 @@ class ServiceManagerProcess implements Process {
   }
 
   async _waitForHealthCheck (): Promise<void> {
+    if (!this._monitoring.isStarted) {
+      this._monitoring.start()
+    }
+
     let resolveAndClearTimer: ?StatusCallback
     await new Promise((resolve, reject) => {
       const rejectTimer = setTimeout(() => reject(new Error('Unable to start service')), SERVICE_INIT_TIME)
