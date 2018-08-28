@@ -84,7 +84,7 @@ describe('TequilapiConnectionEstablisher', () => {
   let mockConnectionState: MockConnectionState
   let mockErrorMessage: MockErrorMessage
 
-  const location = new ConsumerLocationDTO({ original: {}, current: {} })
+  const location = new ConsumerLocationDTO({ original: { country: 'lt' }, current: {} })
   const actionLooper: ?FunctionLooper = null
 
   beforeEach(() => {
@@ -99,7 +99,7 @@ describe('TequilapiConnectionEstablisher', () => {
   })
 
   describe('.connect', () => {
-    const request = new ConnectionRequestDTO('consumer', 'provider id')
+    const request = new ConnectionRequestDTO('consumer', 'provider id', 'us')
 
     it('marks connecting status', async () => {
       await connectionEstablisher.connect(request, mockConnectionState, mockErrorMessage, location, actionLooper)
@@ -120,6 +120,16 @@ describe('TequilapiConnectionEstablisher', () => {
     it('persistes provider id', async () => {
       await connectionEstablisher.connect(request, mockConnectionState, mockErrorMessage, location, actionLooper)
       expect(mockConnectionState.lastConnectionProviderId).to.eql('provider id')
+    })
+
+    it('sends successful connection event', async () => {
+      await connectionEstablisher.connect(request, mockConnectionState, mockErrorMessage, location, actionLooper)
+
+      expect(fakeEventSender.events).to.have.lengthOf(1)
+      const event = fakeEventSender.events[0]
+      expect(event.eventName).to.eql('connect_successful')
+      expect(event.context.originalCountry).to.eql('lt')
+      expect(event.context.providerCountry).to.eql('us')
     })
 
     describe('when connection fails', () => {

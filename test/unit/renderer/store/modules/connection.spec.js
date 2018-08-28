@@ -471,7 +471,7 @@ describe('connection', () => {
           actionLoopers: {},
           location: { originalCountry: '' }
         }
-        const request = new ConnectionRequestDTO('consumer', 'provider')
+        const request = new ConnectionRequestDTO('consumer', 'provider', 'provider country')
         await executeAction(type.CONNECT, state, request)
 
         const params = mockConnectionEstablisher.connectParams

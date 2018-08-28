@@ -55,7 +55,7 @@ class TequilapiConnectionEstablisher implements ConnectionEstablisher {
     actionLooper: ?FunctionLooper) {
     const eventTracker = new ConnectEventTracker(this._eventSender, currentUserTime)
     const originalCountry = this._getOriginalCountry(location) || ''
-    eventTracker.connectStarted(request, originalCountry)
+    eventTracker.connectStarted(request, originalCountry, request.providerCountry || '')
     if (actionLooper) {
       await actionLooper.stop()
     }

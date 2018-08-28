@@ -38,6 +38,11 @@ export default {
     providerId: {
       type: String,
       required: true
+    },
+    providerCountry: {
+      type: String,
+      required: false,
+      default: null
     }
   },
   computed: {
@@ -94,7 +99,13 @@ export default {
       }
 
       if (canConnect) {
-        this.$store.dispatch(type.CONNECT, new ConnectionRequestDTO(this.consumerId, this.providerId))
+        let connectionRequest
+        if (this.providerCountry) {
+          connectionRequest = new ConnectionRequestDTO(this.consumerId, this.providerId, this.providerCountry)
+        } else {
+          connectionRequest = new ConnectionRequestDTO(this.consumerId, this.providerId)
+        }
+        this.$store.dispatch(type.CONNECT, connectionRequest)
       }
     }
   }
