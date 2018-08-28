@@ -20,14 +20,14 @@
 import { beforeEach, describe, expect, it } from '../../../helpers/dependencies'
 import ConnectionStatusEnum from '../../../../src/libraries/mysterium-tequilapi/dto/connection-status-enum'
 import ConnectionRequestDTO from '../../../../src/libraries/mysterium-tequilapi/dto/connection-request'
-import TequilapiConnectionEstablisher from '../../../../src/app/connection/connection-establisher'
 import MockEventSender from '../../../helpers/statistics/mock-event-sender'
 import BugReporterMock from '../../../helpers/bug-reporter-mock'
-import type { ConnectionActions } from '../../../../src/app/connection/connection-establisher'
 import ConsumerLocationDTO from '../../../../src/libraries/mysterium-tequilapi/dto/consumer-location'
 import type { ConnectionStore } from '../../../../src/renderer/store/modules/connection'
 import type { ConnectionStatus } from '../../../../src/libraries/mysterium-tequilapi/dto/connection-status-enum'
 import factoryTequilapiManipulator, { createMockHttpError } from '../../../helpers/mysterium-tequilapi/factory-tequilapi-manipulator'
+import TequilapiConnectionEstablisher from '../../../../src/app/connection/tequilapi-connection-establisher'
+import type { ConnectionActions } from '../../../../src/app/connection/connection-actions'
 
 class MockConnectionActions implements ConnectionActions {
   connectionStatus: ?ConnectionStatus = null

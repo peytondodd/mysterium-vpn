@@ -17,13 +17,17 @@
 
 // @flow
 
-import ConnectionRequestDTO from '../../libraries/mysterium-tequilapi/dto/connection-request'
-import type { ConnectionStore } from '../../renderer/store/modules/connection'
-import type { ConnectionActions } from './connection-actions'
+import type { ConnectionStatus } from '../../libraries/mysterium-tequilapi/dto/connection-status-enum'
 
-interface ConnectionEstablisher {
-  connect (request: ConnectionRequestDTO, actions: ConnectionActions, state: ConnectionStore): Promise<void>,
-  disconnect (actions: ConnectionActions, state: ConnectionStore): Promise<void>
+interface ConnectionActions {
+  resetStatistics (): void,
+  setLastConnectionProvider (providerId: string): void,
+  hideError (): void,
+  showError (error: Error): void,
+  showErrorMessage (message: string): void,
+  setConnectionStatus (status: ConnectionStatus): Promise<void>,
+  fetchConnectionStatus (): Promise<void>,
+  fetchConnectionIp (): Promise<void>
 }
 
-export type { ConnectionEstablisher }
+export type { ConnectionActions }

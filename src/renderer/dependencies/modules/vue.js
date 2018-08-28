@@ -28,7 +28,7 @@ import connectionFactory, { actionsFactory } from '../../store/modules/connectio
 import errors from '../../store/modules/errors'
 import terms from '../../store/modules/terms'
 import clientProcess from '../../store/modules/client-process'
-import TequilapiConnectionEstablisher from '../../../app/connection/connection-establisher'
+import TequilapiConnectionEstablisher from '../../../app/connection/tequilapi-connection-establisher'
 
 function bootstrap (container: Container) {
   container.service(

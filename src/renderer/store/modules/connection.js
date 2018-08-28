@@ -30,7 +30,8 @@ import ConsumerLocationDTO from '../../../libraries/mysterium-tequilapi/dto/cons
 import type { BugReporter } from '../../../app/bug-reporting/interface'
 import logger from '../../../app/logger'
 import TequilapiError from '../../../libraries/mysterium-tequilapi/tequilapi-error'
-import type { ConnectionActions, ConnectionEstablisher } from '../../../app/connection/connection-establisher'
+import type { ConnectionEstablisher } from '../../../app/connection/connection-establisher'
+import type { ConnectionActions } from '../../../app/connection/connection-actions'
 
 type ConnectionStore = {
   ip: ?string,
