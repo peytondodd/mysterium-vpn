@@ -31,6 +31,7 @@ import ConnectionRequestDTO from '../../libraries/mysterium-tequilapi/dto/connec
 import type { ConnectionActions } from './connection-actions'
 import type { ConnectionStore } from '../../renderer/store/modules/connection'
 import { FunctionLooper } from '../../libraries/function-looper'
+import type { ErrorMessage } from './error-message'
 
 /**
  * Allows connecting and disconnecting to provider using Tequilapi.
@@ -46,7 +47,7 @@ class TequilapiConnectionEstablisher implements ConnectionEstablisher {
     this._bugReporter = bugReporter
   }
 
-  async connect (request: ConnectionRequestDTO, actions: ConnectionActions, state: ConnectionStore) {
+  async connect (request: ConnectionRequestDTO, actions: ConnectionActions, errorMessage: ErrorMessage, state: ConnectionStore) {
     const eventTracker = new ConnectEventTracker(this._eventSender, currentUserTime)
     let originalCountry = ''
     if (state.location != null && state.location.originalCountry != null) {
@@ -69,14 +70,14 @@ class TequilapiConnectionEstablisher implements ConnectionEstablisher {
     try {
       await this._tequilapi.connectionCreate(request)
       eventTracker.connectEnded()
-      actions.hideError()
+      errorMessage.hide()
     } catch (err) {
       if (err instanceof TequilapiError && err.isRequestClosedError) {
         eventTracker.connectCanceled()
         return
       }
 
-      actions.showErrorMessage(messages.connectFailed)
+      errorMessage.showMessage(messages.connectFailed)
 
       eventTracker.connectEnded('Error: Connection to node failed.')
 
@@ -90,7 +91,7 @@ class TequilapiConnectionEstablisher implements ConnectionEstablisher {
     }
   }
 
-  async disconnect (actions: ConnectionActions, state: ConnectionStore) {
+  async disconnect (actions: ConnectionActions, errorMessage: ErrorMessage, state: ConnectionStore) {
     const looper: FunctionLooper = state.actionLoopers[type.FETCH_CONNECTION_STATUS]
     if (looper) {
       await looper.stop()
@@ -102,7 +103,7 @@ class TequilapiConnectionEstablisher implements ConnectionEstablisher {
       try {
         await this._tequilapi.connectionCancel()
       } catch (err) {
-        actions.showError(err)
+        errorMessage.showError(err)
         logger.info('Connection cancelling failed:', err)
         if (!(err instanceof TequilapiError)) {
           this._bugReporter.captureInfoException(err)
@@ -111,7 +112,7 @@ class TequilapiConnectionEstablisher implements ConnectionEstablisher {
       actions.fetchConnectionStatus()
       actions.fetchConnectionIp()
     } catch (err) {
-      actions.showError(err)
+      errorMessage.showError(err)
       throw err
     } finally {
       if (looper) {

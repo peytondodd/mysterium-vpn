@@ -32,6 +32,7 @@ import logger from '../../../app/logger'
 import TequilapiError from '../../../libraries/mysterium-tequilapi/tequilapi-error'
 import type { ConnectionEstablisher } from '../../../app/connection/connection-establisher'
 import type { ConnectionActions } from '../../../app/connection/connection-actions'
+import type { ErrorMessage } from '../../../app/connection/error-message'
 
 type ConnectionStore = {
   ip: ?string,
@@ -211,11 +212,13 @@ function actionsFactory (
     },
     async [type.CONNECT] ({ commit, dispatch, state }, connectionRequest: ConnectionRequestDTO) {
       const connectionActions = new VueConnectionActions(commit, dispatch)
-      await connectionEstablisher.connect(connectionRequest, connectionActions, state)
+      const errorMessage = new VueErrorMessage(commit, dispatch)
+      await connectionEstablisher.connect(connectionRequest, connectionActions, errorMessage, state)
     },
     async [type.DISCONNECT] ({ commit, dispatch, state }) {
       const connectionActions = new VueConnectionActions(commit, dispatch)
-      await connectionEstablisher.disconnect(connectionActions, state)
+      const errorMessage = new VueErrorMessage(commit, dispatch)
+      await connectionEstablisher.disconnect(connectionActions, errorMessage, state)
     }
   }
 }
@@ -238,7 +241,7 @@ export {
   actionsFactory
 }
 
-class VueConnectionActions implements ConnectionActions {
+class VueAction {
   _commit: CommitFunction
   _dispatch: DispatchFunction
 
@@ -246,16 +249,10 @@ class VueConnectionActions implements ConnectionActions {
     this._commit = commit
     this._dispatch = dispatch
   }
+}
 
-  resetStatistics () {
-    this._commit(type.CONNECTION_STATISTICS_RESET)
-  }
-
-  setLastConnectionProvider (providerId: string) {
-    this._commit(type.SET_LAST_CONNECTION_PROVIDER, providerId)
-  }
-
-  hideError () {
+class VueErrorMessage extends VueAction implements ErrorMessage {
+  hide () {
     this._commit(type.HIDE_ERROR)
   }
 
@@ -263,8 +260,18 @@ class VueConnectionActions implements ConnectionActions {
     this._commit(type.SHOW_ERROR, error)
   }
 
-  showErrorMessage (message: string) {
+  showMessage (message: string) {
     this._commit(type.SHOW_ERROR_MESSAGE, message)
+  }
+}
+
+class VueConnectionActions extends VueAction implements ConnectionActions {
+  resetStatistics () {
+    this._commit(type.CONNECTION_STATISTICS_RESET)
+  }
+
+  setLastConnectionProvider (providerId: string) {
+    this._commit(type.SET_LAST_CONNECTION_PROVIDER, providerId)
   }
 
   async setConnectionStatus (status: ConnectionStatus) {

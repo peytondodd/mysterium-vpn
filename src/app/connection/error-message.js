@@ -17,14 +17,13 @@
 
 // @flow
 
-import type { ConnectionStatus } from '../../libraries/mysterium-tequilapi/dto/connection-status-enum'
-
-interface ConnectionActions {
-  resetStatistics (): void,
-  setLastConnectionProvider (providerId: string): void,
-  setConnectionStatus (status: ConnectionStatus): Promise<void>,
-  fetchConnectionStatus (): Promise<void>,
-  fetchConnectionIp (): Promise<void>
+/**
+ * Allows displaying error messages.
+ */
+interface ErrorMessage {
+  hide (): void,
+  showError (error: Error): void,
+  showMessage (message: string): void,
 }
 
-export type { ConnectionActions }
+export type { ErrorMessage }

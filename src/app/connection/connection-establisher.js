@@ -20,10 +20,11 @@
 import ConnectionRequestDTO from '../../libraries/mysterium-tequilapi/dto/connection-request'
 import type { ConnectionStore } from '../../renderer/store/modules/connection'
 import type { ConnectionActions } from './connection-actions'
+import type { ErrorMessage } from './error-message'
 
 interface ConnectionEstablisher {
-  connect (request: ConnectionRequestDTO, actions: ConnectionActions, state: ConnectionStore): Promise<void>,
-  disconnect (actions: ConnectionActions, state: ConnectionStore): Promise<void>
+  connect (request: ConnectionRequestDTO, actions: ConnectionActions, errorMessage: ErrorMessage, state: ConnectionStore): Promise<void>,
+  disconnect (actions: ConnectionActions, errorMessage: ErrorMessage, state: ConnectionStore): Promise<void>
 }
 
 export type { ConnectionEstablisher }

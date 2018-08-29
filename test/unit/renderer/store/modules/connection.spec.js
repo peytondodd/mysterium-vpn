@@ -34,16 +34,21 @@ import factoryTequilapiManipulator from '../../../../helpers/mysterium-tequilapi
 import type { ConnectionEstablisher } from '../../../../../src/app/connection/connection-establisher'
 import type { ConnectionStore } from '../../../../../src/renderer/store/modules/connection'
 import type { ConnectionActions } from '../../../../../src/app/connection/connection-actions'
+import type { ErrorMessage } from '../../../../../src/app/connection/error-message'
 
 class MockConnectionEstablisher implements ConnectionEstablisher {
   connectParams: ?{ request: ConnectionRequestDTO, actions: ConnectionActions, state: ConnectionStore } = null
   disconnectParams: ?{ actions: ConnectionActions, state: ConnectionStore }
 
-  async connect (request: ConnectionRequestDTO, actions: ConnectionActions, state: ConnectionStore): Promise<void> {
+  async connect (
+    request: ConnectionRequestDTO,
+    actions: ConnectionActions,
+    errorMessage: ErrorMessage,
+    state: ConnectionStore): Promise<void> {
     this.connectParams = { request, actions, state }
   }
 
-  async disconnect (actions: ConnectionActions, state: ConnectionStore): Promise<void> {
+  async disconnect (actions: ConnectionActions, errorMessage: ErrorMessage, state: ConnectionStore): Promise<void> {
     this.disconnectParams = { actions, state }
   }
 }
