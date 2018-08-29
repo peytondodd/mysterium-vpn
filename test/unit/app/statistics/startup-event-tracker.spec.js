@@ -17,25 +17,40 @@
 
 // @flow
 
-import { describe, expect, it } from '../../../helpers/dependencies'
+import { beforeEach, describe, expect, it } from '../../../helpers/dependencies'
 import StartupEventTracker from '../../../../src/app/statistics/startup-event-tracker'
 import MockEventSender from '../../../helpers/statistics/mock-event-sender'
 
 describe('StartupEventTracker', () => {
-  const mockSender = new MockEventSender()
-  const tracker = new StartupEventTracker(mockSender)
+  let tracker, mockSender
+  beforeEach(() => {
+    mockSender = new MockEventSender()
+    tracker = new StartupEventTracker(mockSender)
+  })
 
-  describe('.sendEvent', () => {
+  describe('.sendRuntimeEnvironmentDetails', () => {
     it('collects startup event', async () => {
-      await tracker.sendEvent('0x1D')
+      await tracker.sendRuntimeEnvironmentDetails('0x1D')
 
       expect(mockSender.events.length).to.eql(1)
       const event = mockSender.events[0]
-      expect(event.eventName).to.eql('startup')
+      expect(event.eventName).to.eql('runtime_environment_details')
       expect(event.context.platform).to.be.a('string')
       expect(event.context.osName).to.be.a('string')
       expect(event.context.osRelease).to.be.a('string')
       expect(event.context.identity).to.eql('0x1D')
+    })
+    it('sends app_start event', async () => {
+      await tracker.sendAppStartEvent()
+
+      expect(mockSender.events.length).to.eql(1)
+      expect(mockSender.events[0].eventName).to.eql('app_start')
+    })
+    it('sends app_start_success event', async () => {
+      await tracker.sendAppStartSuccessEvent()
+
+      expect(mockSender.events.length).to.eql(1)
+      expect(mockSender.events[0].eventName).to.eql('app_start_success')
     })
   })
 })
