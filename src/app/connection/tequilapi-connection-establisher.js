@@ -29,9 +29,9 @@ import logger from '../logger'
 import type { ConnectionEstablisher } from './connection-establisher'
 import ConnectionRequestDTO from '../../libraries/mysterium-tequilapi/dto/connection-request'
 import type { ConnectionActions } from './connection-actions'
-import type { ConnectionStore } from '../../renderer/store/modules/connection'
 import { FunctionLooper } from '../../libraries/function-looper'
 import type { ErrorMessage } from './error-message'
+import ConsumerLocationDTO from '../../libraries/mysterium-tequilapi/dto/consumer-location'
 
 /**
  * Allows connecting and disconnecting to provider using Tequilapi.
@@ -47,11 +47,16 @@ class TequilapiConnectionEstablisher implements ConnectionEstablisher {
     this._bugReporter = bugReporter
   }
 
-  async connect (request: ConnectionRequestDTO, actions: ConnectionActions, errorMessage: ErrorMessage, state: ConnectionStore) {
+  async connect (
+    request: ConnectionRequestDTO,
+    actions: ConnectionActions,
+    errorMessage: ErrorMessage,
+    location: ?ConsumerLocationDTO,
+    actionLoopers: { [string]: FunctionLooper }) {
     const eventTracker = new ConnectEventTracker(this._eventSender, currentUserTime)
     let originalCountry = ''
-    if (state.location != null && state.location.originalCountry != null) {
-      originalCountry = state.location.originalCountry
+    if (location != null && location.originalCountry != null) {
+      originalCountry = location.originalCountry
     }
     eventTracker.connectStarted(
       {
@@ -60,7 +65,7 @@ class TequilapiConnectionEstablisher implements ConnectionEstablisher {
       },
       originalCountry
     )
-    const looper: FunctionLooper = state.actionLoopers[type.FETCH_CONNECTION_STATUS]
+    const looper: FunctionLooper = actionLoopers[type.FETCH_CONNECTION_STATUS]
     if (looper) {
       await looper.stop()
     }
@@ -91,8 +96,8 @@ class TequilapiConnectionEstablisher implements ConnectionEstablisher {
     }
   }
 
-  async disconnect (actions: ConnectionActions, errorMessage: ErrorMessage, state: ConnectionStore) {
-    const looper: FunctionLooper = state.actionLoopers[type.FETCH_CONNECTION_STATUS]
+  async disconnect (actions: ConnectionActions, errorMessage: ErrorMessage, actionLoopers: { [string]: FunctionLooper }) {
+    const looper: FunctionLooper = actionLoopers[type.FETCH_CONNECTION_STATUS]
     if (looper) {
       await looper.stop()
     }

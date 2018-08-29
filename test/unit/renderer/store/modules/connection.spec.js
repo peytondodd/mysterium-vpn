@@ -32,24 +32,37 @@ import BugReporterMock from '../../../../helpers/bug-reporter-mock'
 import ConnectionRequestDTO from '../../../../../src/libraries/mysterium-tequilapi/dto/connection-request'
 import factoryTequilapiManipulator from '../../../../helpers/mysterium-tequilapi/factory-tequilapi-manipulator'
 import type { ConnectionEstablisher } from '../../../../../src/app/connection/connection-establisher'
-import type { ConnectionStore } from '../../../../../src/renderer/store/modules/connection'
 import type { ConnectionActions } from '../../../../../src/app/connection/connection-actions'
 import type { ErrorMessage } from '../../../../../src/app/connection/error-message'
+import ConsumerLocationDTO from '../../../../../src/libraries/mysterium-tequilapi/dto/consumer-location'
+
+type ConnectParams = {
+  request: ConnectionRequestDTO,
+  actions: ConnectionActions,
+  location: ?ConsumerLocationDTO,
+  actionLoopers: { [string]: FunctionLooper }
+}
+
+type DisconnectParams = {
+  actions: ConnectionActions,
+  actionLoopers: { [string]: FunctionLooper }
+}
 
 class MockConnectionEstablisher implements ConnectionEstablisher {
-  connectParams: ?{ request: ConnectionRequestDTO, actions: ConnectionActions, state: ConnectionStore } = null
-  disconnectParams: ?{ actions: ConnectionActions, state: ConnectionStore }
+  connectParams: ?ConnectParams = null
+  disconnectParams: ?DisconnectParams = null
 
   async connect (
     request: ConnectionRequestDTO,
     actions: ConnectionActions,
     errorMessage: ErrorMessage,
-    state: ConnectionStore): Promise<void> {
-    this.connectParams = { request, actions, state }
+    location: ?ConsumerLocationDTO,
+    actionLoopers: { [string]: FunctionLooper }): Promise<void> {
+    this.connectParams = { request, actions, location, actionLoopers }
   }
 
-  async disconnect (actions: ConnectionActions, errorMessage: ErrorMessage, state: ConnectionStore): Promise<void> {
-    this.disconnectParams = { actions, state }
+  async disconnect (actions: ConnectionActions, errorMessage: ErrorMessage, actionLoopers: { [string]: FunctionLooper }): Promise<void> {
+    this.disconnectParams = { actions, actionLoopers }
   }
 }
 
@@ -436,7 +449,8 @@ describe('connection', () => {
         }
         expect(params.request.providerId).to.eql('lastConnectionProvider')
         expect(params.request.consumerId).to.eql('current')
-        expect(params.state).to.eql(state)
+        expect(params.location).to.eql(state.location)
+        expect(params.actionLoopers).to.eql(state.actionLoopers)
         expect(params.actions).to.exist
       })
     })
@@ -456,7 +470,8 @@ describe('connection', () => {
           throw new Error('Connection params missing')
         }
         expect(params.request).to.eql(request)
-        expect(params.state).to.eql(state)
+        expect(params.location).to.eql(state.location)
+        expect(params.actionLoopers).to.eql(state.actionLoopers)
         expect(params.actions).to.exist
       })
     })
@@ -474,7 +489,7 @@ describe('connection', () => {
         if (params == null) {
           throw new Error('Connection params missing')
         }
-        expect(params.state).to.eql(state)
+        expect(params.actionLoopers).to.eql(state.actionLoopers)
         expect(params.actions).to.exist
       })
     })
