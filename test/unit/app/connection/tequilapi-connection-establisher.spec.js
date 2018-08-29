@@ -126,7 +126,6 @@ describe('TequilapiConnectionEstablisher', () => {
 
       it('shows error', async () => {
         await connectionEstablisher.connect(request, mockActions, state)
-
         expect(mockActions.errorMessageShown).to.eql('Connection failed. Try another country')
       })
 
@@ -141,7 +140,6 @@ describe('TequilapiConnectionEstablisher', () => {
 
       it('captures unknown error', async () => {
         await connectionEstablisher.connect(request, mockActions, state)
-
         expect(bugReporterMock.infoExceptions).to.have.lengthOf(1)
       })
 
@@ -149,7 +147,6 @@ describe('TequilapiConnectionEstablisher', () => {
         fakeTequilapi.setFakeError(createMockHttpError())
 
         await connectionEstablisher.connect(request, mockActions, state)
-
         expect(bugReporterMock.infoExceptions).to.be.empty
       })
     })

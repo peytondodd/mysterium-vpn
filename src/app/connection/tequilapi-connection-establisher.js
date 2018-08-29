@@ -30,6 +30,7 @@ import type { ConnectionEstablisher } from './connection-establisher'
 import ConnectionRequestDTO from '../../libraries/mysterium-tequilapi/dto/connection-request'
 import type { ConnectionActions } from './connection-actions'
 import type { ConnectionStore } from '../../renderer/store/modules/connection'
+import { FunctionLooper } from '../../libraries/function-looper'
 
 /**
  * Allows connecting and disconnecting to provider using Tequilapi.
@@ -58,7 +59,7 @@ class TequilapiConnectionEstablisher implements ConnectionEstablisher {
       },
       originalCountry
     )
-    const looper = state.actionLoopers[type.FETCH_CONNECTION_STATUS]
+    const looper: FunctionLooper = state.actionLoopers[type.FETCH_CONNECTION_STATUS]
     if (looper) {
       await looper.stop()
     }
@@ -90,7 +91,7 @@ class TequilapiConnectionEstablisher implements ConnectionEstablisher {
   }
 
   async disconnect (actions: ConnectionActions, state: ConnectionStore) {
-    const looper = state.actionLoopers[type.FETCH_CONNECTION_STATUS]
+    const looper: FunctionLooper = state.actionLoopers[type.FETCH_CONNECTION_STATUS]
     if (looper) {
       await looper.stop()
     }
@@ -111,7 +112,7 @@ class TequilapiConnectionEstablisher implements ConnectionEstablisher {
       actions.fetchConnectionIp()
     } catch (err) {
       actions.showError(err)
-      throw (err)
+      throw err
     } finally {
       if (looper) {
         looper.start()
