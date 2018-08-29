@@ -21,7 +21,6 @@ import type { EventSender } from '../statistics/event-sender'
 import type { BugReporter } from '../bug-reporting/interface'
 import type { TequilapiClient } from '../../libraries/mysterium-tequilapi/client'
 import { ConnectEventTracker, currentUserTime } from '../statistics/events-connection'
-import type from '../../renderer/store/types'
 import ConnectionStatusEnum from '../../libraries/mysterium-tequilapi/dto/connection-status-enum'
 import TequilapiError from '../../libraries/mysterium-tequilapi/tequilapi-error'
 import messages from '../messages'
@@ -52,7 +51,7 @@ class TequilapiConnectionEstablisher implements ConnectionEstablisher {
     actions: ConnectionActions,
     errorMessage: ErrorMessage,
     location: ?ConsumerLocationDTO,
-    actionLoopers: { [string]: FunctionLooper }) {
+    actionLooper: ?FunctionLooper) {
     const eventTracker = new ConnectEventTracker(this._eventSender, currentUserTime)
     let originalCountry = ''
     if (location != null && location.originalCountry != null) {
@@ -65,9 +64,8 @@ class TequilapiConnectionEstablisher implements ConnectionEstablisher {
       },
       originalCountry
     )
-    const looper: FunctionLooper = actionLoopers[type.FETCH_CONNECTION_STATUS]
-    if (looper) {
-      await looper.stop()
+    if (actionLooper) {
+      await actionLooper.stop()
     }
     await actions.setConnectionStatus(ConnectionStatusEnum.CONNECTING)
     actions.resetStatistics()
@@ -90,16 +88,15 @@ class TequilapiConnectionEstablisher implements ConnectionEstablisher {
         this._bugReporter.captureInfoException(err)
       }
     } finally {
-      if (looper) {
-        looper.start()
+      if (actionLooper) {
+        actionLooper.start()
       }
     }
   }
 
-  async disconnect (actions: ConnectionActions, errorMessage: ErrorMessage, actionLoopers: { [string]: FunctionLooper }) {
-    const looper: FunctionLooper = actionLoopers[type.FETCH_CONNECTION_STATUS]
-    if (looper) {
-      await looper.stop()
+  async disconnect (actions: ConnectionActions, errorMessage: ErrorMessage, actionLoopers: ?FunctionLooper) {
+    if (actionLoopers) {
+      await actionLoopers.stop()
     }
 
     try {
@@ -120,8 +117,8 @@ class TequilapiConnectionEstablisher implements ConnectionEstablisher {
       errorMessage.showError(err)
       throw err
     } finally {
-      if (looper) {
-        looper.start()
+      if (actionLoopers) {
+        actionLoopers.start()
       }
     }
   }

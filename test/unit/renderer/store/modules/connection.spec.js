@@ -40,12 +40,12 @@ type ConnectParams = {
   request: ConnectionRequestDTO,
   actions: ConnectionActions,
   location: ?ConsumerLocationDTO,
-  actionLoopers: { [string]: FunctionLooper }
+  actionLooper: ?FunctionLooper
 }
 
 type DisconnectParams = {
   actions: ConnectionActions,
-  actionLoopers: { [string]: FunctionLooper }
+  actionLooper: ?FunctionLooper
 }
 
 class MockConnectionEstablisher implements ConnectionEstablisher {
@@ -57,12 +57,12 @@ class MockConnectionEstablisher implements ConnectionEstablisher {
     actions: ConnectionActions,
     errorMessage: ErrorMessage,
     location: ?ConsumerLocationDTO,
-    actionLoopers: { [string]: FunctionLooper }): Promise<void> {
-    this.connectParams = { request, actions, location, actionLoopers }
+    actionLooper: ?FunctionLooper): Promise<void> {
+    this.connectParams = { request, actions, location, actionLooper }
   }
 
-  async disconnect (actions: ConnectionActions, errorMessage: ErrorMessage, actionLoopers: { [string]: FunctionLooper }): Promise<void> {
-    this.disconnectParams = { actions, actionLoopers }
+  async disconnect (actions: ConnectionActions, errorMessage: ErrorMessage, actionLooper: ?FunctionLooper): Promise<void> {
+    this.disconnectParams = { actions, actionLooper }
   }
 }
 
@@ -434,7 +434,9 @@ describe('connection', () => {
     describe('RECONNECT', () => {
       it('invokes connection establisher with last connection provider', async () => {
         const state = {
-          actionLoopers: {},
+          actionLoopers: {
+            [type.FETCH_CONNECTION_STATUS]: new FunctionLooper(async () => {}, 1000)
+          },
           location: { originalCountry: '' }
         }
         await executeAction(type.RECONNECT, state, null, {
@@ -450,7 +452,7 @@ describe('connection', () => {
         expect(params.request.providerId).to.eql('lastConnectionProvider')
         expect(params.request.consumerId).to.eql('current')
         expect(params.location).to.eql(state.location)
-        expect(params.actionLoopers).to.eql(state.actionLoopers)
+        expect(params.actionLooper).to.eql(state.actionLoopers[type.FETCH_CONNECTION_STATUS])
         expect(params.actions).to.exist
       })
     })
@@ -471,7 +473,7 @@ describe('connection', () => {
         }
         expect(params.request).to.eql(request)
         expect(params.location).to.eql(state.location)
-        expect(params.actionLoopers).to.eql(state.actionLoopers)
+        expect(params.actionLooper).to.eql(state.actionLoopers[type.FETCH_CONNECTION_STATUS])
         expect(params.actions).to.exist
       })
     })
@@ -489,7 +491,7 @@ describe('connection', () => {
         if (params == null) {
           throw new Error('Connection params missing')
         }
-        expect(params.actionLoopers).to.eql(state.actionLoopers)
+        expect(params.actionLooper).to.eql(state.actionLoopers[type.FETCH_CONNECTION_STATUS])
         expect(params.actions).to.exist
       })
     })

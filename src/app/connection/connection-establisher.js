@@ -29,8 +29,8 @@ interface ConnectionEstablisher {
     actions: ConnectionActions,
     errorMessage: ErrorMessage,
     location: ?ConsumerLocationDTO,
-    actionLoopers: { [string]: FunctionLooper }): Promise<void>,
-  disconnect (actions: ConnectionActions, errorMessage: ErrorMessage, actionLoopers: { [string]: FunctionLooper }): Promise<void>
+    actionLooper: ?FunctionLooper): Promise<void>,
+  disconnect (actions: ConnectionActions, errorMessage: ErrorMessage, actionLoopers: ?FunctionLooper): Promise<void>
 }
 
 export type { ConnectionEstablisher }

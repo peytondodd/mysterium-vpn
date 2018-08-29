@@ -213,13 +213,15 @@ function actionsFactory (
     async [type.CONNECT] ({ commit, dispatch, state }, connectionRequest: ConnectionRequestDTO) {
       const connectionActions = new VueConnectionActions(commit, dispatch)
       const errorMessage = new VueErrorMessage(commit, dispatch)
+      const actionLooper = state.actionLoopers[type.FETCH_CONNECTION_STATUS]
       await connectionEstablisher
-        .connect(connectionRequest, connectionActions, errorMessage, state.location, state.actionLoopers)
+        .connect(connectionRequest, connectionActions, errorMessage, state.location, actionLooper)
     },
     async [type.DISCONNECT] ({ commit, dispatch, state }) {
       const connectionActions = new VueConnectionActions(commit, dispatch)
       const errorMessage = new VueErrorMessage(commit, dispatch)
-      await connectionEstablisher.disconnect(connectionActions, errorMessage, state.actionLoopers)
+      const actionLooper = state.actionLoopers[type.FETCH_CONNECTION_STATUS]
+      await connectionEstablisher.disconnect(connectionActions, errorMessage, actionLooper)
     }
   }
 }
