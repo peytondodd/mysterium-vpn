@@ -1,8 +1,8 @@
 {
-  "name": "mysterion",
+  "name": "MysteriumVPN",
   "version": "0.3.0",
   "author": "Andrej Novikov <jazzaiman@gmail.com>",
-  "description": "Mysterion is desktop application to access Mysterion Network - decentralized VPN built on blockchain.",
+  "description": "Mysterium VPN is a desktop application for accessing Mysterium Network - decentralized VPN built on blockchain.",
   "license": "GPL-3.0",
   "main": "./dist/electron/main.js",
   "scripts": {
@@ -30,8 +30,8 @@
     "postinstall": "mkdir -p ./bin && cp -r ./node_modules/mysterium-client-bin/bin/* ./bin/"
   },
   "build": {
-    "productName": "Mysterion",
-    "appId": "network.mysterium.Mysterion",
+    "productName": "MysteriumVPN",
+    "appId": "network.mysterium.MysteriumVPN",
     "directories": {
       "output": "build"
     },

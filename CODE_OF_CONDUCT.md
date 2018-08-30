@@ -1,7 +1,7 @@
 Code of Conduct
 ===============
 
-This document describes how we collaborate developing Mysterion.
+This document describes how we collaborate developing Mysterium VPN app.
 
 Main collaboration goals:
 - Fast feature delivery
