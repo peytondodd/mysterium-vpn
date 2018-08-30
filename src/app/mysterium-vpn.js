@@ -29,7 +29,7 @@ import { onFirstEvent, onFirstEventOrTimeout } from './communication/utils'
 import path from 'path'
 import ConnectionStatusEnum from '../libraries/mysterium-tequilapi/dto/connection-status-enum'
 import type { Size } from './window'
-import type { MysterionConfig } from './mysterion-config'
+import type { MysteriumVpnConfig } from './mysterium-vpn-config'
 import Window from './window'
 import Terms from './terms'
 import ProcessMonitoring from '../libraries/mysterium-client/monitoring'
@@ -55,10 +55,10 @@ import StartupEventTracker from './statistics/startup-event-tracker'
 import TequilapiRegistrationFetcher from './data-fetchers/tequilapi-registration-fetcher'
 import IdentityRegistrationDTO from '../libraries/mysterium-tequilapi/dto/identity-registration'
 
-type MysterionParams = {
+type MysteriumVpnParams = {
   browserWindowFactory: () => BrowserWindow,
   windowFactory: () => Window,
-  config: MysterionConfig,
+  config: MysteriumVpnConfig,
   terms: Terms,
   installer: Installer,
   monitoring: ProcessMonitoring,
@@ -78,13 +78,13 @@ type MysterionParams = {
   startupEventTracker: StartupEventTracker
 }
 
-const LOG_PREFIX = '[Mysterion] '
+const LOG_PREFIX = '[MysteriumVpn] '
 const MYSTERIUM_CLIENT_STARTUP_THRESHOLD = 10000
 
-class Mysterion {
+class MysteriumVpn {
   _browserWindowFactory: () => BrowserWindow
   _windowFactory: Function
-  _config: MysterionConfig
+  _config: MysteriumVpnConfig
   _terms: Terms
   _installer: Installer
   _monitoring: ProcessMonitoring
@@ -107,7 +107,7 @@ class Mysterion {
   _messageBus: MessageBus
   _communication: MainMessageBusCommunication
 
-  constructor (params: MysterionParams) {
+  constructor (params: MysteriumVpnParams) {
     this._browserWindowFactory = params.browserWindowFactory
     this._windowFactory = params.windowFactory
     this._config = params.config
@@ -561,4 +561,4 @@ function generateSessionId () {
   return Math.floor(Math.random() * 10 ** 9).toString()
 }
 
-export default Mysterion
+export default MysteriumVpn

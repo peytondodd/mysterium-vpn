@@ -18,17 +18,17 @@
 // @flow
 import { app, BrowserWindow } from 'electron'
 import type { Container } from '../../../app/di'
-import Mysterion from '../../../app/mysterion'
-import type { MysterionConfig } from '../../../app/mysterion-config'
+import MysteriumVpn from '../../../app/mysterium-vpn'
+import type { MysteriumVpnConfig } from '../../../app/mysterium-vpn-config'
 import path from 'path'
 import Window from '../../../app/window'
 import Terms from '../../../app/terms'
-import { getMysterionReleaseId } from '../../../libraries/version'
+import { getMysteriumVpnReleaseId } from '../../../libraries/version'
 
 function bootstrap (container: Container) {
   const version = process.env.MYSTERION_VERSION
   const build = process.env.BUILD_NUMBER
-  const mysterionReleaseID = getMysterionReleaseId(version, build)
+  const mysterionReleaseID = getMysteriumVpnReleaseId(version, build)
   global.__mysterionReleaseID = mysterionReleaseID
 
   container.constant('mysterionReleaseID', mysterionReleaseID)
@@ -90,7 +90,7 @@ function bootstrap (container: Container) {
       'startupEventTracker'
     ],
     (
-      mysterionConfig: MysterionConfig,
+      mysterionConfig: MysteriumVpnConfig,
       mysteriumClientInstaller,
       mysteriumClientProcess,
       mysteriumClientMonitoring,
@@ -108,7 +108,7 @@ function bootstrap (container: Container) {
       featureToggle,
       startupEventTracker
     ) => {
-      return new Mysterion({
+      return new MysteriumVpn({
         config: mysterionConfig,
         browserWindowFactory: () => container.get('mysterionBrowserWindow'),
         windowFactory: () => container.get('mysterionWindow'),

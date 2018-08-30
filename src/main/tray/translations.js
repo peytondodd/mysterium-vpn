@@ -16,7 +16,7 @@
  */
 
 const translations = {
-  name: 'Mysterion',
+  name: 'MysteriumVpn',
   connect: 'Connect',
   disconnect: 'Disconnect',
   showWindow: 'Show window',

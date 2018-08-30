@@ -22,7 +22,7 @@ import { Tail } from 'tail'
 import type { BugReporter } from '../../../app/bug-reporting/interface'
 
 import type { Container } from '../../../app/di'
-import type { MysterionConfig } from '../../../app/mysterion-config'
+import type { MysteriumVpnConfig } from '../../../app/mysterium-vpn-config'
 import type { LogCallback } from '../../../libraries/mysterium-client'
 import type { TailFunction } from '../../../libraries/mysterium-client/client-log-subscriber'
 import type { ClientConfig } from '../../../libraries/mysterium-client/config'
@@ -54,7 +54,7 @@ function bootstrap (container: Container) {
   container.service(
     'mysteriumClient.config',
     ['mysteriumClient.platform', 'mysterionApplication.config'],
-    (platform: string, mysterionConfig: MysterionConfig): ClientConfig => {
+    (platform: string, mysterionConfig: MysteriumVpnConfig): ClientConfig => {
       let clientBin = path.join(mysterionConfig.contentsDirectory, 'bin', 'mysterium_client')
       let openvpnBin = path.join(mysterionConfig.contentsDirectory, 'bin', 'openvpn')
       let systemLogPath = '/var/log/system.log'
@@ -83,7 +83,7 @@ function bootstrap (container: Container) {
   container.service(
     'serviceManager',
     ['mysterionApplication.config', 'mysteriumClient.platform'],
-    (mysterionConfig: MysterionConfig, platform: string) => {
+    (mysterionConfig: MysteriumVpnConfig, platform: string) => {
       switch (platform) {
         case WINDOWS:
           let serviceManagerPath = path.join(mysterionConfig.contentsDirectory, 'bin', SERVICE_MANAGER_BIN)

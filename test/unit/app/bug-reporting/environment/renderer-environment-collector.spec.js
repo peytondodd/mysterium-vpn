@@ -59,9 +59,9 @@ describe('RendererEnvironmentCollector', () => {
     collector = new RendererEnvironmentCollector(releaseID, communication)
   })
 
-  describe('.getMysterionReleaseId', () => {
+  describe('.getMysteriumVpnReleaseId', () => {
     it('returns release id', () => {
-      expect(collector.getMysterionReleaseId()).to.eql(releaseID)
+      expect(collector.getMysteriumVpnReleaseId()).to.eql(releaseID)
     })
   })
 

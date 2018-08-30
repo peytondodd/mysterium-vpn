@@ -34,7 +34,7 @@ class MainEnvironmentCollector implements EnvironmentCollector {
     this._bugReporterMetrics = bugReporterMetrics
   }
 
-  getMysterionReleaseId (): string {
+  getMysteriumVpnReleaseId (): string {
     return this._mysterionReleaseId
   }
 

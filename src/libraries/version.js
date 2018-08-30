@@ -24,7 +24,7 @@ function getVersionLabel (mysterionReleaseId: string, clientVersion: ?string): s
   return `v${mysterionReleaseId}-${clientVersion}`
 }
 
-function getMysterionReleaseId (version: ?string, build: ?string): string {
+function getMysteriumVpnReleaseId (version: ?string, build: ?string): string {
   version = version || ''
   if (build == null) {
     return version
@@ -41,4 +41,4 @@ function minifyBuildNumber (build: string): string {
   return build.substr(0, workerIdStart)
 }
 
-export { getVersionLabel, getMysterionReleaseId }
+export { getVersionLabel, getMysteriumVpnReleaseId }

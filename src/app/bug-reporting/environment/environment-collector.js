@@ -21,7 +21,7 @@ import type { SerializedLogCaches } from '../../logging/log-cache-bundle'
 import type { RavenData } from '../bug-reporter-metrics'
 
 interface EnvironmentCollector {
-  getMysterionReleaseId (): string,
+  getMysteriumVpnReleaseId (): string,
   getSerializedCaches (): SerializedLogCaches,
   getMetrics (): RavenData
 }
