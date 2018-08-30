@@ -32,19 +32,23 @@ import BugReporterMock from '../../../../helpers/bug-reporter-mock'
 import ConnectionRequestDTO from '../../../../../src/libraries/mysterium-tequilapi/dto/connection-request'
 import factoryTequilapiManipulator from '../../../../helpers/mysterium-tequilapi/factory-tequilapi-manipulator'
 import type { ConnectionEstablisher } from '../../../../../src/app/connection/connection-establisher'
-import type { ConnectionActions } from '../../../../../src/app/connection/connection-actions'
 import type { ErrorMessage } from '../../../../../src/app/connection/error-message'
 import ConsumerLocationDTO from '../../../../../src/libraries/mysterium-tequilapi/dto/consumer-location'
+import type { ConnectionState } from '../../../../../src/app/connection/connection-state'
+import type { ConnectionStatsFetcher } from '../../../../../src/app/connection/connection-stats-fetcher'
 
 type ConnectParams = {
   request: ConnectionRequestDTO,
-  actions: ConnectionActions,
+  connectionState: ConnectionState,
+  errorMessage: ErrorMessage,
   location: ?ConsumerLocationDTO,
   actionLooper: ?FunctionLooper
 }
 
 type DisconnectParams = {
-  actions: ConnectionActions,
+  connectionState: ConnectionState,
+  connectionStatsFetcher: ConnectionStatsFetcher,
+  errorMessage: ErrorMessage,
   actionLooper: ?FunctionLooper
 }
 
@@ -54,15 +58,19 @@ class MockConnectionEstablisher implements ConnectionEstablisher {
 
   async connect (
     request: ConnectionRequestDTO,
-    actions: ConnectionActions,
+    connectionState: ConnectionState,
     errorMessage: ErrorMessage,
     location: ?ConsumerLocationDTO,
     actionLooper: ?FunctionLooper): Promise<void> {
-    this.connectParams = { request, actions, location, actionLooper }
+    this.connectParams = { request, connectionState, errorMessage, location, actionLooper }
   }
 
-  async disconnect (actions: ConnectionActions, errorMessage: ErrorMessage, actionLooper: ?FunctionLooper): Promise<void> {
-    this.disconnectParams = { actions, actionLooper }
+  async disconnect (
+    connectionState: ConnectionState,
+    connectionStatsFetcher: ConnectionStatsFetcher,
+    errorMessage: ErrorMessage,
+    actionLooper: ?FunctionLooper): Promise<void> {
+    this.disconnectParams = { connectionState, connectionStatsFetcher, errorMessage, actionLooper }
   }
 }
 
@@ -445,7 +453,7 @@ describe('connection', () => {
         })
 
         const params = mockConnectionEstablisher.connectParams
-        expect(params).to.be.exist
+        expect(params).to.exist
         if (params == null) {
           throw new Error('Connection params missing')
         }
@@ -453,7 +461,7 @@ describe('connection', () => {
         expect(params.request.consumerId).to.eql('current')
         expect(params.location).to.eql(state.location)
         expect(params.actionLooper).to.eql(state.actionLoopers[type.FETCH_CONNECTION_STATUS])
-        expect(params.actions).to.exist
+        expect(params.connectionState).to.exist
       })
     })
 
@@ -467,14 +475,14 @@ describe('connection', () => {
         await executeAction(type.CONNECT, state, request)
 
         const params = mockConnectionEstablisher.connectParams
-        expect(params).to.be.exist
+        expect(params).to.exist
         if (params == null) {
           throw new Error('Connection params missing')
         }
         expect(params.request).to.eql(request)
         expect(params.location).to.eql(state.location)
         expect(params.actionLooper).to.eql(state.actionLoopers[type.FETCH_CONNECTION_STATUS])
-        expect(params.actions).to.exist
+        expect(params.connectionState).to.exist
       })
     })
 
@@ -487,12 +495,13 @@ describe('connection', () => {
         await executeAction(type.DISCONNECT, state)
 
         const params = mockConnectionEstablisher.disconnectParams
-        expect(params).to.be.exist
+        expect(params).to.exist
         if (params == null) {
           throw new Error('Connection params missing')
         }
         expect(params.actionLooper).to.eql(state.actionLoopers[type.FETCH_CONNECTION_STATUS])
-        expect(params.actions).to.exist
+        expect(params.connectionState).to.exist
+        expect(params.connectionStatsFetcher).to.exist
       })
     })
   })

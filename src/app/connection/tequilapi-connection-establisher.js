@@ -27,10 +27,11 @@ import messages from '../messages'
 import logger from '../logger'
 import type { ConnectionEstablisher } from './connection-establisher'
 import ConnectionRequestDTO from '../../libraries/mysterium-tequilapi/dto/connection-request'
-import type { ConnectionActions } from './connection-actions'
 import { FunctionLooper } from '../../libraries/function-looper'
 import type { ErrorMessage } from './error-message'
 import ConsumerLocationDTO from '../../libraries/mysterium-tequilapi/dto/consumer-location'
+import type { ConnectionState } from './connection-state'
+import type { ConnectionStatsFetcher } from './connection-stats-fetcher'
 
 /**
  * Allows connecting and disconnecting to provider using Tequilapi.
@@ -48,7 +49,7 @@ class TequilapiConnectionEstablisher implements ConnectionEstablisher {
 
   async connect (
     request: ConnectionRequestDTO,
-    actions: ConnectionActions,
+    connectionState: ConnectionState,
     errorMessage: ErrorMessage,
     location: ?ConsumerLocationDTO,
     actionLooper: ?FunctionLooper) {
@@ -67,9 +68,9 @@ class TequilapiConnectionEstablisher implements ConnectionEstablisher {
     if (actionLooper) {
       await actionLooper.stop()
     }
-    await actions.setConnectionStatus(ConnectionStatusEnum.CONNECTING)
-    actions.resetStatistics()
-    actions.setLastConnectionProvider(request.providerId)
+    await connectionState.setConnectionStatus(ConnectionStatusEnum.CONNECTING)
+    connectionState.resetStatistics()
+    connectionState.setLastConnectionProvider(request.providerId)
     try {
       await this._tequilapi.connectionCreate(request)
       eventTracker.connectEnded()
@@ -94,13 +95,17 @@ class TequilapiConnectionEstablisher implements ConnectionEstablisher {
     }
   }
 
-  async disconnect (actions: ConnectionActions, errorMessage: ErrorMessage, actionLoopers: ?FunctionLooper) {
+  async disconnect (
+    connectionState: ConnectionState,
+    connectionStatsFetcher: ConnectionStatsFetcher,
+    errorMessage: ErrorMessage,
+    actionLoopers: ?FunctionLooper) {
     if (actionLoopers) {
       await actionLoopers.stop()
     }
 
     try {
-      await actions.setConnectionStatus(ConnectionStatusEnum.DISCONNECTING)
+      await connectionState.setConnectionStatus(ConnectionStatusEnum.DISCONNECTING)
 
       try {
         await this._tequilapi.connectionCancel()
@@ -111,8 +116,8 @@ class TequilapiConnectionEstablisher implements ConnectionEstablisher {
           this._bugReporter.captureInfoException(err)
         }
       }
-      actions.fetchConnectionStatus()
-      actions.fetchConnectionIp()
+      connectionStatsFetcher.fetchConnectionStatus()
+      connectionStatsFetcher.fetchConnectionIp()
     } catch (err) {
       errorMessage.showError(err)
       throw err

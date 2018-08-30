@@ -18,19 +18,24 @@
 // @flow
 
 import ConnectionRequestDTO from '../../libraries/mysterium-tequilapi/dto/connection-request'
-import type { ConnectionActions } from './connection-actions'
 import type { ErrorMessage } from './error-message'
 import ConsumerLocationDTO from '../../libraries/mysterium-tequilapi/dto/consumer-location'
 import { FunctionLooper } from '../../libraries/function-looper'
+import type { ConnectionState } from './connection-state'
+import type { ConnectionStatsFetcher } from './connection-stats-fetcher'
 
 interface ConnectionEstablisher {
   connect (
     request: ConnectionRequestDTO,
-    actions: ConnectionActions,
+    connectionState: ConnectionState,
     errorMessage: ErrorMessage,
     location: ?ConsumerLocationDTO,
     actionLooper: ?FunctionLooper): Promise<void>,
-  disconnect (actions: ConnectionActions, errorMessage: ErrorMessage, actionLoopers: ?FunctionLooper): Promise<void>
+  disconnect (
+    connectionState: ConnectionState,
+    connectionStatsFetcher: ConnectionStatsFetcher,
+    errorMessage: ErrorMessage,
+    actionLoopers: ?FunctionLooper): Promise<void>
 }
 
 export type { ConnectionEstablisher }

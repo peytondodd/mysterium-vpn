@@ -31,8 +31,9 @@ import type { BugReporter } from '../../../app/bug-reporting/interface'
 import logger from '../../../app/logger'
 import TequilapiError from '../../../libraries/mysterium-tequilapi/tequilapi-error'
 import type { ConnectionEstablisher } from '../../../app/connection/connection-establisher'
-import type { ConnectionActions } from '../../../app/connection/connection-actions'
 import type { ErrorMessage } from '../../../app/connection/error-message'
+import { ConnectionStatsFetcher } from '../../../app/connection/connection-stats-fetcher'
+import type { ConnectionState } from '../../../app/connection/connection-state'
 
 type ConnectionStore = {
   ip: ?string,
@@ -211,17 +212,18 @@ function actionsFactory (
       await dispatch(type.CONNECT, new ConnectionRequestDTO(getters.currentIdentity, getters.lastConnectionAttemptProvider))
     },
     async [type.CONNECT] ({ commit, dispatch, state }, connectionRequest: ConnectionRequestDTO) {
-      const connectionActions = new VueConnectionActions(commit, dispatch)
+      const connectionState = new VueConnectionState(commit, dispatch)
       const errorMessage = new VueErrorMessage(commit, dispatch)
       const actionLooper = state.actionLoopers[type.FETCH_CONNECTION_STATUS]
       await connectionEstablisher
-        .connect(connectionRequest, connectionActions, errorMessage, state.location, actionLooper)
+        .connect(connectionRequest, connectionState, errorMessage, state.location, actionLooper)
     },
     async [type.DISCONNECT] ({ commit, dispatch, state }) {
-      const connectionActions = new VueConnectionActions(commit, dispatch)
+      const connectionState = new VueConnectionState(commit, dispatch)
+      const connectionStatsFetcher = new VueConnectionStatsFetcher(commit, dispatch)
       const errorMessage = new VueErrorMessage(commit, dispatch)
       const actionLooper = state.actionLoopers[type.FETCH_CONNECTION_STATUS]
-      await connectionEstablisher.disconnect(connectionActions, errorMessage, actionLooper)
+      await connectionEstablisher.disconnect(connectionState, connectionStatsFetcher, errorMessage, actionLooper)
     }
   }
 }
@@ -268,11 +270,17 @@ class VueErrorMessage extends VueAction implements ErrorMessage {
   }
 }
 
-class VueConnectionActions extends VueAction implements ConnectionActions {
-  resetStatistics () {
-    this._commit(type.CONNECTION_STATISTICS_RESET)
+class VueConnectionStatsFetcher extends VueAction implements ConnectionStatsFetcher {
+  async fetchConnectionStatus () {
+    await this._dispatch(type.FETCH_CONNECTION_STATUS)
   }
 
+  async fetchConnectionIp () {
+    await this._dispatch(type.CONNECTION_IP)
+  }
+}
+
+class VueConnectionState extends VueAction implements ConnectionState {
   setLastConnectionProvider (providerId: string) {
     this._commit(type.SET_LAST_CONNECTION_PROVIDER, providerId)
   }
@@ -281,12 +289,8 @@ class VueConnectionActions extends VueAction implements ConnectionActions {
     await this._dispatch(type.SET_CONNECTION_STATUS, status)
   }
 
-  async fetchConnectionStatus () {
-    await this._dispatch(type.FETCH_CONNECTION_STATUS)
-  }
-
-  async fetchConnectionIp () {
-    await this._dispatch(type.CONNECTION_IP)
+  resetStatistics () {
+    this._commit(type.CONNECTION_STATISTICS_RESET)
   }
 }
 

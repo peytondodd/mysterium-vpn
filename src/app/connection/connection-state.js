@@ -19,12 +19,10 @@
 
 import type { ConnectionStatus } from '../../libraries/mysterium-tequilapi/dto/connection-status-enum'
 
-interface ConnectionActions {
-  resetStatistics (): void,
-  setLastConnectionProvider (providerId: string): void,
+interface ConnectionState {
   setConnectionStatus (status: ConnectionStatus): Promise<void>,
-  fetchConnectionStatus (): Promise<void>,
-  fetchConnectionIp (): Promise<void>
+  setLastConnectionProvider (providerId: string): void,
+  resetStatistics (): void,
 }
 
-export type { ConnectionActions }
+export type { ConnectionState }

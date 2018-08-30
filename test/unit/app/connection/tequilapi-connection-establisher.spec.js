@@ -26,18 +26,15 @@ import ConsumerLocationDTO from '../../../../src/libraries/mysterium-tequilapi/d
 import type { ConnectionStatus } from '../../../../src/libraries/mysterium-tequilapi/dto/connection-status-enum'
 import factoryTequilapiManipulator, { createMockHttpError } from '../../../helpers/mysterium-tequilapi/factory-tequilapi-manipulator'
 import TequilapiConnectionEstablisher from '../../../../src/app/connection/tequilapi-connection-establisher'
-import type { ConnectionActions } from '../../../../src/app/connection/connection-actions'
 import type { ErrorMessage } from '../../../../src/app/connection/error-message'
 import { FunctionLooper } from '../../../../src/libraries/function-looper'
+import type { ConnectionStatsFetcher } from '../../../../src/app/connection/connection-stats-fetcher'
+import type { ConnectionState } from '../../../../src/app/connection/connection-state'
 
-class MockConnectionActions implements ConnectionActions {
+class MockConnectionState implements ConnectionState {
   connectionStatus: ?ConnectionStatus = null
   statisticsReset: boolean = false
   lastConnectionProviderId: ?string = null
-
-  resetStatistics () {
-    this.statisticsReset = true
-  }
 
   setLastConnectionProvider (providerId: string) {
     this.lastConnectionProviderId = providerId
@@ -47,6 +44,12 @@ class MockConnectionActions implements ConnectionActions {
     this.connectionStatus = status
   }
 
+  resetStatistics () {
+    this.statisticsReset = true
+  }
+}
+
+class MockConnectionStatsFetcher implements ConnectionStatsFetcher {
   async fetchConnectionStatus () {
   }
 
@@ -78,7 +81,7 @@ describe('TequilapiConnectionEstablisher', () => {
   let bugReporterMock: BugReporterMock
 
   let connectionEstablisher: TequilapiConnectionEstablisher
-  let mockActions: MockConnectionActions
+  let mockConnectionState: MockConnectionState
   let mockErrorMessage: MockErrorMessage
 
   const location = new ConsumerLocationDTO({ original: {}, current: {} })
@@ -91,7 +94,7 @@ describe('TequilapiConnectionEstablisher', () => {
 
     const fakeApi = fakeTequilapi.getFakeApi()
     connectionEstablisher = new TequilapiConnectionEstablisher(fakeApi, fakeEventSender, bugReporterMock)
-    mockActions = new MockConnectionActions()
+    mockConnectionState = new MockConnectionState()
     mockErrorMessage = new MockErrorMessage()
   })
 
@@ -99,24 +102,24 @@ describe('TequilapiConnectionEstablisher', () => {
     const request = new ConnectionRequestDTO('consumer', 'provider id')
 
     it('marks connecting status', async () => {
-      await connectionEstablisher.connect(request, mockActions, mockErrorMessage, location, actionLooper)
+      await connectionEstablisher.connect(request, mockConnectionState, mockErrorMessage, location, actionLooper)
 
-      expect(mockActions.connectionStatus).to.eql(ConnectionStatusEnum.CONNECTING)
+      expect(mockConnectionState.connectionStatus).to.eql(ConnectionStatusEnum.CONNECTING)
     })
 
     it('resets statistics', async () => {
-      await connectionEstablisher.connect(request, mockActions, mockErrorMessage, location, actionLooper)
-      expect(mockActions.statisticsReset).to.be.true
+      await connectionEstablisher.connect(request, mockConnectionState, mockErrorMessage, location, actionLooper)
+      expect(mockConnectionState.statisticsReset).to.be.true
     })
 
     it('hides error', async () => {
-      await connectionEstablisher.connect(request, mockActions, mockErrorMessage, location, actionLooper)
+      await connectionEstablisher.connect(request, mockConnectionState, mockErrorMessage, location, actionLooper)
       expect(mockErrorMessage.hidden).to.be.true
     })
 
     it('persistes provider id', async () => {
-      await connectionEstablisher.connect(request, mockActions, mockErrorMessage, location, actionLooper)
-      expect(mockActions.lastConnectionProviderId).to.eql('provider id')
+      await connectionEstablisher.connect(request, mockConnectionState, mockErrorMessage, location, actionLooper)
+      expect(mockConnectionState.lastConnectionProviderId).to.eql('provider id')
     })
 
     describe('when connection fails', () => {
@@ -125,12 +128,12 @@ describe('TequilapiConnectionEstablisher', () => {
       })
 
       it('shows error', async () => {
-        await connectionEstablisher.connect(request, mockActions, mockErrorMessage, location, actionLooper)
+        await connectionEstablisher.connect(request, mockConnectionState, mockErrorMessage, location, actionLooper)
         expect(mockErrorMessage.messageShown).to.eql('Connection failed. Try another country')
       })
 
       it('sends error event', async () => {
-        await connectionEstablisher.connect(request, mockActions, mockErrorMessage, location, actionLooper)
+        await connectionEstablisher.connect(request, mockConnectionState, mockErrorMessage, location, actionLooper)
 
         expect(fakeEventSender.events).to.have.lengthOf(1)
         const event = fakeEventSender.events[0]
@@ -139,14 +142,14 @@ describe('TequilapiConnectionEstablisher', () => {
       })
 
       it('captures unknown error', async () => {
-        await connectionEstablisher.connect(request, mockActions, mockErrorMessage, location, actionLooper)
+        await connectionEstablisher.connect(request, mockConnectionState, mockErrorMessage, location, actionLooper)
         expect(bugReporterMock.infoExceptions).to.have.lengthOf(1)
       })
 
       it('does not capture http error', async () => {
         fakeTequilapi.setFakeError(createMockHttpError())
 
-        await connectionEstablisher.connect(request, mockActions, mockErrorMessage, location, actionLooper)
+        await connectionEstablisher.connect(request, mockConnectionState, mockErrorMessage, location, actionLooper)
         expect(bugReporterMock.infoExceptions).to.be.empty
       })
     })
@@ -157,7 +160,7 @@ describe('TequilapiConnectionEstablisher', () => {
       })
 
       it('does not throw error and does not show error', async () => {
-        await connectionEstablisher.connect(request, mockActions, mockErrorMessage, location, actionLooper)
+        await connectionEstablisher.connect(request, mockConnectionState, mockErrorMessage, location, actionLooper)
         expect(mockErrorMessage.messageShown).to.be.null
         expect(mockErrorMessage.errorShown).to.be.null
       })
@@ -165,9 +168,15 @@ describe('TequilapiConnectionEstablisher', () => {
   })
 
   describe('.disconnect', () => {
+    let mockConnectionStatsFetcher: MockConnectionStatsFetcher
+
+    beforeEach(() => {
+      mockConnectionStatsFetcher = new MockConnectionStatsFetcher()
+    })
+
     it('marks disconnecting status', async () => {
-      await connectionEstablisher.disconnect(mockActions, mockErrorMessage, actionLooper)
-      expect(mockActions.connectionStatus).to.eql(ConnectionStatusEnum.DISCONNECTING)
+      await connectionEstablisher.disconnect(mockConnectionState, mockConnectionStatsFetcher, mockErrorMessage, actionLooper)
+      expect(mockConnectionState.connectionStatus).to.eql(ConnectionStatusEnum.DISCONNECTING)
     })
 
     describe('when disconnecting fails', () => {
@@ -176,14 +185,14 @@ describe('TequilapiConnectionEstablisher', () => {
       })
 
       it('captures unknown error', async () => {
-        await connectionEstablisher.disconnect(mockActions, mockErrorMessage, actionLooper)
+        await connectionEstablisher.disconnect(mockConnectionState, mockConnectionStatsFetcher, mockErrorMessage, actionLooper)
 
         expect(bugReporterMock.infoExceptions).to.have.lengthOf(1)
       })
 
       it('does not capture http error', async () => {
         fakeTequilapi.setFakeError(createMockHttpError())
-        await connectionEstablisher.disconnect(mockActions, mockErrorMessage, actionLooper)
+        await connectionEstablisher.disconnect(mockConnectionState, mockConnectionStatsFetcher, mockErrorMessage, actionLooper)
 
         expect(bugReporterMock.infoExceptions).to.be.empty
       })
