@@ -28,7 +28,7 @@ import type { RavenData } from '../../../src/app/bug-reporting/bug-reporter-metr
 import { TAGS } from '../../../src/app/bug-reporting/bug-reporter-metrics'
 
 class MockEnvironmentCollector implements EnvironmentCollector {
-  mockMysteriumVpnReleaseId = 'mock mysterion release id'
+  mockMysteriumVpnReleaseId = 'mock mysterium vpn release id'
   _cache = { info: 'mock info', error: 'mock error' }
   mockSerializedCaches = {
     backend: this._cache,

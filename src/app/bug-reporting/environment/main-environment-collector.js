@@ -25,17 +25,17 @@ import { BugReporterMetrics } from '../bug-reporter-metrics'
 
 class MainEnvironmentCollector implements EnvironmentCollector {
   _logCacheBundle: LogCacheBundle
-  _mysterionReleaseId: string
+  _mysteriumVpnReleaseId: string
   _bugReporterMetrics: BugReporterMetrics
 
-  constructor (logCacheBundle: LogCacheBundle, mysterionReleaseId: string, bugReporterMetrics: BugReporterMetrics) {
+  constructor (logCacheBundle: LogCacheBundle, mysteriumVpnReleaseId: string, bugReporterMetrics: BugReporterMetrics) {
     this._logCacheBundle = logCacheBundle
-    this._mysterionReleaseId = mysterionReleaseId
+    this._mysteriumVpnReleaseId = mysteriumVpnReleaseId
     this._bugReporterMetrics = bugReporterMetrics
   }
 
   getMysteriumVpnReleaseId (): string {
-    return this._mysterionReleaseId
+    return this._mysteriumVpnReleaseId
   }
 
   getSerializedCaches (): SerializedLogCaches {

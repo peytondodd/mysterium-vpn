@@ -28,12 +28,12 @@ import { getMysteriumVpnReleaseId } from '../../../libraries/version'
 function bootstrap (container: Container) {
   const version = process.env.MYSTERION_VERSION
   const build = process.env.BUILD_NUMBER
-  const mysterionReleaseID = getMysteriumVpnReleaseId(version, build)
-  global.__mysterionReleaseID = mysterionReleaseID
+  const mysteriumVpnReleaseID = getMysteriumVpnReleaseId(version, build)
+  global.__mysteriumVpnReleaseID = mysteriumVpnReleaseID
 
-  container.constant('mysterionReleaseID', mysterionReleaseID)
+  container.constant('mysteriumVpnReleaseID', mysteriumVpnReleaseID)
   container.service(
-    'mysterionApplication.config',
+    'mysteriumVpnApplication.config',
     [],
     () => {
       const inDevMode = process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'testing'
@@ -69,9 +69,9 @@ function bootstrap (container: Container) {
   )
 
   container.service(
-    'mysterionApplication',
+    'mysteriumVpnApplication',
     [
-      'mysterionApplication.config',
+      'mysteriumVpnApplication.config',
       'mysteriumClientInstaller',
       'mysteriumClientProcess',
       'mysteriumClientMonitoring',
@@ -90,7 +90,7 @@ function bootstrap (container: Container) {
       'startupEventTracker'
     ],
     (
-      mysterionConfig: MysteriumVpnConfig,
+      mysteriumVpnConfig: MysteriumVpnConfig,
       mysteriumClientInstaller,
       mysteriumClientProcess,
       mysteriumClientMonitoring,
@@ -109,10 +109,10 @@ function bootstrap (container: Container) {
       startupEventTracker
     ) => {
       return new MysteriumVpn({
-        config: mysterionConfig,
-        browserWindowFactory: () => container.get('mysterionBrowserWindow'),
-        windowFactory: () => container.get('mysterionWindow'),
-        terms: new Terms(path.join(mysterionConfig.staticDirectory, 'terms'), mysterionConfig.userDataDirectory),
+        config: mysteriumVpnConfig,
+        browserWindowFactory: () => container.get('mysteriumVpnBrowserWindow'),
+        windowFactory: () => container.get('mysteriumVpnWindow'),
+        terms: new Terms(path.join(mysteriumVpnConfig.staticDirectory, 'terms'), mysteriumVpnConfig.userDataDirectory),
         installer: mysteriumClientInstaller,
         process: mysteriumClientProcess,
         monitoring: mysteriumClientMonitoring,
@@ -134,7 +134,7 @@ function bootstrap (container: Container) {
   )
 
   container.factory(
-    'mysterionBrowserWindow',
+    'mysteriumVpnBrowserWindow',
     [],
     () => {
       return new BrowserWindow({
@@ -144,8 +144,8 @@ function bootstrap (container: Container) {
     })
 
   container.service(
-    'mysterionWindow',
-    ['mysterionBrowserWindow', 'feedbackForm.headerRule'],
+    'mysteriumVpnWindow',
+    ['mysteriumVpnBrowserWindow', 'feedbackForm.headerRule'],
     (browserWindow, rule) => {
       const url = process.env.NODE_ENV === 'development' ? `http://localhost:9080/` : `file://${__dirname}/index.html`
 

@@ -30,11 +30,11 @@ import StartupEventTracker from '../app/statistics/startup-event-tracker'
 function bootstrap (container: Container) {
   container.service(
     'statsEventFactory',
-    ['mysterionReleaseID'],
-    (mysterionReleaseId: string): EventFactory => {
+    ['mysteriumVpnReleaseID'],
+    (mysteriumVpnReleaseId: string): EventFactory => {
       const applicationInfo: ApplicationInfo = {
-        name: 'mysterion_application',
-        version: mysterionReleaseId
+        name: 'mysterium_vpn_application',
+        version: mysteriumVpnReleaseId
       }
       return createEventFactory(applicationInfo)
     }

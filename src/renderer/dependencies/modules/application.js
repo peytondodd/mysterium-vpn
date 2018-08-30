@@ -26,8 +26,8 @@ import realSleep from '../../../libraries/sleep'
 import IpcMessageBus from '../../../app/communication/ipc-message-bus'
 
 function bootstrap (container: Container) {
-  const mysterionReleaseID = remote.getGlobal('__mysterionReleaseID')
-  container.constant('mysterionReleaseID', mysterionReleaseID)
+  const mysteriumVpnReleaseID = remote.getGlobal('__mysteriumVpnReleaseID')
+  container.constant('mysteriumVpnReleaseID', mysteriumVpnReleaseID)
 
   container.service(
     'rendererCommunication',

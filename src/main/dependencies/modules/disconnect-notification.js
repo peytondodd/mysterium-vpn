@@ -25,7 +25,7 @@ import type { MysteriumVpnConfig } from '../../../app/mysterium-vpn-config'
 function bootstrap (container: Container) {
   container.factory(
     'disconnectNotification',
-    ['mysterionApplication.config'],
+    ['mysteriumVpnApplication.config'],
     (config: MysteriumVpnConfig) => {
       const iconPath = join(config.staticDirectory, 'icons', 'notification.png')
       return new Notification('Disconnected', 'from VPN server', iconPath)
