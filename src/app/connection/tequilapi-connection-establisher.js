@@ -54,10 +54,7 @@ class TequilapiConnectionEstablisher implements ConnectionEstablisher {
     location: ?ConsumerLocationDTO,
     actionLooper: ?FunctionLooper) {
     const eventTracker = new ConnectEventTracker(this._eventSender, currentUserTime)
-    let originalCountry = ''
-    if (location != null && location.originalCountry != null) {
-      originalCountry = location.originalCountry
-    }
+    const originalCountry = this._getOriginalCountry(location) || ''
     eventTracker.connectStarted(
       {
         consumerId: request.consumerId,
@@ -85,9 +82,7 @@ class TequilapiConnectionEstablisher implements ConnectionEstablisher {
 
       eventTracker.connectEnded('Error: Connection to node failed.')
 
-      if (!(err instanceof TequilapiError)) {
-        this._bugReporter.captureInfoException(err)
-      }
+      this._bugReporter.captureInfoException(err)
     } finally {
       if (actionLooper) {
         actionLooper.start()
@@ -112,9 +107,7 @@ class TequilapiConnectionEstablisher implements ConnectionEstablisher {
       } catch (err) {
         errorMessage.showError(err)
         logger.info('Connection cancelling failed:', err)
-        if (!(err instanceof TequilapiError)) {
-          this._bugReporter.captureInfoException(err)
-        }
+        this._bugReporter.captureInfoException(err)
       }
       connectionStatsFetcher.fetchConnectionStatus()
       connectionStatsFetcher.fetchConnectionIp()
@@ -126,6 +119,13 @@ class TequilapiConnectionEstablisher implements ConnectionEstablisher {
         actionLoopers.start()
       }
     }
+  }
+
+  _getOriginalCountry (location: ?ConsumerLocationDTO): ?string {
+    if (location == null || location.originalCountry == null) {
+      return null
+    }
+    return location.originalCountry
   }
 }
 

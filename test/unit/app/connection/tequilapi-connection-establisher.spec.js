@@ -24,7 +24,7 @@ import MockEventSender from '../../../helpers/statistics/mock-event-sender'
 import BugReporterMock from '../../../helpers/bug-reporter-mock'
 import ConsumerLocationDTO from '../../../../src/libraries/mysterium-tequilapi/dto/consumer-location'
 import type { ConnectionStatus } from '../../../../src/libraries/mysterium-tequilapi/dto/connection-status-enum'
-import factoryTequilapiManipulator, { createMockHttpError } from '../../../helpers/mysterium-tequilapi/factory-tequilapi-manipulator'
+import factoryTequilapiManipulator from '../../../helpers/mysterium-tequilapi/factory-tequilapi-manipulator'
 import TequilapiConnectionEstablisher from '../../../../src/app/connection/tequilapi-connection-establisher'
 import type { ErrorMessage } from '../../../../src/app/connection/error-message'
 import { FunctionLooper } from '../../../../src/libraries/function-looper'
@@ -141,16 +141,9 @@ describe('TequilapiConnectionEstablisher', () => {
         expect(event.context.error).to.eql('Error: Connection to node failed.')
       })
 
-      it('captures unknown error', async () => {
+      it('captures error', async () => {
         await connectionEstablisher.connect(request, mockConnectionState, mockErrorMessage, location, actionLooper)
         expect(bugReporterMock.infoExceptions).to.have.lengthOf(1)
-      })
-
-      it('does not capture http error', async () => {
-        fakeTequilapi.setFakeError(createMockHttpError())
-
-        await connectionEstablisher.connect(request, mockConnectionState, mockErrorMessage, location, actionLooper)
-        expect(bugReporterMock.infoExceptions).to.be.empty
       })
     })
 
@@ -184,17 +177,10 @@ describe('TequilapiConnectionEstablisher', () => {
         fakeTequilapi.setConnectCancelFail()
       })
 
-      it('captures unknown error', async () => {
+      it('captures error', async () => {
         await connectionEstablisher.disconnect(mockConnectionState, mockConnectionStatsFetcher, mockErrorMessage, actionLooper)
 
         expect(bugReporterMock.infoExceptions).to.have.lengthOf(1)
-      })
-
-      it('does not capture http error', async () => {
-        fakeTequilapi.setFakeError(createMockHttpError())
-        await connectionEstablisher.disconnect(mockConnectionState, mockConnectionStatsFetcher, mockErrorMessage, actionLooper)
-
-        expect(bugReporterMock.infoExceptions).to.be.empty
       })
     })
   })
