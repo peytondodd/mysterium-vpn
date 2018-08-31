@@ -40,7 +40,7 @@ class MockEnvironmentCollector implements EnvironmentCollector {
     extra: {}
   }
 
-  getMysteriumVpnReleaseId () {
+  getReleaseId () {
     return this.mockMysteriumVpnReleaseId
   }
 

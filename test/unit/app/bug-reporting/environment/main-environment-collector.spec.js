@@ -41,9 +41,9 @@ describe('MainEnvironmentCollector', () => {
     collector = new MainEnvironmentCollector(logCacheBundle, releaseID, bugReporterMetrics)
   })
 
-  describe('.getMysteriumVpnReleaseId', () => {
+  describe('.getReleaseId', () => {
     it('returns release id', () => {
-      expect(collector.getMysteriumVpnReleaseId()).to.eql(releaseID)
+      expect(collector.getReleaseId()).to.eql(releaseID)
     })
   })
 

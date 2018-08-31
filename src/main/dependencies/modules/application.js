@@ -23,12 +23,12 @@ import type { MysteriumVpnConfig } from '../../../app/mysterium-vpn-config'
 import path from 'path'
 import Window from '../../../app/window'
 import Terms from '../../../app/terms'
-import { getMysteriumVpnReleaseId } from '../../../libraries/version'
+import { getReleaseId } from '../../../libraries/version'
 
 function bootstrap (container: Container) {
   const version = process.env.MYSTERION_VERSION
   const build = process.env.BUILD_NUMBER
-  const mysteriumVpnReleaseID = getMysteriumVpnReleaseId(version, build)
+  const mysteriumVpnReleaseID = getReleaseId(version, build)
   global.__mysteriumVpnReleaseID = mysteriumVpnReleaseID
 
   container.constant('mysteriumVpnReleaseID', mysteriumVpnReleaseID)

@@ -37,7 +37,7 @@ function bootstrap (container: Container) {
     (environmentCollector: EnvironmentCollector): RavenOptions => {
       return {
         captureUnhandledRejections: true,
-        release: environmentCollector.getMysteriumVpnReleaseId(),
+        release: environmentCollector.getReleaseId(),
         tags: {
           environment: process.env.NODE_ENV || '',
           process: extendedProcess.type || '',

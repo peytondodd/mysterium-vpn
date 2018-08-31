@@ -30,7 +30,7 @@ class RendererEnvironmentCollector implements EnvironmentCollector {
     this._syncRendererCommunication = syncRendererCommunication
   }
 
-  getMysteriumVpnReleaseId (): string {
+  getReleaseId (): string {
     return this._mysteriumVpnReleaseId
   }
 
