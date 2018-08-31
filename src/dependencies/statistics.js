@@ -31,10 +31,10 @@ function bootstrap (container: Container) {
   container.service(
     'statsEventFactory',
     ['mysteriumVpnReleaseID'],
-    (mysteriumVpnReleaseId: string): EventFactory => {
+    (releaseId: string): EventFactory => {
       const applicationInfo: ApplicationInfo = {
         name: 'mysterium_vpn_application',
-        version: mysteriumVpnReleaseId
+        version: releaseId
       }
       return createEventFactory(applicationInfo)
     }

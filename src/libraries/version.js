@@ -17,11 +17,11 @@
 
 // @flow
 
-function getVersionLabel (mysteriumVpnReleaseId: string, clientVersion: ?string): string {
+function getVersionLabel (releaseId: string, clientVersion: ?string): string {
   if (!clientVersion) {
-    return `v${mysteriumVpnReleaseId}`
+    return `v${releaseId}`
   }
-  return `v${mysteriumVpnReleaseId}-${clientVersion}`
+  return `v${releaseId}-${clientVersion}`
 }
 
 function getReleaseId (version: ?string, build: ?string): string {
