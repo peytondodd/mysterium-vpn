@@ -131,6 +131,7 @@ class Mysterion {
   }
 
   run () {
+    this._startupEventTracker.sendAppStartEvent()
     this._makeSureOnlySingleInstanceIsRunning()
 
     logger.setLogger(this._logger)
@@ -191,7 +192,7 @@ class Mysterion {
     this._communication = new MainMessageBusCommunication(this._messageBus)
 
     this._communication.onCurrentIdentityChangeOnce((identityChange: CurrentIdentityChangeDTO) => {
-      this._startupEventTracker.sendEvent(identityChange.id)
+      this._startupEventTracker.sendRuntimeEnvironmentDetails(identityChange.id)
     })
 
     this._communication.onCurrentIdentityChange((identityChange: CurrentIdentityChangeDTO) => {
