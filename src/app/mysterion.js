@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 The "MysteriumNetwork/mysterion" Authors.
+ * Copyright (C) 2017 The "MysteriumNetwork/mysterium-vpn" Authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -131,6 +131,7 @@ class Mysterion {
   }
 
   run () {
+    this._startupEventTracker.sendAppStartEvent()
     this._makeSureOnlySingleInstanceIsRunning()
 
     logger.setLogger(this._logger)
@@ -191,7 +192,7 @@ class Mysterion {
     this._communication = new MainMessageBusCommunication(this._messageBus)
 
     this._communication.onCurrentIdentityChangeOnce((identityChange: CurrentIdentityChangeDTO) => {
-      this._startupEventTracker.sendEvent(identityChange.id)
+      this._startupEventTracker.sendRuntimeEnvironmentDetails(identityChange.id)
     })
 
     this._communication.onCurrentIdentityChange((identityChange: CurrentIdentityChangeDTO) => {

@@ -1,5 +1,5 @@
 <!--
-  - Copyright (C) 2017 The "MysteriumNetwork/mysterion" Authors.
+  - Copyright (C) 2017 The "MysteriumNetwork/mysterium-vpn" Authors.
   -
   - This program is free software: you can redistribute it and/or modify
   - it under the terms of the GNU General Public License as published by
@@ -85,7 +85,7 @@ export default {
     StatsDisplay,
     AppError
   },
-  dependencies: ['bugReporter', 'rendererCommunication'],
+  dependencies: ['bugReporter', 'rendererCommunication', 'startupEventTracker'],
   data () {
     return {
       country: null,
@@ -135,6 +135,7 @@ export default {
     }
   },
   async mounted () {
+    this.startupEventTracker.sendAppStartSuccessEvent()
     this.rendererCommunication.onCountriesUpdate(this.onCountriesUpdate)
     this.$store.dispatch(type.START_ACTION_LOOPING, new ActionLooperConfig(type.CONNECTION_IP, config.ipUpdateThreshold))
     this.$store.dispatch(type.START_ACTION_LOOPING, new ActionLooperConfig(type.FETCH_CONNECTION_STATUS, config.statusUpdateThreshold))

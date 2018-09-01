@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 The "MysteriumNetwork/mysterion" Authors.
+ * Copyright (C) 2017 The "MysteriumNetwork/mysterium-vpn" Authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,7 +23,6 @@ import type { MysterionConfig } from '../../../app/mysterion-config'
 import path from 'path'
 import Window from '../../../app/window'
 import Terms from '../../../app/terms'
-import StartupEventTracker from '../../../app/statistics/startup-event-tracker'
 import { getMysterionReleaseId } from '../../../libraries/version'
 
 function bootstrap (container: Container) {
@@ -88,7 +87,7 @@ function bootstrap (container: Container) {
       'userSettingsStore',
       'disconnectNotification',
       'featureToggle',
-      'eventSender'
+      'startupEventTracker'
     ],
     (
       mysterionConfig: MysterionConfig,
@@ -107,9 +106,8 @@ function bootstrap (container: Container) {
       userSettingsStore,
       disconnectNotification,
       featureToggle,
-      eventSender
+      startupEventTracker
     ) => {
-      const startupEventTracker = new StartupEventTracker(eventSender)
       return new Mysterion({
         config: mysterionConfig,
         browserWindowFactory: () => container.get('mysterionBrowserWindow'),

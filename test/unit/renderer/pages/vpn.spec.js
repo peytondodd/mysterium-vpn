@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 The "MysteriumNetwork/mysterion" Authors.
+ * Copyright (C) 2018 The "MysteriumNetwork/mysterium-vpn" Authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +27,8 @@ import type from '@/store/types'
 import FakeMessageBus from '../../../helpers/fake-message-bus'
 import BugReporterMock from '../../../helpers/bug-reporter-mock'
 import Vue from 'vue'
+import StartupEventTracker from '../../../../src/app/statistics/startup-event-tracker'
+import MockEventSender from '../../../helpers/statistics/mock-event-sender'
 Vue.use(Vuex)
 
 describe('Vpn', () => {
@@ -38,8 +40,10 @@ describe('Vpn', () => {
     const vue = createLocalVue()
     fakeMessageBus = new FakeMessageBus()
     const dependencies = new DIContainer(vue)
+    const startupEventTracker = new StartupEventTracker(new MockEventSender())
     dependencies.constant('rendererCommunication', new RendererCommunication(fakeMessageBus))
     dependencies.constant('bugReporter', bugReporterMock)
+    dependencies.constant('startupEventTracker', startupEventTracker)
 
     return mount(Vpn, {
       localVue: vue,
