@@ -24,6 +24,9 @@ import path from 'path'
 import Window from '../../../app/window'
 import Terms from '../../../app/terms'
 import { getReleaseId } from '../../../libraries/version'
+import MainBufferedIpc from '../../../app/communication/ipc/main-buffered-ipc'
+import IpcMessageBus from '../../../app/communication/ipc-message-bus'
+import MainMessageBusCommunication from '../../../app/communication/main-message-bus-communication'
 
 function bootstrap (container: Container) {
   const version = process.env.MYSTERION_VERSION
@@ -87,7 +90,9 @@ function bootstrap (container: Container) {
       'userSettingsStore',
       'disconnectNotification',
       'featureToggle',
-      'startupEventTracker'
+      'startupEventTracker',
+      'mainIpc',
+      'mainCommunication'
     ],
     (
       mysteriumVpnConfig: MysteriumVpnConfig,
@@ -106,7 +111,9 @@ function bootstrap (container: Container) {
       userSettingsStore,
       disconnectNotification,
       featureToggle,
-      startupEventTracker
+      startupEventTracker,
+      mainIpc,
+      mainCommunication
     ) => {
       return new MysteriumVpn({
         config: mysteriumVpnConfig,
@@ -128,7 +135,9 @@ function bootstrap (container: Container) {
         userSettingsStore,
         disconnectNotification,
         featureToggle,
-        startupEventTracker
+        startupEventTracker,
+        mainIpc,
+        mainCommunication
       })
     }
   )
@@ -152,6 +161,23 @@ function bootstrap (container: Container) {
       const window = new Window(browserWindow, url)
       window.registerRequestHeadersRule(rule)
       return window
+    }
+  )
+
+  container.factory(
+    'mainIpc',
+    ['bugReporter'],
+    (bugReporter) => {
+      return new MainBufferedIpc(bugReporter.captureException)
+    }
+  )
+
+  container.factory(
+    'mainCommunication',
+    ['mainIpc'],
+    (ipc) => {
+      const messageBus = new IpcMessageBus(ipc)
+      return new MainMessageBusCommunication(messageBus)
     }
   )
 }

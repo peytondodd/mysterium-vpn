@@ -38,7 +38,6 @@ import CountryList from './data-fetchers/country-list'
 import type { BugReporter } from './bug-reporting/interface'
 import { UserSettingsStore } from './user-settings/user-settings-store'
 import Notification from './notification'
-import type { MessageBus } from './communication/message-bus'
 import IdentityDTO from '../libraries/mysterium-tequilapi/dto/identity'
 import type { CurrentIdentityChangeDTO } from './communication/dto'
 import type { EnvironmentCollector } from './bug-reporting/environment/environment-collector'
@@ -49,11 +48,10 @@ import SyncReceiverMainCommunication from './communication/sync/sync-main-commun
 import { SyncIpcReceiver } from './communication/sync/sync-ipc'
 import type { StringLogger } from './logging/string-logger'
 import logger from './logger'
-import MainIpc from './communication/ipc/main-ipc'
-import IpcMessageBus from './communication/ipc-message-bus'
 import StartupEventTracker from './statistics/startup-event-tracker'
 import TequilapiRegistrationFetcher from './data-fetchers/tequilapi-registration-fetcher'
 import IdentityRegistrationDTO from '../libraries/mysterium-tequilapi/dto/identity-registration'
+import MainBufferedIpc from './communication/ipc/main-buffered-ipc'
 
 type MysteriumVpnParams = {
   browserWindowFactory: () => BrowserWindow,
@@ -75,7 +73,9 @@ type MysteriumVpnParams = {
   userSettingsStore: UserSettingsStore,
   disconnectNotification: Notification,
   featureToggle: FeatureToggle,
-  startupEventTracker: StartupEventTracker
+  startupEventTracker: StartupEventTracker,
+  mainIpc: MainBufferedIpc,
+  mainCommunication: MainMessageBusCommunication
 }
 
 const LOG_PREFIX = '[MysteriumVpn] '
@@ -104,8 +104,8 @@ class MysteriumVpn {
   _featureToggle: FeatureToggle
 
   _window: Window
-  _messageBus: MessageBus
   _communication: MainMessageBusCommunication
+  _ipc: MainBufferedIpc
 
   constructor (params: MysteriumVpnParams) {
     this._browserWindowFactory = params.browserWindowFactory
@@ -128,6 +128,9 @@ class MysteriumVpn {
     this._disconnectNotification = params.disconnectNotification
     this._startupEventTracker = params.startupEventTracker
     this._featureToggle = params.featureToggle
+
+    this._ipc = params.mainIpc
+    this._communication = params.mainCommunication
   }
 
   run () {
@@ -187,9 +190,7 @@ class MysteriumVpn {
     const windowSize = this._getWindowSize(showTerms)
     this._window = this._createWindow(windowSize)
     const send = this._getSendFunction(browserWindow)
-    const ipc = new MainIpc(send, this._bugReporter.captureErrorException)
-    this._messageBus = new IpcMessageBus(ipc)
-    this._communication = new MainMessageBusCommunication(this._messageBus)
+    this._ipc.setSenderAndSendBuffered(send)
 
     this._communication.onCurrentIdentityChangeOnce((identityChange: CurrentIdentityChangeDTO) => {
       this._startupEventTracker.sendRuntimeEnvironmentDetails(identityChange.id)
