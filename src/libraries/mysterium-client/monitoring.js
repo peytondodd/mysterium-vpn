@@ -16,10 +16,13 @@
  */
 
 // @flow
+import { promisify } from 'util'
 import type { TequilapiClient } from '../mysterium-tequilapi/client'
+import sleep from '../sleep'
 
 const healthCheckInterval = 1500
 const healthCheckTimeout = 500
+const healthCheckWaitTimeout = 6000
 
 type StatusCallback = (boolean) => void
 type UpCallback = () => void
@@ -81,6 +84,10 @@ class Monitoring {
   }
 
   async _healthCheckLoop (): Promise<void> {
+    if (!this.isStarted) {
+      return
+    }
+
     let isRunning
     try {
       await this.api.healthCheck(healthCheckTimeout)
@@ -95,7 +102,9 @@ class Monitoring {
       e.message = 'Bad subscriber added to Monitoring: ' + e.message
       throw e
     } finally {
-      this._timer = setTimeout(() => this._healthCheckLoop(), healthCheckInterval)
+      if (this._isStarted) {
+        this._timer = setTimeout(() => this._healthCheckLoop(), healthCheckInterval)
+      }
     }
   }
 
@@ -132,5 +141,26 @@ class Monitoring {
   }
 }
 
+function waitForStatusUp (tequilapi: TequilapiClient, timeout: number = healthCheckWaitTimeout): Promise<void> {
+  const monitoring = new Monitoring(tequilapi)
+  const statusUpAsync = promisify(monitoring.onStatusUp.bind(monitoring))
+  monitoring.start()
+
+  return Promise.race([
+    throwErrorAfterTimeout(timeout),
+    statusUpAsync()
+  ]).catch(e => {
+    throw e
+  }).finally(() => {
+    monitoring.stop()
+  })
+}
+
+async function throwErrorAfterTimeout (timeout: number) {
+  await sleep(timeout)
+  throw new Error(`Timeout of ${timeout}ms passed`)
+}
+
+export { waitForStatusUp }
 export default Monitoring
 export type { StatusCallback, UpCallback, DownCallback }
