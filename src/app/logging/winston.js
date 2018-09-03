@@ -57,7 +57,7 @@ function createWinstonSyncComLogger (communication: SyncRendererCommunication) {
   return winstonLogger
 }
 
-function mapWinstonLogLevelToMysteriumVpnLevel (level: WinstonLevel): LogLevel {
+function mapWinstonLogLevelToApplicationLevel (level: WinstonLevel): LogLevel {
   return level === 'error' ? 'error' : 'info'
 }
 
@@ -65,5 +65,5 @@ export type { WinstonLogEntry }
 export {
   createWinstonCachingLogger,
   createWinstonSyncComLogger,
-  mapWinstonLogLevelToMysteriumVpnLevel
+  mapWinstonLogLevelToApplicationLevel
 }

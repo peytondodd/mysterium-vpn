@@ -20,7 +20,7 @@
 import Transport from 'winston-transport'
 import type { SyncRendererCommunication } from '../communication/sync/sync-communication'
 import type { WinstonLogEntry } from './winston'
-import { mapWinstonLogLevelToMysteriumVpnLevel } from './winston'
+import { mapWinstonLogLevelToApplicationLevel } from './winston'
 
 class WinstonTransportSyncCom extends Transport {
   _communication: SyncRendererCommunication
@@ -33,7 +33,7 @@ class WinstonTransportSyncCom extends Transport {
   log (logEntry: WinstonLogEntry, callback: () => any) {
     const timestamp = logEntry.timestamp || ''
     const message = timestamp + logEntry.message
-    const logDto = { level: mapWinstonLogLevelToMysteriumVpnLevel(logEntry.level), data: message }
+    const logDto = { level: mapWinstonLogLevelToApplicationLevel(logEntry.level), data: message }
     this._communication.sendLog(logDto)
     callback()
   }
