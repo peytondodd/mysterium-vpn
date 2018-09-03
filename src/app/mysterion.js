@@ -411,9 +411,12 @@ class Mysterion {
     }
 
     logInfo("Starting 'mysterium_client' process")
-    await this._process.start()
-      .then(() => { logInfo('mysterium_client start successful') })
-      .catch((e) => { logException('mysterium_client start failed', e) })
+    try {
+      await this._process.start()
+      logInfo('mysterium_client start successful')
+    } catch (e) {
+      logException('mysterium_client start failed', e)
+    }
 
     try {
       this._process.setupLogging()

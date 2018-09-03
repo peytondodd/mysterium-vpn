@@ -22,8 +22,8 @@ import lolex from 'lolex'
 import EmptyTequilapiClientMock from '../../renderer/store/modules/empty-tequilapi-client-mock'
 import NodeBuildInfoDTO from '../../../../src/libraries/mysterium-tequilapi/dto/node-build-info'
 import type { NodeHealthcheckDTO } from '../../../../src/libraries/mysterium-tequilapi/dto/node-healthcheck'
-import Monitoring from '../../../../src/libraries/mysterium-client/monitoring'
-import { nextTick } from '../../../helpers/utils'
+import Monitoring, { waitForStatusUp } from '../../../../src/libraries/mysterium-client/monitoring'
+import { captureAsyncError, nextTick } from '../../../helpers/utils'
 
 class TequilapiMock extends EmptyTequilapiClientMock {
   cancelIsCalled: boolean = false
@@ -57,6 +57,7 @@ describe('Monitoring', () => {
   let clock: lolex
 
   async function tickWithDelay (duration) {
+    await nextTick()
     clock.tick(duration)
     await nextTick()
   }
@@ -92,6 +93,16 @@ describe('Monitoring', () => {
 
       await tickWithDelay(1500)
       expect(tequilapiClient.healthCheckCallCount).to.be.eql(3)
+    })
+  })
+
+  describe('.stop', () => {
+    it('stops healthcheck fetching', async () => {
+      monitoring.start()
+      monitoring.stop()
+      expect(tequilapiClient.healthCheckCallCount).to.eql(1)
+      await tickWithDelay(10000)
+      expect(tequilapiClient.healthCheckCallCount).to.eql(1)
     })
   })
 
@@ -143,5 +154,64 @@ describe('Monitoring', () => {
       await tickWithDelay(4000)
       expect(called).to.be.false
     })
+  })
+
+  describe('.waitForStatusUp', () => {
+    it('finishes after healthcheck passes', async () => {
+      await waitForStatusUp(tequilapiClient)
+      expect(tequilapiClient.healthCheckCallCount).to.be.eql(1)
+      await tickWithDelay(99999)
+      expect(tequilapiClient.healthCheckCallCount).to.be.eql(1)
+    })
+
+    it('fails after timeout', async () => {
+      tequilapiClient.healthCheckThrowsError = true
+      let errorCaught = null
+      waitForStatusUp(tequilapiClient, 1000).catch((error) => {
+        errorCaught = error
+      })
+      expect(errorCaught).to.be.null
+      await tickWithDelay(999)
+      expect(errorCaught).to.be.null
+      await tickWithDelay(1)
+      expect(errorCaught).to.be.an('error')
+
+      if (errorCaught == null) {
+        throw new Error('Error was not expected')
+      }
+      expect(errorCaught.message).to.be.eql('Timeout of 1000ms passed')
+    })
+
+    it('stops calling healthcheck after timeout', async () => {
+      tequilapiClient.healthCheckThrowsError = true
+      waitForStatusUp(tequilapiClient, 1000)
+      await nextTick()
+      expect(tequilapiClient.healthCheckCallCount).to.eql(1)
+      await tickWithDelay(1000)
+      expect(tequilapiClient.healthCheckCallCount).to.eql(1)
+      await tickWithDelay(10000)
+      expect(tequilapiClient.healthCheckCallCount).to.eql(1)
+    })
+
+    it('calls healthcheck multiple times', async () => {
+      tequilapiClient.healthCheckThrowsError = true
+      const waitPromise = waitForStatusUp(tequilapiClient, 15000)
+      await nextTick()
+      for (let i = 0; i < 10; i++) {
+        expect(tequilapiClient.healthCheckCallCount).to.be.eql(i + 1)
+        await tickWithDelay(1500)
+      }
+      await captureAsyncError(() => waitPromise)
+      expect(tequilapiClient.healthCheckCallCount).to.be.eql(11)
+    })
+    // it('stops calling healthcheck after first success', async () => {
+    //   tequilapiClient.healthCheckThrowsError = true
+    //   let
+    //   const waitPromise = waitForStatusUp(tequilapiClient, 15000).then(() => {
+    //
+    //   })
+    //   await tickWithDelay(15000)
+    //
+    // })
   })
 })
