@@ -17,7 +17,7 @@
 
 // @flow
 import DIContainer from '../../app/di/jpex-container'
-import mysterionBootstrap from './modules/application'
+import mysteriumVpnBootstrap from './modules/application'
 import bugReportingConfigBootstrap from '../../dependencies/bug-reporting'
 import featureToggleBootstrap from '../../dependencies/feature-toggle'
 import bugReportingBootstrap from './modules/bug-reporting'
@@ -37,7 +37,7 @@ function bootstrap (): DIContainer {
   const container = new DIContainer()
 
   featureToggleBootstrap(container)
-  mysterionBootstrap(container)
+  mysteriumVpnBootstrap(container)
   bugReportingConfigBootstrap(container)
   bugReportingBootstrap(container)
   eventsBootstrap(container)

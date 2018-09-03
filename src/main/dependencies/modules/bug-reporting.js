@@ -69,15 +69,15 @@ function bootstrap (container: Container) {
 
   container.service(
     'environmentCollector',
-    ['backendLogCache', 'frontendLogCache', 'mysteriumProcessLogCache', 'mysterionReleaseID', 'bugReporterMetrics'],
+    ['backendLogCache', 'frontendLogCache', 'mysteriumProcessLogCache', 'mysteriumVpnReleaseID', 'bugReporterMetrics'],
     (
       backendLogCache: LogCache,
       frontendLogCache: LogCache,
       mysteriumProcessLogCache: LogCache,
-      mysterionReleaseID: string,
+      mysteriumVpnReleaseID: string,
       bugReporterMetrics: BugReporterMetrics): EnvironmentCollector => {
       const bundle = new LogCacheBundle(backendLogCache, frontendLogCache, mysteriumProcessLogCache)
-      return new MainEnvironmentCollector(bundle, mysterionReleaseID, bugReporterMetrics)
+      return new MainEnvironmentCollector(bundle, mysteriumVpnReleaseID, bugReporterMetrics)
     }
   )
 

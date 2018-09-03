@@ -22,12 +22,12 @@ type WindowSizeConfig = {
   height: number
 }
 
-type MysterionWindowsConfig = {
+type MysteriumVpnWindowsConfig = {
   terms: WindowSizeConfig,
   app: WindowSizeConfig
 }
 
-type MysterionConfig = {
+type MysteriumVpnConfig = {
   // Application root directory
   contentsDirectory: string,
   // User data directory. This should store logs, terms and conditions file, etc.
@@ -37,7 +37,7 @@ type MysterionConfig = {
   // Static file directory
   staticDirectory: string,
   // Window configuration
-  windows: MysterionWindowsConfig
+  windows: MysteriumVpnWindowsConfig
 }
 
-export type { MysterionConfig, MysterionWindowsConfig, WindowSizeConfig }
+export type { MysteriumVpnConfig, MysteriumVpnWindowsConfig, WindowSizeConfig }

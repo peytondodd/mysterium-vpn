@@ -17,4 +17,4 @@
 
 import dependencies from './dependencies'
 
-dependencies.get('mysterionApplication').run()
+dependencies.get('mysteriumVpnApplication').run()

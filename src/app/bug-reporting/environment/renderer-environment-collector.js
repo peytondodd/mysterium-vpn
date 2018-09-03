@@ -22,16 +22,16 @@ import type { SyncRendererCommunication } from '../../communication/sync/sync-co
 import type { SerializedLogCaches } from '../../logging/log-cache-bundle'
 
 class RendererEnvironmentCollector implements EnvironmentCollector {
-  _mysterionReleaseId: string
+  _releaseId: string
   _syncRendererCommunication: SyncRendererCommunication
 
-  constructor (mysterionReleaseId: string, syncRendererCommunication: SyncRendererCommunication) {
-    this._mysterionReleaseId = mysterionReleaseId
+  constructor (releaseId: string, syncRendererCommunication: SyncRendererCommunication) {
+    this._releaseId = releaseId
     this._syncRendererCommunication = syncRendererCommunication
   }
 
-  getMysterionReleaseId (): string {
-    return this._mysterionReleaseId
+  getReleaseId (): string {
+    return this._releaseId
   }
 
   getSerializedCaches (): SerializedLogCaches {

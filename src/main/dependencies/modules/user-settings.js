@@ -25,9 +25,9 @@ const userSettingsFilename = 'userSettings.json'
 function bootstrap (container: Container) {
   container.factory(
     'userSettingsStore',
-    ['mysterionApplication.config'],
-    (mysterionConfig) => {
-      return new UserSettingsStore(join(mysterionConfig.userDataDirectory, userSettingsFilename))
+    ['mysteriumVpnApplication.config'],
+    (mysteriumVpnConfig) => {
+      return new UserSettingsStore(join(mysteriumVpnConfig.userDataDirectory, userSettingsFilename))
     }
   )
 }

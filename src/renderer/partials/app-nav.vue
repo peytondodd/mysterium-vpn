@@ -83,7 +83,7 @@ import { getVersionLabel } from '../../libraries/version'
 
 export default {
   name: 'AppNav',
-  dependencies: ['mysterionReleaseID', 'feedbackForm'],
+  dependencies: ['mysteriumVpnReleaseID', 'feedbackForm'],
   components: {
     IconEye,
     IconIssue,
@@ -94,7 +94,7 @@ export default {
     // mix the getters into computed with object spread operator
     ...mapGetters(['navOpen', 'clientVersion']),
     version () {
-      return getVersionLabel(this.mysterionReleaseID, this.clientVersion)
+      return getVersionLabel(this.mysteriumVpnReleaseID, this.clientVersion)
     }
   },
   methods: {

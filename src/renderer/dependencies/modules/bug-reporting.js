@@ -73,11 +73,11 @@ function bootstrap (container: Container) {
 
   container.service(
     'environmentCollector',
-    ['mysterionReleaseID', 'syncCommunication'],
+    ['mysteriumVpnReleaseID', 'syncCommunication'],
     (
-      mysterionReleaseID: string,
+      mysteriumVpnReleaseID: string,
       syncCommunication: SyncRendererCommunication): EnvironmentCollector => {
-      return new RendererEnvironmentCollector(mysterionReleaseID, syncCommunication)
+      return new RendererEnvironmentCollector(mysteriumVpnReleaseID, syncCommunication)
     }
   )
 
