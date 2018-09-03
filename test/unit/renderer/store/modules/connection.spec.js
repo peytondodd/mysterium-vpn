@@ -36,6 +36,7 @@ import ConsumerLocationDTO from '../../../../../src/libraries/mysterium-tequilap
 import type { ConnectionState } from '../../../../../src/app/connection/connection-state'
 import type { ConnectionStatsFetcher } from '../../../../../src/app/connection/connection-stats-fetcher'
 import type { Provider } from '../../../../../src/app/connection/provider'
+import { captureAsyncError } from '../../../../helpers/utils'
 
 type ConnectParams = {
   consumerId: string,
@@ -78,6 +79,20 @@ class MockConnectionEstablisher implements ConnectionEstablisher {
 
 describe('connection', () => {
   describe('mutations', () => {
+    describe('SET_LAST_CONNECTION_PROVIDER', () => {
+      const setLastConnectionProvider = mutations[type.SET_LAST_CONNECTION_PROVIDER]
+
+      it('updates provider', () => {
+        const state = {}
+        const provider: Provider = {
+          id: 'id',
+          country: 'country'
+        }
+        setLastConnectionProvider(state, provider)
+        expect(state).to.eql({ lastConnectionProvider: provider })
+      })
+    })
+
     describe('SET_CONNECTION_STATUS', () => {
       const connectionStatus = mutations[type.SET_CONNECTION_STATUS]
 
@@ -449,22 +464,46 @@ describe('connection', () => {
           },
           location: { originalCountry: '' }
         }
-        await executeAction(type.RECONNECT, state, null, {
+        const getters = {
           currentIdentity: 'current',
-          lastConnectionAttemptProvider: 'lastConnectionProvider'
-        })
+          lastConnectionAttemptProvider: {
+            id: 'lastConnectionProvider',
+            country: 'us'
+          }
+        }
+        await executeAction(type.RECONNECT, state, null, getters)
 
         const params = mockConnectionEstablisher.connectParams
         expect(params).to.exist
         if (params == null) {
           throw new Error('Connection params missing')
         }
-        // TODO: country
         expect(params.provider.id).to.eql('lastConnectionProvider')
+        expect(params.provider.country).to.eql('us')
         expect(params.consumerId).to.eql('current')
         expect(params.location).to.eql(state.location)
         expect(params.actionLooper).to.eql(state.actionLoopers[type.FETCH_CONNECTION_STATUS])
         expect(params.connectionState).to.exist
+      })
+
+      it('fails when last connection provider is not present', async () => {
+        const state = {
+          actionLoopers: {
+            [type.FETCH_CONNECTION_STATUS]: new FunctionLooper(async () => {}, 1000)
+          },
+          location: { originalCountry: '' }
+        }
+        const getters = {
+          currentIdentity: 'current',
+          lastConnectionAttemptProvider: null
+        }
+
+        const error = await captureAsyncError(() => executeAction(type.RECONNECT, state, null, getters))
+        expect(error).to.be.an('error')
+        if (!(error instanceof Error)) {
+          throw new Error('error is not Error instance')
+        }
+        expect(error.message).to.eql('Last provider not set')
       })
     })
 

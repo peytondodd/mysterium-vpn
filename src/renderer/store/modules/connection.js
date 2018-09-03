@@ -40,7 +40,7 @@ type ConnectionStore = {
   location: ?ConsumerLocationDTO,
   status: ConnectionStatus,
   statistics: Object,
-  lastConnectionProvider: ?string,
+  lastConnectionProvider: ?Provider,
   actionLoopers: { [string]: FunctionLooper }
 }
 
@@ -79,7 +79,7 @@ const state: ConnectionStore = {
 }
 
 const getters = {
-  lastConnectionAttemptProvider (state: ConnectionStore): ?string {
+  lastConnectionAttemptProvider (state: ConnectionStore): ?Provider {
     return state.lastConnectionProvider
   },
   status (state: ConnectionStore): ConnectionStatus {
@@ -115,8 +115,8 @@ const mutations = {
   [type.REMOVE_ACTION_LOOPER] (state: ConnectionStore, action: string) {
     delete state.actionLoopers[action]
   },
-  [type.SET_LAST_CONNECTION_PROVIDER] (state: ConnectionStore, providerId: string) {
-    state.lastConnectionProvider = providerId
+  [type.SET_LAST_CONNECTION_PROVIDER] (state: ConnectionStore, provider: Provider) {
+    state.lastConnectionProvider = provider
   }
 }
 
@@ -211,8 +211,10 @@ function actionsFactory (
       }
     },
     async [type.RECONNECT] ({ dispatch, getters }) {
-      // TODO: country
-      const provider: Provider = { id: getters.lastConnectionAttemptProvider, country: null }
+      const provider: ?Provider = getters.lastConnectionAttemptProvider
+      if (provider == null) {
+        throw new Error('Last provider not set')
+      }
       await dispatch(type.CONNECT, provider)
     },
     async [type.CONNECT] ({ commit, dispatch, state, getters }, provider: Provider) {
