@@ -96,12 +96,12 @@
     }
   },
   "dependencies": {
-    "axios": "^0.16.1",
+    "axios": "^0.18.0",
     "babel-plugin-transform-builtin-extend": "^1.1.2",
     "dbly-linked-list": "^0.2.0",
     "electron-notifications": "^1.0.0",
     "file-size": "^1.0.0",
-    "flow-typed": "^2.4.0",
+    "flow-typed": "^2.5.1",
     "jpex": "^2.1.0",
     "less": "^2.7.3",
     "less-loader": "^4.0.5",
@@ -162,7 +162,7 @@
     "eslint-plugin-vue": "^4.5.0",
     "extract-text-webpack-plugin": "^3.0.0",
     "file-loader": "^0.11.2",
-    "flow-bin": "^0.68.0",
+    "flow-bin": "^0.80.0",
     "html-webpack-plugin": "^2.30.1",
     "karma": "^1.3.0",
     "karma-chai": "^0.1.0",
