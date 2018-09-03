@@ -158,7 +158,7 @@ describe('Monitoring', () => {
 
   describe('.waitForStatusUp', () => {
     it('finishes after healthcheck passes', async () => {
-      await waitForStatusUp(tequilapiClient)
+      await waitForStatusUp(tequilapiClient, 6000)
       expect(tequilapiClient.healthCheckCallCount).to.be.eql(1)
       await tickWithDelay(99999)
       expect(tequilapiClient.healthCheckCallCount).to.be.eql(1)

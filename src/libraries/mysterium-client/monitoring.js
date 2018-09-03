@@ -22,7 +22,6 @@ import sleep from '../sleep'
 
 const HEALTH_CHECK_INTERVAL = 1500
 const healthCheckTimeout = 500
-const healthCheckWaitTimeout = 6000
 
 type StatusCallback = (boolean) => void
 type UpCallback = () => void
@@ -141,7 +140,7 @@ class Monitoring {
   }
 }
 
-function waitForStatusUp (tequilapi: TequilapiClient, timeout: number = healthCheckWaitTimeout): Promise<void> {
+function waitForStatusUp (tequilapi: TequilapiClient, timeout: number): Promise<void> {
   const monitoring = new Monitoring(tequilapi)
   const statusUpAsync = promisify(monitoring.onStatusUp.bind(monitoring))
   monitoring.start()
