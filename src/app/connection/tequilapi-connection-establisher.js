@@ -32,6 +32,8 @@ import type { ErrorMessage } from './error-message'
 import ConsumerLocationDTO from '../../libraries/mysterium-tequilapi/dto/consumer-location'
 import type { ConnectionState } from './connection-state'
 import type { ConnectionStatsFetcher } from './connection-stats-fetcher'
+import type { ConnectDetails } from '../statistics/events-connection'
+import type { Provider } from './provider'
 
 /**
  * Allows connecting and disconnecting to provider using Tequilapi.
@@ -48,21 +50,27 @@ class TequilapiConnectionEstablisher implements ConnectionEstablisher {
   }
 
   async connect (
-    request: ConnectionRequestDTO,
+    consumerId: string,
+    provider: Provider,
     connectionState: ConnectionState,
     errorMessage: ErrorMessage,
     location: ?ConsumerLocationDTO,
     actionLooper: ?FunctionLooper) {
     const eventTracker = new ConnectEventTracker(this._eventSender, currentUserTime)
+    const connectDetails: ConnectDetails = {
+      consumerId,
+      providerId: provider.id
+    }
     const originalCountry = this._getOriginalCountry(location) || ''
-    eventTracker.connectStarted(request, originalCountry, request.providerCountry || '')
+    eventTracker.connectStarted(connectDetails, originalCountry, provider.country || '')
     if (actionLooper) {
       await actionLooper.stop()
     }
     await connectionState.setConnectionStatus(ConnectionStatusEnum.CONNECTING)
     connectionState.resetStatistics()
-    connectionState.setLastConnectionProvider(request.providerId)
+    connectionState.setLastConnectionProvider(provider.id)
     try {
+      const request: ConnectionRequestDTO = new ConnectionRequestDTO(consumerId, provider.id, provider.country)
       await this._tequilapi.connectionCreate(request)
       eventTracker.connectEnded()
       errorMessage.hide()

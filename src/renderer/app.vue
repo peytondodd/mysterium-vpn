@@ -83,11 +83,11 @@ export default {
     })
 
     this.rendererCommunication.onConnectionRequest((proposal) => {
-      this.$store.dispatch(type.CONNECT, {
-        consumerId: this.$store.getters.currentIdentity,
-        providerId: proposal.providerId,
-        providerCountry: proposal.providerCountry
-      })
+      const provider = {
+        id: proposal.providerId,
+        country: proposal.providerCountry
+      }
+      this.$store.dispatch(type.CONNECT, provider)
     })
 
     this.rendererCommunication.onDisconnectionRequest(() => {

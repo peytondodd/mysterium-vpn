@@ -29,16 +29,17 @@ import FakeMessageBus from '../../../../helpers/fake-message-bus'
 import { ActionLooper, ActionLooperConfig } from '../../../../../src/renderer/store/modules/connection'
 import ConnectionStatisticsDTO from '../../../../../src/libraries/mysterium-tequilapi/dto/connection-statistics'
 import BugReporterMock from '../../../../helpers/bug-reporter-mock'
-import ConnectionRequestDTO from '../../../../../src/libraries/mysterium-tequilapi/dto/connection-request'
 import factoryTequilapiManipulator from '../../../../helpers/mysterium-tequilapi/factory-tequilapi-manipulator'
 import type { ConnectionEstablisher } from '../../../../../src/app/connection/connection-establisher'
 import type { ErrorMessage } from '../../../../../src/app/connection/error-message'
 import ConsumerLocationDTO from '../../../../../src/libraries/mysterium-tequilapi/dto/consumer-location'
 import type { ConnectionState } from '../../../../../src/app/connection/connection-state'
 import type { ConnectionStatsFetcher } from '../../../../../src/app/connection/connection-stats-fetcher'
+import type { Provider } from '../../../../../src/app/connection/provider'
 
 type ConnectParams = {
-  request: ConnectionRequestDTO,
+  consumerId: string,
+  provider: Provider,
   connectionState: ConnectionState,
   errorMessage: ErrorMessage,
   location: ?ConsumerLocationDTO,
@@ -57,12 +58,13 @@ class MockConnectionEstablisher implements ConnectionEstablisher {
   disconnectParams: ?DisconnectParams = null
 
   async connect (
-    request: ConnectionRequestDTO,
+    consumerId: string,
+    provider: Provider,
     connectionState: ConnectionState,
     errorMessage: ErrorMessage,
     location: ?ConsumerLocationDTO,
     actionLooper: ?FunctionLooper): Promise<void> {
-    this.connectParams = { request, connectionState, errorMessage, location, actionLooper }
+    this.connectParams = { consumerId, provider, connectionState, errorMessage, location, actionLooper }
   }
 
   async disconnect (
@@ -457,8 +459,9 @@ describe('connection', () => {
         if (params == null) {
           throw new Error('Connection params missing')
         }
-        expect(params.request.providerId).to.eql('lastConnectionProvider')
-        expect(params.request.consumerId).to.eql('current')
+        // TODO: country
+        expect(params.provider.id).to.eql('lastConnectionProvider')
+        expect(params.consumerId).to.eql('current')
         expect(params.location).to.eql(state.location)
         expect(params.actionLooper).to.eql(state.actionLoopers[type.FETCH_CONNECTION_STATUS])
         expect(params.connectionState).to.exist
@@ -471,15 +474,19 @@ describe('connection', () => {
           actionLoopers: {},
           location: { originalCountry: '' }
         }
-        const request = new ConnectionRequestDTO('consumer', 'provider', 'provider country')
-        await executeAction(type.CONNECT, state, request)
+        const getters = {
+          currentIdentity: 'consumer id'
+        }
+        const provider: Provider = { id: 'provider', country: 'provider country' }
+        await executeAction(type.CONNECT, state, provider, getters)
 
         const params = mockConnectionEstablisher.connectParams
         expect(params).to.exist
         if (params == null) {
           throw new Error('Connection params missing')
         }
-        expect(params.request).to.eql(request)
+        expect(params.consumerId).to.eql('consumer id')
+        expect(params.provider).to.eql(provider)
         expect(params.location).to.eql(state.location)
         expect(params.actionLooper).to.eql(state.actionLoopers[type.FETCH_CONNECTION_STATUS])
         expect(params.connectionState).to.exist

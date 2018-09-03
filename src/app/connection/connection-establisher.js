@@ -17,16 +17,17 @@
 
 // @flow
 
-import ConnectionRequestDTO from '../../libraries/mysterium-tequilapi/dto/connection-request'
 import type { ErrorMessage } from './error-message'
 import ConsumerLocationDTO from '../../libraries/mysterium-tequilapi/dto/consumer-location'
 import { FunctionLooper } from '../../libraries/function-looper'
 import type { ConnectionState } from './connection-state'
 import type { ConnectionStatsFetcher } from './connection-stats-fetcher'
+import type { Provider } from './provider'
 
 interface ConnectionEstablisher {
   connect (
-    request: ConnectionRequestDTO,
+    consumerId: string,
+    provider: Provider,
     connectionState: ConnectionState,
     errorMessage: ErrorMessage,
     location: ?ConsumerLocationDTO,
