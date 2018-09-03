@@ -50,6 +50,8 @@ module.exports = {
     // strict file names rules (ex: 'file-name.js')
     "filenames/match-regex": [2, "^[a-z-]+$", true],
     "max-len": ["error", { "code": 120 }],
-    'object-curly-spacing': [2, 'always']
+    'object-curly-spacing': [2, 'always'],
+    // TODO: enable this new rule
+    'no-use-before-define': 'off'
   }
 }
