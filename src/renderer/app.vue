@@ -85,7 +85,8 @@ export default {
     this.rendererCommunication.onConnectionRequest((proposal) => {
       this.$store.dispatch(type.CONNECT, {
         consumerId: this.$store.getters.currentIdentity,
-        providerId: proposal.providerId
+        providerId: proposal.providerId,
+        providerCountry: proposal.providerCountry
       })
     })
 
