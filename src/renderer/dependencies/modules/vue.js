@@ -28,8 +28,16 @@ import connectionFactory, { actionsFactory } from '../../store/modules/connectio
 import errors from '../../store/modules/errors'
 import terms from '../../store/modules/terms'
 import clientProcess from '../../store/modules/client-process'
+import TequilapiConnectionEstablisher from '../../../app/connection/tequilapi-connection-establisher'
 
 function bootstrap (container: Container) {
+  container.service(
+    'connectionEstablisher',
+    ['tequilapiClient', 'eventSender', 'bugReporter'],
+    (tequilapiClient, eventSender, bugReporter) => {
+      return new TequilapiConnectionEstablisher(tequilapiClient, eventSender, bugReporter)
+    }
+  )
   container.service(
     'vue-application',
     [],
@@ -96,9 +104,9 @@ function bootstrap (container: Container) {
   )
   container.service(
     'vue-store.connection.actions',
-    ['tequilapiClient', 'rendererCommunication', 'eventSender', 'bugReporter'],
-    (tequilapiClient, rendererCommunication, eventSender, bugReporter) => {
-      return actionsFactory(tequilapiClient, rendererCommunication, eventSender, bugReporter)
+    ['tequilapiClient', 'rendererCommunication', 'bugReporter', 'connectionEstablisher'],
+    (tequilapiClient, rendererCommunication, bugReporter, connectionEstablisher) => {
+      return actionsFactory(tequilapiClient, rendererCommunication, bugReporter, connectionEstablisher)
     }
   )
   container.constant('vue-store.errors', errors)

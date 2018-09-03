@@ -18,10 +18,8 @@
 // @flow
 import type from '../types'
 
-import messages from '../../../app/messages'
 import { FunctionLooper } from '../../../libraries/function-looper'
 import config from '@/config'
-import { ConnectEventTracker, currentUserTime } from '../../../app/statistics/events-connection'
 import RendererCommunication from '../../../app/communication/renderer-communication'
 import type { TequilapiClient } from '../../../libraries/mysterium-tequilapi/client'
 import type { ConnectionStatus } from '../../../libraries/mysterium-tequilapi/dto/connection-status-enum'
@@ -31,8 +29,11 @@ import ConnectionRequestDTO from '../../../libraries/mysterium-tequilapi/dto/con
 import ConsumerLocationDTO from '../../../libraries/mysterium-tequilapi/dto/consumer-location'
 import type { BugReporter } from '../../../app/bug-reporting/interface'
 import logger from '../../../app/logger'
-import type { EventSender } from '../../../app/statistics/event-sender'
 import TequilapiError from '../../../libraries/mysterium-tequilapi/tequilapi-error'
+import type { ConnectionEstablisher } from '../../../app/connection/connection-establisher'
+import type { ErrorMessage } from '../../../app/connection/error-message'
+import { ConnectionStatsFetcher } from '../../../app/connection/connection-stats-fetcher'
+import type { ConnectionState } from '../../../app/connection/connection-state'
 
 type ConnectionStore = {
   ip: ?string,
@@ -122,8 +123,8 @@ const mutations = {
 function actionsFactory (
   tequilapi: TequilapiClient,
   rendererCommunication: RendererCommunication,
-  eventSender: EventSender,
-  bugReporter: BugReporter
+  bugReporter: BugReporter,
+  connectionEstablisher: ConnectionEstablisher
 ) {
   return {
     async [type.LOCATION] ({ commit }) {
@@ -208,79 +209,21 @@ function actionsFactory (
       }
     },
     async [type.RECONNECT] ({ dispatch, getters }) {
-      dispatch(type.CONNECT, new ConnectionRequestDTO(getters.currentIdentity, getters.lastConnectionAttemptProvider))
+      await dispatch(type.CONNECT, new ConnectionRequestDTO(getters.currentIdentity, getters.lastConnectionAttemptProvider))
     },
     async [type.CONNECT] ({ commit, dispatch, state }, connectionRequest: ConnectionRequestDTO) {
-      const eventTracker = new ConnectEventTracker(eventSender, currentUserTime)
-      let originalCountry = ''
-      if (state.location != null && state.location.originalCountry != null) {
-        originalCountry = state.location.originalCountry
-      }
-      eventTracker.connectStarted(
-        {
-          consumerId: connectionRequest.consumerId,
-          providerId: connectionRequest.providerId
-        },
-        originalCountry
-      )
-      const looper = state.actionLoopers[type.FETCH_CONNECTION_STATUS]
-      if (looper) {
-        await looper.stop()
-      }
-      await dispatch(type.SET_CONNECTION_STATUS, ConnectionStatusEnum.CONNECTING)
-      commit(type.CONNECTION_STATISTICS_RESET)
-      commit(type.SET_LAST_CONNECTION_PROVIDER, connectionRequest.providerId)
-      try {
-        await tequilapi.connectionCreate(connectionRequest)
-        eventTracker.connectEnded()
-        commit(type.HIDE_ERROR)
-      } catch (err) {
-        if (err instanceof TequilapiError && err.isRequestClosedError) {
-          eventTracker.connectCanceled()
-          return
-        }
-
-        commit(type.SHOW_ERROR_MESSAGE, messages.connectFailed)
-
-        eventTracker.connectEnded('Error: Connection to node failed.')
-
-        if (!(err instanceof TequilapiError)) {
-          bugReporter.captureInfoException(err)
-        }
-      } finally {
-        if (looper) {
-          looper.start()
-        }
-      }
+      const connectionState = new VueConnectionState(commit, dispatch)
+      const errorMessage = new VueErrorMessage(commit, dispatch)
+      const actionLooper = state.actionLoopers[type.FETCH_CONNECTION_STATUS]
+      await connectionEstablisher
+        .connect(connectionRequest, connectionState, errorMessage, state.location, actionLooper)
     },
-    async [type.DISCONNECT] ({ commit, dispatch }) {
-      const looper = state.actionLoopers[type.FETCH_CONNECTION_STATUS]
-      if (looper) {
-        await looper.stop()
-      }
-
-      try {
-        await dispatch(type.SET_CONNECTION_STATUS, ConnectionStatusEnum.DISCONNECTING)
-
-        try {
-          await tequilapi.connectionCancel()
-        } catch (err) {
-          commit(type.SHOW_ERROR, err)
-          logger.info('Connection cancelling failed:', err)
-          if (!(err instanceof TequilapiError)) {
-            bugReporter.captureInfoException(err)
-          }
-        }
-        dispatch(type.FETCH_CONNECTION_STATUS)
-        dispatch(type.CONNECTION_IP)
-      } catch (err) {
-        commit(type.SHOW_ERROR, err)
-        throw (err)
-      } finally {
-        if (looper) {
-          looper.start()
-        }
-      }
+    async [type.DISCONNECT] ({ commit, dispatch, state }) {
+      const connectionState = new VueConnectionState(commit, dispatch)
+      const connectionStatsFetcher = new VueConnectionStatsFetcher(commit, dispatch)
+      const errorMessage = new VueErrorMessage(commit, dispatch)
+      const actionLooper = state.actionLoopers[type.FETCH_CONNECTION_STATUS]
+      await connectionEstablisher.disconnect(connectionState, connectionStatsFetcher, errorMessage, actionLooper)
     }
   }
 }
@@ -302,4 +245,57 @@ export {
   getters,
   actionsFactory
 }
+
+class VueAction {
+  _commit: CommitFunction
+  _dispatch: DispatchFunction
+
+  constructor (commit: CommitFunction, dispatch: DispatchFunction) {
+    this._commit = commit
+    this._dispatch = dispatch
+  }
+}
+
+class VueErrorMessage extends VueAction implements ErrorMessage {
+  hide () {
+    this._commit(type.HIDE_ERROR)
+  }
+
+  showError (error: Error) {
+    this._commit(type.SHOW_ERROR, error)
+  }
+
+  showMessage (message: string) {
+    this._commit(type.SHOW_ERROR_MESSAGE, message)
+  }
+}
+
+class VueConnectionStatsFetcher extends VueAction implements ConnectionStatsFetcher {
+  async fetchConnectionStatus () {
+    await this._dispatch(type.FETCH_CONNECTION_STATUS)
+  }
+
+  async fetchConnectionIp () {
+    await this._dispatch(type.CONNECTION_IP)
+  }
+}
+
+class VueConnectionState extends VueAction implements ConnectionState {
+  setLastConnectionProvider (providerId: string) {
+    this._commit(type.SET_LAST_CONNECTION_PROVIDER, providerId)
+  }
+
+  async setConnectionStatus (status: ConnectionStatus) {
+    await this._dispatch(type.SET_CONNECTION_STATUS, status)
+  }
+
+  resetStatistics () {
+    this._commit(type.CONNECTION_STATISTICS_RESET)
+  }
+}
+
+type CommitFunction = (string, any) => void
+type DispatchFunction = (string, ...Array<any>) => Promise<void>
+
+export type { ConnectionStore }
 export default factory
