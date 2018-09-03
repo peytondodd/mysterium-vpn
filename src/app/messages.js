@@ -20,10 +20,10 @@ export default {
   countryListIsEmpty: 'No countries available',
   locationNotSelected: 'Please select location',
   initializationError: {
-    message: 'Failed to load MysteriumVpn'
+    message: 'Failed to load MysteriumVPN'
   },
-  processInstallationPermissionsError: 'Failed to install MysteriumVpn. Please restart the app and grant permissions.',
-  processInstallationError: 'Failed to install MysteriumVpn.',
+  processInstallationPermissionsError: 'Failed to install MysteriumVPN. Please restart the app and grant permissions.',
+  processInstallationError: 'Failed to install MysteriumVPN.',
   processStartError: 'Failed to start mysterium_client daemon. Please restart the app and try again.',
   termsAcceptError: 'Failed to make a local copy of terms and conditions. Please restart the app and try again.',
   mysteriumCLientDown: {
