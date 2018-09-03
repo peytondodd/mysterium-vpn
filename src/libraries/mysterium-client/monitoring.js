@@ -20,7 +20,7 @@ import { promisify } from 'util'
 import type { TequilapiClient } from '../mysterium-tequilapi/client'
 import sleep from '../sleep'
 
-const healthCheckInterval = 1500
+const HEALTH_CHECK_INTERVAL = 1500
 const healthCheckTimeout = 500
 const healthCheckWaitTimeout = 6000
 
@@ -103,7 +103,7 @@ class Monitoring {
       throw e
     } finally {
       if (this._isStarted) {
-        this._timer = setTimeout(() => this._healthCheckLoop(), healthCheckInterval)
+        this._timer = setTimeout(() => this._healthCheckLoop(), HEALTH_CHECK_INTERVAL)
       }
     }
   }
@@ -149,9 +149,7 @@ function waitForStatusUp (tequilapi: TequilapiClient, timeout: number = healthCh
   return Promise.race([
     throwErrorAfterTimeout(timeout),
     statusUpAsync()
-  ]).catch(e => {
-    throw e
-  }).finally(() => {
+  ]).finally(() => {
     monitoring.stop()
   })
 }
@@ -161,6 +159,6 @@ async function throwErrorAfterTimeout (timeout: number) {
   throw new Error(`Timeout of ${timeout}ms passed`)
 }
 
-export { waitForStatusUp }
+export { waitForStatusUp, HEALTH_CHECK_INTERVAL }
 export default Monitoring
 export type { StatusCallback, UpCallback, DownCallback }

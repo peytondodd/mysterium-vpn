@@ -204,14 +204,5 @@ describe('Monitoring', () => {
       await captureAsyncError(() => waitPromise)
       expect(tequilapiClient.healthCheckCallCount).to.be.eql(11)
     })
-    // it('stops calling healthcheck after first success', async () => {
-    //   tequilapiClient.healthCheckThrowsError = true
-    //   let
-    //   const waitPromise = waitForStatusUp(tequilapiClient, 15000).then(() => {
-    //
-    //   })
-    //   await tickWithDelay(15000)
-    //
-    // })
   })
 })
