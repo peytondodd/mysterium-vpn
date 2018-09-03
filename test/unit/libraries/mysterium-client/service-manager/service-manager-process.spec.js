@@ -151,8 +151,8 @@ describe('ServiceManagerProcess', () => {
     it('restarts running service if healthcheck was failed', async () => {
       tequilapiClient.healthCheckThrowsError = true
       const startPromise = process.start()
-      // 4 healthcheck attempts should be made to decide that service is not alive
-      for (let i = 0; i < 4; i++) {
+      // 2 healthcheck attempts should be made to decide that service is not alive
+      for (let i = 0; i < 2; i++) {
         await tickWithDelay(1500)
       }
       tequilapiClient.healthCheckThrowsError = false

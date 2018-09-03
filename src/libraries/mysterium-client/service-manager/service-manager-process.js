@@ -30,7 +30,7 @@ import type { ServiceState } from './service-manager'
  * Time in milliseconds required to fully activate Mysterium client
  * @type {number}
  */
-const SERVICE_INIT_TIME = 1500 * 4
+const SERVICE_INIT_TIME = 1500 * 2
 
 class ServiceManagerProcess implements Process {
   _tequilapi: TequilapiClient
