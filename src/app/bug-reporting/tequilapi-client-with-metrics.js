@@ -80,7 +80,9 @@ class TequilapiClientWithMetrics implements TequilapiClient {
     return result
   }
 
-  async connectionCreate (request: ConnectionRequestDTO, timeout: ?number = TIMEOUT_DISABLED): Promise<ConnectionStatusDTO> {
+  async connectionCreate (
+    request: ConnectionRequestDTO,
+    timeout: ?number = TIMEOUT_DISABLED): Promise<ConnectionStatusDTO> {
     this._bugReporterMetrics.set(METRICS.CONNECTION_ACTIVE, false)
     const result = await this._client.connectionCreate(request, timeout)
     this._bugReporterMetrics.set(METRICS.CONNECTION_ACTIVE, true)

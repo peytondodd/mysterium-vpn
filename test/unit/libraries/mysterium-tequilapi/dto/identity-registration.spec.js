@@ -16,7 +16,8 @@
  */
 
 import { expect } from 'chai'
-import IdentityRegistrationDTO, { getPaymentLink } from '../../../../../src/libraries/mysterium-tequilapi/dto/identity-registration'
+import IdentityRegistrationDTO, { getPaymentLink }
+  from '../../../../../src/libraries/mysterium-tequilapi/dto/identity-registration'
 
 describe('TequilapiClient DTO', () => {
   describe('IdentityRegistrationDTO', () => {

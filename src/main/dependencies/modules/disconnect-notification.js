@@ -27,7 +27,8 @@ function bootstrap (container: Container) {
     'disconnectNotification',
     ['mysterionApplication.config'],
     (config: MysterionConfig) => {
-      return new Notification('Disconnected', 'from VPN server', join(config.staticDirectory, 'icons', 'notification.png'))
+      const iconPath = join(config.staticDirectory, 'icons', 'notification.png')
+      return new Notification('Disconnected', 'from VPN server', iconPath)
     }
   )
 }

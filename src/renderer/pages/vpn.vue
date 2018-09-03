@@ -124,7 +124,8 @@ export default {
       this.country = { ...this.country, isFavorite: !this.country.isFavorite }
       this.countryList.find((c) => c.id === this.country.id).isFavorite = this.country.isFavorite
 
-      this.rendererCommunication.sendToggleFavoriteProvider({ id: this.country.id, isFavorite: this.country.isFavorite })
+      const favoriteDto = { id: this.country.id, isFavorite: this.country.isFavorite }
+      this.rendererCommunication.sendToggleFavoriteProvider(favoriteDto)
     },
     onCountriesUpdate (countries) {
       this.countriesAreLoading = false
@@ -137,8 +138,11 @@ export default {
   async mounted () {
     this.startupEventTracker.sendAppStartSuccessEvent()
     this.rendererCommunication.onCountriesUpdate(this.onCountriesUpdate)
-    this.$store.dispatch(type.START_ACTION_LOOPING, new ActionLooperConfig(type.CONNECTION_IP, config.ipUpdateThreshold))
-    this.$store.dispatch(type.START_ACTION_LOOPING, new ActionLooperConfig(type.FETCH_CONNECTION_STATUS, config.statusUpdateThreshold))
+
+    const ipConfig = new ActionLooperConfig(type.CONNECTION_IP, config.ipUpdateThreshold)
+    this.$store.dispatch(type.START_ACTION_LOOPING, ipConfig)
+    const statusConfig = new ActionLooperConfig(type.FETCH_CONNECTION_STATUS, config.statusUpdateThreshold)
+    this.$store.dispatch(type.START_ACTION_LOOPING, statusConfig)
   },
   beforeDestroy () {
     this.rendererCommunication.removeCountriesUpdateCallback(this.onCountriesUpdate)

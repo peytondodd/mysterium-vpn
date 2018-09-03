@@ -40,7 +40,9 @@ function getCountryLabel (country: Country, maxNameLength: ?number = null, maxId
   return `${title} (${identity})`
 }
 
-function getSortedCountryListFromProposals (proposals: Array<ProposalDTO>, favorites: FavoriteProviders): Array<Country> {
+function getSortedCountryListFromProposals (
+  proposals: Array<ProposalDTO>,
+  favorites: FavoriteProviders): Array<Country> {
   const countries = proposals.map(getCountryFromProposal).map(countryFavoriteMapper(favorites))
   return countries.sort(compareCountries)
 }

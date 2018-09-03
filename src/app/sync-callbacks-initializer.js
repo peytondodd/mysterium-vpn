@@ -30,7 +30,10 @@ class SyncCallbacksInitializer {
   _communication: SyncMainCommunication
   _frontendLogCache: LogCache
 
-  constructor (communication: SyncMainCommunication, environmentCollector: EnvironmentCollector, frontendLogCache: LogCache) {
+  constructor (
+    communication: SyncMainCommunication,
+    environmentCollector: EnvironmentCollector,
+    frontendLogCache: LogCache) {
     this._environmentCollector = environmentCollector
     this._communication = communication
     this._frontendLogCache = frontendLogCache

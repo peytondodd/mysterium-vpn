@@ -137,7 +137,9 @@ export default class ServiceManager {
     }
   }
 
-  async _execAndGetState (operation: ServiceManagerOperation, reinstallOnError: boolean = false): Promise<ServiceState> {
+  async _execAndGetState (
+    operation: ServiceManagerOperation,
+    reinstallOnError: boolean = false): Promise<ServiceState> {
     try {
       const result = await this._execOperations(operation)
       return parseServiceState(result)

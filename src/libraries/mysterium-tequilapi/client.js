@@ -117,7 +117,9 @@ class HttpTequilapiClient implements TequilapiClient {
     return proposals
   }
 
-  async connectionCreate (request: ConnectionRequestDTO, timeout: ?number = TIMEOUT_DISABLED): Promise<ConnectionStatusDTO> {
+  async connectionCreate (
+    request: ConnectionRequestDTO,
+    timeout: ?number = TIMEOUT_DISABLED): Promise<ConnectionStatusDTO> {
     const response = await this.http.put(
       'connection',
       {

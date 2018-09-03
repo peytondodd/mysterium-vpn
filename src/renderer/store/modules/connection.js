@@ -191,7 +191,9 @@ function actionsFactory (
 
       if (newStatus === ConnectionStatusEnum.CONNECTED) {
         commit(type.CONNECTION_IP, IP_REFRESHING)
-        await dispatch(type.START_ACTION_LOOPING, new ActionLooperConfig(type.CONNECTION_STATISTICS, config.statisticsUpdateThreshold))
+        const statisticsLooperConfig =
+          new ActionLooperConfig(type.CONNECTION_STATISTICS, config.statisticsUpdateThreshold)
+        await dispatch(type.START_ACTION_LOOPING, statisticsLooperConfig)
       }
       if (newStatus === ConnectionStatusEnum.NOT_CONNECTED) {
         commit(type.CONNECTION_IP, IP_REFRESHING)
@@ -209,7 +211,8 @@ function actionsFactory (
       }
     },
     async [type.RECONNECT] ({ dispatch, getters }) {
-      await dispatch(type.CONNECT, new ConnectionRequestDTO(getters.currentIdentity, getters.lastConnectionAttemptProvider))
+      const dto = new ConnectionRequestDTO(getters.currentIdentity, getters.lastConnectionAttemptProvider)
+      await dispatch(type.CONNECT, dto)
     },
     async [type.CONNECT] ({ commit, dispatch, state }, connectionRequest: ConnectionRequestDTO) {
       const connectionState = new VueConnectionState(commit, dispatch)

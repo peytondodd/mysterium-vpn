@@ -168,7 +168,8 @@ describe('TequilapiConnectionEstablisher', () => {
     })
 
     it('marks disconnecting status', async () => {
-      await connectionEstablisher.disconnect(mockConnectionState, mockConnectionStatsFetcher, mockErrorMessage, actionLooper)
+      await connectionEstablisher
+        .disconnect(mockConnectionState, mockConnectionStatsFetcher, mockErrorMessage, actionLooper)
       expect(mockConnectionState.connectionStatus).to.eql(ConnectionStatusEnum.DISCONNECTING)
     })
 
@@ -178,7 +179,8 @@ describe('TequilapiConnectionEstablisher', () => {
       })
 
       it('captures error', async () => {
-        await connectionEstablisher.disconnect(mockConnectionState, mockConnectionStatsFetcher, mockErrorMessage, actionLooper)
+        await connectionEstablisher
+          .disconnect(mockConnectionState, mockConnectionStatsFetcher, mockErrorMessage, actionLooper)
 
         expect(bugReporterMock.infoExceptions).to.have.lengthOf(1)
       })

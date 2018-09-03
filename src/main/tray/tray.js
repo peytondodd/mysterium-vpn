@@ -47,7 +47,11 @@ class Tray {
   _connectionStatus: ConnectionStatus
   _iconPath: string
 
-  constructor (trayFactory: electronTrayFactory, templateBuilder: Function, menuBuilder: TrayMenuBuilder, imagePath: string) {
+  constructor (
+    trayFactory: electronTrayFactory,
+    templateBuilder: Function,
+    menuBuilder: TrayMenuBuilder,
+    imagePath: string) {
     this._electronTrayFactory = trayFactory
     this._templateBuilder = templateBuilder
     this._menuBuilder = menuBuilder
