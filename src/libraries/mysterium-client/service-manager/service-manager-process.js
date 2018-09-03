@@ -27,10 +27,16 @@ import ServiceManager, { SERVICE_STATE } from './service-manager'
 import type { ServiceState } from './service-manager'
 
 /***
- * Time in milliseconds required to fully activate Mysterium client
+ * Time in milliseconds required to fully activate Mysterium client after restart
  * @type {number}
  */
-const SERVICE_INIT_TIME = 1500 * 2
+const SERVICE_INIT_TIME = 1500 * 4
+
+/***
+ * Time in milliseconds required to wait for healthcheck
+ * @type {number}
+ */
+const SERVICE_CHECK_TIME = 1500
 
 class ServiceManagerProcess implements Process {
   _tequilapi: TequilapiClient
@@ -57,7 +63,7 @@ class ServiceManagerProcess implements Process {
   async start (): Promise<void> {
     const state = await this._serviceManager.getServiceState()
     try {
-      await waitForStatusUp(this._tequilapi, SERVICE_INIT_TIME)
+      await waitForStatusUp(this._tequilapi, SERVICE_CHECK_TIME)
       return
     } catch (e) {
       logger.error('Unable to healthcheck while starting process', e)
