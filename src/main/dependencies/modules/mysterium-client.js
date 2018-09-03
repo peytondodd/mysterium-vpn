@@ -37,7 +37,8 @@ import LaunchDaemonProcess from '../../../libraries/mysterium-client/launch-daem
 import StandaloneClientInstaller from '../../../libraries/mysterium-client/standalone/standalone-client-installer'
 import StandaloneClientProcess from '../../../libraries/mysterium-client/standalone/standalone-client-process'
 
-import ServiceManagerInstaller, { SERVICE_MANAGER_BIN } from '../../../libraries/mysterium-client/service-manager/service-manager-installer'
+import ServiceManagerInstaller, { SERVICE_MANAGER_BIN }
+  from '../../../libraries/mysterium-client/service-manager/service-manager-installer'
 import ServiceManagerProcess from '../../../libraries/mysterium-client/service-manager/service-manager-process'
 
 import { LAUNCH_DAEMON_PORT } from '../../../libraries/mysterium-client/launch-daemon/config'

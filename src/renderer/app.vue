@@ -52,6 +52,7 @@ import AppNav from '@/partials/app-nav'
 import AppError from '@/partials/app-error'
 import AppModal from '@/partials/app-modal'
 import logger from '../app/logger'
+import messages from '../app/messages'
 
 export default {
   name: 'App',
@@ -127,10 +128,7 @@ export default {
       // TODO Such conditional behaviour should be dropped at all
       // do nothing while on terms page
       if (this.$route.name !== 'terms') {
-        this.$store.dispatch(type.OVERLAY_ERROR, {
-          message: 'mysterium_client is down',
-          hint: 'Please give it a moment to boot. If this message persists try restarting the app or please contact support'
-        })
+        this.$store.dispatch(type.OVERLAY_ERROR, messages.mysteriumCLientDown)
       }
     })
   }

@@ -49,8 +49,7 @@ module.exports = {
     'no-console': ['error'],
     // strict file names rules (ex: 'file-name.js')
     "filenames/match-regex": [2, "^[a-z-]+$", true],
-    // TODO: reduce this limit to 120
-    "max-len": ["error", { "code": 140 }],
+    "max-len": ["error", { "code": 120 }],
     'object-curly-spacing': [2, 'always']
   }
 }

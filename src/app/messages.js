@@ -25,5 +25,9 @@ export default {
   processInstallationPermissionsError: 'Failed to install Mysterion. Please restart the app and grant permissions.',
   processInstallationError: 'Failed to install Mysterion.',
   processStartError: 'Failed to start mysterium_client daemon. Please restart the app and try again.',
-  termsAcceptError: 'Failed to make a local copy of terms and conditions. Please restart the app and try again.'
+  termsAcceptError: 'Failed to make a local copy of terms and conditions. Please restart the app and try again.',
+  mysteriumCLientDown: {
+    message: 'mysterium_client is down',
+    hint: 'Please give it a moment to boot. If this message persists try restarting the app or please contact support'
+  }
 }
