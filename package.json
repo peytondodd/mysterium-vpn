@@ -177,18 +177,18 @@
     "node-loader": "^0.6.0",
     "node-sass": "^4.9.3",
     "require-dir": "^1.0.0",
-    "sass-loader": "^6.0.6",
+    "sass-loader": "^7.1.0",
     "spectron": "^3.8.0",
     "style-loader": "^0.23.0",
     "url-loader": "^0.5.9",
     "vue-html-loader": "^1.2.4",
     "vue-loader": "^14.2.2",
-    "vue-style-loader": "^3.1.2",
+    "vue-style-loader": "^4.1.2",
     "vue-svg-loader": "^0.8.0",
     "vue-template-compiler": "^2.5.17",
     "webpack": "^3.11.0",
     "webpack-dev-server": "^2.11.1",
-    "webpack-hot-middleware": "^2.21.0",
+    "webpack-hot-middleware": "^2.23.1",
     "webpack-merge": "^4.1.4"
   }
 }
