@@ -87,7 +87,7 @@ describe('ConnectionButton', () => {
     vm.$store.commit(type.SET_CONNECTION_STATUS, ConnectionStatusEnum.NOT_CONNECTED)
   })
 
-  it('clicks change state', () => {
+  it('changes state when clicked', () => {
     const wrapper = mountWithStore()
     const vm = wrapper.vm
 

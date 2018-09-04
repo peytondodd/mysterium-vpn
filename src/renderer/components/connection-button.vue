@@ -30,7 +30,6 @@ import { mapGetters } from 'vuex'
 import type from '../store/types'
 import ConnectionStatusEnum from '../../libraries/mysterium-tequilapi/dto/connection-status-enum'
 import messages from '../../app/messages'
-import ConnectionRequestDTO from '../../libraries/mysterium-tequilapi/dto/connection-request'
 
 export default {
   name: 'ConnectionButton',
@@ -38,6 +37,11 @@ export default {
     providerId: {
       type: String,
       required: true
+    },
+    providerCountry: {
+      type: String,
+      required: false,
+      default: null
     }
   },
   computed: {
@@ -94,7 +98,8 @@ export default {
       }
 
       if (canConnect) {
-        this.$store.dispatch(type.CONNECT, new ConnectionRequestDTO(this.consumerId, this.providerId))
+        const provider = { id: this.providerId, country: this.providerCountry }
+        this.$store.dispatch(type.CONNECT, provider)
       }
     }
   }

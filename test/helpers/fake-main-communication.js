@@ -21,7 +21,7 @@ import type { MainCommunication } from '../../src/app/communication/main-communi
 import type {
   AppErrorDTO, ConnectionStatusChangeDTO, CurrentIdentityChangeDTO,
   CountriesDTO,
-  RequestTermsDTO, TermsAnsweredDTO
+  RequestTermsDTO, TermsAnsweredDTO, RequestConnectionDTO
 } from '../../src/app/communication/dto'
 import type { UserSettings } from '../../src/app/user-settings/user-settings'
 import IdentityRegistrationDTO from '../../src/libraries/mysterium-tequilapi/dto/identity-registration'
@@ -44,23 +44,20 @@ class FakeMainCommunication implements MainCommunication {
   }
 
   getLastPayload (method: Function): Array<any> {
-    return this.getAllInvocationPayloads(method)[this._invokedMethodPayloads[method.name].length - 1]
-  }
-
-  getAllInvocationPayloads (method: Function): Array<any> {
-    return this._invokedMethodPayloads[method.name]
+    const payloads = this._getPayloads(method)
+    return payloads[payloads.length - 1]
   }
 
   onRendererBooted (callback: () => void): void {
     this._registerMethod(this.onRendererBooted)
   }
 
-  sendRendererShowErrorMessage (_error: string): void {
-    this._registerMethod(this.sendRendererShowErrorMessage)
+  sendRendererShowErrorMessage (error: string): void {
+    this._registerMethod(this.sendRendererShowErrorMessage, error)
   }
 
   sendRendererShowError (data: AppErrorDTO): void {
-    this._registerMethod(this.sendRendererShowError)
+    this._registerMethod(this.sendRendererShowError, data)
   }
 
   sendMysteriumClientIsReady (): void {
@@ -76,23 +73,23 @@ class FakeMainCommunication implements MainCommunication {
   }
 
   sendCountries (countries: CountriesDTO): void {
-    this._registerMethod(this.sendCountries)
+    this._registerMethod(this.sendCountries, countries)
   }
 
   sendRegistration (registration: IdentityRegistrationDTO): void {
-    this._registerMethod(this.sendRegistration)
+    this._registerMethod(this.sendRegistration, registration)
   }
 
   sendConnectionCancelRequest () {
     this._registerMethod(this.sendConnectionCancelRequest)
   }
 
-  sendConnectionRequest () {
-    this._registerMethod(this.sendConnectionRequest)
+  sendConnectionRequest (data: RequestConnectionDTO) {
+    this._registerMethod(this.sendConnectionRequest, data)
   }
 
   sendTermsRequest (data: RequestTermsDTO): void {
-    this._registerMethod(this.sendTermsRequest)
+    this._registerMethod(this.sendTermsRequest, data)
   }
 
   sendTermsAccepted (): void {
@@ -100,7 +97,7 @@ class FakeMainCommunication implements MainCommunication {
   }
 
   sendUserSettings (data: UserSettings): void {
-    this._registerMethod(this.sendUserSettings)
+    this._registerMethod(this.sendUserSettings, data)
   }
 
   onConnectionStatusChange (callback: (ConnectionStatusChangeDTO) => void): void {
@@ -133,6 +130,10 @@ class FakeMainCommunication implements MainCommunication {
       this._invokedMethodPayloads[method.name] = []
     }
     this._invokedMethodPayloads[method.name].push(payload)
+  }
+
+  _getPayloads (method: Function): Array<any> {
+    return this._invokedMethodPayloads[method.name]
   }
 }
 

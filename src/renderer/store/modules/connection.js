@@ -25,7 +25,6 @@ import type { TequilapiClient } from '../../../libraries/mysterium-tequilapi/cli
 import type { ConnectionStatus } from '../../../libraries/mysterium-tequilapi/dto/connection-status-enum'
 import ConnectionStatusEnum from '../../../libraries/mysterium-tequilapi/dto/connection-status-enum'
 import ConnectionStatisticsDTO from '../../../libraries/mysterium-tequilapi/dto/connection-statistics'
-import ConnectionRequestDTO from '../../../libraries/mysterium-tequilapi/dto/connection-request'
 import ConsumerLocationDTO from '../../../libraries/mysterium-tequilapi/dto/consumer-location'
 import type { BugReporter } from '../../../app/bug-reporting/interface'
 import logger from '../../../app/logger'
@@ -34,13 +33,14 @@ import type { ConnectionEstablisher } from '../../../app/connection/connection-e
 import type { ErrorMessage } from '../../../app/connection/error-message'
 import { ConnectionStatsFetcher } from '../../../app/connection/connection-stats-fetcher'
 import type { ConnectionState } from '../../../app/connection/connection-state'
+import type { Provider } from '../../../app/connection/provider'
 
 type ConnectionStore = {
   ip: ?string,
   location: ?ConsumerLocationDTO,
   status: ConnectionStatus,
   statistics: Object,
-  lastConnectionProvider: ?string,
+  lastConnectionProvider: ?Provider,
   actionLoopers: { [string]: FunctionLooper }
 }
 
@@ -79,7 +79,7 @@ const state: ConnectionStore = {
 }
 
 const getters = {
-  lastConnectionAttemptProvider (state: ConnectionStore): ?string {
+  lastConnectionAttemptProvider (state: ConnectionStore): ?Provider {
     return state.lastConnectionProvider
   },
   status (state: ConnectionStore): ConnectionStatus {
@@ -115,8 +115,8 @@ const mutations = {
   [type.REMOVE_ACTION_LOOPER] (state: ConnectionStore, action: string) {
     delete state.actionLoopers[action]
   },
-  [type.SET_LAST_CONNECTION_PROVIDER] (state: ConnectionStore, providerId: string) {
-    state.lastConnectionProvider = providerId
+  [type.SET_LAST_CONNECTION_PROVIDER] (state: ConnectionStore, provider: Provider) {
+    state.lastConnectionProvider = provider
   }
 }
 
@@ -211,15 +211,19 @@ function actionsFactory (
       }
     },
     async [type.RECONNECT] ({ dispatch, getters }) {
-      const dto = new ConnectionRequestDTO(getters.currentIdentity, getters.lastConnectionAttemptProvider)
-      await dispatch(type.CONNECT, dto)
+      const provider: ?Provider = getters.lastConnectionAttemptProvider
+      if (provider == null) {
+        throw new Error('Last provider not set')
+      }
+      await dispatch(type.CONNECT, provider)
     },
-    async [type.CONNECT] ({ commit, dispatch, state }, connectionRequest: ConnectionRequestDTO) {
+    async [type.CONNECT] ({ commit, dispatch, state, getters }, provider: Provider) {
+      const consumerId = getters.currentIdentity
       const connectionState = new VueConnectionState(commit, dispatch)
       const errorMessage = new VueErrorMessage(commit, dispatch)
       const actionLooper = state.actionLoopers[type.FETCH_CONNECTION_STATUS]
       await connectionEstablisher
-        .connect(connectionRequest, connectionState, errorMessage, state.location, actionLooper)
+        .connect(consumerId, provider, connectionState, errorMessage, state.location, actionLooper)
     },
     async [type.DISCONNECT] ({ commit, dispatch, state }) {
       const connectionState = new VueConnectionState(commit, dispatch)

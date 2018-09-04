@@ -47,7 +47,7 @@ describe('ConnectEventTracker', () => {
   })
 
   it('sends connect failed event', async () => {
-    eventTracker.connectStarted(connectionDetails, 'original country')
+    eventTracker.connectStarted(connectionDetails, 'original country', 'provider country')
     await eventTracker.connectEnded('some error')
     expect(eventSender.events[0]).to.deep.eql(
       {
@@ -67,14 +67,21 @@ describe('ConnectEventTracker', () => {
           },
           timeDelta: 123,
           error: 'some error',
-          originalCountry: 'original country'
+          originalCountry: 'original country',
+          providerCountry: 'provider country'
         }
       }
     )
   })
 
-  it('sends connect successful event', async () => {
+  it('sends event with unknown provided country when it is not provided', async () => {
     eventTracker.connectStarted(connectionDetails, 'original country')
+    await eventTracker.connectEnded('some error')
+    expect(eventSender.events[0].context.providerCountry).to.eql('<unknown>')
+  })
+
+  it('sends connect successful event', async () => {
+    eventTracker.connectStarted(connectionDetails, 'original country', 'provider country')
     await eventTracker.connectEnded()
     expect(eventSender.events[0]).to.deep.eql(
       {
@@ -93,14 +100,15 @@ describe('ConnectEventTracker', () => {
             localTime: 444
           },
           timeDelta: 123,
-          originalCountry: 'original country'
+          originalCountry: 'original country',
+          providerCountry: 'provider country'
         }
       }
     )
   })
 
   it('sends connect canceled event', async () => {
-    eventTracker.connectStarted(connectionDetails, 'original country')
+    eventTracker.connectStarted(connectionDetails, 'original country', 'provider country')
     await eventTracker.connectCanceled()
     expect(eventSender.events[0]).to.deep.eql(
       {
@@ -119,7 +127,8 @@ describe('ConnectEventTracker', () => {
             localTime: 444
           },
           timeDelta: 123,
-          originalCountry: 'original country'
+          originalCountry: 'original country',
+          providerCountry: 'provider country'
         }
       }
     )
