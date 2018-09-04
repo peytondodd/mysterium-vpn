@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 The "MysteriumNetwork/mysterium-vpn" Authors.
+ * Copyright (C) 2018 The "MysteriumNetwork/mysterium-vpn" Authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,16 +17,9 @@
 
 // @flow
 
-class ConnectionRequestDTO {
-  consumerId: string
-  providerId: string
-  providerCountry: ?string
-
-  constructor (consumerId: string, providerId: string, providerCountry: ?string) {
-    this.consumerId = consumerId
-    this.providerId = providerId
-    this.providerCountry = providerCountry
-  }
+type Provider = {
+  id: string,
+  country: ?string
 }
 
-export default ConnectionRequestDTO
+export type { Provider }

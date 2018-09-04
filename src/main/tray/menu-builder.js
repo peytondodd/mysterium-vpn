@@ -49,7 +49,7 @@ function getMenuItems (
       label = '* ' + label
     }
     connectSubmenu.add(label, () => {
-      communication.sendConnectionRequest({ providerId: country.id })
+      communication.sendConnectionRequest({ providerId: country.id, providerCountry: country.code })
     })
   })
 

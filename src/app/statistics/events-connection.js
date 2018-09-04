@@ -15,6 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+// TODO: rename file to connect-event-tracker.js
+
 // @flow
 
 import type { EventSender } from './event-sender'
@@ -31,6 +33,8 @@ type ConnectDetails = {
   providerId: string
 }
 
+const UNKNOWN_COUNTRY = '<unknown>'
+
 class ConnectEventTracker {
   _eventSender: EventSender
   _userTimeProvider: UserTimeProvider
@@ -42,11 +46,12 @@ class ConnectEventTracker {
     this._userTimeProvider = userTimeProvider
   }
 
-  connectStarted (connectDetails: ConnectDetails, originalCountry: string): void {
+  connectStarted (connectDetails: ConnectDetails, originalCountry: string, providerCountry: ?string): void {
     this._eventDetails = {
       startedAt: this._userTimeProvider(),
       connectDetails,
-      originalCountry
+      originalCountry,
+      providerCountry: providerCountry || UNKNOWN_COUNTRY
     }
     this._connectStarted = true
   }

@@ -107,7 +107,7 @@ describe('MainMessageBusCommunication', () => {
   describe('sendConnectionRequest', () => {
     it('sends message through message bus', () => {
       rendererCommunication.onConnectionRequest(recorder.getCallback())
-      const requestDto = { providerId: 'test provider id' }
+      const requestDto = { providerId: 'test provider id', providerCountry: 'lt' }
       mainCommunication.sendConnectionRequest(requestDto)
       expect(recorder.invoked).to.be.true
       expect(recorder.firstArgument).to.eql(requestDto)

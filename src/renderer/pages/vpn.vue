@@ -42,7 +42,9 @@
             :country="country"
             :toggle-favorite="toggleFavorite"/>
         </div>
-        <connection-button :provider-id="providerIdentity"/>
+        <connection-button
+          :provider-id="providerIdentity"
+          :provider-country="providerCountry" />
       </div>
 
       <div class="control__footer">
@@ -110,6 +112,9 @@ export default {
     },
     providerIdentity () {
       return this.country ? this.country.id : ''
+    },
+    providerCountry () {
+      return this.country ? this.country.code : null
     }
   },
   methods: {
