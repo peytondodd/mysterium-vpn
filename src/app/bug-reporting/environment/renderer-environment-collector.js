@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 The "MysteriumNetwork/mysterion" Authors.
+ * Copyright (C) 2017 The "MysteriumNetwork/mysterium-vpn" Authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,16 +22,16 @@ import type { SyncRendererCommunication } from '../../communication/sync/sync-co
 import type { SerializedLogCaches } from '../../logging/log-cache-bundle'
 
 class RendererEnvironmentCollector implements EnvironmentCollector {
-  _mysterionReleaseId: string
+  _releaseId: string
   _syncRendererCommunication: SyncRendererCommunication
 
-  constructor (mysterionReleaseId: string, syncRendererCommunication: SyncRendererCommunication) {
-    this._mysterionReleaseId = mysterionReleaseId
+  constructor (releaseId: string, syncRendererCommunication: SyncRendererCommunication) {
+    this._releaseId = releaseId
     this._syncRendererCommunication = syncRendererCommunication
   }
 
-  getMysterionReleaseId (): string {
-    return this._mysterionReleaseId
+  getReleaseId (): string {
+    return this._releaseId
   }
 
   getSerializedCaches (): SerializedLogCaches {

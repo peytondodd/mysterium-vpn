@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 The "MysteriumNetwork/mysterion" Authors.
+ * Copyright (C) 2017 The "MysteriumNetwork/mysterium-vpn" Authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,8 +26,8 @@ import realSleep from '../../../libraries/sleep'
 import IpcMessageBus from '../../../app/communication/ipc-message-bus'
 
 function bootstrap (container: Container) {
-  const mysterionReleaseID = remote.getGlobal('__mysterionReleaseID')
-  container.constant('mysterionReleaseID', mysterionReleaseID)
+  const mysteriumVpnReleaseID = remote.getGlobal('__mysteriumVpnReleaseID')
+  container.constant('mysteriumVpnReleaseID', mysteriumVpnReleaseID)
 
   container.service(
     'rendererCommunication',

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 The "MysteriumNetwork/mysterion" Authors.
+ * Copyright (C) 2017 The "MysteriumNetwork/mysterium-vpn" Authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -117,7 +117,9 @@ class HttpTequilapiClient implements TequilapiClient {
     return proposals
   }
 
-  async connectionCreate (request: ConnectionRequestDTO, timeout: ?number = TIMEOUT_DISABLED): Promise<ConnectionStatusDTO> {
+  async connectionCreate (
+    request: ConnectionRequestDTO,
+    timeout: ?number = TIMEOUT_DISABLED): Promise<ConnectionStatusDTO> {
     const response = await this.http.put(
       'connection',
       {

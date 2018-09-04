@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 The "MysteriumNetwork/mysterion" Authors.
+ * Copyright (C) 2017 The "MysteriumNetwork/mysterium-vpn" Authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 // @flow
 
 import { describe, expect, it } from '../../helpers/dependencies'
-import { getMysterionReleaseId, getVersionLabel } from '../../../src/libraries/version'
+import { getReleaseId, getVersionLabel } from '../../../src/libraries/version'
 
 describe('versioning', () => {
   describe('.getVersionLabel', () => {
@@ -31,26 +31,26 @@ describe('versioning', () => {
     })
   })
 
-  describe('getMysterionReleaseId', () => {
+  describe('getReleaseId', () => {
     it('returns joined release label', () => {
-      expect(getMysterionReleaseId('0.0.1', '123')).to.eql('0.0.1(123)')
+      expect(getReleaseId('0.0.1', '123')).to.eql('0.0.1(123)')
     })
 
     it('returns joined release label with compact build number', () => {
-      expect(getMysterionReleaseId('0.0.1', '123.1')).to.eql('0.0.1(123)')
-      expect(getMysterionReleaseId('0.0.1', '1.5')).to.eql('0.0.1(1)')
+      expect(getReleaseId('0.0.1', '123.1')).to.eql('0.0.1(123)')
+      expect(getReleaseId('0.0.1', '1.5')).to.eql('0.0.1(1)')
     })
 
     it('returns release label without build', () => {
-      expect(getMysterionReleaseId('0.0.1', null)).to.eql('0.0.1')
+      expect(getReleaseId('0.0.1', null)).to.eql('0.0.1')
     })
 
     it('returns release label without version', () => {
-      expect(getMysterionReleaseId(null, '123')).to.eql('(123)')
+      expect(getReleaseId(null, '123')).to.eql('(123)')
     })
 
     it('returns empty label without version and build', () => {
-      expect(getMysterionReleaseId(null, null)).to.eql('')
+      expect(getReleaseId(null, null)).to.eql('')
     })
   })
 })

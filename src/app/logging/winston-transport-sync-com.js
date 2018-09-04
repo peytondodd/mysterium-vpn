@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 The "MysteriumNetwork/mysterion" Authors.
+ * Copyright (C) 2018 The "MysteriumNetwork/mysterium-vpn" Authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 import Transport from 'winston-transport'
 import type { SyncRendererCommunication } from '../communication/sync/sync-communication'
 import type { WinstonLogEntry } from './winston'
-import { mapWinstonLogLevelToMysterionLevel } from './winston'
+import { mapWinstonLogLevelToApplicationLevel } from './winston'
 
 class WinstonTransportSyncCom extends Transport {
   _communication: SyncRendererCommunication
@@ -33,7 +33,7 @@ class WinstonTransportSyncCom extends Transport {
   log (logEntry: WinstonLogEntry, callback: () => any) {
     const timestamp = logEntry.timestamp || ''
     const message = timestamp + logEntry.message
-    const logDto = { level: mapWinstonLogLevelToMysterionLevel(logEntry.level), data: message }
+    const logDto = { level: mapWinstonLogLevelToApplicationLevel(logEntry.level), data: message }
     this._communication.sendLog(logDto)
     callback()
   }

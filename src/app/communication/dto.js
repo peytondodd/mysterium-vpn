@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 The "MysteriumNetwork/mysterion" Authors.
+ * Copyright (C) 2017 The "MysteriumNetwork/mysterium-vpn" Authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 
 // @flow
 import type { ConnectionStatus } from '../../libraries/mysterium-tequilapi/dto/connection-status-enum'
-import type { LogLevel } from '../logging/mysterion-log-levels'
+import type { LogLevel } from '../logging/mysterium-vpn-log-levels'
 import type { Country } from '../countries'
 
 export type ConnectionStatusChangeDTO = {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 The "MysteriumNetwork/mysterion" Authors.
+ * Copyright (C) 2017 The "MysteriumNetwork/mysterium-vpn" Authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,8 @@
 
 import { before, beforeEach, after, describe, expect, it } from '../../../../helpers/dependencies'
 import lolex from 'lolex'
-import ServiceManagerProcess from '../../../../../src/libraries/mysterium-client/service-manager/service-manager-process'
+import ServiceManagerProcess
+  from '../../../../../src/libraries/mysterium-client/service-manager/service-manager-process'
 import EmptyTequilapiClientMock from '../../../renderer/store/modules/empty-tequilapi-client-mock'
 import SystemMock from '../../../../helpers/system-mock'
 import type { NodeHealthcheckDTO } from '../../../../../src/libraries/mysterium-tequilapi/dto/node-healthcheck'
@@ -31,8 +32,10 @@ import type { System } from '../../../../../src/libraries/mysterium-client/syste
 import Monitoring from '../../../../../src/libraries/mysterium-client/monitoring'
 import { captureAsyncError, nextTick } from '../../../../helpers/utils'
 import BugReporterMock from '../../../../helpers/bug-reporter-mock'
-import type { ServiceState } from '../../../../../src/libraries/mysterium-client/service-manager/service-manager'
-import ServiceManager, { SERVICE_STATE } from '../../../../../src/libraries/mysterium-client/service-manager/service-manager'
+import type { ServiceState }
+  from '../../../../../src/libraries/mysterium-client/service-manager/service-manager'
+import ServiceManager, { SERVICE_STATE }
+  from '../../../../../src/libraries/mysterium-client/service-manager/service-manager'
 
 const SERVICE_MANAGER_PATH = '/service-manager/bin/servicemanager.exe'
 
@@ -42,9 +45,18 @@ const getServiceInfo = (state: ServiceState) =>
 
 const createSystemMock = () => {
   const systemMock = new SystemMock()
-  systemMock.setMockCommand('sc.exe query "MysteriumClient"', getServiceInfo(SERVICE_STATE.RUNNING))
-  systemMock.setMockCommand('"/service-manager/bin/servicemanager.exe" --do=start', getServiceInfo(SERVICE_STATE.START_PENDING))
-  systemMock.setMockCommand('"/service-manager/bin/servicemanager.exe" --do=restart', getServiceInfo(SERVICE_STATE.START_PENDING))
+  systemMock.setMockCommand(
+    'sc.exe query "MysteriumClient"',
+    getServiceInfo(SERVICE_STATE.RUNNING)
+  )
+  systemMock.setMockCommand(
+    '"/service-manager/bin/servicemanager.exe" --do=start',
+    getServiceInfo(SERVICE_STATE.START_PENDING)
+  )
+  systemMock.setMockCommand(
+    '"/service-manager/bin/servicemanager.exe" --do=restart',
+    getServiceInfo(SERVICE_STATE.START_PENDING)
+  )
   return systemMock
 }
 
@@ -172,7 +184,8 @@ describe('ServiceManagerProcess', () => {
       await repairPromise
 
       expect(systemMockManager.sudoExecCalledCommands).to.have.length(1)
-      expect(systemMockManager.sudoExecCalledCommands[0]).to.be.eql('"/service-manager/bin/servicemanager.exe" --do=restart')
+      expect(systemMockManager.sudoExecCalledCommands[0])
+        .to.be.eql('"/service-manager/bin/servicemanager.exe" --do=restart')
     })
 
     it('starts stopped service and waits for healthcheck', async () => {
@@ -194,11 +207,15 @@ describe('ServiceManagerProcess', () => {
       await repairPromise
 
       expect(systemMockManager.sudoExecCalledCommands).to.have.length(1)
-      expect(systemMockManager.sudoExecCalledCommands[0]).to.be.eql('"/service-manager/bin/servicemanager.exe" --do=start')
+      expect(systemMockManager.sudoExecCalledCommands[0])
+        .to.be.eql('"/service-manager/bin/servicemanager.exe" --do=start')
     })
 
     it('throws error when service is not installed', async () => {
-      systemMockManager.setMockCommand('sc.exe query "MysteriumClient"', 'RANDOM RESPONSE TO COMMAND, SAME AS NON-INSTALLED SERVICE')
+      systemMockManager.setMockCommand(
+        'sc.exe query "MysteriumClient"',
+        'RANDOM RESPONSE TO COMMAND, SAME AS NON-INSTALLED SERVICE'
+      )
       const error = await captureAsyncError(() => process.repair())
       expect(error).to.be.an('error')
     })

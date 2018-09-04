@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 The "MysteriumNetwork/mysterion" Authors.
+ * Copyright (C) 2017 The "MysteriumNetwork/mysterium-vpn" Authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,7 @@ import type { RavenData } from '../../../src/app/bug-reporting/bug-reporter-metr
 import { TAGS } from '../../../src/app/bug-reporting/bug-reporter-metrics'
 
 class MockEnvironmentCollector implements EnvironmentCollector {
-  mockMysterionReleaseId = 'mock mysterion release id'
+  mockMysteriumVpnReleaseId = 'mock mysterium vpn release id'
   _cache = { info: 'mock info', error: 'mock error' }
   mockSerializedCaches = {
     backend: this._cache,
@@ -40,8 +40,8 @@ class MockEnvironmentCollector implements EnvironmentCollector {
     extra: {}
   }
 
-  getMysterionReleaseId () {
-    return this.mockMysterionReleaseId
+  getReleaseId () {
+    return this.mockMysteriumVpnReleaseId
   }
 
   getSerializedCaches () {

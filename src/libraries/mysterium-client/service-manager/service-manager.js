@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 The "MysteriumNetwork/mysterion" Authors.
+ * Copyright (C) 2017 The "MysteriumNetwork/mysterium-vpn" Authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -137,7 +137,9 @@ export default class ServiceManager {
     }
   }
 
-  async _execAndGetState (operation: ServiceManagerOperation, reinstallOnError: boolean = false): Promise<ServiceState> {
+  async _execAndGetState (
+    operation: ServiceManagerOperation,
+    reinstallOnError: boolean = false): Promise<ServiceState> {
     try {
       const result = await this._execOperations(operation)
       return parseServiceState(result)

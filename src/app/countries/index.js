@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 The "MysteriumNetwork/mysterion" Authors.
+ * Copyright (C) 2017 The "MysteriumNetwork/mysterium-vpn" Authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +40,9 @@ function getCountryLabel (country: Country, maxNameLength: ?number = null, maxId
   return `${title} (${identity})`
 }
 
-function getSortedCountryListFromProposals (proposals: Array<ProposalDTO>, favorites: FavoriteProviders): Array<Country> {
+function getSortedCountryListFromProposals (
+  proposals: Array<ProposalDTO>,
+  favorites: FavoriteProviders): Array<Country> {
   const countries = proposals.map(getCountryFromProposal).map(countryFavoriteMapper(favorites))
   return countries.sort(compareCountries)
 }

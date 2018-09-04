@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 The "MysteriumNetwork/mysterion" Authors.
+ * Copyright (C) 2017 The "MysteriumNetwork/mysterium-vpn" Authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,14 +17,14 @@
 
 // @flow
 
-function getVersionLabel (mysterionReleaseId: string, clientVersion: ?string): string {
+function getVersionLabel (releaseId: string, clientVersion: ?string): string {
   if (!clientVersion) {
-    return `v${mysterionReleaseId}`
+    return `v${releaseId}`
   }
-  return `v${mysterionReleaseId}-${clientVersion}`
+  return `v${releaseId}-${clientVersion}`
 }
 
-function getMysterionReleaseId (version: ?string, build: ?string): string {
+function getReleaseId (version: ?string, build: ?string): string {
   version = version || ''
   if (build == null) {
     return version
@@ -41,4 +41,4 @@ function minifyBuildNumber (build: string): string {
   return build.substr(0, workerIdStart)
 }
 
-export { getVersionLabel, getMysterionReleaseId }
+export { getVersionLabel, getReleaseId }

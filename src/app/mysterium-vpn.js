@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 The "MysteriumNetwork/mysterion" Authors.
+ * Copyright (C) 2017 The "MysteriumNetwork/mysterium-vpn" Authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ import { onFirstEvent, onFirstEventOrTimeout } from './communication/utils'
 import path from 'path'
 import ConnectionStatusEnum from '../libraries/mysterium-tequilapi/dto/connection-status-enum'
 import type { Size } from './window'
-import type { MysterionConfig } from './mysterion-config'
+import type { MysteriumVpnConfig } from './mysterium-vpn-config'
 import Window from './window'
 import Terms from './terms'
 import ProcessMonitoring from '../libraries/mysterium-client/monitoring'
@@ -38,7 +38,6 @@ import CountryList from './data-fetchers/country-list'
 import type { BugReporter } from './bug-reporting/interface'
 import { UserSettingsStore } from './user-settings/user-settings-store'
 import Notification from './notification'
-import type { MessageBus } from './communication/message-bus'
 import IdentityDTO from '../libraries/mysterium-tequilapi/dto/identity'
 import type { CurrentIdentityChangeDTO } from './communication/dto'
 import type { EnvironmentCollector } from './bug-reporting/environment/environment-collector'
@@ -49,16 +48,15 @@ import SyncReceiverMainCommunication from './communication/sync/sync-main-commun
 import { SyncIpcReceiver } from './communication/sync/sync-ipc'
 import type { StringLogger } from './logging/string-logger'
 import logger from './logger'
-import MainIpc from './communication/ipc/main-ipc'
-import IpcMessageBus from './communication/ipc-message-bus'
 import StartupEventTracker from './statistics/startup-event-tracker'
 import TequilapiRegistrationFetcher from './data-fetchers/tequilapi-registration-fetcher'
 import IdentityRegistrationDTO from '../libraries/mysterium-tequilapi/dto/identity-registration'
+import MainBufferedIpc from './communication/ipc/main-buffered-ipc'
 
-type MysterionParams = {
+type MysteriumVpnParams = {
   browserWindowFactory: () => BrowserWindow,
   windowFactory: () => Window,
-  config: MysterionConfig,
+  config: MysteriumVpnConfig,
   terms: Terms,
   installer: Installer,
   monitoring: ProcessMonitoring,
@@ -75,16 +73,18 @@ type MysterionParams = {
   userSettingsStore: UserSettingsStore,
   disconnectNotification: Notification,
   featureToggle: FeatureToggle,
-  startupEventTracker: StartupEventTracker
+  startupEventTracker: StartupEventTracker,
+  mainIpc: MainBufferedIpc,
+  mainCommunication: MainMessageBusCommunication
 }
 
-const LOG_PREFIX = '[Mysterion] '
+const LOG_PREFIX = '[MysteriumVpn] '
 const MYSTERIUM_CLIENT_STARTUP_THRESHOLD = 10000
 
-class Mysterion {
+class MysteriumVpn {
   _browserWindowFactory: () => BrowserWindow
   _windowFactory: Function
-  _config: MysterionConfig
+  _config: MysteriumVpnConfig
   _terms: Terms
   _installer: Installer
   _monitoring: ProcessMonitoring
@@ -104,10 +104,10 @@ class Mysterion {
   _featureToggle: FeatureToggle
 
   _window: Window
-  _messageBus: MessageBus
   _communication: MainMessageBusCommunication
+  _ipc: MainBufferedIpc
 
-  constructor (params: MysterionParams) {
+  constructor (params: MysteriumVpnParams) {
     this._browserWindowFactory = params.browserWindowFactory
     this._windowFactory = params.windowFactory
     this._config = params.config
@@ -128,9 +128,13 @@ class Mysterion {
     this._disconnectNotification = params.disconnectNotification
     this._startupEventTracker = params.startupEventTracker
     this._featureToggle = params.featureToggle
+
+    this._ipc = params.mainIpc
+    this._communication = params.mainCommunication
   }
 
   run () {
+    this._startupEventTracker.sendAppStartEvent()
     this._makeSureOnlySingleInstanceIsRunning()
 
     logger.setLogger(this._logger)
@@ -186,12 +190,10 @@ class Mysterion {
     const windowSize = this._getWindowSize(showTerms)
     this._window = this._createWindow(windowSize)
     const send = this._getSendFunction(browserWindow)
-    const ipc = new MainIpc(send, this._bugReporter.captureErrorException)
-    this._messageBus = new IpcMessageBus(ipc)
-    this._communication = new MainMessageBusCommunication(this._messageBus)
+    this._ipc.setSenderAndSendBuffered(send)
 
     this._communication.onCurrentIdentityChangeOnce((identityChange: CurrentIdentityChangeDTO) => {
-      this._startupEventTracker.sendEvent(identityChange.id)
+      this._startupEventTracker.sendRuntimeEnvironmentDetails(identityChange.id)
     })
 
     this._communication.onCurrentIdentityChange((identityChange: CurrentIdentityChangeDTO) => {
@@ -563,4 +565,4 @@ function generateSessionId () {
   return Math.floor(Math.random() * 10 ** 9).toString()
 }
 
-export default Mysterion
+export default MysteriumVpn

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 The "MysteriumNetwork/mysterion" Authors.
+ * Copyright (C) 2017 The "MysteriumNetwork/mysterium-vpn" Authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@ import type { SerializedLogCaches } from '../../logging/log-cache-bundle'
 import type { RavenData } from '../bug-reporter-metrics'
 
 interface EnvironmentCollector {
-  getMysterionReleaseId (): string,
+  getReleaseId (): string,
   getSerializedCaches (): SerializedLogCaches,
   getMetrics (): RavenData
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 The "MysteriumNetwork/mysterion" Authors.
+ * Copyright (C) 2018 The "MysteriumNetwork/mysterium-vpn" Authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,6 +17,13 @@
 
 // @flow
 
-type LogLevel = 'info' | 'error'
+/**
+ * Allows displaying error messages.
+ */
+interface ErrorMessage {
+  hide (): void,
+  showError (error: Error): void,
+  showMessage (message: string): void,
+}
 
-export type { LogLevel }
+export type { ErrorMessage }

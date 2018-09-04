@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 The "MysteriumNetwork/mysterion" Authors.
+ * Copyright (C) 2017 The "MysteriumNetwork/mysterium-vpn" Authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,17 +25,17 @@ import { BugReporterMetrics } from '../bug-reporter-metrics'
 
 class MainEnvironmentCollector implements EnvironmentCollector {
   _logCacheBundle: LogCacheBundle
-  _mysterionReleaseId: string
+  _releaseId: string
   _bugReporterMetrics: BugReporterMetrics
 
-  constructor (logCacheBundle: LogCacheBundle, mysterionReleaseId: string, bugReporterMetrics: BugReporterMetrics) {
+  constructor (logCacheBundle: LogCacheBundle, releaseId: string, bugReporterMetrics: BugReporterMetrics) {
     this._logCacheBundle = logCacheBundle
-    this._mysterionReleaseId = mysterionReleaseId
+    this._releaseId = releaseId
     this._bugReporterMetrics = bugReporterMetrics
   }
 
-  getMysterionReleaseId (): string {
-    return this._mysterionReleaseId
+  getReleaseId (): string {
+    return this._releaseId
   }
 
   getSerializedCaches (): SerializedLogCaches {

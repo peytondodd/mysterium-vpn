@@ -1,10 +1,10 @@
-# Mysterion - decentralized VPN built on blockchain
+# Mysterium VPN - decentralized VPN built on blockchain
 
-Mysterion is desktop application to access Mysterion Network - decentralized VPN built on blockchain.
+Mysterium VPN is a desktop application for accessing Mysterium Network - decentralized VPN built on blockchain.
 
 - Homepage https://mysterium.network/
 - [Whitepaper](https://mysterium.network/whitepaper.pdf)
-- [Stable](https://github.com/MysteriumNetwork/mysterion/releases/latest) release
+- [Stable](https://github.com/MysteriumNetwork/mysterium-vpn/releases/latest) release
 
 ## Build Setup
 

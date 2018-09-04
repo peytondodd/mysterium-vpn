@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 The "MysteriumNetwork/mysterion" Authors.
+ * Copyright (C) 2017 The "MysteriumNetwork/mysterium-vpn" Authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +47,11 @@ class Tray {
   _connectionStatus: ConnectionStatus
   _iconPath: string
 
-  constructor (trayFactory: electronTrayFactory, templateBuilder: Function, menuBuilder: TrayMenuBuilder, imagePath: string) {
+  constructor (
+    trayFactory: electronTrayFactory,
+    templateBuilder: Function,
+    menuBuilder: TrayMenuBuilder,
+    imagePath: string) {
     this._electronTrayFactory = trayFactory
     this._templateBuilder = templateBuilder
     this._menuBuilder = menuBuilder

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 The "MysteriumNetwork/mysterion" Authors.
+ * Copyright (C) 2018 The "MysteriumNetwork/mysterium-vpn" Authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,14 +20,15 @@ import { join } from 'path'
 
 import type { Container } from '../../../app/di'
 import Notification from '../../../app/notification/index'
-import type { MysterionConfig } from '../../../app/mysterion-config'
+import type { MysteriumVpnConfig } from '../../../app/mysterium-vpn-config'
 
 function bootstrap (container: Container) {
   container.factory(
     'disconnectNotification',
-    ['mysterionApplication.config'],
-    (config: MysterionConfig) => {
-      return new Notification('Disconnected', 'from VPN server', join(config.staticDirectory, 'icons', 'notification.png'))
+    ['mysteriumVpnApplication.config'],
+    (config: MysteriumVpnConfig) => {
+      const iconPath = join(config.staticDirectory, 'icons', 'notification.png')
+      return new Notification('Disconnected', 'from VPN server', iconPath)
     }
   )
 }

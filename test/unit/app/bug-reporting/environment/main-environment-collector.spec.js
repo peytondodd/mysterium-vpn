@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 The "MysteriumNetwork/mysterion" Authors.
+ * Copyright (C) 2017 The "MysteriumNetwork/mysterium-vpn" Authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,9 +41,9 @@ describe('MainEnvironmentCollector', () => {
     collector = new MainEnvironmentCollector(logCacheBundle, releaseID, bugReporterMetrics)
   })
 
-  describe('.getMysterionReleaseId', () => {
+  describe('.getReleaseId', () => {
     it('returns release id', () => {
-      expect(collector.getMysterionReleaseId()).to.eql(releaseID)
+      expect(collector.getReleaseId()).to.eql(releaseID)
     })
   })
 

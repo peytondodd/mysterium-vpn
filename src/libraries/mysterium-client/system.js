@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 The "MysteriumNetwork/mysterion" Authors.
+ * Copyright (C) 2018 The "MysteriumNetwork/mysterium-vpn" Authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -108,7 +108,7 @@ class OSSystem implements System {
 
   _sudoExec (command: string): Promise<string> {
     return new Promise(function (resolve, reject) {
-      sudo.exec(command, { name: 'Mysterion' }, (error, stdout, stderr) => {
+      sudo.exec(command, { name: 'MysteriumVpn' }, (error, stdout, stderr) => {
         if (error) {
           reject(ensureError(error))
           return

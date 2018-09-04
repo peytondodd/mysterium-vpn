@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 The "MysteriumNetwork/mysterion" Authors.
+ * Copyright (C) 2018 The "MysteriumNetwork/mysterium-vpn" Authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 import Transport from 'winston-transport'
 import LogCache from './log-cache'
 import type { WinstonLogEntry } from './winston'
-import { mapWinstonLogLevelToMysterionLevel } from './winston'
+import { mapWinstonLogLevelToApplicationLevel } from './winston'
 
 class WinstonTransportCaching extends Transport {
   _logCache: LogCache
@@ -32,7 +32,7 @@ class WinstonTransportCaching extends Transport {
   log (logEntry: WinstonLogEntry, callback: () => any) {
     const timestamp = logEntry.timestamp || ''
     const message = timestamp + logEntry.message
-    this._logCache.pushToLevel(mapWinstonLogLevelToMysterionLevel(logEntry.level), message)
+    this._logCache.pushToLevel(mapWinstonLogLevelToApplicationLevel(logEntry.level), message)
     callback()
   }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 The "MysteriumNetwork/mysterion" Authors.
+ * Copyright (C) 2017 The "MysteriumNetwork/mysterium-vpn" Authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,10 @@ class SyncCallbacksInitializer {
   _communication: SyncMainCommunication
   _frontendLogCache: LogCache
 
-  constructor (communication: SyncMainCommunication, environmentCollector: EnvironmentCollector, frontendLogCache: LogCache) {
+  constructor (
+    communication: SyncMainCommunication,
+    environmentCollector: EnvironmentCollector,
+    frontendLogCache: LogCache) {
     this._environmentCollector = environmentCollector
     this._communication = communication
     this._frontendLogCache = frontendLogCache

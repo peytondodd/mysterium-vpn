@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 The "MysteriumNetwork/mysterion" Authors.
+ * Copyright (C) 2018 The "MysteriumNetwork/mysterium-vpn" Authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,17 +22,31 @@ import type { EventListener } from '../ipc-message-bus'
 import { ipcMain } from 'electron'
 
 type Sender = (channel: string, data?: mixed) => void
+export type IpcMessage = { channel: string, data: ?mixed }
 
-class MainIpc implements Ipc {
-  _send: Sender
+class MainBufferedIpc implements Ipc {
+  _send: ?Sender
+  _buffer: IpcMessage[] = []
   _captureException: (Error) => void
 
-  constructor (send: Sender, captureException: (Error) => void) {
-    this._send = send
+  constructor (captureException: (Error) => void) {
     this._captureException = captureException
   }
 
+  setSenderAndSendBuffered (send: Sender) {
+    this._send = send
+
+    this._buffer.forEach((m: IpcMessage) => {
+      this.send(m.channel, m.data)
+    })
+    this._buffer = []
+  }
+
   send (channel: string, data?: mixed): void {
+    if (!this._send) {
+      this._buffer.push({ channel, data })
+      return
+    }
     try {
       this._send(channel, data)
     } catch (err) {
@@ -50,4 +64,4 @@ class MainIpc implements Ipc {
 }
 
 export type { Sender }
-export default MainIpc
+export default MainBufferedIpc

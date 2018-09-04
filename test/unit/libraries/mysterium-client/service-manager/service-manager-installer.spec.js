@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 The "MysteriumNetwork/mysterion" Authors.
+ * Copyright (C) 2017 The "MysteriumNetwork/mysterium-vpn" Authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -146,7 +146,9 @@ describe('ServiceManagerInstaller', () => {
       await installer.install()
 
       expect(systemMockManager.sudoExecCalledCommands[0]).to.be.eql(
-        '"/service-manager/bin/servicemanager.exe" --do=install && "/service-manager/bin/servicemanager.exe" --do=start')
+        '"/service-manager/bin/servicemanager.exe" --do=install && ' +
+        '"/service-manager/bin/servicemanager.exe" --do=start'
+      )
     })
 
     it('installs TAP drivers when they are not installed', async () => {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 The "MysteriumNetwork/mysterion" Authors.
+ * Copyright (C) 2017 The "MysteriumNetwork/mysterium-vpn" Authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,15 +69,15 @@ function bootstrap (container: Container) {
 
   container.service(
     'environmentCollector',
-    ['backendLogCache', 'frontendLogCache', 'mysteriumProcessLogCache', 'mysterionReleaseID', 'bugReporterMetrics'],
+    ['backendLogCache', 'frontendLogCache', 'mysteriumProcessLogCache', 'mysteriumVpnReleaseID', 'bugReporterMetrics'],
     (
       backendLogCache: LogCache,
       frontendLogCache: LogCache,
       mysteriumProcessLogCache: LogCache,
-      mysterionReleaseID: string,
+      mysteriumVpnReleaseID: string,
       bugReporterMetrics: BugReporterMetrics): EnvironmentCollector => {
       const bundle = new LogCacheBundle(backendLogCache, frontendLogCache, mysteriumProcessLogCache)
-      return new MainEnvironmentCollector(bundle, mysterionReleaseID, bugReporterMetrics)
+      return new MainEnvironmentCollector(bundle, mysteriumVpnReleaseID, bugReporterMetrics)
     }
   )
 

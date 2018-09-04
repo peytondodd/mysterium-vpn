@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 The "MysteriumNetwork/mysterion" Authors.
+ * Copyright (C) 2017 The "MysteriumNetwork/mysterium-vpn" Authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,13 @@
 
 // @flow
 import { describe, it, expect, beforeEach } from '../../../helpers/dependencies'
-import { BugReporterMetrics, EXTRA, METRICS, NOT_SET, TAGS } from '../../../../src/app/bug-reporting/bug-reporter-metrics'
+import {
+  BugReporterMetrics,
+  EXTRA,
+  METRICS,
+  NOT_SET,
+  TAGS
+} from '../../../../src/app/bug-reporting/bug-reporter-metrics'
 import type { Metric } from '../../../../src/app/bug-reporting/bug-reporter-metrics'
 import type { MapSyncDTO } from '../../../../src/libraries/map-sync'
 import FakeMapSyncCommunication from '../../../helpers/fake_map_sync_communication'

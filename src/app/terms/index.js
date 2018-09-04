@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 The "MysteriumNetwork/mysterion" Authors.
+ * Copyright (C) 2017 The "MysteriumNetwork/mysterium-vpn" Authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,7 +66,9 @@ class Terms {
    * @throws exception when this.termsHtml is falsy
    */
   getContent (): string {
-    if (!this.termsHtml) throw new Error('Trying to get terms content, but termsHtml is undefined. Must do load() first')
+    if (!this.termsHtml) {
+      throw new Error('Trying to get terms content, but termsHtml is undefined. Must do load() first')
+    }
     return this.termsHtml
   }
 

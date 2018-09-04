@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 The "MysteriumNetwork/mysterion" Authors.
+ * Copyright (C) 2017 The "MysteriumNetwork/mysterium-vpn" Authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 
 // @flow
 import DIContainer from '../../app/di/jpex-container'
-import mysterionBootstrap from './modules/application'
+import mysteriumVpnBootstrap from './modules/application'
 import bugReportingConfigBootstrap from '../../dependencies/bug-reporting'
 import featureToggleBootstrap from '../../dependencies/feature-toggle'
 import bugReportingBootstrap from './modules/bug-reporting'
@@ -37,7 +37,7 @@ function bootstrap (): DIContainer {
   const container = new DIContainer()
 
   featureToggleBootstrap(container)
-  mysterionBootstrap(container)
+  mysteriumVpnBootstrap(container)
   bugReportingConfigBootstrap(container)
   bugReportingBootstrap(container)
   eventsBootstrap(container)

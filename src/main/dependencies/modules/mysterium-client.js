@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 The "MysteriumNetwork/mysterion" Authors.
+ * Copyright (C) 2017 The "MysteriumNetwork/mysterium-vpn" Authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@ import { Tail } from 'tail'
 import type { BugReporter } from '../../../app/bug-reporting/interface'
 
 import type { Container } from '../../../app/di'
-import type { MysterionConfig } from '../../../app/mysterion-config'
+import type { MysteriumVpnConfig } from '../../../app/mysterium-vpn-config'
 import type { LogCallback } from '../../../libraries/mysterium-client'
 import type { TailFunction } from '../../../libraries/mysterium-client/client-log-subscriber'
 import type { ClientConfig } from '../../../libraries/mysterium-client/config'
@@ -37,7 +37,8 @@ import LaunchDaemonProcess from '../../../libraries/mysterium-client/launch-daem
 import StandaloneClientInstaller from '../../../libraries/mysterium-client/standalone/standalone-client-installer'
 import StandaloneClientProcess from '../../../libraries/mysterium-client/standalone/standalone-client-process'
 
-import ServiceManagerInstaller, { SERVICE_MANAGER_BIN } from '../../../libraries/mysterium-client/service-manager/service-manager-installer'
+import ServiceManagerInstaller, { SERVICE_MANAGER_BIN }
+  from '../../../libraries/mysterium-client/service-manager/service-manager-installer'
 import ServiceManagerProcess from '../../../libraries/mysterium-client/service-manager/service-manager-process'
 
 import { LAUNCH_DAEMON_PORT } from '../../../libraries/mysterium-client/launch-daemon/config'
@@ -52,10 +53,10 @@ function bootstrap (container: Container) {
 
   container.service(
     'mysteriumClient.config',
-    ['mysteriumClient.platform', 'mysterionApplication.config'],
-    (platform: string, mysterionConfig: MysterionConfig): ClientConfig => {
-      let clientBin = path.join(mysterionConfig.contentsDirectory, 'bin', 'mysterium_client')
-      let openvpnBin = path.join(mysterionConfig.contentsDirectory, 'bin', 'openvpn')
+    ['mysteriumClient.platform', 'mysteriumVpnApplication.config'],
+    (platform: string, mysteriumVpnConfig: MysteriumVpnConfig): ClientConfig => {
+      let clientBin = path.join(mysteriumVpnConfig.contentsDirectory, 'bin', 'mysterium_client')
+      let openvpnBin = path.join(mysteriumVpnConfig.contentsDirectory, 'bin', 'openvpn')
       let systemLogPath = '/var/log/system.log'
 
       if (platform === WINDOWS) {
@@ -66,11 +67,11 @@ function bootstrap (container: Container) {
 
       return {
         clientBin: clientBin,
-        configDir: path.join(mysterionConfig.contentsDirectory, 'bin', 'config'),
+        configDir: path.join(mysteriumVpnConfig.contentsDirectory, 'bin', 'config'),
         openVPNBin: openvpnBin,
-        dataDir: mysterionConfig.userDataDirectory,
-        runtimeDir: mysterionConfig.runtimeDirectory,
-        logDir: mysterionConfig.userDataDirectory,
+        dataDir: mysteriumVpnConfig.userDataDirectory,
+        runtimeDir: mysteriumVpnConfig.runtimeDirectory,
+        logDir: mysteriumVpnConfig.userDataDirectory,
         stdOutFileName: 'stdout.log',
         stdErrFileName: 'stderr.log',
         systemLogPath: systemLogPath,
@@ -81,11 +82,11 @@ function bootstrap (container: Container) {
 
   container.service(
     'serviceManager',
-    ['mysterionApplication.config', 'mysteriumClient.platform'],
-    (mysterionConfig: MysterionConfig, platform: string) => {
+    ['mysteriumVpnApplication.config', 'mysteriumClient.platform'],
+    (mysteriumVpnConfig: MysteriumVpnConfig, platform: string) => {
       switch (platform) {
         case WINDOWS:
-          let serviceManagerPath = path.join(mysterionConfig.contentsDirectory, 'bin', SERVICE_MANAGER_BIN)
+          let serviceManagerPath = path.join(mysteriumVpnConfig.contentsDirectory, 'bin', SERVICE_MANAGER_BIN)
           return new ServiceManager(serviceManagerPath, new OSSystem())
         default:
           return null

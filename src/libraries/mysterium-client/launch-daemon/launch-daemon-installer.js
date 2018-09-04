@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 The "MysteriumNetwork/mysterion" Authors.
+ * Copyright (C) 2017 The "MysteriumNetwork/mysterium-vpn" Authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -108,7 +108,7 @@ class LaunchDaemonInstaller implements Installer {
     let command = `sh -c '${script}'`.replace(/\n/, '')
 
     await writeFile(tempPlistFile, this.template())
-    await sudoExec(command, { name: 'Mysterion' })
+    await sudoExec(command, { name: 'MysteriumVpn' })
     await this._createLogFilesIfMissing()
   }
 

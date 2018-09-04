@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 The "MysteriumNetwork/mysterion" Authors.
+ * Copyright (C) 2017 The "MysteriumNetwork/mysterium-vpn" Authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,12 +22,12 @@ type WindowSizeConfig = {
   height: number
 }
 
-type MysterionWindowsConfig = {
+type MysteriumVpnWindowsConfig = {
   terms: WindowSizeConfig,
   app: WindowSizeConfig
 }
 
-type MysterionConfig = {
+type MysteriumVpnConfig = {
   // Application root directory
   contentsDirectory: string,
   // User data directory. This should store logs, terms and conditions file, etc.
@@ -37,7 +37,7 @@ type MysterionConfig = {
   // Static file directory
   staticDirectory: string,
   // Window configuration
-  windows: MysterionWindowsConfig
+  windows: MysteriumVpnWindowsConfig
 }
 
-export type { MysterionConfig, MysterionWindowsConfig, WindowSizeConfig }
+export type { MysteriumVpnConfig, MysteriumVpnWindowsConfig, WindowSizeConfig }

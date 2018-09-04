@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 The "MysteriumNetwork/mysterion" Authors.
+ * Copyright (C) 2017 The "MysteriumNetwork/mysterium-vpn" Authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,8 @@ import SystemMock from '../../../../helpers/system-mock'
 import type { SystemMockManager } from '../../../../helpers/system-mock'
 import type { System } from '../../../../../src/libraries/mysterium-client/system'
 import type { ServiceState } from '../../../../../src/libraries/mysterium-client/service-manager/service-manager'
-import ServiceManager, { SERVICE_STATE } from '../../../../../src/libraries/mysterium-client/service-manager/service-manager'
+import ServiceManager, { SERVICE_STATE }
+  from '../../../../../src/libraries/mysterium-client/service-manager/service-manager'
 import { captureAsyncError } from '../../../../helpers/utils'
 
 const SERVICE_MANAGER_PATH = '/service-manager/bin/servicemanager.exe'
@@ -34,11 +35,22 @@ const getServiceInfo = (state: ServiceState) =>
 const createSystemMock = () => {
   const systemMock = new SystemMock()
   systemMock.setMockCommand('sc.exe query "MysteriumClient"', getServiceInfo(SERVICE_STATE.RUNNING))
-  systemMock.setMockCommand('"/service-manager/bin/servicemanager.exe" --do=start', getServiceInfo(SERVICE_STATE.START_PENDING))
-  systemMock.setMockCommand('"/service-manager/bin/servicemanager.exe" --do=stop', getServiceInfo(SERVICE_STATE.STOP_PENDING))
-  systemMock.setMockCommand('"/service-manager/bin/servicemanager.exe" --do=restart', getServiceInfo(SERVICE_STATE.START_PENDING))
-  systemMock.setMockCommand('"/service-manager/bin/servicemanager.exe" --do=install && "/service-manager/bin/servicemanager.exe"',
-    getServiceInfo(SERVICE_STATE.START_PENDING))
+  systemMock.setMockCommand(
+    '"/service-manager/bin/servicemanager.exe" --do=start',
+    getServiceInfo(SERVICE_STATE.START_PENDING)
+  )
+  systemMock.setMockCommand(
+    '"/service-manager/bin/servicemanager.exe" --do=stop',
+    getServiceInfo(SERVICE_STATE.STOP_PENDING)
+  )
+  systemMock.setMockCommand(
+    '"/service-manager/bin/servicemanager.exe" --do=restart',
+    getServiceInfo(SERVICE_STATE.START_PENDING)
+  )
+  systemMock.setMockCommand(
+    '"/service-manager/bin/servicemanager.exe" --do=install && "/service-manager/bin/servicemanager.exe"',
+    getServiceInfo(SERVICE_STATE.START_PENDING)
+  )
   return systemMock
 }
 
@@ -51,7 +63,8 @@ describe('ServiceManager', () => {
     const state = await command()
     expect(state).to.be.eql(resultState)
     expect(systemMockManager.sudoExecCalledCommands).to.have.length(1)
-    expect(systemMockManager.sudoExecCalledCommands[0]).to.be.eql('"/service-manager/bin/servicemanager.exe" --do=' + doCommand)
+    expect(systemMockManager.sudoExecCalledCommands[0])
+      .to.be.eql('"/service-manager/bin/servicemanager.exe" --do=' + doCommand)
   }
 
   beforeEach(() => {
@@ -66,7 +79,8 @@ describe('ServiceManager', () => {
       await serviceManager.install()
       expect(systemMockManager.sudoExecCalledCommands).to.have.length(1)
       expect(systemMockManager.sudoExecCalledCommands[0]).to.be.eql(
-        '"/service-manager/bin/servicemanager.exe" --do=install && "/service-manager/bin/servicemanager.exe" --do=start')
+        '"/service-manager/bin/servicemanager.exe" --do=install && "/service-manager/bin/servicemanager.exe" --do=start'
+      )
     })
 
     it('throws error when sudo persmissions are not granted by user', async () => {
@@ -88,10 +102,14 @@ describe('ServiceManager', () => {
     })
 
     it('re-installs broken service', async () => {
-      systemMockManager.setMockCommandError('"/service-manager/bin/servicemanager.exe" --do=start', new Error('Command failed'))
+      systemMockManager.setMockCommandError(
+        '"/service-manager/bin/servicemanager.exe" --do=start',
+        new Error('Command failed')
+      )
       await serviceManager.start()
       expect(systemMockManager.sudoExecCalledCommands).to.have.length(2)
-      expect(systemMockManager.sudoExecCalledCommands[0]).to.be.eql('"/service-manager/bin/servicemanager.exe" --do=start')
+      expect(systemMockManager.sudoExecCalledCommands[0])
+        .to.be.eql('"/service-manager/bin/servicemanager.exe" --do=start')
       expect(systemMockManager.sudoExecCalledCommands[1]).to.be.eql(
         '"/service-manager/bin/servicemanager.exe" --do=uninstall' +
           ' && "/service-manager/bin/servicemanager.exe" --do=install' +
@@ -124,10 +142,14 @@ describe('ServiceManager', () => {
     })
 
     it('re-installs broken service', async () => {
-      systemMockManager.setMockCommandError('"/service-manager/bin/servicemanager.exe" --do=restart', new Error('Command failed'))
+      systemMockManager.setMockCommandError(
+        '"/service-manager/bin/servicemanager.exe" --do=restart',
+        new Error('Command failed')
+      )
       await serviceManager.restart()
       expect(systemMockManager.sudoExecCalledCommands).to.have.length(2)
-      expect(systemMockManager.sudoExecCalledCommands[0]).to.be.eql('"/service-manager/bin/servicemanager.exe" --do=restart')
+      expect(systemMockManager.sudoExecCalledCommands[0])
+        .to.be.eql('"/service-manager/bin/servicemanager.exe" --do=restart')
       expect(systemMockManager.sudoExecCalledCommands[1]).to.be.eql(
         '"/service-manager/bin/servicemanager.exe" --do=uninstall' +
         ' && "/service-manager/bin/servicemanager.exe" --do=install' +

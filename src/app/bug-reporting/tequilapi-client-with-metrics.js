@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 The "MysteriumNetwork/mysterion" Authors.
+ * Copyright (C) 2017 The "MysteriumNetwork/mysterium-vpn" Authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,7 +80,9 @@ class TequilapiClientWithMetrics implements TequilapiClient {
     return result
   }
 
-  async connectionCreate (request: ConnectionRequestDTO, timeout: ?number = TIMEOUT_DISABLED): Promise<ConnectionStatusDTO> {
+  async connectionCreate (
+    request: ConnectionRequestDTO,
+    timeout: ?number = TIMEOUT_DISABLED): Promise<ConnectionStatusDTO> {
     this._bugReporterMetrics.set(METRICS.CONNECTION_ACTIVE, false)
     const result = await this._client.connectionCreate(request, timeout)
     this._bugReporterMetrics.set(METRICS.CONNECTION_ACTIVE, true)

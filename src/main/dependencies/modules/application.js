@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 The "MysteriumNetwork/mysterion" Authors.
+ * Copyright (C) 2017 The "MysteriumNetwork/mysterium-vpn" Authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,23 +18,25 @@
 // @flow
 import { app, BrowserWindow } from 'electron'
 import type { Container } from '../../../app/di'
-import Mysterion from '../../../app/mysterion'
-import type { MysterionConfig } from '../../../app/mysterion-config'
+import MysteriumVpn from '../../../app/mysterium-vpn'
+import type { MysteriumVpnConfig } from '../../../app/mysterium-vpn-config'
 import path from 'path'
 import Window from '../../../app/window'
 import Terms from '../../../app/terms'
-import StartupEventTracker from '../../../app/statistics/startup-event-tracker'
-import { getMysterionReleaseId } from '../../../libraries/version'
+import { getReleaseId } from '../../../libraries/version'
+import MainBufferedIpc from '../../../app/communication/ipc/main-buffered-ipc'
+import IpcMessageBus from '../../../app/communication/ipc-message-bus'
+import MainMessageBusCommunication from '../../../app/communication/main-message-bus-communication'
 
 function bootstrap (container: Container) {
   const version = process.env.MYSTERION_VERSION
   const build = process.env.BUILD_NUMBER
-  const mysterionReleaseID = getMysterionReleaseId(version, build)
-  global.__mysterionReleaseID = mysterionReleaseID
+  const mysteriumVpnReleaseID = getReleaseId(version, build)
+  global.__mysteriumVpnReleaseID = mysteriumVpnReleaseID
 
-  container.constant('mysterionReleaseID', mysterionReleaseID)
+  container.constant('mysteriumVpnReleaseID', mysteriumVpnReleaseID)
   container.service(
-    'mysterionApplication.config',
+    'mysteriumVpnApplication.config',
     [],
     () => {
       const inDevMode = process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'testing'
@@ -70,9 +72,9 @@ function bootstrap (container: Container) {
   )
 
   container.service(
-    'mysterionApplication',
+    'mysteriumVpnApplication',
     [
-      'mysterionApplication.config',
+      'mysteriumVpnApplication.config',
       'mysteriumClientInstaller',
       'mysteriumClientProcess',
       'mysteriumClientMonitoring',
@@ -88,10 +90,12 @@ function bootstrap (container: Container) {
       'userSettingsStore',
       'disconnectNotification',
       'featureToggle',
-      'eventSender'
+      'startupEventTracker',
+      'mainIpc',
+      'mainCommunication'
     ],
     (
-      mysterionConfig: MysterionConfig,
+      mysteriumVpnConfig: MysteriumVpnConfig,
       mysteriumClientInstaller,
       mysteriumClientProcess,
       mysteriumClientMonitoring,
@@ -107,14 +111,15 @@ function bootstrap (container: Container) {
       userSettingsStore,
       disconnectNotification,
       featureToggle,
-      eventSender
+      startupEventTracker,
+      mainIpc,
+      mainCommunication
     ) => {
-      const startupEventTracker = new StartupEventTracker(eventSender)
-      return new Mysterion({
-        config: mysterionConfig,
-        browserWindowFactory: () => container.get('mysterionBrowserWindow'),
-        windowFactory: () => container.get('mysterionWindow'),
-        terms: new Terms(path.join(mysterionConfig.staticDirectory, 'terms'), mysterionConfig.userDataDirectory),
+      return new MysteriumVpn({
+        config: mysteriumVpnConfig,
+        browserWindowFactory: () => container.get('mysteriumVpnBrowserWindow'),
+        windowFactory: () => container.get('mysteriumVpnWindow'),
+        terms: new Terms(path.join(mysteriumVpnConfig.staticDirectory, 'terms'), mysteriumVpnConfig.userDataDirectory),
         installer: mysteriumClientInstaller,
         process: mysteriumClientProcess,
         monitoring: mysteriumClientMonitoring,
@@ -130,13 +135,15 @@ function bootstrap (container: Container) {
         userSettingsStore,
         disconnectNotification,
         featureToggle,
-        startupEventTracker
+        startupEventTracker,
+        mainIpc,
+        mainCommunication
       })
     }
   )
 
   container.factory(
-    'mysterionBrowserWindow',
+    'mysteriumVpnBrowserWindow',
     [],
     () => {
       return new BrowserWindow({
@@ -146,14 +153,31 @@ function bootstrap (container: Container) {
     })
 
   container.service(
-    'mysterionWindow',
-    ['mysterionBrowserWindow', 'feedbackForm.headerRule'],
+    'mysteriumVpnWindow',
+    ['mysteriumVpnBrowserWindow', 'feedbackForm.headerRule'],
     (browserWindow, rule) => {
       const url = process.env.NODE_ENV === 'development' ? `http://localhost:9080/` : `file://${__dirname}/index.html`
 
       const window = new Window(browserWindow, url)
       window.registerRequestHeadersRule(rule)
       return window
+    }
+  )
+
+  container.factory(
+    'mainIpc',
+    ['bugReporter'],
+    (bugReporter) => {
+      return new MainBufferedIpc(bugReporter.captureException)
+    }
+  )
+
+  container.factory(
+    'mainCommunication',
+    ['mainIpc'],
+    (ipc) => {
+      const messageBus = new IpcMessageBus(ipc)
+      return new MainMessageBusCommunication(messageBus)
     }
   )
 }

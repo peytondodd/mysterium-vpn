@@ -4,7 +4,7 @@
 
 DIRS='src test'
 IGNORE_PATH="test/unit/coverage/"
-COPYRIGHT="Copyright (C) \d\{4\} The \"MysteriumNetwork/mysterion\" Authors."
+COPYRIGHT="Copyright (C) \d\{4\} The \"MysteriumNetwork/mysterium-vpn\" Authors."
 
 # Colorful output
 
@@ -19,7 +19,6 @@ print_success () {
 print_error () {
     echo -e $FAILURE_COLOR$1$DEFAULT_COLOR
 }
-
 
 # Checking for license
 

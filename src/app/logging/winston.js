@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 The "MysteriumNetwork/mysterion" Authors.
+ * Copyright (C) 2018 The "MysteriumNetwork/mysterium-vpn" Authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@
 // @flow
 
 import winston from 'winston'
-import type { LogLevel } from './mysterion-log-levels'
+import type { LogLevel } from './mysterium-vpn-log-levels'
 import LogCache from './log-cache'
 import WinstonTransportCaching from './winston-transport-caching'
 import type { StringLogger } from './string-logger'
@@ -57,7 +57,7 @@ function createWinstonSyncComLogger (communication: SyncRendererCommunication) {
   return winstonLogger
 }
 
-function mapWinstonLogLevelToMysterionLevel (level: WinstonLevel): LogLevel {
+function mapWinstonLogLevelToApplicationLevel (level: WinstonLevel): LogLevel {
   return level === 'error' ? 'error' : 'info'
 }
 
@@ -65,5 +65,5 @@ export type { WinstonLogEntry }
 export {
   createWinstonCachingLogger,
   createWinstonSyncComLogger,
-  mapWinstonLogLevelToMysterionLevel
+  mapWinstonLogLevelToApplicationLevel
 }

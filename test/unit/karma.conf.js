@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 The "MysteriumNetwork/mysterion" Authors.
+ * Copyright (C) 2017 The "MysteriumNetwork/mysterium-vpn" Authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 const merge = require('webpack-merge')
 const webpack = require('webpack')
 
-const baseConfig = require('../../../mysterion/.electron-vue/webpack.renderer.config')
+const baseConfig = require('../../.electron-vue/webpack.renderer.config')
 
 // Set BABEL_ENV to use proper preset config
 process.env.BABEL_ENV = 'test'

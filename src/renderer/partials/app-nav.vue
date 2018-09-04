@@ -1,5 +1,5 @@
 <!--
-  - Copyright (C) 2017 The "MysteriumNetwork/mysterion" Authors.
+  - Copyright (C) 2017 The "MysteriumNetwork/mysterium-vpn" Authors.
   -
   - This program is free software: you can redistribute it and/or modify
   - it under the terms of the GNU General Public License as published by
@@ -83,7 +83,7 @@ import { getVersionLabel } from '../../libraries/version'
 
 export default {
   name: 'AppNav',
-  dependencies: ['mysterionReleaseID', 'feedbackForm'],
+  dependencies: ['mysteriumVpnReleaseID', 'feedbackForm'],
   components: {
     IconEye,
     IconIssue,
@@ -94,7 +94,7 @@ export default {
     // mix the getters into computed with object spread operator
     ...mapGetters(['navOpen', 'clientVersion']),
     version () {
-      return getVersionLabel(this.mysterionReleaseID, this.clientVersion)
+      return getVersionLabel(this.mysteriumVpnReleaseID, this.clientVersion)
     }
   },
   methods: {
