@@ -56,7 +56,7 @@ describe('tray', () => {
       builder = new TrayMenuBuilder(() => appQuitter.quit(), showWindow, toggleDevTools, communication)
     })
 
-    describe('.render', () => {
+    describe('.build', () => {
       it('renders menu items without disconnect when not connected', () => {
         const items = builder.updateConnectionStatus(ConnectionStatusEnum.NOT_CONNECTED).build()
         expect(items[1].type).to.equal(separator)
@@ -120,6 +120,8 @@ describe('tray', () => {
         expect(communication.wasInvoked(communication.sendConnectionCancelRequest)).to.equal(false)
         items[2].submenu[0].click()
         expect(communication.wasInvoked(communication.sendConnectionRequest)).to.equal(true)
+        expect(communication.getLastPayload(communication.sendConnectionRequest))
+          .to.eql([{ providerId: 'proposalId_123', providerCountry: 'LT' }])
       })
 
       it('disconnects', () => {

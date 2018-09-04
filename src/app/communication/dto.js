@@ -34,7 +34,8 @@ export type CountriesDTO = Array<Country>
 export type FavoriteProviderDTO = { id: string, isFavorite: boolean }
 
 export type RequestConnectionDTO = {
-  providerId: string
+  providerId: string,
+  providerCountry: ?string
 }
 
 export type RequestTermsDTO = {

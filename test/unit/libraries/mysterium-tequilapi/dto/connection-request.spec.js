@@ -21,10 +21,11 @@ import ConnectionRequestDTO from '../../../../../src/libraries/mysterium-tequila
 describe('TequilapiClient DTO', () => {
   describe('ConnectionRequestDTO', () => {
     it('sets properties', async () => {
-      const request = new ConnectionRequestDTO('0x1000FACE', '0x2000FACE')
+      const request = new ConnectionRequestDTO('0x1000FACE', '0x2000FACE', 'lt')
 
       expect(request.consumerId).to.equal('0x1000FACE')
       expect(request.providerId).to.equal('0x2000FACE')
+      expect(request.providerCountry).to.equal('lt')
     })
 
     it('sets wrong properties', async () => {
