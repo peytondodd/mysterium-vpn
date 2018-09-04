@@ -42,6 +42,12 @@
     width: 25.4rem;
     position: relative;
     flex: 0 0 25.4rem;
+    .head {
+      fill: @white;
+      &__logo {
+        transition-delay: 200ms;
+      }
+    }
     path {
       transition: fill 800ms @easeOutBack 300ms;
       &.head {
@@ -63,6 +69,14 @@
       }
     }
     &.connecting {
+      path {
+        transition: fill 500ms @easeOutQuad 0ms;
+        &.head {
+          fill: @white;
+        }
+      }
+    }
+    &.is-pulsing.is-loading {
       path {
         transition: fill 500ms @easeOutQuad 0ms;
         &.head {

@@ -88,6 +88,9 @@ export default {
             break
         }
       }
+
+      console.log(classes)
+
       return classes
     }
   }
