@@ -168,7 +168,8 @@ describe('ServiceManagerProcess', () => {
       await tickWithDelay(2000)
       await startPromise
       expect(systemMockManager.sudoExecCalledCommands).to.have.length(1)
-      expect(systemMockManager.sudoExecCalledCommands[0]).to.be.eql('"/service-manager/bin/servicemanager.exe" --do=restart')
+      expect(systemMockManager.sudoExecCalledCommands[0]).to.be.eql(
+        '"/service-manager/bin/servicemanager.exe" --do=restart')
     })
 
     it('starts stopped service and waits for healthcheck', async () => {
