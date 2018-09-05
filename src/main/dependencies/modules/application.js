@@ -90,7 +90,7 @@ function bootstrap (container: Container) {
       'startupEventTracker',
       'mainIpc',
       'mainCommunication',
-      'syncCallbackInitializer'
+      'syncCallbacksInitializer'
     ],
     (
       mysteriumVpnConfig: MysteriumVpnConfig,
@@ -112,7 +112,7 @@ function bootstrap (container: Container) {
       startupEventTracker,
       mainIpc,
       mainCommunication,
-      syncCallbackInitializer
+      syncCallbacksInitializer
     ) => {
       return new MysteriumVpn({
         config: mysteriumVpnConfig,
@@ -137,7 +137,7 @@ function bootstrap (container: Container) {
         startupEventTracker,
         mainIpc,
         mainCommunication,
-        syncCallbackInitializer
+        syncCallbacksInitializer
       })
     }
   )

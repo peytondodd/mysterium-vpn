@@ -74,7 +74,7 @@ type MysteriumVpnParams = {
   startupEventTracker: StartupEventTracker,
   mainIpc: MainBufferedIpc,
   mainCommunication: MainMessageBusCommunication,
-  syncCallbackInitializer: SyncCallbacksInitializer
+  syncCallbacksInitializer: SyncCallbacksInitializer
 }
 
 const LOG_PREFIX = '[MysteriumVpn] '
@@ -105,7 +105,7 @@ class MysteriumVpn {
   _window: Window
   _communication: MainMessageBusCommunication
   _ipc: MainBufferedIpc
-  _syncCallbackInitializer: SyncCallbacksInitializer
+  _syncCallbacksInitializer: SyncCallbacksInitializer
 
   constructor (params: MysteriumVpnParams) {
     this._browserWindowFactory = params.browserWindowFactory
@@ -131,7 +131,7 @@ class MysteriumVpn {
 
     this._ipc = params.mainIpc
     this._communication = params.mainCommunication
-    this._syncCallbackInitializer = params.syncCallbackInitializer
+    this._syncCallbacksInitializer = params.syncCallbacksInitializer
   }
 
   run () {
@@ -140,7 +140,7 @@ class MysteriumVpn {
 
     logger.setLogger(this._logger)
     this._bugReporterMetrics.set(TAGS.SESSION_ID, generateSessionId())
-    this._syncCallbackInitializer.initialize()
+    this._syncCallbacksInitializer.initialize()
     this.logUnhandledRejections()
 
     // fired when app has been launched
