@@ -21,6 +21,7 @@ import { exec } from 'child_process'
 import sudo from 'sudo-prompt'
 import { promisify } from 'util'
 import fs from 'fs'
+import logger from '../../app/logger'
 
 const writeFile = promisify(fs.writeFile)
 
@@ -98,8 +99,9 @@ class OSSystem implements System {
           reject(ensureError(error))
           return
         }
-
-        resolve(stdout.trim())
+        const result = stdout.trim()
+        logger.info('user exec', command, result)
+        resolve(result)
       })
     })
   }
@@ -111,8 +113,9 @@ class OSSystem implements System {
           reject(ensureError(error))
           return
         }
-
-        resolve(stdout.trim())
+        const result = stdout.trim()
+        logger.info('sudo exec', command, result)
+        resolve(result)
       })
     })
   }
