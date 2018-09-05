@@ -27,7 +27,7 @@
 
 </template>
 
-<style lang="scss">
+<style lang="less">
   .appError {
     font-size: medium;
     line-height: 1.43;

@@ -44,6 +44,8 @@ delete webpackConfig.output.libraryTarget
 webpackConfig.module.rules
   .find(rule => rule.use.loader === 'vue-loader').use.options.loaders.js = 'babel-loader'
 
+webpackConfig.mode = 'development'
+
 const reporters = ['spec']
 
 module.exports = config => {
