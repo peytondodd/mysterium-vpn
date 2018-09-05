@@ -104,7 +104,7 @@
     "flow-typed": "^2.5.1",
     "jpex": "^2.1.0",
     "less": "^2.7.3",
-    "less-loader": "^4.0.5",
+    "less-loader": "^4.1.0",
     "lolex": "^2.3.2",
     "md5": "^2.2.1",
     "mysterium-client-bin": "^0.2.3",
@@ -160,7 +160,7 @@
     "eslint-plugin-promise": "^4.0.0",
     "eslint-plugin-standard": "^3.1.0",
     "eslint-plugin-vue": "^4.7.1",
-    "extract-text-webpack-plugin": "^3.0.0",
+    "extract-text-webpack-plugin": "^4.0.0-beta.0",
     "file-loader": "^2.0.0",
     "flow-bin": "^0.80.0",
     "html-webpack-plugin": "^3.2.0",
@@ -186,8 +186,8 @@
     "vue-style-loader": "^4.1.2",
     "vue-svg-loader": "^0.8.0",
     "vue-template-compiler": "^2.5.17",
-    "webpack": "^3.11.0",
-    "webpack-dev-server": "^2.11.1",
+    "webpack": "^4.17.2",
+    "webpack-dev-server": "^3.1.7",
     "webpack-hot-middleware": "^2.23.1",
     "webpack-merge": "^4.1.4"
   }
