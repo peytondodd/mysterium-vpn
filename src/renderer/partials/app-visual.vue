@@ -64,7 +64,7 @@ export default {
     visualClass () {
       let classes = []
       if (this.$route.name === 'home') {
-        return ['is-pulsing', 'not-connected']
+        return ['is-pulsing']
       }
 
       if (this.loading) {
