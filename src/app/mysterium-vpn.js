@@ -220,7 +220,7 @@ class MysteriumVpn {
     this._subscribeProposals()
 
     if (this._featureToggle.paymentsAreEnabled()) {
-      this._subscribeRegistration()
+      syncRegistrationStatus(this._registrationFetcher, this._bugReporter, this._communication)
     }
 
     syncFavorites(this._userSettingsStore, this._communication)
@@ -488,16 +488,6 @@ class MysteriumVpn {
     })
   }
 
-  _subscribeRegistration () {
-    this._registrationFetcher.onFetchedRegistration((registration: IdentityRegistrationDTO) => {
-      this._communication.sendRegistration(registration)
-    })
-    this._registrationFetcher.onFetchingError((error: Error) => {
-      logException('Identity registration fetching failed', error)
-      this._bugReporter.captureErrorException(error)
-    })
-  }
-
   _buildTray () {
     logInfo('Building tray')
     trayFactory(
@@ -567,6 +557,19 @@ function syncCurrentIdentityForBugReporter (
   communication.onCurrentIdentityChange((identityChange: CurrentIdentityChangeDTO) => {
     const identity = new IdentityDTO({ id: identityChange.id })
     bugReporter.setUser(identity)
+  })
+}
+
+function syncRegistrationStatus (
+  registrationFetcher: TequilapiRegistrationFetcher,
+  bugReporter: BugReporter,
+  communication: MainMessageBusCommunication) {
+  registrationFetcher.onFetchedRegistration((registration: IdentityRegistrationDTO) => {
+    communication.sendRegistration(registration)
+  })
+  registrationFetcher.onFetchingError((error: Error) => {
+    logException('Identity registration fetching failed', error)
+    bugReporter.captureErrorException(error)
   })
 }
 
