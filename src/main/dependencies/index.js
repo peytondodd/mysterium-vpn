@@ -29,6 +29,7 @@ import proposalFetcherBootstrap from './modules/proposal-fetcher'
 import registrationFetcherBootstrap from './modules/registration-fetcher'
 import userSettingsBootstrap from './modules/user-settings'
 import disconnectNotificationsBootstrap from './modules/disconnect-notification'
+import communicationBootstrap from './modules/communication'
 
 /**
  * Bootstraps all application dependencies into DI container
@@ -48,6 +49,7 @@ function bootstrap (): DIContainer {
   registrationFetcherBootstrap(container)
   userSettingsBootstrap(container)
   disconnectNotificationsBootstrap(container)
+  communicationBootstrap(container)
 
   return container
 }
