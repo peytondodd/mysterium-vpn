@@ -30,7 +30,6 @@ class FunctionLooper {
   _func: AsyncFunctionWithoutParams
   _threshold: number
   _running: boolean = false
-  _stopping: boolean = false
   _errorSubscriber: Subscriber<Error> = new Subscriber()
   _currentExecutor: ?ThresholdExecutor
   _currentPromise: ?Promise<void>
@@ -44,10 +43,11 @@ class FunctionLooper {
     if (this.isRunning()) {
       return
     }
+    this._running = true
 
     const loop = async () => {
       // eslint-disable-next-line no-unmodified-loop-condition
-      while (this._running && !this._stopping) {
+      while (this._running) {
         this._currentExecutor = new ThresholdExecutor(this._func, this._threshold)
         this._currentPromise = this._currentExecutor.execute()
         try {
@@ -57,18 +57,12 @@ class FunctionLooper {
         }
       }
     }
-
-    this._running = true
     loop()
   }
 
   async stop (): Promise<void> {
-    this._stopping = true
-
-    await this._waitForStartedPromise()
-
     this._running = false
-    this._stopping = false
+    await this._waitForStartedPromise()
   }
 
   isRunning (): boolean {

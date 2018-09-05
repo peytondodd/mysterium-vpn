@@ -111,19 +111,19 @@ describe('ServiceManagerProcess', () => {
 
     systemMockManager.setMockCommand('sc.exe query "MysteriumClient"', getServiceInfo(SERVICE_STATE.STOPPED))
 
-    let startExecuted = false
+    let funcExecuted = false
     const promise = func()
     promise.then(() => {
-      startExecuted = true
+      funcExecuted = true
     })
 
-    expect(startExecuted).to.be.false
+    expect(funcExecuted).to.be.false
 
     tequilapiClient.healthCheckThrowsError = false
     await promise
 
     expect(tequilapiClient.healthCheckIsCalled).to.be.true
-    expect(startExecuted).to.be.true
+    expect(funcExecuted).to.be.true
   }
 
   async function tickWithDelay (duration) {
@@ -154,9 +154,22 @@ describe('ServiceManagerProcess', () => {
   })
 
   describe('.start', () => {
-    it('does nothing with running service', async () => {
+    it('checks running service with healthcheck', async () => {
       await process.start()
       expect(systemMockManager.sudoExecCalledCommands).to.have.length(0)
+      expect(tequilapiClient.healthCheckIsCalled).to.be.true
+    })
+
+    it('restarts running service if healthcheck was failed', async () => {
+      tequilapiClient.healthCheckThrowsError = true
+      const startPromise = process.start()
+      await tickWithDelay(2000)
+      tequilapiClient.healthCheckThrowsError = false
+      await tickWithDelay(2000)
+      await startPromise
+      expect(systemMockManager.sudoExecCalledCommands).to.have.length(1)
+      expect(systemMockManager.sudoExecCalledCommands[0]).to.be.eql(
+        '"/service-manager/bin/servicemanager.exe" --do=restart')
     })
 
     it('starts stopped service and waits for healthcheck', async () => {

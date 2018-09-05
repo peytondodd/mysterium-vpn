@@ -22,16 +22,21 @@ import type { LogCallback, Process } from '../index'
 import type { TequilapiClient } from '../../mysterium-tequilapi/client'
 import type { System } from '../system'
 import ClientLogSubscriber from '../client-log-subscriber'
-import Monitoring from '../monitoring'
-import type { StatusCallback } from '../monitoring'
+import Monitoring, { HEALTH_CHECK_INTERVAL, waitForStatusUp } from '../monitoring'
 import ServiceManager, { SERVICE_STATE } from './service-manager'
 import type { ServiceState } from './service-manager'
 
 /***
- * Time in milliseconds required to fully activate Mysterium client
+ * Time in milliseconds required to fully activate Mysterium client after restart
  * @type {number}
  */
-const SERVICE_INIT_TIME = 8000
+const SERVICE_INIT_TIME = HEALTH_CHECK_INTERVAL * 4
+
+/***
+ * Time in milliseconds required to wait for healthcheck
+ * @type {number}
+ */
+const SERVICE_CHECK_TIME = HEALTH_CHECK_INTERVAL
 
 class ServiceManagerProcess implements Process {
   _tequilapi: TequilapiClient
@@ -57,10 +62,12 @@ class ServiceManagerProcess implements Process {
 
   async start (): Promise<void> {
     const state = await this._serviceManager.getServiceState()
-    if (state === SERVICE_STATE.RUNNING) {
+    try {
+      await waitForStatusUp(this._tequilapi, SERVICE_CHECK_TIME)
       return
+    } catch (e) {
+      logger.error('Unable to healthcheck while starting process', e)
     }
-
     await this._repair(state)
   }
 
@@ -101,27 +108,9 @@ class ServiceManagerProcess implements Process {
         default:
           await this._serviceManager.start()
       }
-      await this._waitForHealthCheck()
+      await waitForStatusUp(this._tequilapi, SERVICE_INIT_TIME)
     } finally {
       this._repairIsRunning = false
-    }
-  }
-
-  async _waitForHealthCheck (): Promise<void> {
-    let resolveAndClearTimer: ?StatusCallback
-    await new Promise((resolve, reject) => {
-      const rejectTimer = setTimeout(() => reject(new Error('Unable to start service')), SERVICE_INIT_TIME)
-      resolveAndClearTimer = (isRunning: boolean) => {
-        if (isRunning) {
-          clearTimeout(rejectTimer)
-          resolve()
-        }
-      }
-      this._monitoring.onStatus(resolveAndClearTimer)
-    })
-
-    if (resolveAndClearTimer) {
-      this._monitoring.removeOnStatus(resolveAndClearTimer)
     }
   }
 }
