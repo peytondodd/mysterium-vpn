@@ -40,7 +40,7 @@ class TequilapiMock extends EmptyTequilapiClientMock {
   async healthCheck (_timeout: ?number): Promise<NodeHealthcheckDTO> {
     this.healthCheckCallCount++
     if (this.healthCheckThrowsError) {
-      throw new Error('HEALTHCHECK_TEST_ERROR')
+      throw new Error('HEALTH_CHECK_TEST_ERROR')
     }
     return {
       uptime: '',
