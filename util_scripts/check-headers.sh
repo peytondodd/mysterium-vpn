@@ -4,7 +4,7 @@
 
 DIRS='src test'
 IGNORE_PATH="test/unit/coverage/"
-COPYRIGHT="Copyright (C) \d\{4\} The \"MysteriumNetwork/mysterium-vpn\" Authors."
+COPYRIGHT="Copyright (C) \d\{4\} The \"mysteriumnetwork/mysterium-vpn\" Authors."
 
 # Colorful output
 
