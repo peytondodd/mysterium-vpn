@@ -42,9 +42,16 @@
     width: 25.4rem;
     position: relative;
     flex: 0 0 25.4rem;
+    .head {
+      fill: @white;
+      &__logo {
+        transition-delay: 200ms;
+      }
+    }
     path {
       transition: fill 800ms @easeOutBack 300ms;
       &.head {
+        fill: @white;
         &__logo {
           transition-delay: 200ms;
         }
@@ -57,9 +64,7 @@
       path {
         transition: fill 500ms @easeOutQuad 0ms;
         &.head {
-          &__logo {
-            fill: @white;
-          }
+          fill: @grey;
         }
       }
     }
@@ -67,9 +72,15 @@
       path {
         transition: fill 500ms @easeOutQuad 0ms;
         &.head {
-          &__logo {
-            fill: @white;
-          }
+          fill: @white;
+        }
+      }
+    }
+    &.is-pulsing.is-loading {
+      path {
+        transition: fill 500ms @easeOutQuad 0ms;
+        &.head {
+          fill: @white;
         }
       }
     }
@@ -149,7 +160,7 @@
     position: relative;
     height: 100%;
     &--head {
-      height: 73%;
+      height: 50%;
       top: -0.7rem;
     }
     &--networking {
