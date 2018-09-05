@@ -44,8 +44,6 @@ import type { EnvironmentCollector } from './bug-reporting/environment/environme
 import { BugReporterMetrics, METRICS, TAGS } from '../app/bug-reporting/bug-reporter-metrics'
 import LogCache from './logging/log-cache'
 import SyncCallbacksInitializer from './sync-callbacks-initializer'
-import SyncReceiverMainCommunication from './communication/sync/sync-main-communication'
-import { SyncIpcReceiver } from './communication/sync/sync-ipc'
 import type { StringLogger } from './logging/string-logger'
 import logger from './logger'
 import StartupEventTracker from './statistics/startup-event-tracker'
@@ -75,7 +73,8 @@ type MysteriumVpnParams = {
   featureToggle: FeatureToggle,
   startupEventTracker: StartupEventTracker,
   mainIpc: MainBufferedIpc,
-  mainCommunication: MainMessageBusCommunication
+  mainCommunication: MainMessageBusCommunication,
+  syncCallbackInitializer: SyncCallbacksInitializer
 }
 
 const LOG_PREFIX = '[MysteriumVpn] '
@@ -106,6 +105,7 @@ class MysteriumVpn {
   _window: Window
   _communication: MainMessageBusCommunication
   _ipc: MainBufferedIpc
+  _syncCallbackInitializer: SyncCallbacksInitializer
 
   constructor (params: MysteriumVpnParams) {
     this._browserWindowFactory = params.browserWindowFactory
@@ -131,6 +131,7 @@ class MysteriumVpn {
 
     this._ipc = params.mainIpc
     this._communication = params.mainCommunication
+    this._syncCallbackInitializer = params.syncCallbackInitializer
   }
 
   run () {
@@ -139,7 +140,7 @@ class MysteriumVpn {
 
     logger.setLogger(this._logger)
     this._bugReporterMetrics.set(TAGS.SESSION_ID, generateSessionId())
-    this._initializeSyncCallbacks()
+    this._syncCallbackInitializer.initialize()
     this.logUnhandledRejections()
 
     // fired when app has been launched
@@ -169,13 +170,6 @@ class MysteriumVpn {
     app.on('before-quit', () => {
       this._window.willQuitApp = true
     })
-  }
-
-  _initializeSyncCallbacks () {
-    const receiver = new SyncIpcReceiver()
-    const communication = new SyncReceiverMainCommunication(receiver)
-    const initializer = new SyncCallbacksInitializer(communication, this._environmentCollector, this._frontendLogCache)
-    initializer.initialize()
   }
 
   logUnhandledRejections () {
