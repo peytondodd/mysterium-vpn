@@ -4,7 +4,7 @@ Mysterium VPN is a desktop application for accessing Mysterium Network - decentr
 
 - Homepage https://mysterium.network/
 - [Whitepaper](https://mysterium.network/whitepaper.pdf)
-- [Stable](https://github.com/MysteriumNetwork/mysterium-vpn/releases/latest) release
+- [Stable](https://github.com/mysteriumnetwork/mysterium-vpn/releases/latest) release
 
 ## Build Setup
 
