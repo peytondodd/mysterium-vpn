@@ -186,22 +186,15 @@ class MysteriumVpn {
     const send = this._getSendFunction(browserWindow)
     this._ipc.setSenderAndSendBuffered(send)
 
-    this._communication.onCurrentIdentityChangeOnce((identityChange: CurrentIdentityChangeDTO) => {
-      this._startupEventTracker.sendRuntimeEnvironmentDetails(identityChange.id)
-    })
+    syncCurrentIdentityChangeForRuntimeDetails(this._startupEventTracker, this._communication)
+    syncCurrentIdentityForBugReporter(this._bugReporter, this._communication)
 
-    this._communication.onCurrentIdentityChange((identityChange: CurrentIdentityChangeDTO) => {
-      const identity = new IdentityDTO({ id: identityChange.id })
-      this._bugReporter.setUser(identity)
+    syncCurrentIdentityForRegistrationFetcher(
+      this._featureToggle,
+      this._registrationFetcher,
+      this._communication)
 
-      if (this._featureToggle.paymentsAreEnabled()) {
-        this._registrationFetcher.start(identity.id)
-
-        logInfo(`Registration fetcher started with ID ${identity.id}`)
-      }
-    })
-
-    this._bugReporterMetrics.startSyncing(this._communication)
+    this._bugReporterMetrics.startSyncing(this._communication) // FIXME
     this._bugReporterMetrics.setWithCurrentDateTime(METRICS.START_TIME)
 
     await this._onRendererLoaded()
@@ -544,6 +537,36 @@ function syncShowDisconnectNotifications (userSettingsStore, communication) {
   communication.onUserSettingsShowDisconnectNotifications((show) => {
     userSettingsStore.setShowDisconnectNotifications(show)
     userSettingsStore.save()
+  })
+}
+
+function syncCurrentIdentityChangeForRuntimeDetails (
+  startupEventTracker: StartupEventTracker,
+  communication: MainMessageBusCommunication) {
+  communication.onCurrentIdentityChangeOnce((identityChange: CurrentIdentityChangeDTO) => {
+    startupEventTracker.sendRuntimeEnvironmentDetails(identityChange.id)
+  })
+}
+
+function syncCurrentIdentityForRegistrationFetcher (
+  featureToggle: FeatureToggle,
+  registrationFetcher: TequilapiRegistrationFetcher,
+  communication: MainMessageBusCommunication) {
+  communication.onCurrentIdentityChange((identityChange: CurrentIdentityChangeDTO) => {
+    const identity = new IdentityDTO({ id: identityChange.id })
+    if (featureToggle.paymentsAreEnabled()) {
+      registrationFetcher.start(identity.id)
+      logInfo(`Registration fetcher started with ID ${identity.id}`)
+    }
+  })
+}
+
+function syncCurrentIdentityForBugReporter (
+  bugReporter: BugReporter,
+  communication: MainMessageBusCommunication) {
+  communication.onCurrentIdentityChange((identityChange: CurrentIdentityChangeDTO) => {
+    const identity = new IdentityDTO({ id: identityChange.id })
+    bugReporter.setUser(identity)
   })
 }
 
