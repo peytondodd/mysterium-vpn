@@ -136,14 +136,21 @@ describe('VpnInitializer', () => {
           tequilapiManipulator.tequilapiMockIdentitiesListError(mockError)
         })
 
-        it('throws exception', async () => {
-          const commit = (...args: Array<any>) => {}
+        it('throws exception and shows error', async () => {
+          const committed = []
+          const commit = (...args: Array<any>) => {
+            committed.push(args)
+          }
           const state: IdentityState = { current: null, unlocked: false }
           const vpnInitializer = new VpnInitializer(tequilapi)
           const identityManager = new IdentityManager(tequilapi, commit, state)
           const err = await capturePromiseError(vpnInitializer.initialize(identityManager, updateClientVersion))
 
           expect(err).to.eql(mockError)
+          expect(committed[committed.length - 1]).to.eql([
+            types.SHOW_ERROR_MESSAGE,
+            messages.identityListFailed
+          ])
         })
       })
 

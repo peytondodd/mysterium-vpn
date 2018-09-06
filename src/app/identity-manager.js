@@ -43,7 +43,7 @@ class IdentityManager {
     try {
       return await this._tequilapi.identitiesList()
     } catch (err) {
-      this._showError(err)
+      this._showErrorMessage(messages.identityListFailed)
       throw err
     }
   }
