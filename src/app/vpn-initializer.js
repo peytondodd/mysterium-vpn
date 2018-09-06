@@ -33,7 +33,6 @@ class VpnInitializer {
 
   async initialize (identityManager: IdentityManager, updateClientVersion: () => Promise<void>): Promise<void> {
     await this._prepareIdentity(identityManager)
-    // TODO: fetch client version even if identity preparation fails
     await updateClientVersion()
   }
 
@@ -41,12 +40,7 @@ class VpnInitializer {
     const identity = await this._getFirstOrCreateIdentity(identityManager)
     identityManager.setCurrentIdentity(identity)
 
-    try {
-      await identityManager.unlockCurrentIdentity()
-    } catch (err) {
-      // ignoring unlock failure
-      // TODO: handle this
-    }
+    await identityManager.unlockCurrentIdentity()
   }
 
   async _getFirstOrCreateIdentity (identityManager: IdentityManager): Promise<IdentityDTO> {
