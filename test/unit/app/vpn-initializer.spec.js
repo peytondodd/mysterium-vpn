@@ -23,6 +23,7 @@ import type { State as IdentityState } from '../../../src/renderer/store/modules
 import IdentityDTO from '../../../src/libraries/mysterium-tequilapi/dto/identity'
 import types from '../../../src/renderer/store/types'
 import { capturePromiseError } from '../../helpers/utils'
+import IdentityManager from '../../../src/app/identity-manager'
 
 class MockTequilapiManipulator {
   _tequilapi: Object
@@ -65,9 +66,11 @@ class MockTequilapiManipulator {
 }
 
 describe('VpnInitializer', () => {
-  describe('initialize()', () => {
+  describe('.initialize', () => {
     let tequilapiManipulator
     let tequilapi
+
+    const updateClientVersion: () => Promise<void> = async () => {}
 
     beforeEach(() => {
       tequilapiManipulator = new MockTequilapiManipulator('test version')
@@ -84,14 +87,14 @@ describe('VpnInitializer', () => {
 
       it('stores first fetched identity', async () => {
         let storedIdentity = null
-        const dispatch = (...args: Array<any>) => {}
         const commit = (...args: Array<any>) => {
           if (args.length === 2 && args[0] === types.SET_CURRENT_IDENTITY) {
             storedIdentity = args[1]
           }
         }
         const state: IdentityState = { current: null, unlocked: false }
-        await new VpnInitializer(tequilapi).initialize(dispatch, commit, state)
+        const identityManager = new IdentityManager(tequilapi, commit, state)
+        await new VpnInitializer(tequilapi).initialize(identityManager, updateClientVersion)
 
         expect(storedIdentity).to.eql(mockIdentity)
       })
@@ -108,7 +111,6 @@ describe('VpnInitializer', () => {
 
       it('creates and unlocks identity', async () => {
         let unlocked = false
-        const dispatch = (...args: Array<any>) => {}
         const commit = (...args: Array<any>) => {
           if (args.length === 2 && args[0] === types.SET_CURRENT_IDENTITY) {
             state.current = args[1]
@@ -117,7 +119,8 @@ describe('VpnInitializer', () => {
           }
         }
         const state: IdentityState = { current: null, unlocked: false }
-        await new VpnInitializer(tequilapi).initialize(dispatch, commit, state)
+        const identityManager = new IdentityManager(tequilapi, commit, state)
+        await new VpnInitializer(tequilapi).initialize(identityManager, updateClientVersion)
 
         expect(state.current).to.eql(mockCreatedIdentity)
         expect(unlocked).to.be.true
@@ -133,10 +136,11 @@ describe('VpnInitializer', () => {
         })
 
         it('throws exception', async () => {
-          const dispatch = (...args: Array<any>) => {}
           const commit = (...args: Array<any>) => {}
           const state: IdentityState = { current: null, unlocked: false }
-          const err = await capturePromiseError(new VpnInitializer(tequilapi).initialize(dispatch, commit, state))
+          const vpnInitializer = new VpnInitializer(tequilapi)
+          const identityManager = new IdentityManager(tequilapi, commit, state)
+          const err = await capturePromiseError(vpnInitializer.initialize(identityManager, updateClientVersion))
 
           expect(err).to.eql(mockError)
         })
@@ -149,7 +153,6 @@ describe('VpnInitializer', () => {
         })
 
         it('throws exception', async () => {
-          const dispatch = (...args: Array<any>) => {}
           const committed = []
           const commit = (...args: Array<any>) => {
             committed.push(args)
@@ -158,7 +161,8 @@ describe('VpnInitializer', () => {
             }
           }
           const state: IdentityState = { current: null, unlocked: false }
-          await new VpnInitializer(tequilapi).initialize(dispatch, commit, state)
+          const identityManager = new IdentityManager(tequilapi, commit, state)
+          await new VpnInitializer(tequilapi).initialize(identityManager, updateClientVersion)
 
           expect(committed[committed.length - 1]).to.eql([
             types.SHOW_ERROR,

@@ -30,10 +30,12 @@ const PASSWORD = ''
 class IdentityManager {
   _tequilapi: TequilapiClient
   _commit: Function
+  _state: IdentityState
 
-  constructor (tequilapi: TequilapiClient, commit: Function) {
+  constructor (tequilapi: TequilapiClient, commit: Function, state: IdentityState) {
     this._tequilapi = tequilapi
     this._commit = commit
+    this._state = state
   }
 
   async listIdentities (): Promise<Array<IdentityDTO>> {
@@ -58,12 +60,12 @@ class IdentityManager {
     }
   }
 
-  async unlockCurrentIdentity (state: IdentityState): Promise<void> {
+  async unlockCurrentIdentity (): Promise<void> {
     try {
-      if (state.current == null) {
+      if (this._state.current == null) {
         throw new Error('Identity is not available')
       }
-      await this._tequilapi.identityUnlock(state.current.id, PASSWORD)
+      await this._tequilapi.identityUnlock(this._state.current.id, PASSWORD)
       this._commit(types.IDENTITY_UNLOCK_SUCCESS)
     } catch (err) {
       this._commit(types.SHOW_ERROR, err)
