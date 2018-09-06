@@ -7,8 +7,8 @@
 process.env.BABEL_ENV = 'main'
 
 const path = require('path')
-const {dependencies, version} = require('../package.json')
-const {buildNumber} = require('../build-number.json')
+const { dependencies, version } = require('../package.json')
+const { buildNumber } = require('../build-number.json')
 const webpack = require('webpack')
 const features = require('./features')
 
@@ -19,7 +19,8 @@ let mainConfig = {
     main: path.join(__dirname, '../src/main/index.js')
   },
   externals: [
-    ...Object.keys(dependencies || {})
+    ...Object.keys(dependencies || {}),
+    { 'electron-debug': 'electron-debug' }
   ],
   module: {
     rules: [
