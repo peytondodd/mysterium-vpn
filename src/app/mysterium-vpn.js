@@ -186,15 +186,15 @@ class MysteriumVpn {
     const send = this._getSendFunction(browserWindow)
     this._ipc.setSenderAndSendBuffered(send)
 
-    syncCurrentIdentityChangeForRuntimeDetails(this._startupEventTracker, this._communication)
+    setCurrentIdentityForEventTracker(this._startupEventTracker, this._communication)
     syncCurrentIdentityForBugReporter(this._bugReporter, this._communication)
 
-    syncCurrentIdentityForRegistrationFetcher(
+    startRegistrationFetcherOnCurrentIdentity(
       this._featureToggle,
       this._registrationFetcher,
       this._communication)
 
-    this._bugReporterMetrics.startSyncing(this._communication) // FIXME
+    this._bugReporterMetrics.startSyncing(this._communication) // FIXME: MYS-223
     this._bugReporterMetrics.setWithCurrentDateTime(METRICS.START_TIME)
 
     await this._onRendererLoaded()
@@ -530,7 +530,7 @@ function syncShowDisconnectNotifications (userSettingsStore, communication) {
   })
 }
 
-function syncCurrentIdentityChangeForRuntimeDetails (
+function setCurrentIdentityForEventTracker (
   startupEventTracker: StartupEventTracker,
   communication: MainMessageBusCommunication) {
   communication.onCurrentIdentityChangeOnce((identityChange: CurrentIdentityChangeDTO) => {
@@ -538,11 +538,11 @@ function syncCurrentIdentityChangeForRuntimeDetails (
   })
 }
 
-function syncCurrentIdentityForRegistrationFetcher (
+function startRegistrationFetcherOnCurrentIdentity (
   featureToggle: FeatureToggle,
   registrationFetcher: TequilapiRegistrationFetcher,
   communication: MainMessageBusCommunication) {
-  communication.onCurrentIdentityChange((identityChange: CurrentIdentityChangeDTO) => {
+  communication.onCurrentIdentityChangeOnce((identityChange: CurrentIdentityChangeDTO) => {
     const identity = new IdentityDTO({ id: identityChange.id })
     if (featureToggle.paymentsAreEnabled()) {
       registrationFetcher.start(identity.id)
