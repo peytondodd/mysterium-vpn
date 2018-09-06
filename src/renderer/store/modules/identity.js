@@ -41,10 +41,6 @@ function mutationsFactory (dependencies: Container) {
       bugReporter.setUser(identity)
       rendererCommunication.sendCurrentIdentityChange(identity)
     },
-    // TODO: rename to SET_IDENTITIES
-    [type.IDENTITY_LIST_SUCCESS] (state, data) {
-      state.identites = data
-    },
     [type.IDENTITY_UNLOCK_SUCCESS] (state) {
       state.unlocked = true
     },

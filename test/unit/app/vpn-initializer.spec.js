@@ -74,7 +74,7 @@ describe('VpnInitializer', () => {
       tequilapi = tequilapiManipulator.getTequilapi()
     })
 
-    describe('has some identities', () => {
+    describe('with some identities', () => {
       const mockIdentity = new IdentityDTO({ id: '0xC001FACE' })
 
       beforeEach(() => {
@@ -97,7 +97,7 @@ describe('VpnInitializer', () => {
       })
     })
 
-    describe('has not found preset identities', () => {
+    describe('with not identities', () => {
       const mockCreatedIdentity = new IdentityDTO({ id: '0xC001FACY' })
 
       beforeEach(() => {

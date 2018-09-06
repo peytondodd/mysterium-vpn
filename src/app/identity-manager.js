@@ -36,12 +36,10 @@ class IdentityManager {
 
   async listIdentities (commit: Function): Promise<Array<IdentityDTO>> {
     try {
-      const identities = await this._tequilapi.identitiesList()
-      commit(types.IDENTITY_LIST_SUCCESS, identities)
-      return identities
+      return await this._tequilapi.identitiesList()
     } catch (err) {
       commit(types.SHOW_ERROR, err)
-      throw (err)
+      throw err
     }
   }
 
@@ -54,7 +52,7 @@ class IdentityManager {
     }
   }
 
-  async unlockIdentity (commit: Function, state: IdentityState): Promise<void> {
+  async unlockCurrentIdentity (commit: Function, state: IdentityState): Promise<void> {
     try {
       if (state.current == null) {
         throw new Error('Identity is not available')
@@ -62,8 +60,8 @@ class IdentityManager {
       await this._tequilapi.identityUnlock(state.current.id, PASSWORD)
       commit(types.IDENTITY_UNLOCK_SUCCESS)
     } catch (err) {
-      // TODO: throw error here as well for consistency?
       commit(types.SHOW_ERROR, err)
+      throw err
     }
   }
 }

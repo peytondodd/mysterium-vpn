@@ -35,6 +35,7 @@ class VpnInitializer {
 
   async initialize (dispatch: Function, commit: Function, state: IdentityState): Promise<void> {
     await this._prepareIdentity(commit, state)
+    // TODO: fetch client version even if identity preparation fails
     await dispatch(types.CLIENT_VERSION)
   }
 
@@ -44,7 +45,12 @@ class VpnInitializer {
     const identity = await this._identityGet(identityManager, commit)
     commit(types.IDENTITY_GET_SUCCESS, identity)
 
-    await identityManager.unlockIdentity(commit, state)
+    try {
+      await identityManager.unlockCurrentIdentity(commit, state)
+    } catch (err) {
+      // ignoring unlock failure
+      // TODO: handle this
+    }
   }
 
   async _identityGet (identityManager: IdentityManager, commit: Function): Promise<IdentityDTO> {
