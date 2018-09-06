@@ -35,8 +35,7 @@ function mutationsFactory (dependencies: Container) {
   const bugReporter = dependencies.get('bugReporter')
   const rendererCommunication = dependencies.get('rendererCommunication')
   return {
-    // TODO: rename to SET_CURRENT_IDENTITY
-    [type.IDENTITY_GET_SUCCESS] (state, identity: IdentityDTO) {
+    [type.SET_CURRENT_IDENTITY] (state, identity: IdentityDTO) {
       state.current = identity
       bugReporter.setUser(identity)
       rendererCommunication.sendCurrentIdentityChange(identity)

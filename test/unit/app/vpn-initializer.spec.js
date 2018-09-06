@@ -86,7 +86,7 @@ describe('VpnInitializer', () => {
         let storedIdentity = null
         const dispatch = (...args: Array<any>) => {}
         const commit = (...args: Array<any>) => {
-          if (args.length === 2 && args[0] === types.IDENTITY_GET_SUCCESS) {
+          if (args.length === 2 && args[0] === types.SET_CURRENT_IDENTITY) {
             storedIdentity = args[1]
           }
         }
@@ -110,7 +110,7 @@ describe('VpnInitializer', () => {
         let unlocked = false
         const dispatch = (...args: Array<any>) => {}
         const commit = (...args: Array<any>) => {
-          if (args.length === 2 && args[0] === types.IDENTITY_GET_SUCCESS) {
+          if (args.length === 2 && args[0] === types.SET_CURRENT_IDENTITY) {
             state.current = args[1]
           } else if (args.length === 1 && args[0] === types.IDENTITY_UNLOCK_SUCCESS) {
             unlocked = true
@@ -153,7 +153,7 @@ describe('VpnInitializer', () => {
           const committed = []
           const commit = (...args: Array<any>) => {
             committed.push(args)
-            if (args.length === 2 && args[0] === types.IDENTITY_GET_SUCCESS) {
+            if (args.length === 2 && args[0] === types.SET_CURRENT_IDENTITY) {
               state.current = args[1]
             }
           }

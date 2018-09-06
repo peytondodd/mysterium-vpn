@@ -43,7 +43,7 @@ class VpnInitializer {
     const identityManager = new IdentityManager(this._tequilapi)
 
     const identity = await this._identityGet(identityManager, commit)
-    commit(types.IDENTITY_GET_SUCCESS, identity)
+    commit(types.SET_CURRENT_IDENTITY, identity)
 
     try {
       await identityManager.unlockCurrentIdentity(commit, state)
