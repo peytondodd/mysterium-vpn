@@ -18,6 +18,7 @@
 // @flow
 
 import { app, BrowserWindow } from 'electron'
+import type { MysteriumVpnParams } from './mysterium-vpn-params'
 import type { Installer, Process } from '../libraries/mysterium-client'
 import { logLevels as processLogLevels } from '../libraries/mysterium-client'
 import trayFactory from '../main/tray/factory'
@@ -47,32 +48,6 @@ import StartupEventTracker from './statistics/startup-event-tracker'
 import TequilapiRegistrationFetcher from './data-fetchers/tequilapi-registration-fetcher'
 import MainBufferedIpc from './communication/ipc/main-buffered-ipc'
 import comBinds from './communication-bindings'
-
-type MysteriumVpnParams = {
-  browserWindowFactory: () => BrowserWindow,
-  windowFactory: () => Window,
-  config: MysteriumVpnConfig,
-  terms: Terms,
-  installer: Installer,
-  monitoring: ProcessMonitoring,
-  process: Process,
-  proposalFetcher: TequilapiProposalFetcher,
-  registrationFetcher: TequilapiRegistrationFetcher,
-  countryList: CountryList,
-  bugReporter: BugReporter,
-  environmentCollector: EnvironmentCollector,
-  bugReporterMetrics: BugReporterMetrics,
-  logger: StringLogger,
-  frontendLogCache: LogCache,
-  mysteriumProcessLogCache: LogCache,
-  userSettingsStore: UserSettingsStore,
-  disconnectNotification: Notification,
-  featureToggle: FeatureToggle,
-  startupEventTracker: StartupEventTracker,
-  mainIpc: MainBufferedIpc,
-  mainCommunication: MainMessageBusCommunication,
-  syncCallbacksInitializer: SyncCallbacksInitializer
-}
 
 const LOG_PREFIX = '[MysteriumVpn] '
 const MYSTERIUM_CLIENT_STARTUP_THRESHOLD = 10000
