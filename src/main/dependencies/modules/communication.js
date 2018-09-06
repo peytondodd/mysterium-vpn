@@ -43,7 +43,7 @@ function bootstrap (container: Container) {
   )
 
   container.factory(
-    'syncCallbackInitializer',
+    'syncCallbacksInitializer',
     ['environmentCollector', 'frontendLogCache'],
     (environmentCollector, frontendLogCache) => {
       const receiver = new SyncIpcReceiver()
