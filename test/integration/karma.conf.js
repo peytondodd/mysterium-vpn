@@ -20,7 +20,7 @@
 const merge = require('webpack-merge')
 const webpack = require('webpack')
 
-const baseConfig = require('../../../mysterion/.electron-vue/webpack.renderer.config')
+const baseConfig = require('../../.electron-vue/webpack.renderer.config')
 
 // Set BABEL_ENV to use proper preset config
 process.env.BABEL_ENV = 'test'
