@@ -27,7 +27,6 @@ import translations from './messages'
 import MainMessageBusCommunication from './communication/main-message-bus-communication'
 import { onFirstEvent, onFirstEventOrTimeout } from './communication/utils'
 import path from 'path'
-import ConnectionStatusEnum from '../libraries/mysterium-tequilapi/dto/connection-status-enum'
 import type { Size } from './window'
 import type { MysteriumVpnConfig } from './mysterium-vpn-config'
 import Window from './window'
@@ -38,8 +37,6 @@ import CountryList from './data-fetchers/country-list'
 import type { BugReporter } from './bug-reporting/interface'
 import { UserSettingsStore } from './user-settings/user-settings-store'
 import Notification from './notification'
-import IdentityDTO from '../libraries/mysterium-tequilapi/dto/identity'
-import type { CurrentIdentityChangeDTO } from './communication/dto'
 import type { EnvironmentCollector } from './bug-reporting/environment/environment-collector'
 import { BugReporterMetrics, METRICS, TAGS } from '../app/bug-reporting/bug-reporter-metrics'
 import LogCache from './logging/log-cache'
@@ -48,8 +45,8 @@ import type { StringLogger } from './logging/string-logger'
 import logger from './logger'
 import StartupEventTracker from './statistics/startup-event-tracker'
 import TequilapiRegistrationFetcher from './data-fetchers/tequilapi-registration-fetcher'
-import IdentityRegistrationDTO from '../libraries/mysterium-tequilapi/dto/identity-registration'
 import MainBufferedIpc from './communication/ipc/main-buffered-ipc'
+import comBinds from './communication-bindings'
 
 type MysteriumVpnParams = {
   browserWindowFactory: () => BrowserWindow,
@@ -186,10 +183,10 @@ class MysteriumVpn {
     const send = this._getSendFunction(browserWindow)
     this._ipc.setSenderAndSendBuffered(send)
 
-    setCurrentIdentityForEventTracker(this._startupEventTracker, this._communication)
-    syncCurrentIdentityForBugReporter(this._bugReporter, this._communication)
+    comBinds.setCurrentIdentityForEventTracker(this._startupEventTracker, this._communication)
+    comBinds.syncCurrentIdentityForBugReporter(this._bugReporter, this._communication)
 
-    startRegistrationFetcherOnCurrentIdentity(
+    comBinds.startRegistrationFetcherOnCurrentIdentity(
       this._featureToggle,
       this._registrationFetcher,
       this._communication)
@@ -220,12 +217,12 @@ class MysteriumVpn {
     this._subscribeProposals()
 
     if (this._featureToggle.paymentsAreEnabled()) {
-      syncRegistrationStatus(this._registrationFetcher, this._bugReporter, this._communication)
+      comBinds.syncRegistrationStatus(this._registrationFetcher, this._bugReporter, this._communication)
     }
 
-    syncFavorites(this._userSettingsStore, this._communication)
-    syncShowDisconnectNotifications(this._userSettingsStore, this._communication)
-    showNotificationOnDisconnect(this._userSettingsStore, this._communication, this._disconnectNotification)
+    comBinds.syncFavorites(this._userSettingsStore, this._communication)
+    comBinds.syncShowDisconnectNotifications(this._userSettingsStore, this._communication)
+    comBinds.showNotificationOnDisconnect(this._userSettingsStore, this._communication, this._disconnectNotification)
     await this._loadUserSettings()
     this._disconnectNotification.onReconnect(() => this._communication.sendReconnectRequest())
   }
@@ -497,80 +494,6 @@ class MysteriumVpn {
       path.join(this._config.staticDirectory, 'icons')
     )
   }
-}
-
-function showNotificationOnDisconnect (userSettingsStore, communication, disconnectNotification) {
-  communication.onConnectionStatusChange((status) => {
-    const shouldShowNotification =
-      userSettingsStore.getAll().showDisconnectNotifications &&
-      (status.newStatus === ConnectionStatusEnum.NOT_CONNECTED &&
-        status.oldStatus === ConnectionStatusEnum.CONNECTED)
-
-    if (shouldShowNotification) {
-      disconnectNotification.show()
-    }
-  })
-}
-
-function syncFavorites (userSettingsStore, communication) {
-  communication.onToggleFavoriteProvider((fav) => {
-    userSettingsStore.setFavorite(fav.id, fav.isFavorite)
-    userSettingsStore.save()
-  })
-}
-
-function syncShowDisconnectNotifications (userSettingsStore, communication) {
-  communication.onUserSettingsRequest(() => {
-    communication.sendUserSettings(userSettingsStore.getAll())
-  })
-
-  communication.onUserSettingsShowDisconnectNotifications((show) => {
-    userSettingsStore.setShowDisconnectNotifications(show)
-    userSettingsStore.save()
-  })
-}
-
-function setCurrentIdentityForEventTracker (
-  startupEventTracker: StartupEventTracker,
-  communication: MainMessageBusCommunication) {
-  communication.onCurrentIdentityChangeOnce((identityChange: CurrentIdentityChangeDTO) => {
-    startupEventTracker.sendRuntimeEnvironmentDetails(identityChange.id)
-  })
-}
-
-function startRegistrationFetcherOnCurrentIdentity (
-  featureToggle: FeatureToggle,
-  registrationFetcher: TequilapiRegistrationFetcher,
-  communication: MainMessageBusCommunication) {
-  communication.onCurrentIdentityChangeOnce((identityChange: CurrentIdentityChangeDTO) => {
-    const identity = new IdentityDTO({ id: identityChange.id })
-    if (featureToggle.paymentsAreEnabled()) {
-      registrationFetcher.start(identity.id)
-      logInfo(`Registration fetcher started with ID ${identity.id}`)
-    }
-  })
-}
-
-function syncCurrentIdentityForBugReporter (
-  bugReporter: BugReporter,
-  communication: MainMessageBusCommunication) {
-  communication.onCurrentIdentityChange((identityChange: CurrentIdentityChangeDTO) => {
-    const identity = new IdentityDTO({ id: identityChange.id })
-    bugReporter.setUser(identity)
-  })
-}
-
-function syncRegistrationStatus (
-  registrationFetcher: TequilapiRegistrationFetcher,
-  bugReporter: BugReporter,
-  communication: MainMessageBusCommunication) {
-  registrationFetcher.onFetchedRegistration((registration: IdentityRegistrationDTO) => {
-    communication.sendRegistration(registration)
-  })
-  registrationFetcher.onFetchingError((error: Error) => {
-    logException('Identity registration fetching failed', error)
-    bugReporter.captureErrorException(error)
-  })
 }
 
 function logInfo (message: string) {
