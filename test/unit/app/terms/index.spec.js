@@ -136,9 +136,10 @@ describe('Terms', () => {
       expect(error).to.be.an('error')
       expect(content).to.be.undefined
 
-      if (error instanceof Error) {
-        expect(error.message).to.be.eql('Trying to get terms content, but termsHtml is undefined. Must do load() first')
+      if (!error) {
+        throw new Error('No error was returned')
       }
+      expect(error.message).to.be.eql('Trying to get terms content, but termsHtml is undefined. Must do load() first')
     })
   })
 })
