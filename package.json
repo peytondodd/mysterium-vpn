@@ -65,14 +65,14 @@
       ]
     },
     "mac": {
-      "icon": "build/icons/myst_logo.icns",
+      "icon": "build/icons/icon.png",
       "extraFiles": [
         "./bin/openvpn",
         "./bin/mysterium_client"
       ]
     },
     "win": {
-      "icon": "build/icons/icon.ico",
+      "icon": "build/icons/icon.png",
       "requestedExecutionLevel": "requireAdministrator",
       "extraFiles": [
         "./bin/openvpn.exe",
