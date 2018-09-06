@@ -27,7 +27,7 @@ type State = {
   overlay: ?OverlayError
 }
 
-const state:State = {
+const state: State = {
   overlay: null
 }
 
