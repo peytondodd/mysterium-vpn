@@ -29,38 +29,44 @@ const PASSWORD = ''
  */
 class IdentityManager {
   _tequilapi: TequilapiClient
+  _commit: Function
 
-  constructor (tequilapi: TequilapiClient) {
+  constructor (tequilapi: TequilapiClient, commit: Function) {
     this._tequilapi = tequilapi
+    this._commit = commit
   }
 
-  async listIdentities (commit: Function): Promise<Array<IdentityDTO>> {
+  async listIdentities (): Promise<Array<IdentityDTO>> {
     try {
       return await this._tequilapi.identitiesList()
     } catch (err) {
-      commit(types.SHOW_ERROR, err)
+      this._commit(types.SHOW_ERROR, err)
       throw err
     }
   }
 
-  async createIdentity (commit: Function): Promise<IdentityDTO> {
+  setCurrentIdentity (identity: IdentityDTO) {
+    this._commit(types.SET_CURRENT_IDENTITY, identity)
+  }
+
+  async createIdentity (): Promise<IdentityDTO> {
     try {
       return await this._tequilapi.identityCreate(PASSWORD)
     } catch (err) {
-      commit(types.SHOW_ERROR, err)
+      this._commit(types.SHOW_ERROR, err)
       throw err
     }
   }
 
-  async unlockCurrentIdentity (commit: Function, state: IdentityState): Promise<void> {
+  async unlockCurrentIdentity (state: IdentityState): Promise<void> {
     try {
       if (state.current == null) {
         throw new Error('Identity is not available')
       }
       await this._tequilapi.identityUnlock(state.current.id, PASSWORD)
-      commit(types.IDENTITY_UNLOCK_SUCCESS)
+      this._commit(types.IDENTITY_UNLOCK_SUCCESS)
     } catch (err) {
-      commit(types.SHOW_ERROR, err)
+      this._commit(types.SHOW_ERROR, err)
       throw err
     }
   }

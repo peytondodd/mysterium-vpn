@@ -40,27 +40,27 @@ class VpnInitializer {
   }
 
   async _prepareIdentity (commit: Function, state: IdentityState): Promise<void> {
-    const identityManager = new IdentityManager(this._tequilapi)
+    const identityManager = new IdentityManager(this._tequilapi, commit)
 
-    const identity = await this._identityGet(identityManager, commit)
-    commit(types.SET_CURRENT_IDENTITY, identity)
+    const identity = await this._getFirstOrCreateIdentity(identityManager)
+    identityManager.setCurrentIdentity(identity)
 
     try {
-      await identityManager.unlockCurrentIdentity(commit, state)
+      await identityManager.unlockCurrentIdentity(state)
     } catch (err) {
       // ignoring unlock failure
       // TODO: handle this
     }
   }
 
-  async _identityGet (identityManager: IdentityManager, commit: Function): Promise<IdentityDTO> {
-    const identities = await identityManager.listIdentities(commit)
+  async _getFirstOrCreateIdentity (identityManager: IdentityManager): Promise<IdentityDTO> {
+    const identities = await identityManager.listIdentities()
 
     if (identities && identities.length > 0) {
       return identities[0]
     }
 
-    return identityManager.createIdentity(commit)
+    return identityManager.createIdentity()
   }
 }
 
