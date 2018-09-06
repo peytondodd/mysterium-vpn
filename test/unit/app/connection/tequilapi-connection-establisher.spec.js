@@ -34,10 +34,10 @@ import type { Provider } from '../../../../src/app/connection/provider'
 class MockConnectionState implements ConnectionState {
   connectionStatus: ?ConnectionStatus = null
   statisticsReset: boolean = false
-  lastConnectionProviderId: ?string = null
+  lastConnectionProvider: Provider
 
-  setLastConnectionProvider (providerId: string) {
-    this.lastConnectionProviderId = providerId
+  setLastConnectionProvider (provider: Provider) {
+    this.lastConnectionProvider = provider
   }
 
   async setConnectionStatus (status: ConnectionStatus) {
@@ -124,7 +124,7 @@ describe('TequilapiConnectionEstablisher', () => {
     it('persistes provider id', async () => {
       await connectionEstablisher
         .connect(consumerId, provider, mockConnectionState, mockErrorMessage, location, actionLooper)
-      expect(mockConnectionState.lastConnectionProviderId).to.eql('provider id')
+      expect(mockConnectionState.lastConnectionProvider).to.eql({ id: 'provider id', country: 'us' })
     })
 
     it('sends successful connection event', async () => {

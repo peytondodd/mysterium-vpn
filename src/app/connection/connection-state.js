@@ -18,10 +18,11 @@
 // @flow
 
 import type { ConnectionStatus } from '../../libraries/mysterium-tequilapi/dto/connection-status-enum'
+import type { Provider } from './provider'
 
 interface ConnectionState {
   setConnectionStatus (status: ConnectionStatus): Promise<void>,
-  setLastConnectionProvider (providerId: string): void,
+  setLastConnectionProvider (provider: Provider): void,
   resetStatistics (): void,
 }
 

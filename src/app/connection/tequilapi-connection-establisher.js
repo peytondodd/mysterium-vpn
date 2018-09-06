@@ -68,7 +68,7 @@ class TequilapiConnectionEstablisher implements ConnectionEstablisher {
     }
     await connectionState.setConnectionStatus(ConnectionStatusEnum.CONNECTING)
     connectionState.resetStatistics()
-    connectionState.setLastConnectionProvider(provider.id)
+    connectionState.setLastConnectionProvider(provider)
     try {
       const request: ConnectionRequestDTO = new ConnectionRequestDTO(consumerId, provider.id, provider.country)
       await this._tequilapi.connectionCreate(request)
