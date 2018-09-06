@@ -56,7 +56,7 @@ class IdentityManager {
     try {
       return await this._tequilapi.identityCreate(PASSWORD)
     } catch (err) {
-      this._showError(err)
+      this._showErrorMessage(messages.identityCreateFailed)
       throw err
     }
   }
@@ -78,10 +78,6 @@ class IdentityManager {
   }
 
   // TODO: this class should not show errors in case VpnInitializer is run with multiple retries
-  _showError (error: Error): void {
-    this._commit(types.SHOW_ERROR, error)
-  }
-
   _showErrorMessage (message: string): void {
     this._commit(types.SHOW_ERROR_MESSAGE, message)
   }

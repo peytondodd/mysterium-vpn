@@ -56,7 +56,8 @@ class VpnInitializer {
       return identities[0]
     }
 
-    return identityManager.createIdentity()
+    const identity = await identityManager.createIdentity()
+    return identity
   }
 }
 
