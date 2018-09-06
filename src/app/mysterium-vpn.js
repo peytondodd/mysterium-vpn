@@ -74,7 +74,7 @@ type MysteriumVpnParams = {
   startupEventTracker: StartupEventTracker,
   mainIpc: MainBufferedIpc,
   mainCommunication: MainMessageBusCommunication,
-  syncCallbackInitializer: SyncCallbacksInitializer
+  syncCallbacksInitializer: SyncCallbacksInitializer
 }
 
 const LOG_PREFIX = '[MysteriumVpn] '
@@ -105,7 +105,7 @@ class MysteriumVpn {
   _window: Window
   _communication: MainMessageBusCommunication
   _ipc: MainBufferedIpc
-  _syncCallbackInitializer: SyncCallbacksInitializer
+  _syncCallbacksInitializer: SyncCallbacksInitializer
 
   constructor (params: MysteriumVpnParams) {
     this._browserWindowFactory = params.browserWindowFactory
@@ -131,7 +131,7 @@ class MysteriumVpn {
 
     this._ipc = params.mainIpc
     this._communication = params.mainCommunication
-    this._syncCallbackInitializer = params.syncCallbackInitializer
+    this._syncCallbacksInitializer = params.syncCallbacksInitializer
   }
 
   run () {
@@ -140,7 +140,7 @@ class MysteriumVpn {
 
     logger.setLogger(this._logger)
     this._bugReporterMetrics.set(TAGS.SESSION_ID, generateSessionId())
-    this._syncCallbackInitializer.initialize()
+    this._syncCallbacksInitializer.initialize()
     this.logUnhandledRejections()
 
     // fired when app has been launched
@@ -186,22 +186,15 @@ class MysteriumVpn {
     const send = this._getSendFunction(browserWindow)
     this._ipc.setSenderAndSendBuffered(send)
 
-    this._communication.onCurrentIdentityChangeOnce((identityChange: CurrentIdentityChangeDTO) => {
-      this._startupEventTracker.sendRuntimeEnvironmentDetails(identityChange.id)
-    })
+    setCurrentIdentityForEventTracker(this._startupEventTracker, this._communication)
+    syncCurrentIdentityForBugReporter(this._bugReporter, this._communication)
 
-    this._communication.onCurrentIdentityChange((identityChange: CurrentIdentityChangeDTO) => {
-      const identity = new IdentityDTO({ id: identityChange.id })
-      this._bugReporter.setUser(identity)
+    startRegistrationFetcherOnCurrentIdentity(
+      this._featureToggle,
+      this._registrationFetcher,
+      this._communication)
 
-      if (this._featureToggle.paymentsAreEnabled()) {
-        this._registrationFetcher.start(identity.id)
-
-        logInfo(`Registration fetcher started with ID ${identity.id}`)
-      }
-    })
-
-    this._bugReporterMetrics.startSyncing(this._communication)
+    this._bugReporterMetrics.startSyncing(this._communication) // FIXME: MYS-223
     this._bugReporterMetrics.setWithCurrentDateTime(METRICS.START_TIME)
 
     await this._onRendererLoaded()
@@ -227,7 +220,7 @@ class MysteriumVpn {
     this._subscribeProposals()
 
     if (this._featureToggle.paymentsAreEnabled()) {
-      this._subscribeRegistration()
+      syncRegistrationStatus(this._registrationFetcher, this._bugReporter, this._communication)
     }
 
     syncFavorites(this._userSettingsStore, this._communication)
@@ -495,16 +488,6 @@ class MysteriumVpn {
     })
   }
 
-  _subscribeRegistration () {
-    this._registrationFetcher.onFetchedRegistration((registration: IdentityRegistrationDTO) => {
-      this._communication.sendRegistration(registration)
-    })
-    this._registrationFetcher.onFetchingError((error: Error) => {
-      logException('Identity registration fetching failed', error)
-      this._bugReporter.captureErrorException(error)
-    })
-  }
-
   _buildTray () {
     logInfo('Building tray')
     trayFactory(
@@ -544,6 +527,49 @@ function syncShowDisconnectNotifications (userSettingsStore, communication) {
   communication.onUserSettingsShowDisconnectNotifications((show) => {
     userSettingsStore.setShowDisconnectNotifications(show)
     userSettingsStore.save()
+  })
+}
+
+function setCurrentIdentityForEventTracker (
+  startupEventTracker: StartupEventTracker,
+  communication: MainMessageBusCommunication) {
+  communication.onCurrentIdentityChangeOnce((identityChange: CurrentIdentityChangeDTO) => {
+    startupEventTracker.sendRuntimeEnvironmentDetails(identityChange.id)
+  })
+}
+
+function startRegistrationFetcherOnCurrentIdentity (
+  featureToggle: FeatureToggle,
+  registrationFetcher: TequilapiRegistrationFetcher,
+  communication: MainMessageBusCommunication) {
+  communication.onCurrentIdentityChangeOnce((identityChange: CurrentIdentityChangeDTO) => {
+    const identity = new IdentityDTO({ id: identityChange.id })
+    if (featureToggle.paymentsAreEnabled()) {
+      registrationFetcher.start(identity.id)
+      logInfo(`Registration fetcher started with ID ${identity.id}`)
+    }
+  })
+}
+
+function syncCurrentIdentityForBugReporter (
+  bugReporter: BugReporter,
+  communication: MainMessageBusCommunication) {
+  communication.onCurrentIdentityChange((identityChange: CurrentIdentityChangeDTO) => {
+    const identity = new IdentityDTO({ id: identityChange.id })
+    bugReporter.setUser(identity)
+  })
+}
+
+function syncRegistrationStatus (
+  registrationFetcher: TequilapiRegistrationFetcher,
+  bugReporter: BugReporter,
+  communication: MainMessageBusCommunication) {
+  registrationFetcher.onFetchedRegistration((registration: IdentityRegistrationDTO) => {
+    communication.sendRegistration(registration)
+  })
+  registrationFetcher.onFetchingError((error: Error) => {
+    logException('Identity registration fetching failed', error)
+    bugReporter.captureErrorException(error)
   })
 }
 
