@@ -20,6 +20,9 @@
 import { afterEach, beforeEach, describe, expect, it } from '../../../../helpers/dependencies'
 import LaunchDaemonInstaller from '../../../../../src/libraries/mysterium-client/launch-daemon/launch-daemon-installer'
 import mock from 'mock-fs'
+import SystemMock from '../../../../helpers/system-mock'
+import type { System } from '../../../../../src/libraries/mysterium-client/system'
+import type { SystemMockManager } from '../../../../helpers/system-mock'
 
 const CLIENT_CONFIG = {
   clientBin: '/client-bin',
@@ -81,15 +84,32 @@ const TEMPLATE = '<?xml version="1.0" encoding="UTF-8"?>\n' +
   '         </dict>\n' +
   '      </plist>'
 
+const createSystemMock = () => {
+  const systemMock = new SystemMock()
+  return systemMock
+}
+
 describe('LaunchDaemonInstaller', () => {
+  let system: System
+  let systemMockManager: SystemMockManager
   let installer: LaunchDaemonInstaller
 
   beforeEach(() => {
-    installer = new LaunchDaemonInstaller(CLIENT_CONFIG)
+    const systemMock = createSystemMock()
+    system = (systemMock: System)
+    systemMockManager = (systemMock: SystemMockManager)
+
+    installer = new LaunchDaemonInstaller(CLIENT_CONFIG, system)
 
     mock({
       '/Library/LaunchDaemons': {
         'network.mysterium.mysteriumclient.plist': TEMPLATE
+      },
+      '/runtime-dir': {
+        'network.mysterium.mysteriumclient.plist': mock.file()
+      },
+      'log-dir': {
+        'stdout.log': mock.file()
       }
     })
   })
@@ -130,8 +150,8 @@ describe('LaunchDaemonInstaller', () => {
   })
 
   describe('.install', () => {
-    it('TODO', async () => {
-
+    it('does not throw error when everything is fine', async () => {
+      await installer.install()
     })
   })
 })

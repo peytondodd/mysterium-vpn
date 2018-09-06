@@ -100,7 +100,7 @@ function bootstrap (container: Container) {
     (config: ClientConfig, platform: string, serviceManager: ServiceManager) => {
       switch (platform) {
         case OSX:
-          return new LaunchDaemonInstaller(config)
+          return new LaunchDaemonInstaller(config, new OSSystem())
         case WINDOWS:
           return new ServiceManagerInstaller(new OSSystem(), config, serviceManager)
         default:
