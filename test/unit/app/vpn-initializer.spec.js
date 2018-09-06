@@ -24,6 +24,7 @@ import IdentityDTO from '../../../src/libraries/mysterium-tequilapi/dto/identity
 import types from '../../../src/renderer/store/types'
 import { capturePromiseError } from '../../helpers/utils'
 import IdentityManager from '../../../src/app/identity-manager'
+import messages from '../../../src/app/messages'
 
 class MockTequilapiManipulator {
   _tequilapi: Object
@@ -152,7 +153,7 @@ describe('VpnInitializer', () => {
           tequilapiManipulator.tequilapiMockIdentityUnlockError(mockError)
         })
 
-        it('throws exception', async () => {
+        it('throws exception and shows error message', async () => {
           const committed = []
           const commit = (...args: Array<any>) => {
             committed.push(args)
@@ -165,8 +166,8 @@ describe('VpnInitializer', () => {
           await new VpnInitializer(tequilapi).initialize(identityManager, updateClientVersion)
 
           expect(committed[committed.length - 1]).to.eql([
-            types.SHOW_ERROR,
-            mockError
+            types.SHOW_ERROR_MESSAGE,
+            messages.identityUnlockFailed
           ])
         })
       })

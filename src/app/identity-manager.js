@@ -21,6 +21,7 @@ import types from '../renderer/store/types'
 import IdentityDTO from '../libraries/mysterium-tequilapi/dto/identity'
 import type { TequilapiClient } from '../libraries/mysterium-tequilapi/client'
 import type { State as IdentityState } from '../renderer/store/modules/identity'
+import messages from './messages'
 
 const PASSWORD = ''
 
@@ -42,7 +43,7 @@ class IdentityManager {
     try {
       return await this._tequilapi.identitiesList()
     } catch (err) {
-      this._commit(types.SHOW_ERROR, err)
+      this._showError(err)
       throw err
     }
   }
@@ -55,22 +56,34 @@ class IdentityManager {
     try {
       return await this._tequilapi.identityCreate(PASSWORD)
     } catch (err) {
-      this._commit(types.SHOW_ERROR, err)
+      this._showError(err)
       throw err
     }
   }
 
   async unlockCurrentIdentity (): Promise<void> {
+    if (this._state.current == null) {
+      const message = 'Identity is not available'
+      this._showErrorMessage(message)
+      throw new Error(message)
+    }
+
     try {
-      if (this._state.current == null) {
-        throw new Error('Identity is not available')
-      }
       await this._tequilapi.identityUnlock(this._state.current.id, PASSWORD)
       this._commit(types.IDENTITY_UNLOCK_SUCCESS)
     } catch (err) {
-      this._commit(types.SHOW_ERROR, err)
+      this._showErrorMessage(messages.identityUnlockFailed)
       throw err
     }
+  }
+
+  // TODO: this class should not show errors in case VpnInitializer is run with multiple retries
+  _showError (error: Error): void {
+    this._commit(types.SHOW_ERROR, error)
+  }
+
+  _showErrorMessage (message: string): void {
+    this._commit(types.SHOW_ERROR_MESSAGE, message)
   }
 }
 

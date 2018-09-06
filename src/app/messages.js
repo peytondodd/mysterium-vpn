@@ -22,6 +22,7 @@ export default {
   initializationError: {
     message: 'Failed to load MysteriumVPN'
   },
+  identityUnlockFailed: 'Identity unlocking failed',
   processInstallationPermissionsError: 'Failed to install MysteriumVPN. Please restart the app and grant permissions.',
   processInstallationError: 'Failed to install MysteriumVPN.',
   processStartError: 'Failed to start mysterium_client daemon. Please restart the app and try again.',
