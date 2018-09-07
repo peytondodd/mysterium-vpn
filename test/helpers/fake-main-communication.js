@@ -21,7 +21,7 @@ import type { MainCommunication } from '../../src/app/communication/main-communi
 import type {
   AppErrorDTO, ConnectionStatusChangeDTO, CurrentIdentityChangeDTO,
   CountriesDTO,
-  RequestTermsDTO, TermsAnsweredDTO, RequestConnectionDTO
+  RequestTermsDTO, TermsAnsweredDTO, RequestConnectionDTO, FavoriteProviderDTO
 } from '../../src/app/communication/dto'
 import type { UserSettings } from '../../src/app/user-settings/user-settings'
 import IdentityRegistrationDTO from '../../src/libraries/mysterium-tequilapi/dto/identity-registration'
@@ -122,6 +122,18 @@ class FakeMainCommunication implements MainCommunication {
 
   onUserSettingsUpdate (callback: (UserSettings) => void): void {
     this._registerMethod(this.onUserSettingsUpdate)
+  }
+
+  onCurrentIdentityChangeOnce (callback: (CurrentIdentityChangeDTO) => void): void {
+    this._registerMethod(this.onCurrentIdentityChangeOnce, callback)
+  }
+
+  onToggleFavoriteProvider (callback: (FavoriteProviderDTO) => void): void {
+    this._registerMethod(this.onToggleFavoriteProvider)
+  }
+
+  onUserSettingsShowDisconnectNotifications (callback: (boolean) => void): void {
+    this._registerMethod(this.onUserSettingsShowDisconnectNotifications)
   }
 
   _registerMethod (method: Function, ...payload: Array<any>): void {

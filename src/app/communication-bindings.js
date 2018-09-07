@@ -21,7 +21,6 @@ import IdentityRegistrationDTO from '../libraries/mysterium-tequilapi/dto/identi
 import type { CurrentIdentityChangeDTO } from './communication/dto'
 import TequilapiRegistrationFetcher from './data-fetchers/tequilapi-registration-fetcher'
 import IdentityDTO from '../libraries/mysterium-tequilapi/dto/identity'
-import MainMessageBusCommunication from './communication/main-message-bus-communication'
 import FeatureToggle from './features/feature-toggle'
 import ConnectionStatusEnum from '../libraries/mysterium-tequilapi/dto/connection-status-enum'
 import type { BugReporter } from './bug-reporting/interface'
@@ -29,92 +28,81 @@ import StartupEventTracker from './statistics/startup-event-tracker'
 import logger from './logger'
 import { UserSettingsStore } from './user-settings/user-settings-store'
 import Notification from './notification'
+import type { MainCommunication } from './communication/main-communication'
 
-function showNotificationOnDisconnect (
-  userSettingsStore: UserSettingsStore,
-  communication: MainMessageBusCommunication,
-  disconnectNotification: Notification) {
-  communication.onConnectionStatusChange((status) => {
-    const shouldShowNotification =
-      userSettingsStore.getAll().showDisconnectNotifications &&
-      (status.newStatus === ConnectionStatusEnum.NOT_CONNECTED &&
-        status.oldStatus === ConnectionStatusEnum.CONNECTED)
+const LOG_PREFIX = '[ComBinds] '
 
-    if (shouldShowNotification) {
-      disconnectNotification.show()
-    }
-  })
+class CommunicationBindings {
+  _communication: MainCommunication
+  constructor (communication: MainCommunication) {
+    this._communication = communication
+  }
+
+  showNotificationOnDisconnect (userSettingsStore: UserSettingsStore, disconnectNotification: Notification) {
+    this._communication.onConnectionStatusChange((status) => {
+      const shouldShowNotification =
+        userSettingsStore.getAll().showDisconnectNotifications &&
+        (status.newStatus === ConnectionStatusEnum.NOT_CONNECTED &&
+          status.oldStatus === ConnectionStatusEnum.CONNECTED)
+
+      if (shouldShowNotification) {
+        disconnectNotification.show()
+      }
+    })
+  }
+
+  syncFavorites (userSettingsStore: UserSettingsStore) {
+    this._communication.onToggleFavoriteProvider((fav) => {
+      userSettingsStore.setFavorite(fav.id, fav.isFavorite)
+      userSettingsStore.save()
+    })
+  }
+
+  syncShowDisconnectNotifications (userSettingsStore: UserSettingsStore) {
+    this._communication.onUserSettingsRequest(() => {
+      this._communication.sendUserSettings(userSettingsStore.getAll())
+    })
+
+    this._communication.onUserSettingsShowDisconnectNotifications((show) => {
+      userSettingsStore.setShowDisconnectNotifications(show)
+      userSettingsStore.save()
+    })
+  }
+
+  setCurrentIdentityForEventTracker (startupEventTracker: StartupEventTracker) {
+    this._communication.onCurrentIdentityChangeOnce((identityChange: CurrentIdentityChangeDTO) => {
+      startupEventTracker.sendRuntimeEnvironmentDetails(identityChange.id)
+    })
+  }
+
+  startRegistrationFetcherOnCurrentIdentity (
+    featureToggle: FeatureToggle,
+    registrationFetcher: RegistrationFetcher) {
+    this._communication.onCurrentIdentityChangeOnce((identityChange: CurrentIdentityChangeDTO) => {
+      const identity = new IdentityDTO({ id: identityChange.id })
+      if (featureToggle.paymentsAreEnabled()) {
+        registrationFetcher.start(identity.id)
+        logger.info(`${LOG_PREFIX}Registration fetcher started with ID ${identity.id}`)
+      }
+    })
+  }
+
+  syncCurrentIdentityForBugReporter (bugReporter: BugReporter) {
+    this._communication.onCurrentIdentityChange((identityChange: CurrentIdentityChangeDTO) => {
+      const identity = new IdentityDTO({ id: identityChange.id })
+      bugReporter.setUser(identity)
+    })
+  }
+
+  syncRegistrationStatus (registrationFetcher: TequilapiRegistrationFetcher, bugReporter: BugReporter) {
+    registrationFetcher.onFetchedRegistration((registration: IdentityRegistrationDTO) => {
+      this._communication.sendRegistration(registration)
+    })
+    registrationFetcher.onFetchingError((error: Error) => {
+      logger.error(`${LOG_PREFIX}Identity registration fetching failed`, error)
+      bugReporter.captureErrorException(error)
+    })
+  }
 }
 
-function syncFavorites (userSettingsStore: UserSettingsStore, communication: MainMessageBusCommunication) {
-  communication.onToggleFavoriteProvider((fav) => {
-    userSettingsStore.setFavorite(fav.id, fav.isFavorite)
-    userSettingsStore.save()
-  })
-}
-
-function syncShowDisconnectNotifications (
-  userSettingsStore: UserSettingsStore,
-  communication: MainMessageBusCommunication) {
-  communication.onUserSettingsRequest(() => {
-    communication.sendUserSettings(userSettingsStore.getAll())
-  })
-
-  communication.onUserSettingsShowDisconnectNotifications((show) => {
-    userSettingsStore.setShowDisconnectNotifications(show)
-    userSettingsStore.save()
-  })
-}
-
-function setCurrentIdentityForEventTracker (
-  startupEventTracker: StartupEventTracker,
-  communication: MainMessageBusCommunication) {
-  communication.onCurrentIdentityChangeOnce((identityChange: CurrentIdentityChangeDTO) => {
-    startupEventTracker.sendRuntimeEnvironmentDetails(identityChange.id)
-  })
-}
-
-function startRegistrationFetcherOnCurrentIdentity (
-  featureToggle: FeatureToggle,
-  registrationFetcher: TequilapiRegistrationFetcher,
-  communication: MainMessageBusCommunication) {
-  communication.onCurrentIdentityChangeOnce((identityChange: CurrentIdentityChangeDTO) => {
-    const identity = new IdentityDTO({ id: identityChange.id })
-    if (featureToggle.paymentsAreEnabled()) {
-      registrationFetcher.start(identity.id)
-      logger.info(`[ComBinds]Registration fetcher started with ID ${identity.id}`)
-    }
-  })
-}
-
-function syncCurrentIdentityForBugReporter (
-  bugReporter: BugReporter,
-  communication: MainMessageBusCommunication) {
-  communication.onCurrentIdentityChange((identityChange: CurrentIdentityChangeDTO) => {
-    const identity = new IdentityDTO({ id: identityChange.id })
-    bugReporter.setUser(identity)
-  })
-}
-
-function syncRegistrationStatus (
-  registrationFetcher: TequilapiRegistrationFetcher,
-  bugReporter: BugReporter,
-  communication: MainMessageBusCommunication) {
-  registrationFetcher.onFetchedRegistration((registration: IdentityRegistrationDTO) => {
-    communication.sendRegistration(registration)
-  })
-  registrationFetcher.onFetchingError((error: Error) => {
-    logger.error('[ComBinds]Identity registration fetching failed', error)
-    bugReporter.captureErrorException(error)
-  })
-}
-
-export default {
-  showNotificationOnDisconnect,
-  syncFavorites,
-  syncShowDisconnectNotifications,
-  setCurrentIdentityForEventTracker,
-  startRegistrationFetcherOnCurrentIdentity,
-  syncCurrentIdentityForBugReporter,
-  syncRegistrationStatus
-}
+export default CommunicationBindings

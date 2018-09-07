@@ -47,7 +47,7 @@ import logger from './logger'
 import StartupEventTracker from './statistics/startup-event-tracker'
 import TequilapiRegistrationFetcher from './data-fetchers/tequilapi-registration-fetcher'
 import MainBufferedIpc from './communication/ipc/main-buffered-ipc'
-import comBinds from './communication-bindings'
+import CommunicationBindings from './communication-bindings'
 
 const LOG_PREFIX = '[MysteriumVpn] '
 const MYSTERIUM_CLIENT_STARTUP_THRESHOLD = 10000
@@ -78,6 +78,7 @@ class MysteriumVpn {
   _communication: MainMessageBusCommunication
   _ipc: MainBufferedIpc
   _syncCallbacksInitializer: SyncCallbacksInitializer
+  _comBinds: CommunicationBindings
 
   constructor (params: MysteriumVpnParams) {
     this._browserWindowFactory = params.browserWindowFactory
@@ -104,6 +105,7 @@ class MysteriumVpn {
     this._ipc = params.mainIpc
     this._communication = params.mainCommunication
     this._syncCallbacksInitializer = params.syncCallbacksInitializer
+    this._comBinds = params.communicationBindings
   }
 
   run () {
@@ -158,13 +160,10 @@ class MysteriumVpn {
     const send = this._getSendFunction(browserWindow)
     this._ipc.setSenderAndSendBuffered(send)
 
-    comBinds.setCurrentIdentityForEventTracker(this._startupEventTracker, this._communication)
-    comBinds.syncCurrentIdentityForBugReporter(this._bugReporter, this._communication)
+    this._comBinds.setCurrentIdentityForEventTracker(this._startupEventTracker)
+    this._comBinds.syncCurrentIdentityForBugReporter(this._bugReporter)
 
-    comBinds.startRegistrationFetcherOnCurrentIdentity(
-      this._featureToggle,
-      this._registrationFetcher,
-      this._communication)
+    this._comBinds.startRegistrationFetcherOnCurrentIdentity(this._featureToggle, this._registrationFetcher)
 
     this._bugReporterMetrics.startSyncing(this._communication) // FIXME: MYS-223
     this._bugReporterMetrics.setWithCurrentDateTime(METRICS.START_TIME)
@@ -192,12 +191,12 @@ class MysteriumVpn {
     this._subscribeProposals()
 
     if (this._featureToggle.paymentsAreEnabled()) {
-      comBinds.syncRegistrationStatus(this._registrationFetcher, this._bugReporter, this._communication)
+      this._comBinds.syncRegistrationStatus(this._registrationFetcher, this._bugReporter)
     }
 
-    comBinds.syncFavorites(this._userSettingsStore, this._communication)
-    comBinds.syncShowDisconnectNotifications(this._userSettingsStore, this._communication)
-    comBinds.showNotificationOnDisconnect(this._userSettingsStore, this._communication, this._disconnectNotification)
+    this._comBinds.syncFavorites(this._userSettingsStore)
+    this._comBinds.syncShowDisconnectNotifications(this._userSettingsStore)
+    this._comBinds.showNotificationOnDisconnect(this._userSettingsStore, this._disconnectNotification)
     await this._loadUserSettings()
     this._disconnectNotification.onReconnect(() => this._communication.sendReconnectRequest())
   }

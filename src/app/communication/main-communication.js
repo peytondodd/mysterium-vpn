@@ -24,7 +24,7 @@ import type {
   CountriesDTO,
   RequestTermsDTO,
   TermsAnsweredDTO,
-  AppErrorDTO
+  AppErrorDTO, FavoriteProviderDTO
 } from './dto'
 import type { UserSettings } from '../user-settings/user-settings'
 import IdentityRegistrationDTO from '../../libraries/mysterium-tequilapi/dto/identity-registration'
@@ -56,9 +56,15 @@ interface MainCommunication {
 
   sendUserSettings (data: UserSettings): void,
 
+  onToggleFavoriteProvider (callback: (FavoriteProviderDTO) => void): void,
+
+  onUserSettingsShowDisconnectNotifications (callback: (boolean) => void): void,
+
   onConnectionStatusChange (callback: (ConnectionStatusChangeDTO) => void): void,
 
   onCurrentIdentityChange (callback: (CurrentIdentityChangeDTO) => void): void,
+
+  onCurrentIdentityChangeOnce (callback: (CurrentIdentityChangeDTO) => void): void,
 
   onProposalUpdateRequest (callback: () => void): void,
 
