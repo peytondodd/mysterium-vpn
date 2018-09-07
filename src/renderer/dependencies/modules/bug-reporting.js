@@ -28,6 +28,8 @@ import SyncSenderRendererCommunication from '../../../app/communication/sync/syn
 import { SyncIpcSender } from '../../../app/communication/sync/sync-ipc'
 import type { SyncRendererCommunication } from '../../../app/communication/sync/sync-communication'
 import { createWinstonSyncComLogger } from '../../../app/logging/winston'
+import { MapSync } from '../../../libraries/map-sync'
+import { BugReporterMetrics } from '../../../app/bug-reporting/bug-reporter-metrics'
 
 function bootstrap (container: Container) {
   container.constant('bugReporter.sentryURL', 'https://f1e63dd563c34c35a56e98aa02518d40@sentry.io/300978')
@@ -49,6 +51,12 @@ function bootstrap (container: Container) {
       })
       return bugReporter
     }
+  )
+
+  container.factory(
+    'bugReporterMetrics',
+    [],
+    (): BugReporterMetrics => new BugReporterMetrics(new MapSync())
   )
 
   container.service(

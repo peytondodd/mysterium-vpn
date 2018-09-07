@@ -25,6 +25,7 @@ import type { EnvironmentCollector } from '../../../app/bug-reporting/environmen
 import LogCache from '../../../app/logging/log-cache'
 import LogCacheBundle from '../../../app/logging/log-cache-bundle'
 import { BugReporterMetrics } from '../../../app/bug-reporting/bug-reporter-metrics'
+import { MapSync } from '../../../libraries/map-sync'
 
 function bootstrap (container: Container) {
   container.factory(
@@ -47,6 +48,12 @@ function bootstrap (container: Container) {
       const raven = Raven.config(sentryURL, config).install()
       return new BugReporterMain(raven)
     }
+  )
+
+  container.factory(
+    'bugReporterMetrics',
+    [],
+    (): BugReporterMetrics => new BugReporterMetrics(new MapSync())
   )
 
   container.factory(
