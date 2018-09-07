@@ -18,7 +18,7 @@
 // @flow
 import { describe, it, expect, before, beforeEach, after } from '../../../helpers/dependencies'
 import lolex from 'lolex'
-import { nextTick } from '../../../helpers/utils'
+import { capturePromiseError, nextTick } from '../../../helpers/utils'
 import EmptyTequilapiClientMock from '../../renderer/store/modules/empty-tequilapi-client-mock'
 import logger from '../../../../src/app/logger'
 import IdentityRegistrationDTO from '../../../../src/libraries/mysterium-tequilapi/dto/identity-registration'
@@ -49,6 +49,7 @@ class IdentityTequilapiClientMock extends EmptyTequilapiClientMock {
   }
 
   async identityRegistration (id: string): Promise<IdentityRegistrationDTO> {
+    if (!id) throw new Error('some tequilapi error here')
     if (this._willFail) {
       throw this.mockError
     }
@@ -65,7 +66,7 @@ class IdentityTequilapiClientMock extends EmptyTequilapiClientMock {
 }
 
 describe('DataFetchers', () => {
-  describe('RegistrationFetcher', () => {
+  describe('TequilapiRegistrationFetcher', () => {
     let clock
     const interval = 1001
     const tequilapi = new IdentityTequilapiClientMock(new IdentityRegistrationDTO(REGISTRATION))
@@ -167,9 +168,15 @@ describe('DataFetchers', () => {
     })
 
     describe('.fetch', () => {
-      it('returns registration', async () => {
-        const registration = await fetcher.fetch()
-        expect(registration).to.deep.equal(REGISTRATION)
+      it('thows when invoked independently', async () => {
+        const error = await capturePromiseError(fetcher.fetch())
+        expect(error).to.be.instanceOf(Error)
+        expect(error).to.have.property('message', 'some tequilapi error here')
+      })
+      it('resolves when invoked after start()', async () => {
+        fetcher.start('some identity')
+        const reg = await fetcher.fetch()
+        expect(reg).to.eql(REGISTRATION)
       })
     })
   })
