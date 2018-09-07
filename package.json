@@ -105,7 +105,7 @@
     "jpex": "^2.1.0",
     "less": "^3.8.1",
     "less-loader": "^4.1.0",
-    "lolex": "^2.3.2",
+    "lolex": "^2.7.4",
     "md5": "^2.2.1",
     "mysterium-client-bin": "^0.2.3",
     "os-name": "^2.0.1",
