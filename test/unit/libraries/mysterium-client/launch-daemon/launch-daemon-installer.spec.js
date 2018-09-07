@@ -20,6 +20,7 @@
 import { afterEach, beforeEach, describe, expect, it } from '../../../../helpers/dependencies'
 import LaunchDaemonInstaller from '../../../../../src/libraries/mysterium-client/launch-daemon/launch-daemon-installer'
 import mock from 'mock-fs'
+import fs from 'fs'
 import SystemMock from '../../../../helpers/system-mock'
 import type { System } from '../../../../../src/libraries/mysterium-client/system'
 import type { SystemMockManager } from '../../../../helpers/system-mock'
@@ -84,18 +85,13 @@ const TEMPLATE = '<?xml version="1.0" encoding="UTF-8"?>\n' +
   '         </dict>\n' +
   '      </plist>'
 
-const createSystemMock = () => {
-  const systemMock = new SystemMock()
-  return systemMock
-}
-
 describe('LaunchDaemonInstaller', () => {
   let system: System
   let systemMockManager: SystemMockManager
   let installer: LaunchDaemonInstaller
 
   beforeEach(() => {
-    const systemMock = createSystemMock()
+    const systemMock = new SystemMock()
     system = (systemMock: System)
     systemMockManager = (systemMock: SystemMockManager)
 
@@ -152,6 +148,45 @@ describe('LaunchDaemonInstaller', () => {
   describe('.install', () => {
     it('does not throw error when everything is fine', async () => {
       await installer.install()
+    })
+
+    it('repairs previously installed daemon', async () => {
+      await installer.install()
+
+      expect(systemMockManager.sudoExecCalledCommands).to.have.length(1)
+      expect(systemMockManager.sudoExecCalledCommands[0]).to.be.eql(
+        'launchctl unload /Library/LaunchDaemons/network.mysterium.mysteriumclient.plist && ' +
+        'cp /runtime-dir/network.mysterium.mysteriumclient.plist ' +
+          '/Library/LaunchDaemons/network.mysterium.mysteriumclient.plist' +
+        ' && launchctl load /Library/LaunchDaemons/network.mysterium.mysteriumclient.plist')
+    })
+
+    it('executes right commands to install new daemon', async () => {
+      mock.restore()
+      mock({
+        '/runtime-dir': {
+          'network.mysterium.mysteriumclient.plist': mock.file()
+        },
+        'log-dir': {
+          'stdout.log': mock.file()
+        }
+      })
+
+      await installer.install()
+
+      expect(systemMockManager.sudoExecCalledCommands).to.have.length(1)
+      expect(systemMockManager.sudoExecCalledCommands[0]).to.be.eql(
+        'cp /runtime-dir/network.mysterium.mysteriumclient.plist ' +
+          '/Library/LaunchDaemons/network.mysterium.mysteriumclient.plist' +
+        ' && launchctl load /Library/LaunchDaemons/network.mysterium.mysteriumclient.plist')
+    })
+
+    it('copies template file', async () => {
+      await installer.install()
+
+      const destinationPath = '/runtime-dir/network.mysterium.mysteriumclient.plist'
+      const content = fs.readFileSync(destinationPath).toString()
+      expect(content).to.be.eql(TEMPLATE)
     })
   })
 })

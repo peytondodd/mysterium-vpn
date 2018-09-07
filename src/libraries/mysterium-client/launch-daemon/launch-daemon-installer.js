@@ -98,17 +98,19 @@ class LaunchDaemonInstaller implements Installer {
 
   async install (): Promise<void> {
     let tempPlistFile = path.join(this._config.runtimeDir, PROPERTY_LIST_NAME)
-    let script = `\
-      cp ${tempPlistFile} ${PROPERTY_LIST_FILE}\
-      && launchctl load ${PROPERTY_LIST_FILE}\
-    `
+    let commands = [
+      { path: 'cp', args: [tempPlistFile, PROPERTY_LIST_FILE] },
+      { path: 'launchctl', args: ['load', PROPERTY_LIST_FILE] }
+    ]
+
     if (processInstalled()) {
-      script = `launchctl unload ${PROPERTY_LIST_FILE} && ` + script
+      commands.unshift({
+        path: 'launchctl', args: ['unload', PROPERTY_LIST_FILE]
+      })
     }
-    let command = `sh -c '${script}'`.replace(/\n/, '')
 
     await writeFile(tempPlistFile, this.template())
-    await this._system.sudoExec({ path: command })
+    await this._system.sudoExec(...commands)
     await this._createLogFilesIfMissing()
   }
 
