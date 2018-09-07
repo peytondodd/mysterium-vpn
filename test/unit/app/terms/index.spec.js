@@ -17,10 +17,11 @@
 
 // @flow
 
+import fs from 'fs'
+import path from 'path'
 import mock from 'mock-fs'
 import { beforeEach, describe, it, expect, afterEach } from '../../../helpers/dependencies'
 import Terms from '../../../../src/app/terms'
-import logger from '../../../../src/app/logger'
 import { captureError } from '../../../helpers/utils'
 
 const TERMS_SOURCE_PATH = '/TERMS_SOURCE_PATH'
@@ -29,16 +30,14 @@ const TERMS_HTML = '<html>SOME_TERMS</html>'
 
 describe('Terms', () => {
   let terms: Terms
-  let exportTermsFile
 
   beforeEach(() => {
-    exportTermsFile = mock.file()
     mock({
       [TERMS_SOURCE_PATH]: {
         'terms.html': TERMS_HTML
       },
       [TERMS_EXPORT_PATH]: {
-        'terms.html': exportTermsFile
+        'terms.html': mock.file()
       }
     })
 
@@ -110,13 +109,11 @@ describe('Terms', () => {
       terms.load()
       terms.accept()
 
-      const writtenFileData = mock.getMockRoot()
-        ._items.TERMS_EXPORT_PATH
-        ._items['terms.html']
-        ._content
+      const writtenFileData = fs.readFileSync(
+        path.join(TERMS_EXPORT_PATH, 'terms.html')
+      ).toString()
 
-      logger.info(writtenFileData)
-      expect(writtenFileData).to.have.lengthOf(TERMS_HTML.length)
+      expect(writtenFileData).to.be.eql(TERMS_HTML)
     })
   })
 
