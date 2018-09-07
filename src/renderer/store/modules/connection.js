@@ -288,8 +288,8 @@ class VueConnectionStatsFetcher extends VueAction implements ConnectionStatsFetc
 }
 
 class VueConnectionState extends VueAction implements ConnectionState {
-  setLastConnectionProvider (providerId: string) {
-    this._commit(type.SET_LAST_CONNECTION_PROVIDER, providerId)
+  setLastConnectionProvider (provider: Provider) {
+    this._commit(type.SET_LAST_CONNECTION_PROVIDER, provider)
   }
 
   async setConnectionStatus (status: ConnectionStatus) {
