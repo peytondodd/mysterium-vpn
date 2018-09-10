@@ -39,7 +39,7 @@ export default {
       const identityState = this.$store.state.identity
       const identityManager = new IdentityManager(this.tequilapiClient, commit, identityState)
       const updateClientVersion = () => dispatch(type.CLIENT_VERSION)
-      const initialize = async () => this.vpnInitializer.initialize(identityManager, updateClientVersion)
+      const initialize = () => this.vpnInitializer.initialize(identityManager, updateClientVersion)
 
       const delay = async () => {
         const msg = 'Initialization failed, will retry.'

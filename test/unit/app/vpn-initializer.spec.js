@@ -92,9 +92,9 @@ describe('VpnInitializer', () => {
 
       it('stores first fetched identity', async () => {
         const state: IdentityState = { current: null, unlocked: false }
-        const commit = (...args: Array<any>) => {
-          if (args.length === 2 && args[0] === types.SET_CURRENT_IDENTITY) {
-            state.current = args[1]
+        const commit = (mutation, ...args: Array<any>) => {
+          if (mutation === types.SET_CURRENT_IDENTITY && args.length === 1) {
+            state.current = args[0]
           }
         }
         const identityManager = new IdentityManager(tequilapi, commit, state)
@@ -115,10 +115,10 @@ describe('VpnInitializer', () => {
 
       it('creates and unlocks identity', async () => {
         let unlocked = false
-        const commit = (...args: Array<any>) => {
-          if (args.length === 2 && args[0] === types.SET_CURRENT_IDENTITY) {
-            state.current = args[1]
-          } else if (args.length === 1 && args[0] === types.IDENTITY_UNLOCK_SUCCESS) {
+        const commit = (mutation, ...args: Array<any>) => {
+          if (mutation === types.SET_CURRENT_IDENTITY && args.length === 1) {
+            state.current = args[0]
+          } else if (mutation === types.IDENTITY_UNLOCK_SUCCESS && args.length === 0) {
             unlocked = true
           }
         }
