@@ -77,7 +77,7 @@ class CommunicationBindings {
 
   startRegistrationFetcherOnCurrentIdentity (
     featureToggle: FeatureToggle,
-    registrationFetcher: RegistrationFetcher) {
+    registrationFetcher: TequilapiRegistrationFetcher) {
     this._communication.onCurrentIdentityChangeOnce((identityChange: CurrentIdentityChangeDTO) => {
       const identity = new IdentityDTO({ id: identityChange.id })
       if (featureToggle.paymentsAreEnabled()) {
