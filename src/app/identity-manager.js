@@ -21,6 +21,7 @@ import types from '../renderer/store/types'
 import IdentityDTO from '../libraries/mysterium-tequilapi/dto/identity'
 import type { TequilapiClient } from '../libraries/mysterium-tequilapi/client'
 import type { State as IdentityState } from '../renderer/store/modules/identity'
+import messages from './messages'
 
 const PASSWORD = ''
 
@@ -29,42 +30,56 @@ const PASSWORD = ''
  */
 class IdentityManager {
   _tequilapi: TequilapiClient
+  _commit: Function
+  _state: IdentityState
 
-  constructor (tequilapi: TequilapiClient) {
+  constructor (tequilapi: TequilapiClient, commit: Function, state: IdentityState) {
     this._tequilapi = tequilapi
+    this._commit = commit
+    this._state = state
   }
 
-  async listIdentities (commit: Function): Promise<Array<IdentityDTO>> {
+  async listIdentities (): Promise<Array<IdentityDTO>> {
     try {
-      const identities = await this._tequilapi.identitiesList()
-      commit(types.IDENTITY_LIST_SUCCESS, identities)
-      return identities
+      return await this._tequilapi.identitiesList()
     } catch (err) {
-      commit(types.SHOW_ERROR, err)
-      throw (err)
-    }
-  }
-
-  async createIdentity (commit: Function): Promise<IdentityDTO> {
-    try {
-      return await this._tequilapi.identityCreate(PASSWORD)
-    } catch (err) {
-      commit(types.SHOW_ERROR, err)
+      this._showErrorMessage(messages.identityListFailed)
       throw err
     }
   }
 
-  async unlockIdentity (commit: Function, state: IdentityState): Promise<void> {
+  setCurrentIdentity (identity: IdentityDTO) {
+    this._commit(types.SET_CURRENT_IDENTITY, identity)
+  }
+
+  async createIdentity (): Promise<IdentityDTO> {
     try {
-      if (state.current == null) {
-        throw new Error('Identity is not available')
-      }
-      await this._tequilapi.identityUnlock(state.current.id, PASSWORD)
-      commit(types.IDENTITY_UNLOCK_SUCCESS)
+      return await this._tequilapi.identityCreate(PASSWORD)
     } catch (err) {
-      // TODO: throw error here as well for consistency?
-      commit(types.SHOW_ERROR, err)
+      this._showErrorMessage(messages.identityCreateFailed)
+      throw err
     }
+  }
+
+  async unlockCurrentIdentity (): Promise<void> {
+    if (this._state.current == null) {
+      const message = 'Identity is not available'
+      this._showErrorMessage(message)
+      throw new Error(message)
+    }
+
+    try {
+      await this._tequilapi.identityUnlock(this._state.current.id, PASSWORD)
+      this._commit(types.IDENTITY_UNLOCK_SUCCESS)
+    } catch (err) {
+      this._showErrorMessage(messages.identityUnlockFailed)
+      throw err
+    }
+  }
+
+  // TODO: this class should not show errors in case VpnInitializer is run with multiple retries
+  _showErrorMessage (message: string): void {
+    this._commit(types.SHOW_ERROR_MESSAGE, message)
   }
 }
 

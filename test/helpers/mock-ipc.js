@@ -20,6 +20,11 @@
 import type { EventListener } from '../../src/app/communication/ipc-message-bus'
 import type { Ipc } from '../../src/app/communication/ipc/ipc'
 
+type ChannelListener = {
+  channel: string,
+  listener: EventListener
+}
+
 class MockIpc implements Ipc {
   addedSubscribers: Array<ChannelListener> = []
   removedSubscribers: Array<ChannelListener> = []
@@ -34,11 +39,6 @@ class MockIpc implements Ipc {
   removeCallback (channel: string, listener: EventListener): void {
     this.removedSubscribers.push({ channel, listener })
   }
-}
-
-type ChannelListener = {
-  channel: string,
-  listener: EventListener
 }
 
 export default MockIpc

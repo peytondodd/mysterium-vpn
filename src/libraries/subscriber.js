@@ -19,6 +19,8 @@
 
 import logger from '../app/logger'
 
+type Callback<T> = (T) => any
+
 /**
  * Allows subscribing callbacks and notifying them with data.
  */
@@ -39,8 +41,6 @@ class Subscriber<T> {
     })
   }
 }
-
-type Callback<T> = (T) => any
 
 export type { Callback }
 

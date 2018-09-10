@@ -20,6 +20,12 @@
 import LogCache from './log-cache'
 import type { SerializedLogCache } from './log-cache'
 
+type SerializedLogCaches = {
+  backend: SerializedLogCache,
+  frontend: SerializedLogCache,
+  mysterium_process: SerializedLogCache,
+}
+
 class LogCacheBundle {
   _backendCache: LogCache
   _frontendCache: LogCache
@@ -38,12 +44,6 @@ class LogCacheBundle {
       mysterium_process: this._mysteriumProcessCache.getSerialized()
     }
   }
-}
-
-type SerializedLogCaches = {
-  backend: SerializedLogCache,
-  frontend: SerializedLogCache,
-  mysterium_process: SerializedLogCache,
 }
 
 export default LogCacheBundle
