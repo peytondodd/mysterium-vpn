@@ -5,6 +5,7 @@
  */
 
 process.env.BABEL_ENV = 'renderer'
+process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = true
 
 const path = require('path')
 const {dependencies} = require('../package.json')
