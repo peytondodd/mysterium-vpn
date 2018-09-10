@@ -24,8 +24,8 @@ import type { SyncMainCommunication } from '../../../src/app/communication/sync/
 import type { LogDTO } from '../../../src/app/communication/dto'
 import LogCache from '../../../src/app/logging/log-cache'
 import type { SerializedLogCaches } from '../../../src/app/logging/log-cache-bundle'
-import type { RavenData } from '../../../src/app/bug-reporting/bug-reporter-metrics'
-import { TAGS } from '../../../src/app/bug-reporting/bug-reporter-metrics'
+import { TAGS } from '../../../src/app/bug-reporting/metrics/metrics'
+import type { RavenData } from '../../../src/app/bug-reporting/metrics/metrics'
 
 class MockEnvironmentCollector implements EnvironmentCollector {
   mockMysteriumVpnReleaseId = 'mock mysterium vpn release id'

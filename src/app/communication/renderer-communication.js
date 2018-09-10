@@ -31,9 +31,9 @@ import type {
 } from './dto'
 
 import type { UserSettings } from '../user-settings/user-settings'
-import type { Metric } from '../bug-reporting/bug-reporter-metrics'
 import type { MapSyncCommunication, MapSyncDTO } from '../../libraries/map-sync'
 import IdentityRegistrationDTO from '../../libraries/mysterium-tequilapi/dto/identity-registration'
+import type { Metric } from '../bug-reporting/metrics/metrics'
 
 /**
  * This allows renderer process communicating with main process.

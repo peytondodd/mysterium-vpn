@@ -21,8 +21,9 @@ import { beforeEach, describe, expect, it } from '../../../../helpers/dependenci
 import MainEnvironmentCollector from '../../../../../src/app/bug-reporting/environment/main-environment-collector'
 import LogCache from '../../../../../src/app/logging/log-cache'
 import LogCacheBundle from '../../../../../src/app/logging/log-cache-bundle'
-import { BugReporterMetrics, TAGS } from '../../../../../src/app/bug-reporting/bug-reporter-metrics'
-import { MapSync } from '../../../../../src/libraries/map-sync'
+import type { BugReporterMetrics } from '../../../../../src/app/bug-reporting/metrics/bug-reporter-metrics'
+import BugReporterMetricsStore from '../../../../../src/app/bug-reporting/metrics/bug-reporter-metrics-store'
+import { TAGS } from '../../../../../src/app/bug-reporting/metrics/metrics'
 
 describe('MainEnvironmentCollector', () => {
   const releaseID = 'id of release'
@@ -37,7 +38,7 @@ describe('MainEnvironmentCollector', () => {
     frontendLogCache = new LogCache()
     mysteriumProcessLogCache = new LogCache()
     const logCacheBundle = new LogCacheBundle(backendLogCache, frontendLogCache, mysteriumProcessLogCache)
-    bugReporterMetrics = new BugReporterMetrics(new MapSync())
+    bugReporterMetrics = new BugReporterMetricsStore()
     collector = new MainEnvironmentCollector(logCacheBundle, releaseID, bugReporterMetrics)
   })
 

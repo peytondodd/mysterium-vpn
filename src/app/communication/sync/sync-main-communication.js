@@ -22,7 +22,7 @@ import type { SyncReceiver } from './sync'
 import type { SyncMainCommunication } from './sync-communication'
 import type { SerializedLogCaches } from '../../logging/log-cache-bundle'
 import type { LogDTO } from '../dto'
-import type { RavenData } from '../../bug-reporting/bug-reporter-metrics'
+import type { RavenData } from '../../bug-reporting/metrics/metrics'
 
 class SyncReceiverMainCommunication implements SyncMainCommunication {
   _syncReceiver: SyncReceiver

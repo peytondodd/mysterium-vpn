@@ -22,8 +22,8 @@ import RendererEnvironmentCollector
   from '../../../../../src/app/bug-reporting/environment/renderer-environment-collector'
 import type { SyncRendererCommunication } from '../../../../../src/app/communication/sync/sync-communication'
 import type { SerializedLogCaches } from '../../../../../src/app/logging/log-cache-bundle'
-import type { RavenData } from '../../../../../src/app/bug-reporting/bug-reporter-metrics'
-import { TAGS } from '../../../../../src/app/bug-reporting/bug-reporter-metrics'
+import type { RavenData } from '../../../../../src/app/bug-reporting/metrics/metrics'
+import { TAGS } from '../../../../../src/app/bug-reporting/metrics/metrics'
 
 class FakeSyncRendererCommunication implements SyncRendererCommunication {
   mockedSerializedCaches: ?SerializedLogCaches = {

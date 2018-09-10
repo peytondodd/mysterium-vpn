@@ -28,8 +28,9 @@ import SyncSenderRendererCommunication from '../../../app/communication/sync/syn
 import { SyncIpcSender } from '../../../app/communication/sync/sync-ipc'
 import type { SyncRendererCommunication } from '../../../app/communication/sync/sync-communication'
 import { createWinstonSyncComLogger } from '../../../app/logging/winston'
-import { MapSync } from '../../../libraries/map-sync'
-import { BugReporterMetrics } from '../../../app/bug-reporting/bug-reporter-metrics'
+import { BugReporterMetricsProxy } from '../../../app/bug-reporting/metrics/bug-reporter-metrics-proxy'
+import RendererCommunication from '../../../app/communication/renderer-communication'
+import type { BugReporterMetrics } from '../../../app/bug-reporting/metrics/bug-reporter-metrics'
 
 function bootstrap (container: Container) {
   container.constant('bugReporter.sentryURL', 'https://f1e63dd563c34c35a56e98aa02518d40@sentry.io/300978')
@@ -55,8 +56,11 @@ function bootstrap (container: Container) {
 
   container.factory(
     'bugReporterMetrics',
-    [],
-    (): BugReporterMetrics => new BugReporterMetrics(new MapSync())
+    ['rendererCommunication', 'syncCommunication'],
+    (rendererCommunication: RendererCommunication,
+      syncCommunication: SyncRendererCommunication): BugReporterMetrics => {
+      return new BugReporterMetricsProxy(rendererCommunication, syncCommunication)
+    }
   )
 
   container.service(

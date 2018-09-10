@@ -17,11 +17,11 @@
 
 // @flow
 import type { Container } from '../app/di'
-import { BugReporterMetrics } from '../app/bug-reporting/bug-reporter-metrics'
 import TequilapiClientWithMetrics from '../app/bug-reporting/tequilapi-client-with-metrics'
 import type { TequilapiClient } from '../libraries/mysterium-tequilapi/client'
 import type { BugReporter } from '../app/bug-reporting/interface'
 import ReportingTequilapiClientFactory from '../app/mysterium-tequilapi/reporting-tequilapi-client-factory'
+import type { BugReporterMetrics } from '../app/bug-reporting/metrics/bug-reporter-metrics'
 
 function bootstrap (container: Container) {
   container.constant(

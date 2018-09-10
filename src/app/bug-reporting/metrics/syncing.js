@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 The "mysteriumnetwork/mysterium-vpn" Authors.
+ * Copyright (C) 2018 The "MysteriumNetwork/mysterium-vpn" Authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,25 +16,14 @@
  */
 
 // @flow
+import type { BugReporterMetrics } from './bug-reporter-metrics'
+import type { MapSyncCommunication } from '../../../libraries/map-sync'
+import type { Metric } from './metrics'
 
-export type MapSyncDTO<T: string> = {
-  metric: T,
-  value: mixed
+function startSyncing (bugReporterMetrics: BugReporterMetrics, communication: MapSyncCommunication<Metric>) {
+  communication.onMapUpdate(dto => {
+    bugReporterMetrics.set(dto.metric, dto.value)
+  })
 }
 
-export interface MapSyncCommunication<T: string> {
-  sendMapUpdate (update: MapSyncDTO<T>): void,
-  onMapUpdate (callback: (MapSyncDTO<T>) => void): void
-}
-
-export class MapSync<T: string> {
-  _metrics: Map<T, mixed> = new Map()
-
-  set (key: T, value: mixed): void {
-    this._metrics.set(key, value)
-  }
-
-  get (key: T): mixed {
-    return this._metrics.get(key)
-  }
-}
+export { startSyncing }

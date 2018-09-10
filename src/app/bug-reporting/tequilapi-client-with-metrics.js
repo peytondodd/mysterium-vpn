@@ -18,7 +18,6 @@
 // @flow
 
 import ConnectionStatusDTO from '../../libraries/mysterium-tequilapi/dto/connection-status'
-import { BugReporterMetrics, METRICS } from './bug-reporter-metrics'
 import type { NodeHealthcheckDTO } from '../../libraries/mysterium-tequilapi/dto/node-healthcheck'
 import ProposalDTO from '../../libraries/mysterium-tequilapi/dto/proposal'
 import ProposalsFilter from '../../libraries/mysterium-tequilapi/dto/proposals-filter'
@@ -30,6 +29,8 @@ import type { TequilapiClient } from '../../libraries/mysterium-tequilapi/client
 import IdentityDTO from '../../libraries/mysterium-tequilapi/dto/identity'
 import ConsumerLocationDTO from '../../libraries/mysterium-tequilapi/dto/consumer-location'
 import IdentityRegistrationDTO from '../../libraries/mysterium-tequilapi/dto/identity-registration'
+import type { BugReporterMetrics } from './metrics/bug-reporter-metrics'
+import { METRICS } from './metrics/metrics'
 
 class TequilapiClientWithMetrics implements TequilapiClient {
   _bugReporterMetrics: BugReporterMetrics

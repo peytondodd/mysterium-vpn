@@ -24,8 +24,8 @@ import type { SyncReceiver, SyncSender } from '../../../../../src/app/communicat
 import SyncReceiverMainCommunication from '../../../../../src/app/communication/sync/sync-main-communication'
 import type { SerializedLogCaches } from '../../../../../src/app/logging/log-cache-bundle'
 import { CallbackRecorder } from '../../../../helpers/utils'
-import type { RavenData } from '../../../../../src/app/bug-reporting/bug-reporter-metrics'
-import { TAGS } from '../../../../../src/app/bug-reporting/bug-reporter-metrics'
+import type { RavenData } from '../../../../../src/app/bug-reporting/metrics/metrics'
+import { TAGS } from '../../../../../src/app/bug-reporting/metrics/metrics'
 
 class MockSyncReceiver implements SyncReceiver {
   _subscribers: { [string]: (data?: mixed) => mixed } = new Map()
