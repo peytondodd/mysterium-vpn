@@ -253,6 +253,9 @@ export {
   actionsFactory
 }
 
+type CommitFunction = (string, any) => void
+type DispatchFunction = (string, ...Array<any>) => Promise<void>
+
 class VueAction {
   _commit: CommitFunction
   _dispatch: DispatchFunction
@@ -300,9 +303,6 @@ class VueConnectionState extends VueAction implements ConnectionState {
     this._commit(type.CONNECTION_STATISTICS_RESET)
   }
 }
-
-type CommitFunction = (string, any) => void
-type DispatchFunction = (string, ...Array<any>) => Promise<void>
 
 export type { ConnectionStore }
 export default factory

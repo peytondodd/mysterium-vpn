@@ -16,6 +16,11 @@
  */
 
 // @flow
+type AxiosError = {
+  message: string,
+  response?: { status: number },
+  code?: string
+}
 
 class TequilapiError extends Error {
   name: string = 'TequilapiError'
@@ -51,12 +56,6 @@ class TequilapiError extends Error {
     }
     return this._originalError.response.status === expectedStatus
   }
-}
-
-type AxiosError = {
-  message: string,
-  response?: { status: number },
-  code?: string
 }
 
 const httpResponseCodes = {

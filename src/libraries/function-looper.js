@@ -19,70 +19,13 @@
 import sleep from './sleep'
 import Subscriber from './subscriber'
 
-/**
- * Executes given function infinitely.
- * Ensures that time between function executions is above given threshold.
- * @constructor
- * @param {!function} func - Function to be executed
- * @param {!number} threshold - Minimum sleep between function executions (in milliseconds).
- */
-class FunctionLooper {
-  _func: AsyncFunctionWithoutParams
-  _threshold: number
-  _running: boolean = false
-  _errorSubscriber: Subscriber<Error> = new Subscriber()
-  _currentExecutor: ?ThresholdExecutor
-  _currentPromise: ?Promise<void>
-
-  constructor (func: AsyncFunctionWithoutParams, threshold: number) {
-    this._func = func
-    this._threshold = threshold
-  }
-
-  start (): void {
-    if (this.isRunning()) {
-      return
-    }
-    this._running = true
-
-    const loop = async () => {
-      // eslint-disable-next-line no-unmodified-loop-condition
-      while (this._running) {
-        this._currentExecutor = new ThresholdExecutor(this._func, this._threshold)
-        this._currentPromise = this._currentExecutor.execute()
-        try {
-          await this._currentPromise
-        } catch (err) {
-          this._errorSubscriber.notify(err)
-        }
-      }
-    }
-    loop()
-  }
-
-  async stop (): Promise<void> {
-    this._running = false
-    await this._waitForStartedPromise()
-  }
-
-  isRunning (): boolean {
-    return this._running
-  }
-
-  onFunctionError (callback: (Error) => void) {
-    this._errorSubscriber.subscribe(callback)
-  }
-
-  async _waitForStartedPromise (): Promise<void> {
-    if (!this._currentExecutor) {
-      return
-    }
-    this._currentExecutor.cancel()
-    await this._currentPromise
-  }
-}
-
 type AsyncFunctionWithoutParams = () => Promise<any>
+
+// Internal type for capturing duration and error of function
+type ExecutionResult = {
+  error: ?Error,
+  duration: number
+}
 
 /**
  * Executes given function and sleeps for remaining time.
@@ -145,10 +88,67 @@ class ThresholdExecutor {
   }
 }
 
-// Internal type for capturing duration and error of function
-type ExecutionResult = {
-  error: ?Error,
-  duration: number
+/**
+ * Executes given function infinitely.
+ * Ensures that time between function executions is above given threshold.
+ * @constructor
+ * @param {!function} func - Function to be executed
+ * @param {!number} threshold - Minimum sleep between function executions (in milliseconds).
+ */
+class FunctionLooper {
+  _func: AsyncFunctionWithoutParams
+  _threshold: number
+  _running: boolean = false
+  _errorSubscriber: Subscriber<Error> = new Subscriber()
+  _currentExecutor: ?ThresholdExecutor
+  _currentPromise: ?Promise<void>
+
+  constructor (func: AsyncFunctionWithoutParams, threshold: number) {
+    this._func = func
+    this._threshold = threshold
+  }
+
+  start (): void {
+    if (this.isRunning()) {
+      return
+    }
+    this._running = true
+
+    const loop = async () => {
+      // eslint-disable-next-line no-unmodified-loop-condition
+      while (this._running) {
+        this._currentExecutor = new ThresholdExecutor(this._func, this._threshold)
+        this._currentPromise = this._currentExecutor.execute()
+        try {
+          await this._currentPromise
+        } catch (err) {
+          this._errorSubscriber.notify(err)
+        }
+      }
+    }
+    loop()
+  }
+
+  async stop (): Promise<void> {
+    this._running = false
+    await this._waitForStartedPromise()
+  }
+
+  isRunning (): boolean {
+    return this._running
+  }
+
+  onFunctionError (callback: (Error) => void) {
+    this._errorSubscriber.subscribe(callback)
+  }
+
+  async _waitForStartedPromise (): Promise<void> {
+    if (!this._currentExecutor) {
+      return
+    }
+    this._currentExecutor.cancel()
+    await this._currentPromise
+  }
 }
 
 export { FunctionLooper, ThresholdExecutor }
