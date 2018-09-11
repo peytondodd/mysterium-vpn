@@ -30,10 +30,10 @@ import FeatureToggle from '../../../src/app/features/feature-toggle'
 import BugReporterMock from '../../helpers/bug-reporter-mock'
 import FakeMainCommunication from '../../helpers/fake-main-communication'
 import factoryTequilapiManipulator from '../../helpers/mysterium-tequilapi/factory-tequilapi-manipulator'
-import sleep from '../../../src/libraries/sleep'
 import { UserSettingsStore } from '../../../src/app/user-settings/user-settings-store'
 import Notification from '../../../src/app/notification'
 import ConnectionStatusEnum from '../../../src/libraries/mysterium-tequilapi/dto/connection-status-enum'
+import { nextTick } from '../../helpers/utils'
 
 class TequilapiRegistrationFetcherMock extends TequilapiRegistrationFetcher {
   startedWithId: ?string
@@ -182,11 +182,11 @@ describe('CommunicationBindings', () => {
       bugReporter = new BugReporterMock()
     })
 
-    it('sends via communication', async () => {
+    it('sends registration status to renderer via communication', async () => {
       const regFetcher = new TequilapiRegistrationFetcherMock(factoryTequilapiManipulator().getFakeApi())
       comBinds.syncRegistrationStatus(regFetcher, bugReporter)
       regFetcher.start('someID')
-      await sleep(0)
+      await nextTick()
 
       expect(bugReporter.errorExceptions).to.eql([])
       expect(comFake.wasInvoked(comFake.sendRegistration)).to.be.true
@@ -196,10 +196,10 @@ describe('CommunicationBindings', () => {
       const fakeTeqFactory = factoryTequilapiManipulator()
       fakeTeqFactory.setIdentityRegistrationFail()
       const fakeTeq = fakeTeqFactory.getFakeApi()
-      const regFetcher = new TequilapiRegistrationFetcherMock(fakeTeq, 10)
+      const regFetcher = new TequilapiRegistrationFetcherMock(fakeTeq)
       comBinds.syncRegistrationStatus(regFetcher, bugReporter)
       regFetcher.start('someID')
-      await sleep(1)
+      await nextTick()
 
       expect(bugReporter.errorExceptions[0].error.message).to.eql('Mock error')
     })

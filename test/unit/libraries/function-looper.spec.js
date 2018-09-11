@@ -299,25 +299,47 @@ describe('utils', () => {
     })
 
     describe('with function throwing error', () => {
+      let executor
+
       const mockError = new Error('Mock error')
       async function errorFunc () {
         throw mockError
       }
 
-      it('sleeps and throws error', async () => {
-        const executor = new ThresholdExecutor(errorFunc, 1000)
-        let error = null
-        executor.execute().catch((err) => {
-          error = err
-          markThresholdDone()
-        })
+      let capturedError
+      const captureError = (err) => {
+        capturedError = err
+      }
 
+      beforeEach(() => {
+        executor = new ThresholdExecutor(errorFunc, 1000, captureError)
+        capturedError = null
+      })
+
+      it('invokes error callback at next tick', async () => {
+        executor.execute().then(markThresholdDone)
+
+        // no error initially
         expect(thresholdDone).to.be.false
-        expect(error).to.eql(null)
+        expect(capturedError).to.eql(null)
 
+        // error is returned at next tick
+        await nextTick()
+        expect(thresholdDone).to.be.false
+        expect(capturedError).to.eql(mockError)
+      })
+
+      it('sleeps and throws error', async () => {
+        executor.execute().then(markThresholdDone)
+
+        // no error initially
+        expect(thresholdDone).to.be.false
+        expect(capturedError).to.eql(null)
+
+        // promise is done after sleeping
         await tickWithDelay(1000)
         expect(thresholdDone).to.be.true
-        expect(error).to.eql(mockError)
+        expect(capturedError).to.eql(mockError)
       })
     })
   })
