@@ -26,7 +26,7 @@ import Terms from '../../../app/terms'
 import { getReleaseId } from '../../../libraries/version'
 
 function bootstrap (container: Container) {
-  const version = process.env.MYSTERION_VERSION
+  const version = process.env.MYSTERIUM_VPN_VERSION
   const build = process.env.BUILD_NUMBER
   const mysteriumVpnReleaseID = getReleaseId(version, build)
   global.__mysteriumVpnReleaseID = mysteriumVpnReleaseID
