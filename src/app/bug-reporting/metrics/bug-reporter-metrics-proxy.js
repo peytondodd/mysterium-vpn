@@ -18,7 +18,7 @@
 // @flow
 
 import type { BugReporterMetrics } from './bug-reporter-metrics'
-import type { MapSyncCommunication } from '../../../libraries/map-sync'
+import type { Communication } from './communication'
 import type { Metric, RavenData } from './metrics'
 import type { SyncRendererCommunication } from '../../communication/sync/sync-communication'
 import { getCurrentTimeISOFormat } from '../../../libraries/strings'
@@ -27,10 +27,10 @@ import { getCurrentTimeISOFormat } from '../../../libraries/strings'
  * Collects metrics, proxying all requests to communication.
  */
 class BugReporterMetricsProxy implements BugReporterMetrics {
-  _communication: MapSyncCommunication<Metric>
+  _communication: Communication<Metric>
   _syncCommunication: SyncRendererCommunication
 
-  constructor (communication: MapSyncCommunication<Metric>, syncCommunication: SyncRendererCommunication) {
+  constructor (communication: Communication<Metric>, syncCommunication: SyncRendererCommunication) {
     this._communication = communication
     this._syncCommunication = syncCommunication
   }

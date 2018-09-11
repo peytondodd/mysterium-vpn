@@ -17,13 +17,13 @@
 
 // @flow
 
-import type { MapSyncCommunication, MapSyncDTO } from '../../src/libraries/map-sync'
+import type { Communication, MapSyncDTO } from '../../src/app/bug-reporting/metrics/communication'
 import type { Metric } from '../../src/app/bug-reporting/metrics/metrics'
 
 /**
  * Allows tracking method invocations.
  */
-class FakeMapSyncCommunication implements MapSyncCommunication<Metric> {
+class FakeMapSyncCommunication implements Communication<Metric> {
   _mapUpdateCallbacks: Set<MapSyncDTO<Metric> => void> = new Set()
 
   sendMapUpdate (data: MapSyncDTO<Metric>): void {

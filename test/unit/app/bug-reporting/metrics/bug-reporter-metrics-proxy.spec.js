@@ -19,7 +19,8 @@
 
 import { beforeEach, describe, expect, it } from '../../../../helpers/dependencies'
 import { BugReporterMetricsProxy } from '../../../../../src/app/bug-reporting/metrics/bug-reporter-metrics-proxy'
-import type { MapSyncCommunication, MapSyncDTO } from '../../../../../src/libraries/map-sync'
+import type { Communication, MapSyncDTO }
+  from '../../../../../src/app/bug-reporting/metrics/communication'
 import type { Metric } from '../../../../../src/app/bug-reporting/metrics/metrics'
 import type { SyncRendererCommunication } from '../../../../../src/app/communication/sync/sync-communication'
 import FakeMapSyncCommunication from '../../../../helpers/fake_map_sync_communication'
@@ -27,7 +28,7 @@ import METRICS from '../../../../../src/renderer/store/types'
 
 describe('BugReporterMetricsProxy', () => {
   let proxy: BugReporterMetricsProxy
-  let communication: MapSyncCommunication<Metric>
+  let communication: Communication<Metric>
   let syncCommunication: SyncRendererCommunication
 
   beforeEach(() => {

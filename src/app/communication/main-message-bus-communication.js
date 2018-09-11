@@ -31,14 +31,14 @@ import messages from './messages'
 import type { MessageBus } from './message-bus'
 import type { MainCommunication } from './main-communication'
 import type { UserSettings } from '../user-settings/user-settings'
-import type { MapSyncCommunication, MapSyncDTO } from '../../libraries/map-sync'
+import type { Communication, MapSyncDTO } from '../bug-reporting/metrics/communication'
 import IdentityRegistrationDTO from '../../libraries/mysterium-tequilapi/dto/identity-registration'
 import type { Metric } from '../bug-reporting/metrics/metrics'
 
 /**
  * This allows main process communicating with renderer process.
  */
-class MainMessageBusCommunication implements MainCommunication, MapSyncCommunication<Metric> {
+class MainMessageBusCommunication implements MainCommunication, Communication<Metric> {
   _messageBus: MessageBus
 
   constructor (messageBus: MessageBus) {

@@ -31,14 +31,14 @@ import type {
 } from './dto'
 
 import type { UserSettings } from '../user-settings/user-settings'
-import type { MapSyncCommunication, MapSyncDTO } from '../../libraries/map-sync'
+import type { Communication, MapSyncDTO } from '../bug-reporting/metrics/communication'
 import IdentityRegistrationDTO from '../../libraries/mysterium-tequilapi/dto/identity-registration'
 import type { Metric } from '../bug-reporting/metrics/metrics'
 
 /**
  * This allows renderer process communicating with main process.
  */
-class RendererCommunication implements MapSyncCommunication<Metric> {
+class RendererCommunication implements Communication<Metric> {
   _messageBus: MessageBus
 
   constructor (messageBus: MessageBus) {
