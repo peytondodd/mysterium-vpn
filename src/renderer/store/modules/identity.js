@@ -35,15 +35,10 @@ function mutationsFactory (dependencies: Container) {
   const bugReporter = dependencies.get('bugReporter')
   const rendererCommunication = dependencies.get('rendererCommunication')
   return {
-    // TODO: rename to SET_CURRENT_IDENTITY
-    [type.IDENTITY_GET_SUCCESS] (state, identity: IdentityDTO) {
+    [type.SET_CURRENT_IDENTITY] (state, identity: IdentityDTO) {
       state.current = identity
       bugReporter.setUser(identity)
       rendererCommunication.sendCurrentIdentityChange(identity)
-    },
-    // TODO: rename to SET_IDENTITIES
-    [type.IDENTITY_LIST_SUCCESS] (state, data) {
-      state.identites = data
     },
     [type.IDENTITY_UNLOCK_SUCCESS] (state) {
       state.unlocked = true

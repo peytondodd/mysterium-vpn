@@ -18,10 +18,8 @@
 // @flow
 
 import IdentityDTO from '../libraries/mysterium-tequilapi/dto/identity'
-import types from '../renderer/store/types'
 import IdentityManager from './identity-manager'
 import type { TequilapiClient } from '../libraries/mysterium-tequilapi/client'
-import type { State as IdentityState } from '../renderer/store/modules/identity'
 
 /**
  * Creates or re-uses identity and unlocks it for future operations requiring identity.
@@ -33,28 +31,27 @@ class VpnInitializer {
     this._tequilapi = tequilapi
   }
 
-  async initialize (dispatch: Function, commit: Function, state: IdentityState): Promise<void> {
-    await this._prepareIdentity(commit, state)
-    await dispatch(types.CLIENT_VERSION)
+  async initialize (identityManager: IdentityManager, updateClientVersion: () => Promise<void>): Promise<void> {
+    await this._prepareIdentity(identityManager)
+    await updateClientVersion()
   }
 
-  async _prepareIdentity (commit: Function, state: IdentityState): Promise<void> {
-    const identityManager = new IdentityManager(this._tequilapi)
+  async _prepareIdentity (identityManager: IdentityManager): Promise<void> {
+    const identity = await this._getFirstOrCreateIdentity(identityManager)
+    identityManager.setCurrentIdentity(identity)
 
-    const identity = await this._identityGet(identityManager, commit)
-    commit(types.IDENTITY_GET_SUCCESS, identity)
-
-    await identityManager.unlockIdentity(commit, state)
+    await identityManager.unlockCurrentIdentity()
   }
 
-  async _identityGet (identityManager: IdentityManager, commit: Function): Promise<IdentityDTO> {
-    const identities = await identityManager.listIdentities(commit)
+  async _getFirstOrCreateIdentity (identityManager: IdentityManager): Promise<IdentityDTO> {
+    const identities = await identityManager.listIdentities()
 
     if (identities && identities.length > 0) {
       return identities[0]
     }
 
-    return identityManager.createIdentity(commit)
+    const identity = await identityManager.createIdentity()
+    return identity
   }
 }
 
