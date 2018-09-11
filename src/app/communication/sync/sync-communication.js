@@ -24,9 +24,9 @@ import type { MetricValueDto } from '../../bug-reporting/metrics/metric-communic
 
 interface SyncMainCommunication {
   onGetSerializedCaches (callback: () => SerializedLogCaches): void,
+  onSendMetric (callback: (metricValue: MetricValueDto) => void): void,
   onGetMetrics (callback: () => RavenData): void,
-  onLog (callback: () => void): void,
-  onSendMetric (callback: (metricValue: MetricValueDto) => void): void
+  onLog (callback: () => void): void
 }
 
 interface SyncRendererCommunication {

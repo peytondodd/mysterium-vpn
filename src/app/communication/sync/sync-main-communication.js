@@ -36,16 +36,16 @@ class SyncReceiverMainCommunication implements SyncMainCommunication {
     this._on(messages.GET_SERIALIZED_CACHES, callback)
   }
 
+  onSendMetric (callback: (metricValue: MetricValueDto) => void): void {
+    this._on(messages.SEND_METRIC, callback)
+  }
+
   onGetMetrics (callback: () => RavenData): void {
     this._on(messages.GET_METRICS, callback)
   }
 
   onLog (callback: (LogDTO) => void): void {
     this._on(messages.LOG, callback)
-  }
-
-  onSendMetric (callback: (metricValue: MetricValueDto) => void): void {
-    // TODO: implement
   }
 
   _on (channel: string, callback: (data: any) => mixed) {
