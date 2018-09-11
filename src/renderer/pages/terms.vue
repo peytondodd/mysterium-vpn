@@ -29,7 +29,7 @@
       <a
         href="#"
         class="control__action btn"
-        @click.prevent="accept">Accept and launch Mysterion</a>
+        @click.prevent="accept">Accept and launch MysteriumVPN</a>
       <a
         href="#"
         class="control__action btn btn-danger"
