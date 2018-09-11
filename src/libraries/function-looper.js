@@ -119,7 +119,10 @@ class FunctionLooper {
     const loop = async () => {
       // eslint-disable-next-line no-unmodified-loop-condition
       while (this._running) {
-        this._currentExecutor = new ThresholdExecutor(this._func, this._threshold, (err) => this._errorSubscriber.notify(err))
+        this._currentExecutor = new ThresholdExecutor(
+          this._func,
+          this._threshold,
+          (err) => this._errorSubscriber.notify(err))
         this._currentPromise = this._currentExecutor.execute()
         await this._currentPromise
       }
