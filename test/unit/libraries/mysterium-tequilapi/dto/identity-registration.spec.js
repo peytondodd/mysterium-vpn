@@ -18,6 +18,7 @@
 import { expect } from 'chai'
 import IdentityRegistrationDTO, { getPaymentLink }
   from '../../../../../src/libraries/mysterium-tequilapi/dto/identity-registration'
+import { captureError } from '../../../../helpers/utils'
 
 describe('TequilapiClient DTO', () => {
   describe('IdentityRegistrationDTO', () => {
@@ -86,6 +87,11 @@ describe('TequilapiClient DTO', () => {
         '&part2=0xef3156a0d95c3832b191c03c272a5900e3e30484b9c8a65a0387f1f8d436867f' +
         '&r=0xb48616d33aba008f687d500cac9e9f2ca2b3c275fab6fc21318b81e09571d993' +
         '&s=0x49c0d7e1445389dbc805275f0aeb0b7f23e50e26a772b5a3bc4b2cc39f1bb3aa&v=28')
+    })
+
+    it('validates DTO type at runtime', () => {
+      const error = captureError(() => new IdentityRegistrationDTO({}))
+      expect(error).to.be.instanceof(Error)
     })
   })
 })

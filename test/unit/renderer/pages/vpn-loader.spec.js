@@ -42,7 +42,7 @@ import FakeMessageBus from '../../../helpers/fake-message-bus'
 import TequilapiError from '../../../../src/libraries/mysterium-tequilapi/tequilapi-error'
 
 describe('VpnLoader', () => {
-  const tequilapi: TequilapiClient = tequilapiMockCreate()
+  const tequilapi = tequilapiMockCreate()
   let bugReporter: BugReporterMock
 
   async function mountComponent (tequilapi: TequilapiClient, vpnInitializer: Object, bugReporter: BugReporter): Vue {

@@ -27,6 +27,7 @@ import communication from '@/../app/communication/messages'
 import RendererCommunication from '@/../app/communication/renderer-communication'
 import FakeMessageBus from '../../../../helpers/fake-message-bus'
 import { ActionLooper, ActionLooperConfig } from '../../../../../src/renderer/store/modules/connection'
+import type { ConnectionStore } from '../../../../../src/renderer/store/modules/connection'
 import ConnectionStatisticsDTO from '../../../../../src/libraries/mysterium-tequilapi/dto/connection-statistics'
 import BugReporterMock from '../../../../helpers/bug-reporter-mock'
 import factoryTequilapiManipulator from '../../../../helpers/mysterium-tequilapi/factory-tequilapi-manipulator'
@@ -83,7 +84,11 @@ describe('connection', () => {
       const setLastConnectionProvider = mutations[type.SET_LAST_CONNECTION_PROVIDER]
 
       it('updates provider', () => {
-        const state = {}
+        const state: ConnectionStore = {
+          status: 'Connected',
+          statistics: {},
+          actionLoopers: {}
+        }
         const provider: Provider = {
           id: 'id',
           country: 'country'

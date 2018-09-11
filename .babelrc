@@ -12,7 +12,14 @@
         }],
         "stage-0"
       ],
-      "plugins": ["istanbul"]
+      "plugins": [
+        "istanbul",
+        "transform-decorators-legacy",
+        ["flow-runtime", {
+          "assert": true,
+          "annotate": false
+        }]
+      ]
     },
     "main": {
       "presets": [

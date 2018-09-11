@@ -19,7 +19,7 @@
 import ServiceDefinitionDTO from './service-definition'
 
 class ProposalDTO {
-  id: number
+  id: string
   providerId: string
   serviceType: string
   serviceDefinition: ?ServiceDefinitionDTO

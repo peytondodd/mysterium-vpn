@@ -16,6 +16,7 @@
  */
 
 // @flow
+// @flow-runtime
 
 const getPaymentLink = (paymentBaseUrl: string, registration: IdentityRegistrationDTO): string => {
   const { publicKey, signature } = registration
@@ -37,7 +38,7 @@ class PublicKeyDTO {
 class SignatureDTO {
   r: string
   s: string
-  v: string
+  v: number
 
   constructor (data: Object) {
     this.r = data.r
