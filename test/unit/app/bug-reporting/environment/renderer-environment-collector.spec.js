@@ -20,34 +20,7 @@
 import { beforeEach, describe, expect, it } from '../../../../helpers/dependencies'
 import RendererEnvironmentCollector
   from '../../../../../src/app/bug-reporting/environment/renderer-environment-collector'
-import type { SyncRendererCommunication } from '../../../../../src/app/communication/sync/sync-communication'
-import type { SerializedLogCaches } from '../../../../../src/app/logging/log-cache-bundle'
-import type { RavenData } from '../../../../../src/app/bug-reporting/metrics/metrics'
-import { TAGS } from '../../../../../src/app/bug-reporting/metrics/metrics'
-
-class FakeSyncRendererCommunication implements SyncRendererCommunication {
-  mockedSerializedCaches: ?SerializedLogCaches = {
-    backend: { info: 'backend info', error: 'backend error' },
-    mysterium_process: { info: 'mysterium info', error: 'mysterium error' },
-    frontend: { info: 'frontend info', error: 'frontend error' }
-  }
-  mockedSessionId: ?string = 'mock session id'
-  mockedMetrics: RavenData = {
-    tags: { [TAGS.CLIENT_RUNNING]: true },
-    extra: {}
-  }
-
-  getSerializedCaches () {
-    return this.mockedSerializedCaches
-  }
-
-  getMetrics (): RavenData {
-    return this.mockedMetrics
-  }
-
-  sendLog (dto) {
-  }
-}
+import FakeSyncRendererCommunication from '../../../../helpers/communication/fake-sync-renderer-communication'
 
 describe('RendererEnvironmentCollector', () => {
   const releaseID = 'id of release'

@@ -31,6 +31,7 @@ interface SyncMainCommunication {
 
 interface SyncRendererCommunication {
   getSerializedCaches (): ?SerializedLogCaches,
+  sendMetric (dto: MetricValueDto): void,
   getMetrics (): RavenData,
   sendLog (dto: LogDTO): void
 }

@@ -21,21 +21,22 @@ import { beforeEach, describe, expect, it } from '../../../../helpers/dependenci
 import { BugReporterMetricsProxy } from '../../../../../src/app/bug-reporting/metrics/bug-reporter-metrics-proxy'
 import type { MetricCommunication, MetricValueDto }
   from '../../../../../src/app/bug-reporting/metrics/metric-communication'
-import type { SyncRendererCommunication } from '../../../../../src/app/communication/sync/sync-communication'
 import FakeMapSyncCommunication from '../../../../helpers/fake_map_sync_communication'
 import METRICS from '../../../../../src/renderer/store/types'
+import FakeSyncRendererCommunication from '../../../../helpers/communication/fake-sync-renderer-communication'
 
 describe('BugReporterMetricsProxy', () => {
   let proxy: BugReporterMetricsProxy
   let communication: MetricCommunication
-  let syncCommunication: SyncRendererCommunication
+  let syncCommunication: FakeSyncRendererCommunication
 
   beforeEach(() => {
     communication = new FakeMapSyncCommunication()
+    syncCommunication = new FakeSyncRendererCommunication()
     proxy = new BugReporterMetricsProxy(communication, syncCommunication)
   })
 
-  describe('set', () => {
+  describe('.set', () => {
     it('sends metric via communication', () => {
       let lastUpdate: ?MetricValueDto = null
       communication.onMapUpdate(update => {
@@ -52,6 +53,12 @@ describe('BugReporterMetricsProxy', () => {
       expect(lastUpdate).to.not.be.null
       expect(lastUpdate.metric).to.eql(metricKey)
       expect(lastUpdate.value).to.eql(metricValue)
+    })
+  })
+
+  describe('.getMetrics', () => {
+    it('returns metrics from communication', () => {
+      expect(proxy.getMetrics()).to.eql(syncCommunication.mockedMetrics)
     })
   })
 })
