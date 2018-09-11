@@ -3,7 +3,7 @@
 # Checks whether unit tests coverage is above minimum
 COVERATE_LIMIT=54
 
-coverage_double=`TEST_COVERAGE=true yarn unit | grep "Statements" | grep -Eo " [0-9]+\.[0-9]+"`
+coverage_double=`TEST_COVERAGE=true yarn unit | grep "Statements" | grep -Eo -m 1 " [0-9]+(\.[0-9]+)?" | head -1`
 coverage_integer=`printf %.0f $coverage_double`
 
 if (( $coverage_integer < $COVERATE_LIMIT )); then
