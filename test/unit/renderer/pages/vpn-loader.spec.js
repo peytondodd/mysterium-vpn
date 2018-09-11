@@ -57,6 +57,7 @@ describe('VpnLoader', () => {
     dependencies.constant('vpnInitializer', vpnInitializer)
     dependencies.constant('sleeper', fakeSleeper)
     dependencies.constant('rendererCommunication', rendererCommunication)
+    dependencies.constant('tequilapiClient', tequilapi)
 
     localVue.use(Router)
     const router = new Router({ routes: [] })

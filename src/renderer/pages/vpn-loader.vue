@@ -26,9 +26,10 @@ import logger from '../../app/logger'
 import DelayedRetrier from '../../app/delayed-retrier'
 import config from '../config'
 import TequilapiError from '../../libraries/mysterium-tequilapi/tequilapi-error'
+import IdentityManager from '../../app/identity-manager'
 
 export default {
-  dependencies: ['bugReporter', 'vpnInitializer', 'sleeper'],
+  dependencies: ['bugReporter', 'vpnInitializer', 'sleeper', 'tequilapiClient'],
   async mounted () {
     const { commit, dispatch } = this.$store
     try {
@@ -36,7 +37,10 @@ export default {
       commit(type.INIT_PENDING)
 
       const identityState = this.$store.state.identity
-      const initialize = async () => this.vpnInitializer.initialize(dispatch, commit, identityState)
+      const identityManager = new IdentityManager(this.tequilapiClient, commit, identityState)
+      const updateClientVersion = () => dispatch(type.CLIENT_VERSION)
+      const initialize = () => this.vpnInitializer.initialize(identityManager, updateClientVersion)
+
       const delay = async () => {
         const msg = 'Initialization failed, will retry.'
         logger.info(msg)

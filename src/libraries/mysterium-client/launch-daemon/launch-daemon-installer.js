@@ -18,7 +18,6 @@
 // @flow
 
 import fs from 'fs'
-import sudo from 'sudo-prompt'
 import path from 'path'
 import md5 from 'md5'
 import type { ClientConfig } from '../config'
@@ -26,10 +25,9 @@ import type { Installer } from '../index'
 import { INVERSE_DOMAIN_PACKAGE_NAME, LAUNCH_DAEMON_PORT, PROPERTY_LIST_FILE, PROPERTY_LIST_NAME } from './config'
 import { promisify } from 'util'
 import createFileIfMissing from '../../create-file-if-missing'
+import type { System } from '../system'
 
 const writeFile = promisify(fs.writeFile)
-// TODO: check if sudo.exec promisifying works as expected
-const sudoExec = promisify(sudo.exec)
 
 const SUDO_PROMT_PERMISSION_DENIED = 'User did not grant permission.'
 
@@ -39,9 +37,11 @@ function processInstalled () {
 
 class LaunchDaemonInstaller implements Installer {
   _config: ClientConfig
+  _system: System
 
-  constructor (config: ClientConfig) {
+  constructor (config: ClientConfig, system: System) {
     this._config = config
+    this._system = system
   }
 
   template (): string {
@@ -98,17 +98,19 @@ class LaunchDaemonInstaller implements Installer {
 
   async install (): Promise<void> {
     let tempPlistFile = path.join(this._config.runtimeDir, PROPERTY_LIST_NAME)
-    let script = `\
-      cp ${tempPlistFile} ${PROPERTY_LIST_FILE}\
-      && launchctl load ${PROPERTY_LIST_FILE}\
-    `
+    let commands = [
+      { path: 'cp', args: [tempPlistFile, PROPERTY_LIST_FILE] },
+      { path: 'launchctl', args: ['load', PROPERTY_LIST_FILE] }
+    ]
+
     if (processInstalled()) {
-      script = `launchctl unload ${PROPERTY_LIST_FILE} && ` + script
+      commands.unshift({
+        path: 'launchctl', args: ['unload', PROPERTY_LIST_FILE]
+      })
     }
-    let command = `sh -c '${script}'`.replace(/\n/, '')
 
     await writeFile(tempPlistFile, this.template())
-    await sudoExec(command, { name: 'MysteriumVpn' })
+    await this._system.sudoExec(...commands)
     await this._createLogFilesIfMissing()
   }
 
