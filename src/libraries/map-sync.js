@@ -26,15 +26,3 @@ export interface MapSyncCommunication<T: string> {
   sendMapUpdate (update: MapSyncDTO<T>): void,
   onMapUpdate (callback: (MapSyncDTO<T>) => void): void
 }
-
-export class MapSync<T: string> {
-  _metrics: Map<T, mixed> = new Map()
-
-  set (key: T, value: mixed): void {
-    this._metrics.set(key, value)
-  }
-
-  get (key: T): mixed {
-    return this._metrics.get(key)
-  }
-}

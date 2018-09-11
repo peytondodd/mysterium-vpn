@@ -18,7 +18,6 @@
 // @flow
 
 import type { BugReporterMetrics } from './bug-reporter-metrics'
-import { MapSync } from '../../../libraries/map-sync'
 import { getCurrentTimeISOFormat } from '../../../libraries/strings'
 import { EXTRA, NOT_SET, TAGS } from './metrics'
 import type { KeyValueMap, Metric, RavenData } from './metrics'
@@ -27,23 +26,18 @@ import type { KeyValueMap, Metric, RavenData } from './metrics'
  * Collects metrics storing them.
  */
 class BugReporterMetricsStore implements BugReporterMetrics {
-  // TODO: get rid of MapSync?
-  _mapSync: MapSync<Metric>
-
-  constructor () {
-    this._mapSync = new MapSync()
-  }
+  _metrics: Map<Metric, mixed> = new Map()
 
   set (metric: Metric, value: mixed) {
-    this._mapSync.set(metric, value)
+    this._metrics.set(metric, value)
   }
 
   get (metric: Metric): mixed {
-    return this._mapSync.get(metric)
+    return this._metrics.get(metric)
   }
 
   setWithCurrentDateTime (metric: Metric) {
-    this._mapSync.set(metric, getCurrentTimeISOFormat())
+    this.set(metric, getCurrentTimeISOFormat())
   }
 
   getMetrics (): RavenData {
@@ -56,7 +50,7 @@ class BugReporterMetricsStore implements BugReporterMetrics {
   _getValues (metrics: Array<Metric>): KeyValueMap {
     const result = {}
     for (let metric of metrics) {
-      result[metric] = this._mapSync.get(metric) || NOT_SET
+      result[metric] = this._metrics.get(metric) || NOT_SET
     }
     return result
   }
