@@ -29,7 +29,6 @@ import { SyncIpcSender } from '../../../app/communication/sync/sync-ipc'
 import type { SyncRendererCommunication } from '../../../app/communication/sync/sync-communication'
 import { createWinstonSyncComLogger } from '../../../app/logging/winston'
 import { BugReporterMetricsProxy } from '../../../app/bug-reporting/metrics/bug-reporter-metrics-proxy'
-import RendererCommunication from '../../../app/communication/renderer-communication'
 import type { BugReporterMetrics } from '../../../app/bug-reporting/metrics/bug-reporter-metrics'
 
 function bootstrap (container: Container) {
@@ -56,10 +55,9 @@ function bootstrap (container: Container) {
 
   container.factory(
     'bugReporterMetrics',
-    ['rendererCommunication', 'syncCommunication'],
-    (rendererCommunication: RendererCommunication,
-      syncCommunication: SyncRendererCommunication): BugReporterMetrics => {
-      return new BugReporterMetricsProxy(rendererCommunication, syncCommunication)
+    ['syncCommunication'],
+    (syncCommunication: SyncRendererCommunication): BugReporterMetrics => {
+      return new BugReporterMetricsProxy(syncCommunication)
     }
   )
 

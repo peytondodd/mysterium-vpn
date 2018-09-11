@@ -34,12 +34,14 @@ class FakeSyncRendererCommunication implements SyncRendererCommunication {
     tags: { [TAGS.CLIENT_RUNNING]: true },
     extra: {}
   }
+  sentMetric: ?MetricValueDto = null
 
   getSerializedCaches () {
     return this.mockedSerializedCaches
   }
 
   sendMetric (dto: MetricValueDto): void {
+    this.sentMetric = dto
   }
 
   getMetrics (): RavenData {
