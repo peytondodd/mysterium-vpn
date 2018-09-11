@@ -28,7 +28,7 @@ describe('BugReporterMetricsStore', () => {
     store = new BugReporterMetricsStore()
   })
 
-  describe('get/set', () => {
+  describe('.get/.set', () => {
     it('sets tag metric', () => {
       const metricKey = METRICS.IDENTITY_UNLOCKED
       const metricValue = true
@@ -48,7 +48,7 @@ describe('BugReporterMetricsStore', () => {
     })
   })
 
-  describe('getMetrics', () => {
+  describe('.getMetrics', () => {
     it('returns value for non-used metrics', () => {
       const unsetMetric = TAGS.CLIENT_RUNNING
       const data = store.getMetrics()

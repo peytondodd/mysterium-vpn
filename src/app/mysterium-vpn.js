@@ -49,7 +49,6 @@ import MainBufferedIpc from './communication/ipc/main-buffered-ipc'
 import CommunicationBindings from './communication-bindings'
 import { METRICS, TAGS } from './bug-reporting/metrics/metrics'
 import type { BugReporterMetrics } from './bug-reporting/metrics/bug-reporter-metrics'
-import { startSyncing } from './bug-reporting/metrics/syncing'
 
 const LOG_PREFIX = '[MysteriumVpn] '
 const MYSTERIUM_CLIENT_STARTUP_THRESHOLD = 10000
@@ -170,7 +169,6 @@ class MysteriumVpn {
       this._registrationFetcher
     )
 
-    startSyncing(this._bugReporterMetrics, this._communication)
     this._bugReporterMetrics.setWithCurrentDateTime(METRICS.START_TIME)
 
     await this._onRendererLoaded()

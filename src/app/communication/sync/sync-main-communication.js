@@ -21,9 +21,8 @@ import messages from '../messages'
 import type { SyncReceiver } from './sync'
 import type { SyncMainCommunication } from './sync-communication'
 import type { SerializedLogCaches } from '../../logging/log-cache-bundle'
-import type { LogDTO } from '../dto'
+import type { LogDTO, MetricValueDto } from '../dto'
 import type { RavenData } from '../../bug-reporting/metrics/metrics'
-import type { MetricValueDto } from '../../bug-reporting/metrics/metric-communication'
 
 class SyncReceiverMainCommunication implements SyncMainCommunication {
   _syncReceiver: SyncReceiver

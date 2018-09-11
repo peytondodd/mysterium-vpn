@@ -21,8 +21,7 @@ import type { SyncRendererCommunication } from '../../../src/app/communication/s
 import type { SerializedLogCaches } from '../../../src/app/logging/log-cache-bundle'
 import type { RavenData } from '../../../src/app/bug-reporting/metrics/metrics'
 import { TAGS } from '../../../src/app/bug-reporting/metrics/metrics'
-import type { MetricValueDto } from '../../../src/app/bug-reporting/metrics/metric-communication'
-import type { LogDTO } from '../../../src/app/communication/dto'
+import type { MetricValueDto, LogDTO } from '../../../src/app/communication/dto'
 
 class FakeSyncRendererCommunication implements SyncRendererCommunication {
   mockedSerializedCaches: ?SerializedLogCaches = {

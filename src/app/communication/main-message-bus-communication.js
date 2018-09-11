@@ -25,19 +25,19 @@ import type {
   RequestTermsDTO,
   TermsAnsweredDTO,
   AppErrorDTO,
-  FavoriteProviderDTO
+  FavoriteProviderDTO,
+  MetricValueDto
 } from './dto'
 import messages from './messages'
 import type { MessageBus } from './message-bus'
 import type { MainCommunication } from './main-communication'
 import type { UserSettings } from '../user-settings/user-settings'
-import type { MetricCommunication, MetricValueDto } from '../bug-reporting/metrics/metric-communication'
 import IdentityRegistrationDTO from '../../libraries/mysterium-tequilapi/dto/identity-registration'
 
 /**
  * This allows main process communicating with renderer process.
  */
-class MainMessageBusCommunication implements MainCommunication, MetricCommunication {
+class MainMessageBusCommunication implements MainCommunication {
   _messageBus: MessageBus
 
   constructor (messageBus: MessageBus) {
