@@ -123,6 +123,7 @@
     "winston-transport": "^4.2.0"
   },
   "devDependencies": {
+    "@gimenete/type-writer": "^0.1.3",
     "@vue/test-utils": "^1.0.0-beta.24",
     "axios-mock-adapter": "^1.15.0",
     "babel-cli": "^6.26.0",
