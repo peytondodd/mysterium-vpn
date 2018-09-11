@@ -20,11 +20,13 @@
 import type { SerializedLogCaches } from '../../logging/log-cache-bundle'
 import type { LogDTO } from '../dto'
 import type { RavenData } from '../../bug-reporting/metrics/metrics'
+import type { MetricValueDto } from '../../bug-reporting/metrics/metric-communication'
 
 interface SyncMainCommunication {
   onGetSerializedCaches (callback: () => SerializedLogCaches): void,
   onGetMetrics (callback: () => RavenData): void,
-  onLog (callback: () => void): void
+  onLog (callback: () => void): void,
+  onSendMetric (callback: (metricValue: MetricValueDto) => void): void
 }
 
 interface SyncRendererCommunication {

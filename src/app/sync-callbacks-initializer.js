@@ -21,6 +21,7 @@ import type { EnvironmentCollector } from './bug-reporting/environment/environme
 import type { SyncMainCommunication } from './communication/sync/sync-communication'
 import LogCache from './logging/log-cache'
 import logger from './logger'
+import type { BugReporterMetrics } from './bug-reporting/metrics/bug-reporter-metrics'
 
 /**
  * Adds sync application callbacks for communication messages.
@@ -29,14 +30,17 @@ class SyncCallbacksInitializer {
   _environmentCollector: EnvironmentCollector
   _communication: SyncMainCommunication
   _frontendLogCache: LogCache
+  _metrics: BugReporterMetrics
 
   constructor (
     communication: SyncMainCommunication,
     environmentCollector: EnvironmentCollector,
-    frontendLogCache: LogCache) {
+    frontendLogCache: LogCache,
+    metrics: BugReporterMetrics) {
     this._environmentCollector = environmentCollector
     this._communication = communication
     this._frontendLogCache = frontendLogCache
+    this._metrics = metrics
   }
 
   initialize () {
@@ -48,6 +52,9 @@ class SyncCallbacksInitializer {
       } else {
         this._frontendLogCache.pushToLevel(logDto.level, logDto.data)
       }
+    })
+    this._communication.onSendMetric((metricValue) => {
+      this._metrics.set(metricValue.metric, metricValue.value)
     })
   }
 }

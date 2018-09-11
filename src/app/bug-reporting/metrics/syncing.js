@@ -17,10 +17,9 @@
 
 // @flow
 import type { BugReporterMetrics } from './bug-reporter-metrics'
-import type { Communication } from './communication'
-import type { Metric } from './metrics'
+import type { MetricCommunication } from './metric-communication'
 
-function startSyncing (bugReporterMetrics: BugReporterMetrics, communication: Communication<Metric>) {
+function startSyncing (bugReporterMetrics: BugReporterMetrics, communication: MetricCommunication) {
   communication.onMapUpdate(dto => {
     bugReporterMetrics.set(dto.metric, dto.value)
   })

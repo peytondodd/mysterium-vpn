@@ -17,14 +17,16 @@
 
 // @flow
 
-type MapSyncDTO<T: string> = {
-  metric: T,
+import type { Metric } from './metrics'
+
+type MetricValueDto = {
+  metric: Metric,
   value: mixed
 }
 
-interface Communication<T: string> {
-  sendMapUpdate (update: MapSyncDTO<T>): void,
-  onMapUpdate (callback: (MapSyncDTO<T>) => void): void
+interface MetricCommunication {
+  sendMapUpdate (update: MetricValueDto): void,
+  onMapUpdate (callback: (MetricValueDto) => void): void
 }
 
-export type { MapSyncDTO, Communication }
+export type { MetricValueDto, MetricCommunication }

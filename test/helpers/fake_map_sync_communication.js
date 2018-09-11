@@ -17,22 +17,21 @@
 
 // @flow
 
-import type { Communication, MapSyncDTO } from '../../src/app/bug-reporting/metrics/communication'
-import type { Metric } from '../../src/app/bug-reporting/metrics/metrics'
+import type { MetricCommunication, MetricValueDto } from '../../src/app/bug-reporting/metrics/metric-communication'
 
 /**
  * Allows tracking method invocations.
  */
-class FakeMapSyncCommunication implements Communication<Metric> {
-  _mapUpdateCallbacks: Set<MapSyncDTO<Metric> => void> = new Set()
+class FakeMapSyncCommunication implements MetricCommunication {
+  _mapUpdateCallbacks: Set<MetricValueDto => void> = new Set()
 
-  sendMapUpdate (data: MapSyncDTO<Metric>): void {
+  sendMapUpdate (data: MetricValueDto): void {
     for (let callback of this._mapUpdateCallbacks) {
       callback(data)
     }
   }
 
-  onMapUpdate (callback: (MapSyncDTO<Metric> => void)): void {
+  onMapUpdate (callback: (MetricValueDto => void)): void {
     this._mapUpdateCallbacks.add(callback)
   }
 }

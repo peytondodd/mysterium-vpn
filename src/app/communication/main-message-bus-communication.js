@@ -31,14 +31,13 @@ import messages from './messages'
 import type { MessageBus } from './message-bus'
 import type { MainCommunication } from './main-communication'
 import type { UserSettings } from '../user-settings/user-settings'
-import type { Communication, MapSyncDTO } from '../bug-reporting/metrics/communication'
+import type { MetricCommunication, MetricValueDto } from '../bug-reporting/metrics/metric-communication'
 import IdentityRegistrationDTO from '../../libraries/mysterium-tequilapi/dto/identity-registration'
-import type { Metric } from '../bug-reporting/metrics/metrics'
 
 /**
  * This allows main process communicating with renderer process.
  */
-class MainMessageBusCommunication implements MainCommunication, Communication<Metric> {
+class MainMessageBusCommunication implements MainCommunication, MetricCommunication {
   _messageBus: MessageBus
 
   constructor (messageBus: MessageBus) {
@@ -108,11 +107,11 @@ class MainMessageBusCommunication implements MainCommunication, Communication<Me
     this._send(messages.USER_SETTINGS, data)
   }
 
-  sendMapUpdate (data: MapSyncDTO<Metric>): void {
+  sendMapUpdate (data: MetricValueDto): void {
     this._send(messages.METRIC_SYNC, data)
   }
 
-  onMapUpdate (callback: (MapSyncDTO<Metric>) => void): void {
+  onMapUpdate (callback: (MetricValueDto) => void): void {
     this._on(messages.METRIC_SYNC, callback)
   }
 

@@ -19,16 +19,15 @@
 
 import { beforeEach, describe, expect, it } from '../../../../helpers/dependencies'
 import { BugReporterMetricsProxy } from '../../../../../src/app/bug-reporting/metrics/bug-reporter-metrics-proxy'
-import type { Communication, MapSyncDTO }
-  from '../../../../../src/app/bug-reporting/metrics/communication'
-import type { Metric } from '../../../../../src/app/bug-reporting/metrics/metrics'
+import type { MetricCommunication, MetricValueDto }
+  from '../../../../../src/app/bug-reporting/metrics/metric-communication'
 import type { SyncRendererCommunication } from '../../../../../src/app/communication/sync/sync-communication'
 import FakeMapSyncCommunication from '../../../../helpers/fake_map_sync_communication'
 import METRICS from '../../../../../src/renderer/store/types'
 
 describe('BugReporterMetricsProxy', () => {
   let proxy: BugReporterMetricsProxy
-  let communication: Communication<Metric>
+  let communication: MetricCommunication
   let syncCommunication: SyncRendererCommunication
 
   beforeEach(() => {
@@ -38,7 +37,7 @@ describe('BugReporterMetricsProxy', () => {
 
   describe('set', () => {
     it('sends metric via communication', () => {
-      let lastUpdate: ?MapSyncDTO<Metric> = null
+      let lastUpdate: ?MetricValueDto = null
       communication.onMapUpdate(update => {
         lastUpdate = update
       })
