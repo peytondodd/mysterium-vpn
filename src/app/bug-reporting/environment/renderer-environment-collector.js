@@ -20,14 +20,17 @@
 import type { EnvironmentCollector } from './environment-collector'
 import type { SyncRendererCommunication } from '../../communication/sync/sync-communication'
 import type { SerializedLogCaches } from '../../logging/log-cache-bundle'
+import type { BugReporterMetrics } from '../metrics/bug-reporter-metrics'
 
 class RendererEnvironmentCollector implements EnvironmentCollector {
   _releaseId: string
   _syncRendererCommunication: SyncRendererCommunication
+  _metrics: BugReporterMetrics
 
-  constructor (releaseId: string, syncRendererCommunication: SyncRendererCommunication) {
+  constructor (releaseId: string, syncRendererCommunication: SyncRendererCommunication, metrics: BugReporterMetrics) {
     this._releaseId = releaseId
     this._syncRendererCommunication = syncRendererCommunication
+    this._metrics = metrics
   }
 
   getReleaseId (): string {
@@ -41,8 +44,7 @@ class RendererEnvironmentCollector implements EnvironmentCollector {
   }
 
   getMetrics () {
-    const defaultMetrics = { tags: {}, extra: {} }
-    return this._syncRendererCommunication.getMetrics() || defaultMetrics
+    return this._metrics.getMetrics()
   }
 }
 

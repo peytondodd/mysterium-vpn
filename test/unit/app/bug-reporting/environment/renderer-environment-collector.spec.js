@@ -21,15 +21,19 @@ import { beforeEach, describe, expect, it } from '../../../../helpers/dependenci
 import RendererEnvironmentCollector
   from '../../../../../src/app/bug-reporting/environment/renderer-environment-collector'
 import FakeSyncRendererCommunication from '../../../../helpers/communication/fake-sync-renderer-communication'
+import BugReporterMetricsStore from '../../../../../src/app/bug-reporting/metrics/bug-reporter-metrics-store'
+import type { BugReporterMetrics } from '../../../../../src/app/bug-reporting/metrics/bug-reporter-metrics'
 
 describe('RendererEnvironmentCollector', () => {
   const releaseID = 'id of release'
   let communication: FakeSyncRendererCommunication
   let collector: RendererEnvironmentCollector
+  let metrics: BugReporterMetrics
 
   beforeEach(() => {
     communication = new FakeSyncRendererCommunication()
-    collector = new RendererEnvironmentCollector(releaseID, communication)
+    metrics = new BugReporterMetricsStore()
+    collector = new RendererEnvironmentCollector(releaseID, communication, metrics)
   })
 
   describe('.getReleaseId', () => {
@@ -55,8 +59,8 @@ describe('RendererEnvironmentCollector', () => {
   })
 
   describe('.getMetrics', () => {
-    it('returns metrics using sync communication', () => {
-      expect(collector.getMetrics()).to.eql(communication.mockedMetrics)
+    it('returns metrics from metrics storage', () => {
+      expect(collector.getMetrics()).to.eql(metrics.getMetrics())
     })
   })
 })
