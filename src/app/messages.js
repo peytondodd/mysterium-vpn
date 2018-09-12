@@ -32,5 +32,6 @@ export default {
   mysteriumCLientDown: {
     message: 'mysterium_client is down',
     hint: 'Please give it a moment to boot. If this message persists try restarting the app or please contact support'
-  }
+  },
+  connectionStatusFailed: 'Error when fetching connection status'
 }
