@@ -22,8 +22,7 @@
  */
 interface ErrorMessage {
   hide (): void,
-  showError (error: Error): void,
-  showMessage (message: string): void,
+  show (message: string): void,
 }
 
 export type { ErrorMessage }

@@ -34,6 +34,7 @@ import type { ErrorMessage } from '../../../app/connection/error-message'
 import { ConnectionStatsFetcher } from '../../../app/connection/connection-stats-fetcher'
 import type { ConnectionState } from '../../../app/connection/connection-state'
 import type { Provider } from '../../../app/connection/provider'
+import messages from '../../../app/messages'
 
 type ConnectionStore = {
   ip: ?string,
@@ -178,7 +179,7 @@ function actionsFactory (
         const statusModel = await tequilapi.connectionStatus()
         await dispatch(type.SET_CONNECTION_STATUS, statusModel.status)
       } catch (err) {
-        commit(type.SHOW_ERROR, err)
+        commit(type.SHOW_ERROR_MESSAGE, messages.connectionStatusFailed)
       }
     },
     async [type.SET_CONNECTION_STATUS] ({ commit, dispatch, state }, newStatus: ConnectionStatus) {
@@ -207,7 +208,7 @@ function actionsFactory (
         const statistics = await tequilapi.connectionStatistics()
         commit(type.CONNECTION_STATISTICS, statistics)
       } catch (err) {
-        commit(type.SHOW_ERROR, err)
+        commit(type.SHOW_ERROR_MESSAGE, messages.connectionStatisticsFailed)
       }
     },
     async [type.RECONNECT] ({ dispatch, getters }) {
@@ -271,11 +272,7 @@ class VueErrorMessage extends VueAction implements ErrorMessage {
     this._commit(type.HIDE_ERROR)
   }
 
-  showError (error: Error) {
-    this._commit(type.SHOW_ERROR, error)
-  }
-
-  showMessage (message: string) {
+  show (message: string) {
     this._commit(type.SHOW_ERROR_MESSAGE, message)
   }
 }

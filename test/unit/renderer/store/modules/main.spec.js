@@ -28,40 +28,6 @@ import type { NodeHealthcheckDTO } from '../../../../../src/libraries/mysterium-
 import NodeBuildInfoDTO from '../../../../../src/libraries/mysterium-tequilapi/dto/node-build-info'
 
 describe('mutations', () => {
-  describe('SHOW_ERROR', () => {
-    it('saves message and shows it with ordinary error', () => {
-      const state = {}
-      const err = new Error('My error')
-      mutations[type.SHOW_ERROR](state, err)
-
-      expect(state.showError).to.eql(true)
-      expect(state.errorMessage).to.eql('My error')
-    })
-
-    it('saves message and shows it with response error', () => {
-      const state = {}
-      const err = new Error('My error')
-      const errObj = (err: any)
-      errObj.response = {
-        data: {
-          message: 'Response message'
-        }
-      }
-      mutations[type.SHOW_ERROR](state, err)
-
-      expect(state.showError).to.eql(true)
-      expect(state.errorMessage).to.eql('Response message')
-    })
-
-    it('displays Unknown error if no error.message found', () => {
-      const state = {}
-      const err = new Error()
-      mutations[type.SHOW_ERROR](state, err)
-      expect(state.showError).to.eql(true)
-      expect(state.errorMessage).to.eql('Unknown error')
-    })
-  })
-
   describe('SHOW_ERROR_MESSAGE', () => {
     it('saves message and shows it', () => {
       const state = {}
