@@ -29,7 +29,6 @@
     "ci": "util_scripts/check-headers.sh && yarn flow && yarn lint && yarn unit && yarn test:integration && yarn test:coverage",
     "postinstall": "mkdir -p ./bin && cp -r ./node_modules/mysterium-client-bin/bin/* ./bin/"
   },
-  "engines" : { "node" : ">=10.10" },
   "build": {
     "productName": "MysteriumVPN",
     "appId": "network.mysterium.MysteriumVPN",
