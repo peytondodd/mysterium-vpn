@@ -35,7 +35,7 @@ class FakeSyncRendererCommunication implements SyncRendererCommunication {
   }
   sentMetric: ?MetricDto = null
 
-  getSerializedCaches () {
+  getSerializedCaches (): ?SerializedLogCaches {
     return this.mockedSerializedCaches
   }
 

@@ -33,7 +33,7 @@ describe('BugReporterMetricsStore', () => {
       const metricKey = METRICS.IDENTITY_UNLOCKED
       const metricValue = true
 
-      expect(store.get(metricKey)).to.be.undefined
+      expect(store.get(metricKey)).to.eql(NOT_SET)
       store.set(metricKey, metricValue)
       expect(store.get(metricKey)).to.eql(metricValue)
     })
@@ -42,7 +42,7 @@ describe('BugReporterMetricsStore', () => {
       const metricKey = EXTRA.CONNECTION_IP
       const metricValue = { ip: '192.168.1.1' }
 
-      expect(store.get(metricKey)).to.be.undefined
+      expect(store.get(metricKey)).to.eql(NOT_SET)
       store.set(metricKey, metricValue)
       expect(store.get(metricKey)).to.eql(metricValue)
     })
@@ -78,12 +78,12 @@ describe('BugReporterMetricsStore', () => {
       for (let tagKey of Object.values(TAGS)) {
         expect(tagKeys).to.contain(tagKey)
         // $FlowFixMe
-        expect(data.tags[tagKey]).to.deep.equal(store.get(tagKey) || NOT_SET)
+        expect(data.tags[tagKey]).to.deep.equal(store.get(tagKey))
       }
       for (let extraKey of Object.values(EXTRA)) {
         expect(extraKeys).to.contain(extraKey)
         // $FlowFixMe
-        expect(data.extra[extraKey]).to.deep.equal(store.get(extraKey) || NOT_SET)
+        expect(data.extra[extraKey]).to.deep.equal(store.get(extraKey))
       }
     })
   })

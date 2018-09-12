@@ -21,7 +21,7 @@ import { expect, beforeEach, describe, it } from '../../../helpers/dependencies'
 import TequilapiClientWithMetrics from '../../../../src/app/bug-reporting/tequilapi-client-with-metrics'
 import EmptyTequilapiClientMock from '../../renderer/store/modules/empty-tequilapi-client-mock'
 import BugReporterMetricsStore from '../../../../src/app/bug-reporting/metrics/bug-reporter-metrics-store'
-import { METRICS } from '../../../../src/app/bug-reporting/metrics/metrics'
+import { METRICS, NOT_SET } from '../../../../src/app/bug-reporting/metrics/metrics'
 
 describe('TequilapiClientWithMetrics', () => {
   let api
@@ -36,10 +36,9 @@ describe('TequilapiClientWithMetrics', () => {
 
   describe('healthcheck()', () => {
     it('sets HEALTH_CHECK_TIME metric value', async () => {
-      expect(metrics.get(METRICS.HEALTH_CHECK_TIME)).to.be.undefined
+      expect(metrics.get(METRICS.HEALTH_CHECK_TIME)).to.eql(NOT_SET)
       await apiMetrics.healthCheck()
-      expect(metrics.get(METRICS.HEALTH_CHECK_TIME)).to.be.not.undefined
-      expect(metrics.get(METRICS.HEALTH_CHECK_TIME)).to.be.a('string')
+      expect(metrics.get(METRICS.HEALTH_CHECK_TIME)).to.not.eql(NOT_SET)
     })
   })
 })
