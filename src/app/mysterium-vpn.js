@@ -165,7 +165,8 @@ class MysteriumVpn {
 
     this._communicationBindings.startRegistrationFetcherOnCurrentIdentity(
       this._featureToggle,
-      this._registrationFetcher)
+      this._registrationFetcher
+    )
 
     this._bugReporterMetrics.startSyncing(this._communication) // FIXME: MYS-223
     this._bugReporterMetrics.setWithCurrentDateTime(METRICS.START_TIME)
