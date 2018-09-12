@@ -22,7 +22,8 @@ import { tmpdir } from 'os'
 import { join } from 'path'
 import { readFileSync, writeFileSync, unlinkSync } from 'fs'
 import { CallbackRecorder, capturePromiseError } from '../../../helpers/utils'
-import type { UserSettings } from '../../../../src/app/user-settings/user-settings'
+import type { ConnectionRecord, UserSettings } from '../../../../src/app/user-settings/user-settings'
+import { connectionStatuses } from '../../../../src/app/user-settings/user-settings'
 
 describe('UserSettingsStore', () => {
   describe('.save', () => {
@@ -37,7 +38,7 @@ describe('UserSettingsStore', () => {
       const userSettingsStore = new UserSettingsStore(saveSettingsPath)
       userSettingsStore.setShowDisconnectNotifications(false)
       userSettingsStore.setFavorite('id_123', true)
-      userSettingsStore.addConnectionRecord({ country: 'us', success: false })
+      userSettingsStore.addConnectionRecord({ country: 'us', status: connectionStatuses.unsuccessful })
       await userSettingsStore.save()
       const data = readFileSync(saveSettingsPath, { encoding: 'utf8' })
 
@@ -45,7 +46,7 @@ describe('UserSettingsStore', () => {
         '{' +
         '"showDisconnectNotifications":false,' +
         '"favoriteProviders":["id_123"],' +
-        '"connectionRecords":[{"country":"us","success":false}]' +
+        '"connectionRecords":[{"country":"us","status":"unsuccessful"}]' +
         '}'
       )
     })
@@ -70,7 +71,7 @@ describe('UserSettingsStore', () => {
           showDisconnectNotifications: false,
           favoriteProviders: new Set(['id_123']),
           connectionRecords: [
-            { country: 'us', success: false }
+            { country: 'us', status: connectionStatuses.unsuccessful }
           ]
         }
         writeFileSync(
@@ -100,7 +101,7 @@ describe('UserSettingsStore', () => {
       it('loads connection records from json file', async () => {
         await userSettingsStore.load()
         expect(userSettingsStore.getAll().connectionRecords).to.be.eql([
-          { country: 'us', success: false }
+          { country: 'us', status: connectionStatuses.unsuccessful }
         ])
       })
 
@@ -186,7 +187,7 @@ describe('UserSettingsStore', () => {
     })
 
     describe('.addConnectionRecord', () => {
-      const connection = { country: 'us', success: false }
+      const connection: ConnectionRecord = { country: 'us', status: connectionStatuses.unsuccessful }
 
       it('adds connection record to settings store', async () => {
         userSettingsStore.addConnectionRecord(connection)

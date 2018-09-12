@@ -32,6 +32,7 @@ import type { ConnectionState } from '../../../../src/app/connection/connection-
 import type { Provider } from '../../../../src/app/connection/provider'
 import messages from '../../../../src/app/messages'
 import { UserSettingsStore } from '../../../../src/app/user-settings/user-settings-store'
+import { connectionStatuses } from '../../../../src/app/user-settings/user-settings'
 
 class MockConnectionState implements ConnectionState {
   connectionStatus: ?ConnectionStatus = null
@@ -153,7 +154,7 @@ describe('TequilapiConnectionEstablisher', () => {
         .connect(consumerId, provider, mockConnectionState, mockErrorMessage, location, actionLooper)
       expect(userSettingsStore.getAll().connectionRecords).to.eql([{
         country: 'us',
-        success: true
+        status: connectionStatuses.successful
       }])
     })
 
@@ -189,7 +190,7 @@ describe('TequilapiConnectionEstablisher', () => {
           .connect(consumerId, provider, mockConnectionState, mockErrorMessage, location, actionLooper)
         expect(userSettingsStore.getAll().connectionRecords).to.eql([{
           country: 'us',
-          success: false
+          status: connectionStatuses.unsuccessful
         }])
       })
     })

@@ -35,6 +35,7 @@ import type { ConnectionStatsFetcher } from './connection-stats-fetcher'
 import type { ConnectDetails } from '../statistics/events-connection'
 import type { Provider } from './provider'
 import { UserSettingsStore } from '../user-settings/user-settings-store'
+import { connectionStatuses } from '../user-settings/user-settings'
 
 /**
  * Allows connecting and disconnecting to provider using Tequilapi.
@@ -81,7 +82,7 @@ class TequilapiConnectionEstablisher implements ConnectionEstablisher {
       await this._tequilapi.connectionCreate(request)
       eventTracker.connectEnded()
       errorMessage.hide()
-      this._settingsStore.addConnectionRecord({ country: provider.country, success: true })
+      this._settingsStore.addConnectionRecord({ country: provider.country, status: connectionStatuses.successful })
     } catch (err) {
       if (err instanceof TequilapiError && err.isRequestClosedError) {
         eventTracker.connectCanceled()
@@ -90,7 +91,7 @@ class TequilapiConnectionEstablisher implements ConnectionEstablisher {
 
       eventTracker.connectEnded('Error: Connection to node failed.')
       errorMessage.show(messages.connectFailed)
-      this._settingsStore.addConnectionRecord({ country: provider.country, success: false })
+      this._settingsStore.addConnectionRecord({ country: provider.country, status: connectionStatuses.unsuccessful })
       this._bugReporter.captureInfoException(err)
     } finally {
       if (actionLooper) {

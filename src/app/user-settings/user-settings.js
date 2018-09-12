@@ -16,15 +16,26 @@
  */
 
 // @flow
-export type FavoriteProviders = Set<string>
+type FavoriteProviders = Set<string>
 
-export type ConnectionRecord = {
-  country: ?string,
-  success: boolean
+const connectionStatuses = {
+  successful: 'successful',
+  unsuccessful: 'unsuccessful',
+  cancelled: 'cancelled'
 }
 
-export type UserSettings = {
+type ConnectionRecordStatus = $Keys<typeof connectionStatuses>
+
+type ConnectionRecord = {
+  country: ?string,
+  status: ConnectionRecordStatus
+}
+
+type UserSettings = {
   showDisconnectNotifications: boolean,
   favoriteProviders: FavoriteProviders,
   connectionRecords: ConnectionRecord[]
 }
+
+export { connectionStatuses }
+export type { UserSettings, ConnectionRecord, FavoriteProviders }
