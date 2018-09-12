@@ -38,7 +38,6 @@ import type { ConnectionState } from '../../../../../src/app/connection/connecti
 import type { ConnectionStatsFetcher } from '../../../../../src/app/connection/connection-stats-fetcher'
 import type { Provider } from '../../../../../src/app/connection/provider'
 import { captureAsyncError } from '../../../../helpers/utils'
-import logger from '../../../../../src/app/logger'
 
 type ConnectParams = {
   consumerId: string,
@@ -265,7 +264,11 @@ describe('connection', () => {
 
         expect(committed[1]).to.eql({
           key: type.CONNECTION_STATISTICS,
-          value: new ConnectionStatisticsDTO({ duration: 1 })
+          value: new ConnectionStatisticsDTO({
+            duration: 1,
+            bytesReceived: 0,
+            bytesSent: 0
+          })
         })
       })
 
@@ -353,7 +356,6 @@ describe('connection', () => {
     describe('FETCH_CONNECTION_STATUS', () => {
       it('commits new status', async () => {
         const committed = await executeAction(type.FETCH_CONNECTION_STATUS)
-        logger.info(committed)
         expect(committed).to.be.lengthOf(2)
 
         expect(committed[0].key).to.eql(type.SET_CONNECTION_STATUS)
@@ -408,6 +410,8 @@ describe('connection', () => {
 
       it('starts looping statistics when changing state to connected, changes IP to Refreshing...', async () => {
         const state = {
+          status: ConnectionStatusEnum.NOT_CONNECTED,
+          statistics: {},
           actionLoopers: {}
         }
         const committed = await executeAction(type.SET_CONNECTION_STATUS, state, ConnectionStatusEnum.CONNECTED)
@@ -425,7 +429,11 @@ describe('connection', () => {
         expect(looper.isRunning()).to.eql(true)
         expect(committed[3]).to.eql({
           key: type.CONNECTION_STATISTICS,
-          value: new ConnectionStatisticsDTO({ duration: 1 })
+          value: {
+            duration: 1,
+            bytesReceived: 0,
+            bytesSent: 0
+          }
         })
       })
 
@@ -489,7 +497,11 @@ describe('connection', () => {
         const committed = await executeAction(type.CONNECTION_STATISTICS)
         expect(committed).to.eql([{
           key: type.CONNECTION_STATISTICS,
-          value: new ConnectionStatisticsDTO({ duration: 1 })
+          value: {
+            duration: 1,
+            bytesReceived: 0,
+            bytesSent: 0
+          }
         }])
       })
 
@@ -505,11 +517,16 @@ describe('connection', () => {
 
     describe('RECONNECT', () => {
       it('invokes connection establisher with last connection provider', async () => {
-        const state = {
+        const state: ConnectionStore = {
+          status: ConnectionStatusEnum.CONNECTED,
+          statistics: {},
           actionLoopers: {
             [type.FETCH_CONNECTION_STATUS]: new FunctionLooper(async () => {}, 1000)
           },
-          location: { originalCountry: '' }
+          location: new ConsumerLocationDTO({
+            original: { ip: '', country: '' },
+            current: { ip: '', country: '' }
+          })
         }
         const getters = {
           currentIdentity: 'current',
@@ -557,8 +574,13 @@ describe('connection', () => {
     describe('CONNECT', () => {
       it('invokes connection establisher with given provider', async () => {
         const state = {
+          status: ConnectionStatusEnum.CONNECTED,
+          statistics: {},
           actionLoopers: {},
-          location: { originalCountry: '' }
+          location: new ConsumerLocationDTO({
+            original: { ip: '', country: '' },
+            current: { ip: '', country: '' }
+          })
         }
         const getters = {
           currentIdentity: 'consumer id'

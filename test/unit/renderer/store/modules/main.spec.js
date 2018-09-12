@@ -27,10 +27,23 @@ import { CallbackRecorder } from '../../../../helpers/utils'
 import type { NodeHealthcheckDTO } from '../../../../../src/libraries/mysterium-tequilapi/dto/node-healthcheck'
 import NodeBuildInfoDTO from '../../../../../src/libraries/mysterium-tequilapi/dto/node-build-info'
 
+function initialState () {
+  return {
+    init: '',
+    visual: 'head',
+    navOpen: false,
+    clientVersion: null,
+    navVisible: true,
+    errorMessage: null,
+    error: null,
+    showError: false
+  }
+}
+
 describe('mutations', () => {
   describe('SHOW_ERROR', () => {
     it('saves message and shows it with ordinary error', () => {
-      const state = {}
+      const state = initialState()
       const err = new Error('My error')
       mutations[type.SHOW_ERROR](state, err)
 
@@ -39,7 +52,7 @@ describe('mutations', () => {
     })
 
     it('saves message and shows it with response error', () => {
-      const state = {}
+      const state = initialState()
       const err = new Error('My error')
       const errObj = (err: any)
       errObj.response = {
@@ -54,7 +67,7 @@ describe('mutations', () => {
     })
 
     it('displays Unknown error if no error.message found', () => {
-      const state = {}
+      const state = initialState()
       const err = new Error()
       mutations[type.SHOW_ERROR](state, err)
       expect(state.showError).to.eql(true)
@@ -64,7 +77,7 @@ describe('mutations', () => {
 
   describe('SHOW_ERROR_MESSAGE', () => {
     it('saves message and shows it', () => {
-      const state = {}
+      const state = initialState()
       mutations[type.SHOW_ERROR_MESSAGE](state, 'error message')
 
       expect(state.showError).to.eql(true)
@@ -74,9 +87,8 @@ describe('mutations', () => {
 
   describe('HIDE_ERROR', () => {
     it('hides error', () => {
-      const state = {
-        showError: true
-      }
+      const state = initialState()
+      state.showError = true
       mutations[type.HIDE_ERROR](state)
 
       expect(state.showError).to.eql(false)
