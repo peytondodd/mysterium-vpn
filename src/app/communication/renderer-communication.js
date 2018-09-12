@@ -27,8 +27,7 @@ import type {
   RequestTermsDTO,
   TermsAnsweredDTO,
   AppErrorDTO,
-  FavoriteProviderDTO,
-  MetricDto
+  FavoriteProviderDTO
 } from './dto'
 
 import type { UserSettings } from '../user-settings/user-settings'
@@ -82,14 +81,6 @@ class RendererCommunication {
 
   sendToggleFavoriteProvider (data: FavoriteProviderDTO): void {
     return this._send(messages.TOGGLE_FAVORITE_PROVIDER, data)
-  }
-
-  sendMapUpdate (data: MetricDto): void {
-    this._send(messages.METRIC_SYNC, data)
-  }
-
-  onMapUpdate (callback: MetricDto => void): void {
-    this._on(messages.METRIC_SYNC, callback)
   }
 
   onUserSettings (callback: UserSettings => void): void {
