@@ -21,7 +21,7 @@ import type { SyncRendererCommunication } from '../../../src/app/communication/s
 import type { SerializedLogCaches } from '../../../src/app/logging/log-cache-bundle'
 import type { RavenData } from '../../../src/app/bug-reporting/metrics/metrics'
 import { TAGS } from '../../../src/app/bug-reporting/metrics/metrics'
-import type { MetricValueDto, LogDTO } from '../../../src/app/communication/dto'
+import type { MetricDto, LogDTO } from '../../../src/app/communication/dto'
 
 class FakeSyncRendererCommunication implements SyncRendererCommunication {
   mockedSerializedCaches: ?SerializedLogCaches = {
@@ -33,13 +33,13 @@ class FakeSyncRendererCommunication implements SyncRendererCommunication {
     tags: { [TAGS.CLIENT_RUNNING]: true },
     extra: {}
   }
-  sentMetric: ?MetricValueDto = null
+  sentMetric: ?MetricDto = null
 
   getSerializedCaches () {
     return this.mockedSerializedCaches
   }
 
-  sendMetric (dto: MetricValueDto): void {
+  sendMetric (dto: MetricDto): void {
     this.sentMetric = dto
   }
 

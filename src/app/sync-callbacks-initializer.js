@@ -53,8 +53,8 @@ class SyncCallbacksInitializer {
         this._frontendLogCache.pushToLevel(logDto.level, logDto.data)
       }
     })
-    this._communication.onSendMetric((metricValue) => {
-      this._metrics.set(metricValue.metric, metricValue.value)
+    this._communication.onSendMetric(metric => {
+      this._metrics.set(metric.metric, metric.value)
     })
   }
 }

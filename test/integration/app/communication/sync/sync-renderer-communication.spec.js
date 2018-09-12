@@ -115,10 +115,10 @@ describe('SyncSenderRendererCommunication', () => {
   describe('.sendMetric', () => {
     it('sends message to bus', () => {
       mainCommunication.onSendMetric(recorder.getCallback())
-      const metricValue = { metric: METRICS.CLIENT_RUNNING, value: true }
-      rendererCommunication.sendMetric(metricValue)
+      const metric = { metric: METRICS.CLIENT_RUNNING, value: true }
+      rendererCommunication.sendMetric(metric)
       expect(recorder.invoked).to.be.true
-      expect(recorder.firstArgument).to.eql(metricValue)
+      expect(recorder.firstArgument).to.eql(metric)
     })
   })
 })

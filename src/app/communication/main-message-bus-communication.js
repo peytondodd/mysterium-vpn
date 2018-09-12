@@ -26,7 +26,7 @@ import type {
   TermsAnsweredDTO,
   AppErrorDTO,
   FavoriteProviderDTO,
-  MetricValueDto
+  MetricDto
 } from './dto'
 import messages from './messages'
 import type { MessageBus } from './message-bus'
@@ -107,11 +107,11 @@ class MainMessageBusCommunication implements MainCommunication {
     this._send(messages.USER_SETTINGS, data)
   }
 
-  sendMapUpdate (data: MetricValueDto): void {
+  sendMapUpdate (data: MetricDto): void {
     this._send(messages.METRIC_SYNC, data)
   }
 
-  onMapUpdate (callback: (MetricValueDto) => void): void {
+  onMapUpdate (callback: MetricDto => void): void {
     this._on(messages.METRIC_SYNC, callback)
   }
 

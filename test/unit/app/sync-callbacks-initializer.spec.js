@@ -21,7 +21,7 @@ import { before, describe, expect, it } from '../../helpers/dependencies'
 import SyncCallbacksInitializer from '../../../src/app/sync-callbacks-initializer'
 import type { EnvironmentCollector } from '../../../src/app/bug-reporting/environment/environment-collector'
 import type { SyncMainCommunication } from '../../../src/app/communication/sync/sync-communication'
-import type { LogDTO, MetricValueDto } from '../../../src/app/communication/dto'
+import type { LogDTO, MetricDto } from '../../../src/app/communication/dto'
 import LogCache from '../../../src/app/logging/log-cache'
 import type { SerializedLogCaches } from '../../../src/app/logging/log-cache-bundle'
 import { METRICS, TAGS } from '../../../src/app/bug-reporting/metrics/metrics'
@@ -58,7 +58,7 @@ class MockCommunication implements SyncMainCommunication {
   getSerializedCachesCallback: () => SerializedLogCaches
   getMetricsCallback: () => RavenData
   logCallback: (log: LogDTO) => void
-  sendMetric: (metricValue: MetricValueDto) => void
+  sendMetric: (metric: MetricDto) => void
 
   onGetSerializedCaches (callback: () => SerializedLogCaches): void {
     this.getSerializedCachesCallback = callback
@@ -72,7 +72,7 @@ class MockCommunication implements SyncMainCommunication {
     this.logCallback = callback
   }
 
-  onSendMetric (callback: (metricValue: MetricValueDto) => void): void {
+  onSendMetric (callback: MetricDto => void): void {
     this.sendMetric = callback
   }
 }

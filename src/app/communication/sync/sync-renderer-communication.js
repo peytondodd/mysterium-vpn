@@ -21,7 +21,7 @@ import messages from '../messages'
 import type { SyncSender } from './sync'
 import type { SyncRendererCommunication } from './sync-communication'
 import type { SerializedLogCaches } from '../../logging/log-cache-bundle'
-import type { LogDTO, MetricValueDto } from '../dto'
+import type { LogDTO, MetricDto } from '../dto'
 import type { RavenData } from '../../bug-reporting/metrics/metrics'
 
 /**
@@ -39,7 +39,7 @@ class SyncSenderRendererCommunication implements SyncRendererCommunication {
     return ((result: any): SerializedLogCaches)
   }
 
-  sendMetric (dto: MetricValueDto): void {
+  sendMetric (dto: MetricDto): void {
     this._syncSender.send(messages.SEND_METRIC, dto)
   }
 

@@ -58,7 +58,7 @@ export type LogDTO = {
   data: mixed
 }
 
-export type MetricValueDto = {
+export type MetricDto = {
   metric: Metric,
   value: mixed
 }
