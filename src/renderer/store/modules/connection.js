@@ -208,7 +208,7 @@ function actionsFactory (
         const statistics = await tequilapi.connectionStatistics()
         commit(type.CONNECTION_STATISTICS, statistics)
       } catch (err) {
-        commit(type.SHOW_ERROR, err)
+        commit(type.SHOW_ERROR_MESSAGE, messages.connectionStatisticsFailed)
       }
     },
     async [type.RECONNECT] ({ dispatch, getters }) {

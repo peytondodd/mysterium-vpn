@@ -451,8 +451,8 @@ describe('connection', () => {
         fakeTequilapi.setStatisticsFail()
         const committed = await executeAction(type.CONNECTION_STATISTICS)
         expect(committed).to.eql([{
-          key: type.SHOW_ERROR,
-          value: fakeTequilapi.getFakeError()
+          key: type.SHOW_ERROR_MESSAGE,
+          value: messages.connectionStatisticsFailed
         }])
       })
     })
