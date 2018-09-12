@@ -132,7 +132,7 @@ describe('TequilapiConnectionEstablisher', () => {
       expect(mockErrorMessage.hidden).to.be.true
     })
 
-    it('persistes provider id', async () => {
+    it('persists provider id', async () => {
       await connectionEstablisher
         .connect(consumerId, provider, mockConnectionState, mockErrorMessage, location, actionLooper)
       expect(mockConnectionState.lastConnectionProvider).to.eql({ id: 'provider id', country: 'us' })
@@ -147,15 +147,6 @@ describe('TequilapiConnectionEstablisher', () => {
       expect(event.eventName).to.eql('connect_successful')
       expect(event.context.originalCountry).to.eql('lt')
       expect(event.context.providerCountry).to.eql('us')
-    })
-
-    it('adds connection record to settings store', async () => {
-      await connectionEstablisher
-        .connect(consumerId, provider, mockConnectionState, mockErrorMessage, location, actionLooper)
-      expect(userSettingsStore.getAll().connectionRecords).to.eql([{
-        country: 'us',
-        status: connectionStatuses.successful
-      }])
     })
 
     describe('when connection fails', () => {
