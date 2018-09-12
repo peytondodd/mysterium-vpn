@@ -34,6 +34,7 @@ import type { ConnectionState } from './connection-state'
 import type { ConnectionStatsFetcher } from './connection-stats-fetcher'
 import type { ConnectDetails } from '../statistics/events-connection'
 import type { Provider } from './provider'
+import { UserSettingsStore } from '../user-settings/user-settings-store'
 
 /**
  * Allows connecting and disconnecting to provider using Tequilapi.
@@ -42,11 +43,17 @@ class TequilapiConnectionEstablisher implements ConnectionEstablisher {
   _tequilapi: TequilapiClient
   _eventSender: EventSender
   _bugReporter: BugReporter
+  _settingsStore: UserSettingsStore
 
-  constructor (tequilapi: TequilapiClient, eventSender: EventSender, bugReporter: BugReporter) {
+  constructor (
+    tequilapi: TequilapiClient,
+    eventSender: EventSender,
+    bugReporter: BugReporter,
+    settingsStore: UserSettingsStore) {
     this._tequilapi = tequilapi
     this._eventSender = eventSender
     this._bugReporter = bugReporter
+    this._settingsStore = settingsStore
   }
 
   async connect (
@@ -74,16 +81,16 @@ class TequilapiConnectionEstablisher implements ConnectionEstablisher {
       await this._tequilapi.connectionCreate(request)
       eventTracker.connectEnded()
       errorMessage.hide()
+      this._settingsStore.addConnectionRecord({ country: provider.country, success: true })
     } catch (err) {
       if (err instanceof TequilapiError && err.isRequestClosedError) {
         eventTracker.connectCanceled()
         return
       }
 
-      errorMessage.show(messages.connectFailed)
-
       eventTracker.connectEnded('Error: Connection to node failed.')
-
+      errorMessage.show(messages.connectFailed)
+      this._settingsStore.addConnectionRecord({ country: provider.country, success: false })
       this._bugReporter.captureInfoException(err)
     } finally {
       if (actionLooper) {

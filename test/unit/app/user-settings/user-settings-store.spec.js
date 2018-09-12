@@ -85,7 +85,6 @@ describe('UserSettingsStore', () => {
 
       after(() => {
         unlinkSync(loadSettingsPath)
-
       })
 
       it('loads notification setting from json file', async () => {
