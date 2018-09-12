@@ -38,6 +38,7 @@ import type { ConnectionState } from '../../../../../src/app/connection/connecti
 import type { ConnectionStatsFetcher } from '../../../../../src/app/connection/connection-stats-fetcher'
 import type { Provider } from '../../../../../src/app/connection/provider'
 import { captureAsyncError } from '../../../../helpers/utils'
+import messages from '../../../../../src/app/messages'
 
 type ConnectParams = {
   consumerId: string,
@@ -369,8 +370,8 @@ describe('connection', () => {
         fakeTequilapi.setStatusFail()
         const committed = await executeAction(type.FETCH_CONNECTION_STATUS)
         expect(committed).to.eql([{
-          key: type.SHOW_ERROR,
-          value: fakeTequilapi.getFakeError()
+          key: type.SHOW_ERROR_MESSAGE,
+          value: messages.connectionStatusFailed
         }])
       })
     })
@@ -509,8 +510,8 @@ describe('connection', () => {
         fakeTequilapi.setStatisticsFail()
         const committed = await executeAction(type.CONNECTION_STATISTICS)
         expect(committed).to.eql([{
-          key: type.SHOW_ERROR,
-          value: fakeTequilapi.getFakeError()
+          key: type.SHOW_ERROR_MESSAGE,
+          value: messages.connectionStatisticsFailed
         }])
       })
     })

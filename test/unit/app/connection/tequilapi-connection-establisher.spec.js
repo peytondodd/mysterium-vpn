@@ -30,6 +30,7 @@ import { FunctionLooper } from '../../../../src/libraries/function-looper'
 import type { ConnectionStatsFetcher } from '../../../../src/app/connection/connection-stats-fetcher'
 import type { ConnectionState } from '../../../../src/app/connection/connection-state'
 import type { Provider } from '../../../../src/app/connection/provider'
+import messages from '../../../../src/app/messages'
 
 class MockConnectionState implements ConnectionState {
   connectionStatus: ?ConnectionStatus = null
@@ -59,18 +60,14 @@ class MockConnectionStatsFetcher implements ConnectionStatsFetcher {
 
 class MockErrorMessage implements ErrorMessage {
   hidden: boolean = false
-  errorShown: ?Error = null
   messageShown: ?string = null
 
   hide (): void {
     this.hidden = true
   }
 
-  showError (error: Error): void {
-    this.errorShown = error
-  }
-
-  showMessage (message: string): void {
+  show (message: string): void {
+    this.hidden = false
     this.messageShown = message
   }
 }
@@ -184,7 +181,6 @@ describe('TequilapiConnectionEstablisher', () => {
         await connectionEstablisher
           .connect(consumerId, provider, mockConnectionState, mockErrorMessage, location, actionLooper)
         expect(mockErrorMessage.messageShown).to.be.null
-        expect(mockErrorMessage.errorShown).to.be.null
       })
     })
   })
@@ -212,6 +208,12 @@ describe('TequilapiConnectionEstablisher', () => {
           .disconnect(mockConnectionState, mockConnectionStatsFetcher, mockErrorMessage, actionLooper)
 
         expect(bugReporterMock.infoExceptions).to.have.lengthOf(1)
+      })
+
+      it('shows error', async () => {
+        await connectionEstablisher
+          .disconnect(mockConnectionState, mockConnectionStatsFetcher, mockErrorMessage, actionLooper)
+        expect(mockErrorMessage.messageShown).to.eql(messages.disconnectFailed)
       })
     })
   })
