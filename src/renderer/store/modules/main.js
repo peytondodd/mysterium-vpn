@@ -77,17 +77,6 @@ const mutations = {
     state.init = type.INIT_FAIL
     state.error = err
   },
-  [type.SHOW_ERROR] (state: State, errWithResponse: mixed) {
-    let errorMessage = 'Unknown error'
-    if (errWithResponse && errWithResponse.response && errWithResponse.response.data &&
-      errWithResponse.response.data.message && typeof errWithResponse.response.data.message === 'string') {
-      errorMessage = errWithResponse.response.data.message
-    } else if (errWithResponse && errWithResponse.message && typeof errWithResponse.message === 'string') {
-      errorMessage = errWithResponse.message
-    }
-    state.errorMessage = errorMessage
-    state.showError = true
-  },
   [type.SHOW_ERROR_MESSAGE] (state: State, errorMessage: string) {
     state.errorMessage = errorMessage
     state.showError = true

@@ -80,7 +80,7 @@ class TequilapiConnectionEstablisher implements ConnectionEstablisher {
         return
       }
 
-      errorMessage.showMessage(messages.connectFailed)
+      errorMessage.show(messages.connectFailed)
 
       eventTracker.connectEnded('Error: Connection to node failed.')
 
@@ -107,15 +107,12 @@ class TequilapiConnectionEstablisher implements ConnectionEstablisher {
       try {
         await this._tequilapi.connectionCancel()
       } catch (err) {
-        errorMessage.showError(err)
+        errorMessage.show(messages.disconnectFailed)
         logger.info('Connection cancelling failed:', err)
         this._bugReporter.captureInfoException(err)
       }
       connectionStatsFetcher.fetchConnectionStatus()
       connectionStatsFetcher.fetchConnectionIp()
-    } catch (err) {
-      errorMessage.showError(err)
-      throw err
     } finally {
       if (actionLoopers) {
         actionLoopers.start()

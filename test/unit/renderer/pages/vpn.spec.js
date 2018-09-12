@@ -23,7 +23,6 @@ import Vuex, { Store } from 'vuex'
 import DIContainer from '../../../../src/app/di/vue-container'
 import RendererCommunication from '../../../../src/app/communication/renderer-communication'
 import messages from '../../../../src/app/communication/messages'
-import type from '@/store/types'
 import FakeMessageBus from '../../../helpers/fake-message-bus'
 import BugReporterMock from '../../../helpers/bug-reporter-mock'
 import Vue from 'vue'
@@ -36,7 +35,7 @@ describe('Vpn', () => {
   let fakeMessageBus
   const bugReporterMock = new BugReporterMock()
 
-  function mountWith (store, messageBus) {
+  function mountWith (store) {
     const vue = createLocalVue()
     fakeMessageBus = new FakeMessageBus()
     const dependencies = new DIContainer(vue)
@@ -79,9 +78,6 @@ describe('Vpn', () => {
           showError () {}
         },
         mutations: {
-          [type.SHOW_ERROR] (state, error) {
-            state.errorMessage = error.message
-          }
         }
       })
 
