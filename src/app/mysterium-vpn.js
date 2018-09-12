@@ -78,7 +78,7 @@ class MysteriumVpn {
   _communication: MainMessageBusCommunication
   _ipc: MainBufferedIpc
   _syncCallbacksInitializer: SyncCallbacksInitializer
-  _comBinds: CommunicationBindings
+  _communicationBindings: CommunicationBindings
 
   constructor (params: MysteriumVpnParams) {
     this._browserWindowFactory = params.browserWindowFactory
@@ -105,7 +105,7 @@ class MysteriumVpn {
     this._ipc = params.mainIpc
     this._communication = params.mainCommunication
     this._syncCallbacksInitializer = params.syncCallbacksInitializer
-    this._comBinds = params.communicationBindings
+    this._communicationBindings = params.communicationBindings
   }
 
   run () {
@@ -160,10 +160,12 @@ class MysteriumVpn {
     const send = this._getSendFunction(browserWindow)
     this._ipc.setSenderAndSendBuffered(send)
 
-    this._comBinds.setCurrentIdentityForEventTracker(this._startupEventTracker)
-    this._comBinds.syncCurrentIdentityForBugReporter(this._bugReporter)
+    this._communicationBindings.setCurrentIdentityForEventTracker(this._startupEventTracker)
+    this._communicationBindings.syncCurrentIdentityForBugReporter(this._bugReporter)
 
-    this._comBinds.startRegistrationFetcherOnCurrentIdentity(this._featureToggle, this._registrationFetcher)
+    this._communicationBindings.startRegistrationFetcherOnCurrentIdentity(
+      this._featureToggle,
+      this._registrationFetcher)
 
     this._bugReporterMetrics.startSyncing(this._communication) // FIXME: MYS-223
     this._bugReporterMetrics.setWithCurrentDateTime(METRICS.START_TIME)
@@ -191,12 +193,12 @@ class MysteriumVpn {
     this._subscribeProposals()
 
     if (this._featureToggle.paymentsAreEnabled()) {
-      this._comBinds.syncRegistrationStatus(this._registrationFetcher, this._bugReporter)
+      this._communicationBindings.syncRegistrationStatus(this._registrationFetcher, this._bugReporter)
     }
 
-    this._comBinds.syncFavorites(this._userSettingsStore)
-    this._comBinds.syncShowDisconnectNotifications(this._userSettingsStore)
-    this._comBinds.showNotificationOnDisconnect(this._userSettingsStore, this._disconnectNotification)
+    this._communicationBindings.syncFavorites(this._userSettingsStore)
+    this._communicationBindings.syncShowDisconnectNotifications(this._userSettingsStore)
+    this._communicationBindings.showNotificationOnDisconnect(this._userSettingsStore, this._disconnectNotification)
     await this._loadUserSettings()
     this._disconnectNotification.onReconnect(() => this._communication.sendReconnectRequest())
   }

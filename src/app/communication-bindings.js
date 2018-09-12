@@ -30,7 +30,7 @@ import { UserSettingsStore } from './user-settings/user-settings-store'
 import Notification from './notification'
 import type { MainCommunication } from './communication/main-communication'
 
-const LOG_PREFIX = '[ComBinds] '
+const LOG_PREFIX = '[CommunicationBindings] '
 
 class CommunicationBindings {
   _communication: MainCommunication

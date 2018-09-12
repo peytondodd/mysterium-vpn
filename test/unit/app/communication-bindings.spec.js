@@ -28,7 +28,6 @@ import TequilapiRegistrationFetcher from '../../../src/app/data-fetchers/tequila
 import EmptyTequilapiClientMock from '../renderer/store/modules/empty-tequilapi-client-mock'
 import FeatureToggle from '../../../src/app/features/feature-toggle'
 import BugReporterMock from '../../helpers/bug-reporter-mock'
-import FakeMainCommunication from '../../helpers/fake-main-communication'
 import factoryTequilapiManipulator from '../../helpers/mysterium-tequilapi/factory-tequilapi-manipulator'
 import { UserSettingsStore } from '../../../src/app/user-settings/user-settings-store'
 import Notification from '../../../src/app/notification'
@@ -61,19 +60,23 @@ class NotificationMock extends Notification {
 }
 
 describe('CommunicationBindings', () => {
-  let msgBus = new SubscribableMessageBus()
-  let com = new MainMessageBusCommunication(msgBus)
+  let msgBus, comBinds
 
-  describe('showNotificationOnDisconnect', () => {
+  beforeEach(() => {
+    msgBus = new SubscribableMessageBus()
+    const com = new MainMessageBusCommunication(msgBus)
+    comBinds = new CommunicationBindings(com)
+  })
+
+  describe('.showNotificationOnDisconnect', () => {
     let userSettingsStore, notif
-    const comBinds = new CommunicationBindings(com)
 
     beforeEach(() => {
       userSettingsStore = new UserSettingsStoreMock('some path')
       notif = new NotificationMock('title', 'subtitle', 'icon path')
     })
 
-    it('shows notification when connection changes from CONNECTED to NOT_CONNECTED', () => {
+    it('it shows notification when disconnected without user interaction', () => {
       comBinds.showNotificationOnDisconnect(userSettingsStore, notif)
       msgBus.triggerOn(messages.CONNECTION_STATUS_CHANGED, {
         oldStatus: ConnectionStatusEnum.CONNECTED,
@@ -83,7 +86,7 @@ describe('CommunicationBindings', () => {
       expect(notif.showWasCalled).to.be.true
     })
 
-    it('does not show notification when connection changes from CONNECTED to NOT_CONNECTED', () => {
+    it('it does not show notification when disconnecting with notifications disabled', () => {
       userSettingsStore.setShowDisconnectNotifications(false)
       comBinds.showNotificationOnDisconnect(userSettingsStore, notif)
       msgBus.triggerOn(messages.CONNECTION_STATUS_CHANGED, {
@@ -98,8 +101,7 @@ describe('CommunicationBindings', () => {
   describe('.syncFavorites', () => {
     const userSettingsStore = new UserSettingsStoreMock('some path')
 
-    it('saves favourite using userSettingsStore', async () => {
-      const comBinds = new CommunicationBindings(com)
+    it('saves favorite using userSettingsStore', async () => {
       comBinds.syncFavorites(userSettingsStore)
       msgBus.triggerOn(messages.TOGGLE_FAVORITE_PROVIDER, { id: 'some', isFavorite: true })
 
@@ -109,7 +111,6 @@ describe('CommunicationBindings', () => {
   })
 
   describe('.syncShowDisconnectNotifications', () => {
-    const comBinds = new CommunicationBindings(com)
     const userSettingsStore = new UserSettingsStoreMock('some path')
 
     it('sends user settings when requested', () => {
@@ -128,12 +129,11 @@ describe('CommunicationBindings', () => {
     })
   })
 
-  describe('.setCurrentIdentityForEventTracker()', () => {
-    const comBinds = new CommunicationBindings(com)
+  describe('.setCurrentIdentityForEventTracker', () => {
     const evtSender = new MockEventSender()
     const startupEventTracker = new StartupEventTracker(evtSender)
 
-    it('sends event. once.', () => {
+    it('sends event once', () => {
       comBinds.setCurrentIdentityForEventTracker(startupEventTracker)
       msgBus.triggerOn(messages.CURRENT_IDENTITY_CHANGED, { id: 'some data' })
 
@@ -146,12 +146,11 @@ describe('CommunicationBindings', () => {
     })
   })
 
-  describe('.startRegistrationFetcherOnCurrentIdentity()', () => {
-    const comBinds = new CommunicationBindings(com)
+  describe('.startRegistrationFetcherOnCurrentIdentity', () => {
     const regFetcher = new TequilapiRegistrationFetcherMock(new EmptyTequilapiClientMock())
     const featureToggle = new FeatureToggle({ payments: true })
 
-    it('starts registration fetcher. once.', () => {
+    it('starts registration fetcher once', () => {
       comBinds.startRegistrationFetcherOnCurrentIdentity(featureToggle, regFetcher)
       msgBus.triggerOn(messages.CURRENT_IDENTITY_CHANGED, { id: 'some data' })
 
@@ -162,8 +161,7 @@ describe('CommunicationBindings', () => {
     })
   })
 
-  describe('.syncCurrentIdentityForBugReporter()', () => {
-    const comBinds = new CommunicationBindings(com)
+  describe('.syncCurrentIdentityForBugReporter', () => {
     const bugReporter = new BugReporterMock()
 
     it('calls .setUser() for bugReporter', () => {
@@ -174,11 +172,9 @@ describe('CommunicationBindings', () => {
     })
   })
 
-  describe('.syncRegistrationStatus()', () => {
-    let comFake, comBinds, bugReporter
+  describe('.syncRegistrationStatus', () => {
+    let bugReporter
     beforeEach(() => {
-      comFake = new FakeMainCommunication()
-      comBinds = new CommunicationBindings(comFake)
       bugReporter = new BugReporterMock()
     })
 
@@ -189,7 +185,7 @@ describe('CommunicationBindings', () => {
       await nextTick()
 
       expect(bugReporter.errorExceptions).to.eql([])
-      expect(comFake.wasInvoked(comFake.sendRegistration)).to.be.true
+      expect(msgBus.sentData[0].channel).to.be.eql(messages.IDENTITY_REGISTRATION)
     })
 
     it('reports error via bugReporter, if one occurs', async () => {
