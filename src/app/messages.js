@@ -34,5 +34,6 @@ export default {
     hint: 'Please give it a moment to boot. If this message persists try restarting the app or please contact support'
   },
   connectionStatusFailed: 'Error when fetching connection status',
-  connectionStatisticsFailed: 'Error when fetching connection statistics'
+  connectionStatisticsFailed: 'Error when fetching connection statistics',
+  disconnectFailed: 'Error while disconnecting'
 }

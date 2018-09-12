@@ -272,11 +272,7 @@ class VueErrorMessage extends VueAction implements ErrorMessage {
     this._commit(type.HIDE_ERROR)
   }
 
-  showError (error: Error) {
-    this._commit(type.SHOW_ERROR, error)
-  }
-
-  showMessage (message: string) {
+  show (message: string) {
     this._commit(type.SHOW_ERROR_MESSAGE, message)
   }
 }
