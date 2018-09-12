@@ -22,6 +22,7 @@ import EmptyTequilapiClientMock from '../../unit/renderer/store/modules/empty-te
 import ConnectionStatusDTO from '../../../src/libraries/mysterium-tequilapi/dto/connection-status'
 import ConnectionIPDTO from '../../../src/libraries/mysterium-tequilapi/dto/connection-ip'
 import ConnectionStatisticsDTO from '../../../src/libraries/mysterium-tequilapi/dto/connection-statistics'
+import ConnectionStatusEnum from '../../../src/libraries/mysterium-tequilapi/dto/connection-status-enum'
 
 function factoryTequilapiManipulator () {
   let statusFail = false
@@ -44,7 +45,10 @@ function factoryTequilapiManipulator () {
       if (connectFail) {
         throw errorMock
       }
-      return new ConnectionStatusDTO({})
+      return new ConnectionStatusDTO({
+        sessionId: 'mock session',
+        status: ConnectionStatusEnum.CONNECTING
+      })
     }
 
     async connectionStatus (): Promise<ConnectionStatusDTO> {
@@ -52,7 +56,8 @@ function factoryTequilapiManipulator () {
         throw errorMock
       }
       return new ConnectionStatusDTO({
-        status: 'mock status'
+        sessionId: 'mock session',
+        status: ConnectionStatusEnum.NOT_CONNECTED
       })
     }
 
@@ -78,7 +83,11 @@ function factoryTequilapiManipulator () {
       if (statisticsFail) {
         throw errorMock
       }
-      return new ConnectionStatisticsDTO({ duration: 1 })
+      return new ConnectionStatisticsDTO({
+        duration: 1,
+        bytesReceived: 0,
+        bytesSent: 0
+      })
     }
   }
 

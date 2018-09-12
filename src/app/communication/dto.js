@@ -21,7 +21,7 @@ import type { LogLevel } from '../logging/mysterium-vpn-log-levels'
 import type { Country } from '../countries'
 
 export type ConnectionStatusChangeDTO = {
-  oldStatus: ConnectionStatus,
+  oldStatus: ?ConnectionStatus,
   newStatus: ConnectionStatus
 }
 
