@@ -61,73 +61,89 @@ describe('UserSettingsStore', () => {
   })
 
   describe('.load', () => {
-    const loadSettingsPath = join(tmpdir(), 'settings.test.loading.json')
-    const invalidPath = join(tmpdir(), 'someother', 'another')
-    const invalidJsonPath = join(tmpdir(), 'invalidJsonFile')
+    describe('with valid settings file', () => {
+      const loadSettingsPath = join(tmpdir(), 'settings.test.loading.json')
+      let userSettingsStore
 
-    before(() => {
-      const settings: UserSettings = {
-        showDisconnectNotifications: false,
-        favoriteProviders: new Set(['id_123']),
-        connectionRecords: [
+      before(() => {
+        const settings: UserSettings = {
+          showDisconnectNotifications: false,
+          favoriteProviders: new Set(['id_123']),
+          connectionRecords: [
+            { country: 'us', success: false }
+          ]
+        }
+        writeFileSync(
+          loadSettingsPath,
+          JSON.stringify(settings)
+        )
+      })
+
+      beforeEach(() => {
+        userSettingsStore = new UserSettingsStore(loadSettingsPath)
+      })
+
+      after(() => {
+        unlinkSync(loadSettingsPath)
+
+      })
+
+      it('loads notification setting from json file', async () => {
+        await userSettingsStore.load()
+        expect(userSettingsStore.getAll().showDisconnectNotifications).to.be.eql(false)
+      })
+
+      it('loads favorite providers from json file', async () => {
+        await userSettingsStore.load()
+        expect(userSettingsStore.getAll().favoriteProviders).to.be.eql(new Set(['id_123']))
+      })
+
+      it('loads connection records from json file', async () => {
+        await userSettingsStore.load()
+        expect(userSettingsStore.getAll().connectionRecords).to.be.eql([
           { country: 'us', success: false }
-        ]
-      }
-      writeFileSync(
-        loadSettingsPath,
-        JSON.stringify(settings)
-      )
-      writeFileSync(
-        invalidJsonPath,
-        '{"notOfUserSettingsType":true}'
-      )
-    })
-    after(() => {
-      unlinkSync(loadSettingsPath)
-      unlinkSync(invalidJsonPath)
+        ])
+      })
+
+      it('notifies subscribers about connection records change', async () => {
+        const cbRec = new CallbackRecorder()
+        userSettingsStore.onChange(userSettingName.connectionRecords, cbRec.getCallback())
+
+        await userSettingsStore.load()
+        expect(cbRec.invoked).to.be.true
+      })
     })
 
-    it('loads notification setting from json file', async () => {
-      const userSettingsStore = new UserSettingsStore(loadSettingsPath)
-      await userSettingsStore.load()
-      expect(userSettingsStore.getAll().showDisconnectNotifications).to.be.eql(false)
+    describe('with invalid settings file', () => {
+      const invalidJsonPath = join(tmpdir(), 'invalidJsonFile')
+
+      before(() => {
+        writeFileSync(
+          invalidJsonPath,
+          '{"notOfUserSettingsType":true}'
+        )
+      })
+      after(() => {
+        unlinkSync(invalidJsonPath)
+      })
+
+      it('throws TypeError if parsed Object from file is not of UserSettings type', async () => {
+        const userSettingsStore = new UserSettingsStore(invalidJsonPath)
+        const error = await capturePromiseError(userSettingsStore.load())
+        expect(error).to.be.instanceOf(TypeError)
+      })
     })
 
-    it('loads favorite providers from json file', async () => {
-      const userSettingsStore = new UserSettingsStore(loadSettingsPath)
-      await userSettingsStore.load()
-      expect(userSettingsStore.getAll().favoriteProviders).to.be.eql(new Set(['id_123']))
-    })
+    describe('with invalid path for settings file', () => {
+      const invalidPath = join(tmpdir(), 'someother', 'another')
 
-    it('loads connection records from json file', async () => {
-      const userSettingsStore = new UserSettingsStore(loadSettingsPath)
-      await userSettingsStore.load()
-      expect(userSettingsStore.getAll().connectionRecords).to.be.eql([
-        { country: 'us', success: false }
-      ])
-    })
+      it('falls back to default settings when invalid path to settings.json file is given', async () => {
+        const userSettingsStore = new UserSettingsStore(invalidPath)
 
-    it('notifies subscribers about connection records change', async () => {
-      const cbRec = new CallbackRecorder()
-
-      const userSettingsStore = new UserSettingsStore(loadSettingsPath)
-      userSettingsStore.onChange(userSettingName.connectionRecords, cbRec.getCallback())
-      await userSettingsStore.load()
-      expect(cbRec.invoked).to.be.true
-    })
-
-    it('falls back to default settings when invalid path to settings.json file is given', async () => {
-      const userSettingsStore = new UserSettingsStore(invalidPath)
-
-      await userSettingsStore.load()
-      expect(userSettingsStore.getAll().showDisconnectNotifications).to.be.eql(true)
-      expect(userSettingsStore.getAll().favoriteProviders).to.be.eql(new Set())
-    })
-
-    it('throws TypeError if parsed Object from file is not of UserSettings type', async () => {
-      const userSettingsStore = new UserSettingsStore(invalidJsonPath)
-      const error = await capturePromiseError(userSettingsStore.load())
-      expect(error).to.be.instanceOf(TypeError)
+        await userSettingsStore.load()
+        expect(userSettingsStore.getAll().showDisconnectNotifications).to.be.eql(true)
+        expect(userSettingsStore.getAll().favoriteProviders).to.be.eql(new Set())
+      })
     })
   })
 
