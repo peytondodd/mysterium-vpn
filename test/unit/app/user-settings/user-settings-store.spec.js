@@ -16,12 +16,13 @@
  */
 
 // @flow
-import { UserSettingsStore, userStoreSettingString } from '../../../../src/app/user-settings/user-settings-store'
+import { UserSettingsStore, userSettingName } from '../../../../src/app/user-settings/user-settings-store'
 import { describe, expect, it, after, before, beforeEach } from '../../../helpers/dependencies'
 import { tmpdir } from 'os'
 import { join } from 'path'
 import { readFileSync, writeFileSync, unlinkSync } from 'fs'
 import { CallbackRecorder, capturePromiseError } from '../../../helpers/utils'
+import type { UserSettings } from '../../../../src/app/user-settings/user-settings'
 
 describe('UserSettingsStore', () => {
   describe('.save', () => {
@@ -36,10 +37,17 @@ describe('UserSettingsStore', () => {
       const userSettingsStore = new UserSettingsStore(saveSettingsPath)
       userSettingsStore.setShowDisconnectNotifications(false)
       userSettingsStore.setFavorite('id_123', true)
+      userSettingsStore.addConnectionRecord({ country: 'us', success: false })
       await userSettingsStore.save()
       const data = readFileSync(saveSettingsPath, { encoding: 'utf8' })
 
-      expect(data.toString()).to.eql('{"showDisconnectNotifications":false,"favoriteProviders":["id_123"]}')
+      expect(data.toString()).to.eql(
+        '{' +
+        '"showDisconnectNotifications":false,' +
+        '"favoriteProviders":["id_123"],' +
+        '"connectionRecords":[{"country":"us","success":false}]' +
+        '}'
+      )
     })
 
     it('throws error if save() fails on invalid path to file', async () => {
@@ -58,9 +66,16 @@ describe('UserSettingsStore', () => {
     const invalidJsonPath = join(tmpdir(), 'invalidJsonFile')
 
     before(() => {
+      const settings: UserSettings = {
+        showDisconnectNotifications: false,
+        favoriteProviders: new Set(['id_123']),
+        connectionRecords: [
+          { country: 'us', success: false }
+        ]
+      }
       writeFileSync(
         loadSettingsPath,
-        JSON.stringify({ showDisconnectNotifications: false, favoriteProviders: new Set(['id_123']) })
+        JSON.stringify(settings)
       )
       writeFileSync(
         invalidJsonPath,
@@ -72,11 +87,33 @@ describe('UserSettingsStore', () => {
       unlinkSync(invalidJsonPath)
     })
 
-    it('reads showDisconnectNotifications from json file', async () => {
+    it('loads notification setting from json file', async () => {
       const userSettingsStore = new UserSettingsStore(loadSettingsPath)
       await userSettingsStore.load()
       expect(userSettingsStore.getAll().showDisconnectNotifications).to.be.eql(false)
+    })
+
+    it('loads favorite providers from json file', async () => {
+      const userSettingsStore = new UserSettingsStore(loadSettingsPath)
+      await userSettingsStore.load()
       expect(userSettingsStore.getAll().favoriteProviders).to.be.eql(new Set(['id_123']))
+    })
+
+    it('loads connection records from json file', async () => {
+      const userSettingsStore = new UserSettingsStore(loadSettingsPath)
+      await userSettingsStore.load()
+      expect(userSettingsStore.getAll().connectionRecords).to.be.eql([
+        { country: 'us', success: false }
+      ])
+    })
+
+    it('notifies subscribers about connection records change', async () => {
+      const cbRec = new CallbackRecorder()
+
+      const userSettingsStore = new UserSettingsStore(loadSettingsPath)
+      userSettingsStore.onChange(userSettingName.connectionRecords, cbRec.getCallback())
+      await userSettingsStore.load()
+      expect(cbRec.invoked).to.be.true
     })
 
     it('falls back to default settings when invalid path to settings.json file is given', async () => {
@@ -107,29 +144,49 @@ describe('UserSettingsStore', () => {
         expect(userSettingsStore.getAll().showDisconnectNotifications).to.be.false
       })
 
-      it('notifies subscribers on showDisconnectNotifications change', () => {
+      it('notifies subscribers about showDisconnectNotifications change', () => {
         const cbRec = new CallbackRecorder()
 
-        userSettingsStore.onChange(userStoreSettingString.showDisconnectNotifications, cbRec.getCallback())
+        userSettingsStore.onChange(userSettingName.showDisconnectNotifications, cbRec.getCallback())
         userSettingsStore.setShowDisconnectNotifications(false)
         expect(cbRec.invoked).to.be.true
         expect(cbRec.firstArgument).to.be.false
       })
     })
 
-    describe('setFavorite', async () => {
+    describe('.setFavorite', () => {
       it('adds favoriteId to settings store', () => {
         userSettingsStore.setFavorite('0xfax', true)
         expect(userSettingsStore.getAll().favoriteProviders.has('0xfax')).to.be.true
       })
 
-      it('notifies subscribers on favorite add', () => {
+      it('notifies subscribers about favorite add', () => {
         const cbRec = new CallbackRecorder()
 
-        userSettingsStore.onChange('favoriteProviders', cbRec.getCallback())
+        userSettingsStore.onChange(userSettingName.favoriteProviders, cbRec.getCallback())
         userSettingsStore.setFavorite('0xfax', true)
         expect(cbRec.invoked).to.be.true
         expect(cbRec.firstArgument.has('0xfax')).to.be.true
+      })
+    })
+
+    describe('.addConnectionRecord', () => {
+      const connection = { country: 'us', success: false }
+
+      it('adds connection record to settings store', async () => {
+        userSettingsStore.addConnectionRecord(connection)
+        expect(userSettingsStore.getAll().connectionRecords).to.eql([
+          connection
+        ])
+      })
+
+      it('notifies subscribers about connection records change', () => {
+        const cbRec = new CallbackRecorder()
+
+        userSettingsStore.onChange(userSettingName.connectionRecords, cbRec.getCallback())
+        userSettingsStore.addConnectionRecord(connection)
+        expect(cbRec.invoked).to.be.true
+        expect(cbRec.firstArgument).to.eql([connection])
       })
     })
   })

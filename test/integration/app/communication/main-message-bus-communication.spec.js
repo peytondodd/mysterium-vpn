@@ -136,7 +136,7 @@ describe('MainMessageBusCommunication', () => {
     it('sends message through message bus', () => {
       const callback = recorder.getCallback()
       rendererCommunication.onUserSettings(callback)
-      const settingsDto = { showDisconnectNotifications: true, favoriteProviders: new Set() }
+      const settingsDto = { showDisconnectNotifications: true, favoriteProviders: new Set(), connectionRecords: [] }
       mainCommunication.sendUserSettings(settingsDto)
       expect(recorder.invoked).to.be.true
       expect(recorder.firstArgument).to.eql(settingsDto)

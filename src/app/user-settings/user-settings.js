@@ -18,7 +18,13 @@
 // @flow
 export type FavoriteProviders = Set<string>
 
+export type ConnectionRecord = {
+  country: ?string,
+  success: boolean
+}
+
 export type UserSettings = {
   showDisconnectNotifications: boolean,
-  favoriteProviders: FavoriteProviders
+  favoriteProviders: FavoriteProviders,
+  connectionRecords: ConnectionRecord[]
 }

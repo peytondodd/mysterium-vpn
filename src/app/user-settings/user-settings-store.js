@@ -18,33 +18,37 @@
 // @flow
 import { readFile, writeFile } from 'fs'
 import { promisify } from 'util'
-import type { FavoriteProviders, UserSettings } from './user-settings'
+import type { ConnectionRecord, FavoriteProviders, UserSettings } from './user-settings'
 import Subscriber from '../../libraries/subscriber'
 import type { Callback } from '../../libraries/subscriber'
 
 const readFileAsync = promisify(readFile)
 const writeFileAsync = promisify(writeFile)
 
-const userStoreSettingString = {
+const userSettingName = {
   showDisconnectNotifications: 'showDisconnectNotifications',
-  favoriteProviders: 'favoriteProviders'
+  favoriteProviders: 'favoriteProviders',
+  connectionRecords: 'connectionRecords'
 }
 
-type UserStoreSetting = $Values<typeof userStoreSettingString>
+type UserSettingName = $Values<typeof userSettingName>
 
 class UserSettingsStore {
   _settings: UserSettings = {
     showDisconnectNotifications: true,
-    favoriteProviders: new Set()
+    favoriteProviders: new Set(),
+    connectionRecords: []
   }
   _path: string
 
   _listeners: {
+    showDisconnectNotifications: Subscriber<boolean>,
     favoriteProviders: Subscriber<FavoriteProviders>,
-    showDisconnectNotifications: Subscriber<boolean>
+    connectionRecords: Subscriber<ConnectionRecord[]>
   } = {
+    showDisconnectNotifications: new Subscriber(),
     favoriteProviders: new Subscriber(),
-    showDisconnectNotifications: new Subscriber()
+    connectionRecords: new Subscriber()
   }
 
   constructor (path: string) {
@@ -63,8 +67,10 @@ class UserSettingsStore {
     }
     this._settings.favoriteProviders = new Set(parsed.favoriteProviders)
     this._settings.showDisconnectNotifications = parsed.showDisconnectNotifications
-    this._notify(userStoreSettingString.favoriteProviders)
-    this._notify(userStoreSettingString.showDisconnectNotifications)
+    this._settings.connectionRecords = parsed.connectionRecords
+    this._notify(userSettingName.favoriteProviders)
+    this._notify(userSettingName.showDisconnectNotifications)
+    this._notify(userSettingName.connectionRecords)
   }
 
   async save (): Promise<void> {
@@ -78,23 +84,28 @@ class UserSettingsStore {
 
     if (isFavorite) this._settings.favoriteProviders.add(id)
     else this._settings.favoriteProviders.delete(id)
-    this._notify(userStoreSettingString.favoriteProviders)
+    this._notify(userSettingName.favoriteProviders)
   }
 
   setShowDisconnectNotifications (show: boolean) {
     this._settings.showDisconnectNotifications = show
-    this._notify(userStoreSettingString.showDisconnectNotifications)
+    this._notify(userSettingName.showDisconnectNotifications)
+  }
+
+  addConnectionRecord (connection: ConnectionRecord) {
+    this._settings.connectionRecords.push(connection)
+    this._notify(userSettingName.connectionRecords)
   }
 
   getAll (): UserSettings {
     return this._settings
   }
 
-  onChange (property: UserStoreSetting, cb: Callback<any>) {
+  onChange (property: UserSettingName, cb: Callback<any>) {
     this._listeners[property].subscribe(cb)
   }
 
-  _notify (propertyChanged: UserStoreSetting) {
+  _notify (propertyChanged: UserSettingName) {
     const newVal = ((this._settings[propertyChanged]): any)
     this._listeners[propertyChanged].notify(newVal)
   }
@@ -124,4 +135,4 @@ function isFileNotExistError (error: Object): boolean {
   return (error.code && error.code === 'ENOENT')
 }
 
-export { UserSettingsStore, userStoreSettingString }
+export { UserSettingsStore, userSettingName }

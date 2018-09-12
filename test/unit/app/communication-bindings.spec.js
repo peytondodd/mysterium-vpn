@@ -118,7 +118,11 @@ describe('CommunicationBindings', () => {
       msgBus.triggerOn(messages.USER_SETTINGS_REQUEST)
 
       expect(msgBus.sentData[0].channel).to.eql(messages.USER_SETTINGS)
-      expect(msgBus.sentData[0].data).to.eql({ showDisconnectNotifications: true, favoriteProviders: new Set() })
+      expect(msgBus.sentData[0].data).to.eql({
+        showDisconnectNotifications: true,
+        favoriteProviders: new Set(),
+        connectionRecords: []
+      })
     })
 
     it('saves disconnect notification setting that was received from communication', () => {
