@@ -86,6 +86,7 @@ class TequilapiConnectionEstablisher implements ConnectionEstablisher {
     } catch (err) {
       if (err instanceof TequilapiError && err.isRequestClosedError) {
         eventTracker.connectCanceled()
+        this._settingsStore.addConnectionRecord({ country: provider.country, status: connectionStatuses.cancelled })
         return
       }
 

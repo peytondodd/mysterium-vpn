@@ -206,11 +206,12 @@ describe('TequilapiConnectionEstablisher', () => {
         expect(mockErrorMessage.messageShown).to.be.null
       })
 
-      // TODO: add connection record with custom status
-      it('does not add connection record', async () => {
+      it('adds cancelled connection record', async () => {
         await connectionEstablisher
           .connect(consumerId, provider, mockConnectionState, mockErrorMessage, location, actionLooper)
-        expect(userSettingsStore.getAll().connectionRecords).to.be.empty
+        expect(userSettingsStore.getAll().connectionRecords).to.eql([
+          { country: 'us', status: connectionStatuses.cancelled }
+        ])
       })
     })
   })
