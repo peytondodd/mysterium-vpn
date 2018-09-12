@@ -16,12 +16,12 @@
  */
 
 // @flow
-import { UserSettingsStore, userStoreSettingString } from '../../../src/app/user-settings/user-settings-store'
-import { describe, expect, it, after, before, beforeEach } from '../../helpers/dependencies'
+import { UserSettingsStore, userStoreSettingString } from '../../../../src/app/user-settings/user-settings-store'
+import { describe, expect, it, after, before, beforeEach } from '../../../helpers/dependencies'
 import { tmpdir } from 'os'
 import { join } from 'path'
 import { readFileSync, writeFileSync, unlinkSync } from 'fs'
-import { CallbackRecorder, capturePromiseError } from '../../helpers/utils'
+import { CallbackRecorder, capturePromiseError } from '../../../helpers/utils'
 
 describe('UserSettingsStore', () => {
   describe('.save', () => {
