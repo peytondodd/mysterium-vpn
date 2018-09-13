@@ -35,6 +35,8 @@ import { ConnectionStatsFetcher } from '../../../app/connection/connection-stats
 import type { ConnectionState } from '../../../app/connection/connection-state'
 import type { Provider } from '../../../app/connection/provider'
 import messages from '../../../app/messages'
+import { UserSettingsStore } from '../../../app/user-settings/user-settings-store'
+import { connectionStatuses } from '../../../app/user-settings/user-settings'
 
 type ConnectionStore = {
   ip?: ?string,
@@ -125,7 +127,8 @@ function actionsFactory (
   tequilapi: TequilapiClient,
   rendererCommunication: RendererCommunication,
   bugReporter: BugReporter,
-  connectionEstablisher: ConnectionEstablisher
+  connectionEstablisher: ConnectionEstablisher,
+  userSettingsStore: UserSettingsStore
 ) {
   return {
     async [type.LOCATION] ({ commit }) {
@@ -201,6 +204,17 @@ function actionsFactory (
       }
       if (oldStatus === ConnectionStatusEnum.CONNECTED) {
         await dispatch(type.STOP_ACTION_LOOPING, type.CONNECTION_STATISTICS)
+      }
+      if (newStatus === ConnectionStatusEnum.NOT_CONNECTED &&
+        (oldStatus === ConnectionStatusEnum.CONNECTED || oldStatus === ConnectionStatusEnum.DISCONNECTING)) {
+        if (state.lastConnectionProvider != null) {
+          userSettingsStore.addConnectionRecord({
+            country: state.lastConnectionProvider.country,
+            status: connectionStatuses.successful
+          })
+        } else {
+          bugReporter.captureErrorMessage('connection.lastConnectionProvider was not present when connection finished')
+        }
       }
     },
     async [type.CONNECTION_STATISTICS] ({ commit }) {
