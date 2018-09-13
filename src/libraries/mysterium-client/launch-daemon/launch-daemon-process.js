@@ -64,7 +64,7 @@ class LaunchDaemonProcess implements Process {
 
   async _spawnOsXLaunchDaemon (): Promise<void> {
     try {
-      await axios.get('http://127.0.0.1:' + this._daemonPort)
+      await axios.get('http://127.0.0.1:' + this._daemonPort, { timeout: 100 })
     } catch (e) {
       // no http server is running on `_daemonPort`, so request results in a failure
       // if some service is responding on daemonPort then additional healthcheck ensures tequilapi is accessible
