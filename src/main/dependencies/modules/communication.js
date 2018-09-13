@@ -23,6 +23,7 @@ import SyncCallbacksInitializer from '../../../app/sync-callbacks-initializer'
 import { SyncIpcReceiver } from '../../../app/communication/sync/sync-ipc'
 import SyncReceiverMainCommunication from '../../../app/communication/sync/sync-main-communication'
 import type { Container } from '../../../app/di'
+import CommunicationBindings from '../../../app/communication-bindings'
 
 function bootstrap (container: Container) {
   container.factory(
@@ -49,6 +50,14 @@ function bootstrap (container: Container) {
       const receiver = new SyncIpcReceiver()
       const communication = new SyncReceiverMainCommunication(receiver)
       return new SyncCallbacksInitializer(communication, environmentCollector, frontendLogCache)
+    }
+  )
+
+  container.factory(
+    'communicationBindings',
+    ['mainCommunication'],
+    (communication) => {
+      return new CommunicationBindings(communication)
     }
   )
 }
