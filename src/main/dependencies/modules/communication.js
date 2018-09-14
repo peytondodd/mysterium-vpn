@@ -45,11 +45,11 @@ function bootstrap (container: Container) {
 
   container.factory(
     'syncCallbacksInitializer',
-    ['environmentCollector', 'frontendLogCache'],
-    (environmentCollector, frontendLogCache) => {
+    ['environmentCollector', 'frontendLogCache', 'bugReporterMetrics'],
+    (environmentCollector, frontendLogCache, bugReporterMetrics) => {
       const receiver = new SyncIpcReceiver()
       const communication = new SyncReceiverMainCommunication(receiver)
-      return new SyncCallbacksInitializer(communication, environmentCollector, frontendLogCache)
+      return new SyncCallbacksInitializer(communication, environmentCollector, frontendLogCache, bugReporterMetrics)
     }
   )
 

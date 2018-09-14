@@ -19,6 +19,7 @@
 import type { ConnectionStatus } from '../../libraries/mysterium-tequilapi/dto/connection-status-enum'
 import type { LogLevel } from '../logging/mysterium-vpn-log-levels'
 import type { Country } from '../countries'
+import type { Metric } from '../bug-reporting/metrics/metrics'
 
 export type ConnectionStatusChangeDTO = {
   oldStatus: ConnectionStatus,
@@ -55,4 +56,9 @@ export type AppErrorDTO = {
 export type LogDTO = {
   level: LogLevel,
   data: mixed
+}
+
+export type MetricDto = {
+  metric: Metric,
+  value: mixed
 }

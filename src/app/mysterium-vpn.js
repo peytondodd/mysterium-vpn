@@ -39,7 +39,6 @@ import type { BugReporter } from './bug-reporting/interface'
 import { UserSettingsStore } from './user-settings/user-settings-store'
 import Notification from './notification'
 import type { EnvironmentCollector } from './bug-reporting/environment/environment-collector'
-import { BugReporterMetrics, METRICS, TAGS } from '../app/bug-reporting/bug-reporter-metrics'
 import LogCache from './logging/log-cache'
 import SyncCallbacksInitializer from './sync-callbacks-initializer'
 import type { StringLogger } from './logging/string-logger'
@@ -48,6 +47,8 @@ import StartupEventTracker from './statistics/startup-event-tracker'
 import TequilapiRegistrationFetcher from './data-fetchers/tequilapi-registration-fetcher'
 import MainBufferedIpc from './communication/ipc/main-buffered-ipc'
 import CommunicationBindings from './communication-bindings'
+import { METRICS, TAGS } from './bug-reporting/metrics/metrics'
+import type { BugReporterMetrics } from './bug-reporting/metrics/bug-reporter-metrics'
 
 const LOG_PREFIX = '[MysteriumVpn] '
 const MYSTERIUM_CLIENT_STARTUP_THRESHOLD = 10000
@@ -168,7 +169,6 @@ class MysteriumVpn {
       this._registrationFetcher
     )
 
-    this._bugReporterMetrics.startSyncing(this._communication) // FIXME: MYS-223
     this._bugReporterMetrics.setWithCurrentDateTime(METRICS.START_TIME)
 
     await this._onRendererLoaded()

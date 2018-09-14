@@ -31,14 +31,12 @@ import type {
 } from './dto'
 
 import type { UserSettings } from '../user-settings/user-settings'
-import type { Metric } from '../bug-reporting/bug-reporter-metrics'
-import type { MapSyncCommunication, MapSyncDTO } from '../../libraries/map-sync'
 import IdentityRegistrationDTO from '../../libraries/mysterium-tequilapi/dto/identity-registration'
 
 /**
  * This allows renderer process communicating with main process.
  */
-class RendererCommunication implements MapSyncCommunication<Metric> {
+class RendererCommunication {
   _messageBus: MessageBus
 
   constructor (messageBus: MessageBus) {
@@ -83,14 +81,6 @@ class RendererCommunication implements MapSyncCommunication<Metric> {
 
   sendToggleFavoriteProvider (data: FavoriteProviderDTO): void {
     return this._send(messages.TOGGLE_FAVORITE_PROVIDER, data)
-  }
-
-  sendMapUpdate (data: MapSyncDTO<Metric>): void {
-    this._send(messages.METRIC_SYNC, data)
-  }
-
-  onMapUpdate (callback: MapSyncDTO<Metric> => void): void {
-    this._on(messages.METRIC_SYNC, callback)
   }
 
   onUserSettings (callback: UserSettings => void): void {

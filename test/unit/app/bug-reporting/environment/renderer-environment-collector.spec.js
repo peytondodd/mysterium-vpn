@@ -20,43 +20,20 @@
 import { beforeEach, describe, expect, it } from '../../../../helpers/dependencies'
 import RendererEnvironmentCollector
   from '../../../../../src/app/bug-reporting/environment/renderer-environment-collector'
-import type { SyncRendererCommunication } from '../../../../../src/app/communication/sync/sync-communication'
-import type { SerializedLogCaches } from '../../../../../src/app/logging/log-cache-bundle'
-import type { RavenData } from '../../../../../src/app/bug-reporting/bug-reporter-metrics'
-import { TAGS } from '../../../../../src/app/bug-reporting/bug-reporter-metrics'
-
-class FakeSyncRendererCommunication implements SyncRendererCommunication {
-  mockedSerializedCaches: ?SerializedLogCaches = {
-    backend: { info: 'backend info', error: 'backend error' },
-    mysterium_process: { info: 'mysterium info', error: 'mysterium error' },
-    frontend: { info: 'frontend info', error: 'frontend error' }
-  }
-  mockedSessionId: ?string = 'mock session id'
-  mockedMetrics: RavenData = {
-    tags: { [TAGS.CLIENT_RUNNING]: true },
-    extra: {}
-  }
-
-  getSerializedCaches () {
-    return this.mockedSerializedCaches
-  }
-
-  getMetrics (): RavenData {
-    return this.mockedMetrics
-  }
-
-  sendLog (dto) {
-  }
-}
+import FakeSyncRendererCommunication from '../../../../helpers/communication/fake-sync-renderer-communication'
+import BugReporterMetricsStore from '../../../../../src/app/bug-reporting/metrics/bug-reporter-metrics-store'
+import type { BugReporterMetrics } from '../../../../../src/app/bug-reporting/metrics/bug-reporter-metrics'
 
 describe('RendererEnvironmentCollector', () => {
   const releaseID = 'id of release'
   let communication: FakeSyncRendererCommunication
   let collector: RendererEnvironmentCollector
+  let metrics: BugReporterMetrics
 
   beforeEach(() => {
     communication = new FakeSyncRendererCommunication()
-    collector = new RendererEnvironmentCollector(releaseID, communication)
+    metrics = new BugReporterMetricsStore()
+    collector = new RendererEnvironmentCollector(releaseID, communication, metrics)
   })
 
   describe('.getReleaseId', () => {
@@ -82,8 +59,8 @@ describe('RendererEnvironmentCollector', () => {
   })
 
   describe('.getMetrics', () => {
-    it('returns metrics using sync communication', () => {
-      expect(collector.getMetrics()).to.eql(communication.mockedMetrics)
+    it('returns metrics from metrics storage', () => {
+      expect(collector.getMetrics()).to.eql(metrics.getMetrics())
     })
   })
 })

@@ -28,6 +28,8 @@ import SyncSenderRendererCommunication from '../../../app/communication/sync/syn
 import { SyncIpcSender } from '../../../app/communication/sync/sync-ipc'
 import type { SyncRendererCommunication } from '../../../app/communication/sync/sync-communication'
 import { createWinstonSyncComLogger } from '../../../app/logging/winston'
+import { BugReporterMetricsProxy } from '../../../app/bug-reporting/metrics/bug-reporter-metrics-proxy'
+import type { BugReporterMetrics } from '../../../app/bug-reporting/metrics/bug-reporter-metrics'
 
 function bootstrap (container: Container) {
   container.constant('bugReporter.sentryURL', 'https://f1e63dd563c34c35a56e98aa02518d40@sentry.io/300978')
@@ -48,6 +50,14 @@ function bootstrap (container: Container) {
         bugReporter.captureErrorMessage(evt.reason, evt.reason.response ? evt.reason.response.data : evt.reason)
       })
       return bugReporter
+    }
+  )
+
+  container.factory(
+    'bugReporterMetrics',
+    ['syncCommunication'],
+    (syncCommunication: SyncRendererCommunication): BugReporterMetrics => {
+      return new BugReporterMetricsProxy(syncCommunication)
     }
   )
 
@@ -73,11 +83,12 @@ function bootstrap (container: Container) {
 
   container.service(
     'environmentCollector',
-    ['mysteriumVpnReleaseID', 'syncCommunication'],
+    ['mysteriumVpnReleaseID', 'syncCommunication', 'bugReporterMetrics'],
     (
       mysteriumVpnReleaseID: string,
-      syncCommunication: SyncRendererCommunication): EnvironmentCollector => {
-      return new RendererEnvironmentCollector(mysteriumVpnReleaseID, syncCommunication)
+      syncCommunication: SyncRendererCommunication,
+      bugReporterMetrics: BugReporterMetrics): EnvironmentCollector => {
+      return new RendererEnvironmentCollector(mysteriumVpnReleaseID, syncCommunication, bugReporterMetrics)
     }
   )
 

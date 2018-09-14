@@ -21,11 +21,12 @@ import { before, describe, expect, it } from '../../helpers/dependencies'
 import SyncCallbacksInitializer from '../../../src/app/sync-callbacks-initializer'
 import type { EnvironmentCollector } from '../../../src/app/bug-reporting/environment/environment-collector'
 import type { SyncMainCommunication } from '../../../src/app/communication/sync/sync-communication'
-import type { LogDTO } from '../../../src/app/communication/dto'
+import type { LogDTO, MetricDto } from '../../../src/app/communication/dto'
 import LogCache from '../../../src/app/logging/log-cache'
 import type { SerializedLogCaches } from '../../../src/app/logging/log-cache-bundle'
-import type { RavenData } from '../../../src/app/bug-reporting/bug-reporter-metrics'
-import { TAGS } from '../../../src/app/bug-reporting/bug-reporter-metrics'
+import { METRICS, TAGS } from '../../../src/app/bug-reporting/metrics/metrics'
+import type { RavenData } from '../../../src/app/bug-reporting/metrics/metrics'
+import BugReporterMetricsStore from '../../../src/app/bug-reporting/metrics/bug-reporter-metrics-store'
 
 class MockEnvironmentCollector implements EnvironmentCollector {
   mockMysteriumVpnReleaseId = 'mock mysterium vpn release id'
@@ -57,6 +58,7 @@ class MockCommunication implements SyncMainCommunication {
   getSerializedCachesCallback: () => SerializedLogCaches
   getMetricsCallback: () => RavenData
   logCallback: (log: LogDTO) => void
+  sendMetric: (metric: MetricDto) => void
 
   onGetSerializedCaches (callback: () => SerializedLogCaches): void {
     this.getSerializedCachesCallback = callback
@@ -69,6 +71,10 @@ class MockCommunication implements SyncMainCommunication {
   onLog (callback: () => void): void {
     this.logCallback = callback
   }
+
+  onSendMetric (callback: MetricDto => void): void {
+    this.sendMetric = callback
+  }
 }
 
 describe('SyncCallbacksInitializer', () => {
@@ -76,12 +82,14 @@ describe('SyncCallbacksInitializer', () => {
   let envCollector: MockEnvironmentCollector
   let logCache: LogCache
   let initializer: SyncCallbacksInitializer
+  let metricsStore: BugReporterMetricsStore
 
   before(() => {
     communication = new MockCommunication()
     envCollector = new MockEnvironmentCollector()
     logCache = new LogCache()
-    initializer = new SyncCallbacksInitializer(communication, envCollector, logCache)
+    metricsStore = new BugReporterMetricsStore()
+    initializer = new SyncCallbacksInitializer(communication, envCollector, logCache, metricsStore)
   })
 
   describe('.initialize', () => {
@@ -98,6 +106,13 @@ describe('SyncCallbacksInitializer', () => {
       communication.logCallback({ level: 'info', data: 'test info' })
       communication.logCallback({ level: 'error', data: 'test error' })
       expect(logCache.getSerialized()).to.eql({ info: 'test info', error: 'test error' })
+    })
+
+    it('registers metrics handler', () => {
+      initializer.initialize()
+
+      communication.sendMetric({ metric: METRICS.CLIENT_RUNNING, value: true })
+      expect(metricsStore.get(METRICS.CLIENT_RUNNING)).to.be.true
     })
   })
 })

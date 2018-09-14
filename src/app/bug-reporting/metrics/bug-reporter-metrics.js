@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 The "mysteriumnetwork/mysterium-vpn" Authors.
+ * Copyright (C) 2018 The "mysteriumnetwork/mysterium-vpn" Authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,13 +17,15 @@
 
 // @flow
 
-import type { SerializedLogCaches } from '../../logging/log-cache-bundle'
-import type { RavenData } from '../metrics/metrics'
+import type { Metric, RavenData } from './metrics'
 
-interface EnvironmentCollector {
-  getReleaseId (): string,
-  getSerializedCaches (): SerializedLogCaches,
-  getMetrics (): RavenData
+/**
+ * Collects metrics data used in BugReporter.
+ */
+interface BugReporterMetrics {
+  set (metric: Metric, value: mixed): void,
+  setWithCurrentDateTime (metric: Metric): void,
+  getMetrics (): RavenData,
 }
 
-export type { EnvironmentCollector }
+export type { BugReporterMetrics }
