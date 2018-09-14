@@ -16,14 +16,8 @@
  */
 
 // @flow
-import { readFile, writeFile } from 'fs'
-import { promisify } from 'util'
-import type { ConnectionRecord, FavoriteProviders, UserSettings } from './user-settings'
-import Subscriber from '../../libraries/subscriber'
+import type { ConnectionRecord, UserSettings } from './user-settings'
 import type { Callback } from '../../libraries/subscriber'
-
-const readFileAsync = promisify(readFile)
-const writeFileAsync = promisify(writeFile)
 
 const userSettingName = {
   showDisconnectNotifications: 'showDisconnectNotifications',
@@ -33,106 +27,21 @@ const userSettingName = {
 
 type UserSettingName = $Values<typeof userSettingName>
 
-class UserSettingsStore {
-  _settings: UserSettings = {
+// TODO: use interface everywhere
+interface UserSettingsStore {
+  addConnectionRecord (connection: ConnectionRecord): void,
+  setFavorite (id: string, isFavorite: boolean): void,
+  getAll (): UserSettings,
+  onChange (property: UserSettingName, cb: Callback<any>): void
+}
+
+function getDefaultSettings (): UserSettings {
+  return {
     showDisconnectNotifications: true,
     favoriteProviders: new Set(),
     connectionRecords: []
   }
-  _path: string
-
-  _listeners: {
-    showDisconnectNotifications: Subscriber<boolean>,
-    favoriteProviders: Subscriber<FavoriteProviders>,
-    connectionRecords: Subscriber<ConnectionRecord[]>
-  } = {
-    showDisconnectNotifications: new Subscriber(),
-    favoriteProviders: new Subscriber(),
-    connectionRecords: new Subscriber()
-  }
-
-  constructor (path: string) {
-    this._path = path
-  }
-
-  async load (): Promise<void> {
-    let parsed
-    try {
-      parsed = await loadSettings(this._path)
-    } catch (e) {
-      if (isFileNotExistError(e)) {
-        return
-      }
-      throw e
-    }
-    this._settings.favoriteProviders = new Set(parsed.favoriteProviders)
-    this._settings.showDisconnectNotifications = parsed.showDisconnectNotifications
-    this._settings.connectionRecords = parsed.connectionRecords
-    this._notify(userSettingName.favoriteProviders)
-    this._notify(userSettingName.showDisconnectNotifications)
-    this._notify(userSettingName.connectionRecords)
-  }
-
-  async save (): Promise<void> {
-    return saveSettings(this._path, this._settings)
-  }
-
-  setFavorite (id: string, isFavorite: boolean) {
-    if (isFavorite === this._settings.favoriteProviders.has(id)) {
-      return // nothing changed
-    }
-
-    if (isFavorite) this._settings.favoriteProviders.add(id)
-    else this._settings.favoriteProviders.delete(id)
-    this._notify(userSettingName.favoriteProviders)
-  }
-
-  setShowDisconnectNotifications (show: boolean) {
-    this._settings.showDisconnectNotifications = show
-    this._notify(userSettingName.showDisconnectNotifications)
-  }
-
-  addConnectionRecord (connection: ConnectionRecord) {
-    this._settings.connectionRecords.push(connection)
-    this._notify(userSettingName.connectionRecords)
-  }
-
-  getAll (): UserSettings {
-    return this._settings
-  }
-
-  onChange (property: UserSettingName, cb: Callback<any>) {
-    this._listeners[property].subscribe(cb)
-  }
-
-  _notify (propertyChanged: UserSettingName) {
-    const newVal = ((this._settings[propertyChanged]): any)
-    this._listeners[propertyChanged].notify(newVal)
-  }
 }
 
-async function saveSettings (path: string, settings: UserSettings): Promise<void> {
-  const settingsString = JSON.stringify(settings)
-  await writeFileAsync(path, settingsString)
-}
-
-async function loadSettings (path: string): Promise<UserSettings> {
-  let data = await readFileAsync(path, { encoding: 'utf8' })
-  const parsedSettings = JSON.parse(data)
-
-  if (!validateUserSettings(parsedSettings)) {
-    throw new TypeError('UserSettings loading failed. Parsed Object is not of UserSettings type.')
-  }
-
-  return parsedSettings
-}
-
-function validateUserSettings (settings: Object): boolean {
-  return (typeof settings.showDisconnectNotifications === 'boolean')
-}
-
-function isFileNotExistError (error: Object): boolean {
-  return (error.code && error.code === 'ENOENT')
-}
-
-export { UserSettingsStore, userSettingName }
+export type { UserSettingsStore, UserSettingName }
+export { userSettingName, getDefaultSettings }

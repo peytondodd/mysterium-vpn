@@ -21,7 +21,7 @@ import ProposalDTO from 'mysterium-tequilapi/lib/dto/proposal'
 import type { Callback } from '../../../../src/libraries/subscriber'
 import { beforeEach, describe, expect, it } from '../../../helpers/dependencies'
 import CountryList from '../../../../src/app/data-fetchers/country-list'
-import { UserSettingsStore } from '../../../../src/app/user-settings/user-settings-store'
+import { UserSettingsStorage } from '../../../../src/app/user-settings/user-settings-storage'
 import { CallbackRecorder } from '../../../helpers/utils'
 
 class ProposalFetcherMock implements ProposalFetcher {
@@ -45,7 +45,7 @@ class ProposalFetcherMock implements ProposalFetcher {
 describe('CountryList', () => {
   let countryList, cbRec
   const proposalFetcher = new ProposalFetcherMock()
-  const store = new UserSettingsStore('')
+  const store = new UserSettingsStorage('')
 
   const proposal1 = [new ProposalDTO({ id: '1', providerId: '0x1', serviceType: 'mock' })]
   const proposal2 = [new ProposalDTO({

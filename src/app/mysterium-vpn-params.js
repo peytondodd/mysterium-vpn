@@ -21,7 +21,7 @@ import type { Installer, Process } from '../libraries/mysterium-client'
 import TequilapiRegistrationFetcher from './data-fetchers/tequilapi-registration-fetcher'
 import type { EnvironmentCollector } from './bug-reporting/environment/environment-collector'
 import ProcessMonitoring from '../libraries/mysterium-client/monitoring'
-import { UserSettingsStore } from './user-settings/user-settings-store'
+import { UserSettingsStorage } from './user-settings/user-settings-storage'
 import MainMessageBusCommunication from './communication/main-message-bus-communication'
 import MainBufferedIpc from './communication/ipc/main-buffered-ipc'
 import Terms from './terms'
@@ -56,7 +56,7 @@ export type MysteriumVpnParams = {
   logger: StringLogger,
   frontendLogCache: LogCache,
   mysteriumProcessLogCache: LogCache,
-  userSettingsStore: UserSettingsStore,
+  userSettingsStore: UserSettingsStorage,
   disconnectNotification: Notification,
   featureToggle: FeatureToggle,
   startupEventTracker: StartupEventTracker,

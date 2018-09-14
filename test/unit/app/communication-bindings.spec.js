@@ -29,7 +29,7 @@ import EmptyTequilapiClientMock from '../renderer/store/modules/empty-tequilapi-
 import FeatureToggle from '../../../src/app/features/feature-toggle'
 import BugReporterMock from '../../helpers/bug-reporter-mock'
 import factoryTequilapiManipulator from '../../helpers/mysterium-tequilapi/factory-tequilapi-manipulator'
-import { UserSettingsStore } from '../../../src/app/user-settings/user-settings-store'
+import { UserSettingsStorage } from '../../../src/app/user-settings/user-settings-storage'
 import Notification from '../../../src/app/notification'
 import ConnectionStatusEnum from 'mysterium-tequilapi/lib/dto/connection-status-enum'
 import { nextTick } from '../../helpers/utils'
@@ -43,7 +43,7 @@ class TequilapiRegistrationFetcherMock extends TequilapiRegistrationFetcher {
   }
 }
 
-class UserSettingsStoreMock extends UserSettingsStore {
+class UserSettingsStoreMock extends UserSettingsStorage {
   saveWasCalled: boolean = false
 
   async save (): Promise<void> {

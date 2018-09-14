@@ -31,7 +31,7 @@ import type { ConnectionStatsFetcher } from '../../../../src/app/connection/conn
 import type { ConnectionState } from '../../../../src/app/connection/connection-state'
 import type { Provider } from '../../../../src/app/connection/provider'
 import messages from '../../../../src/app/messages'
-import { UserSettingsStore } from '../../../../src/app/user-settings/user-settings-store'
+import { UserSettingsStorage } from '../../../../src/app/user-settings/user-settings-storage'
 import { connectionStatuses } from '../../../../src/app/user-settings/user-settings'
 
 class MockConnectionState implements ConnectionState {
@@ -78,7 +78,7 @@ describe('TequilapiConnectionEstablisher', () => {
   let fakeTequilapi = factoryTequilapiManipulator()
   let fakeEventSender: MockEventSender
   let bugReporterMock: BugReporterMock
-  let userSettingsStore: UserSettingsStore
+  let userSettingsStore: UserSettingsStorage
 
   let connectionEstablisher: TequilapiConnectionEstablisher
   let mockConnectionState: MockConnectionState
@@ -100,7 +100,7 @@ describe('TequilapiConnectionEstablisher', () => {
     fakeTequilapi = factoryTequilapiManipulator()
     fakeEventSender = new MockEventSender()
     bugReporterMock = new BugReporterMock()
-    userSettingsStore = new UserSettingsStore('')
+    userSettingsStore = new UserSettingsStorage('')
 
     const fakeApi = fakeTequilapi.getFakeApi()
     connectionEstablisher =

@@ -34,7 +34,7 @@ import type { ConnectionState } from './connection-state'
 import type { ConnectionStatsFetcher } from './connection-stats-fetcher'
 import type { ConnectDetails } from '../statistics/events-connection'
 import type { Provider } from './provider'
-import { UserSettingsStore } from '../user-settings/user-settings-store'
+import { UserSettingsStorage } from '../user-settings/user-settings-storage'
 import { connectionStatuses } from '../user-settings/user-settings'
 
 /**
@@ -44,13 +44,13 @@ class TequilapiConnectionEstablisher implements ConnectionEstablisher {
   _tequilapi: TequilapiClient
   _eventSender: EventSender
   _bugReporter: BugReporter
-  _settingsStore: UserSettingsStore
+  _settingsStore: UserSettingsStorage
 
   constructor (
     tequilapi: TequilapiClient,
     eventSender: EventSender,
     bugReporter: BugReporter,
-    settingsStore: UserSettingsStore) {
+    settingsStore: UserSettingsStorage) {
     this._tequilapi = tequilapi
     this._eventSender = eventSender
     this._bugReporter = bugReporter

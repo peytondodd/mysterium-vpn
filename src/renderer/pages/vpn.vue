@@ -87,7 +87,7 @@ export default {
     StatsDisplay,
     AppError
   },
-  dependencies: ['bugReporter', 'rendererCommunication', 'startupEventTracker'],
+  dependencies: ['bugReporter', 'rendererCommunication', 'startupEventTracker', 'userSettingsStore'],
   data () {
     return {
       country: null,
@@ -129,8 +129,7 @@ export default {
       this.country = { ...this.country, isFavorite: !this.country.isFavorite }
       this.countryList.find((c) => c.id === this.country.id).isFavorite = this.country.isFavorite
 
-      const favoriteDto = { id: this.country.id, isFavorite: this.country.isFavorite }
-      this.rendererCommunication.sendToggleFavoriteProvider(favoriteDto)
+      this.userSettingsStore.setFavorite(this.country.id, this.country.isFavorite)
     },
     onCountriesUpdate (countries) {
       this.countriesAreLoading = false

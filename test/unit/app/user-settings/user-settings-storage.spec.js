@@ -16,16 +16,17 @@
  */
 
 // @flow
-import { UserSettingsStore, userSettingName } from '../../../../src/app/user-settings/user-settings-store'
-import { describe, expect, it, after, before, beforeEach } from '../../../helpers/dependencies'
+import { userSettingName } from '../../../../src/app/user-settings/user-settings-store'
+import { after, before, beforeEach, describe, expect, it } from '../../../helpers/dependencies'
 import { tmpdir } from 'os'
 import { join } from 'path'
-import { readFileSync, writeFileSync, unlinkSync } from 'fs'
+import { readFileSync, unlinkSync, writeFileSync } from 'fs'
 import { CallbackRecorder, capturePromiseError } from '../../../helpers/utils'
 import type { ConnectionRecord, UserSettings } from '../../../../src/app/user-settings/user-settings'
 import { connectionStatuses } from '../../../../src/app/user-settings/user-settings'
+import { UserSettingsStorage } from '../../../../src/app/user-settings/user-settings-storage'
 
-describe('UserSettingsStore', () => {
+describe('UserSettingsStorage', () => {
   describe('.save', () => {
     const saveSettingsPath = join(tmpdir(), 'settings.test.saving.json')
     const invalidPath = join(tmpdir(), 'some', 'dir')
@@ -35,7 +36,7 @@ describe('UserSettingsStore', () => {
     })
 
     it('exports a valid json file', async () => {
-      const userSettingsStore = new UserSettingsStore(saveSettingsPath)
+      const userSettingsStore = new UserSettingsStorage(saveSettingsPath)
       userSettingsStore.setShowDisconnectNotifications(false)
       userSettingsStore.setFavorite('id_123', true)
       userSettingsStore.addConnectionRecord({ country: 'us', status: connectionStatuses.unsuccessful })
@@ -52,7 +53,7 @@ describe('UserSettingsStore', () => {
     })
 
     it('throws error if save() fails on invalid path to file', async () => {
-      const userSettingsStore = new UserSettingsStore(invalidPath)
+      const userSettingsStore = new UserSettingsStorage(invalidPath)
       userSettingsStore.setShowDisconnectNotifications(false)
       userSettingsStore.setFavorite('id_123', true)
       const error = await capturePromiseError(userSettingsStore.save())
@@ -81,7 +82,7 @@ describe('UserSettingsStore', () => {
       })
 
       beforeEach(() => {
-        userSettingsStore = new UserSettingsStore(loadSettingsPath)
+        userSettingsStore = new UserSettingsStorage(loadSettingsPath)
       })
 
       after(() => {
@@ -128,7 +129,7 @@ describe('UserSettingsStore', () => {
       })
 
       it('throws TypeError if parsed Object from file is not of UserSettings type', async () => {
-        const userSettingsStore = new UserSettingsStore(invalidJsonPath)
+        const userSettingsStore = new UserSettingsStorage(invalidJsonPath)
         const error = await capturePromiseError(userSettingsStore.load())
         expect(error).to.be.instanceOf(TypeError)
       })
@@ -138,7 +139,7 @@ describe('UserSettingsStore', () => {
       const invalidPath = join(tmpdir(), 'someother', 'another')
 
       it('falls back to default settings when invalid path to settings.json file is given', async () => {
-        const userSettingsStore = new UserSettingsStore(invalidPath)
+        const userSettingsStore = new UserSettingsStorage(invalidPath)
 
         await userSettingsStore.load()
         expect(userSettingsStore.getAll().showDisconnectNotifications).to.be.eql(true)
@@ -151,7 +152,7 @@ describe('UserSettingsStore', () => {
     let userSettingsStore
 
     beforeEach(() => {
-      userSettingsStore = new UserSettingsStore('')
+      userSettingsStore = new UserSettingsStorage('')
     })
 
     describe('.setShowDisconnectNotifications', async () => {

@@ -30,7 +30,7 @@ import type {
   FavoriteProviderDTO
 } from './dto'
 
-import type { UserSettings } from '../user-settings/user-settings'
+import type { UserSettings, ConnectionRecord } from '../user-settings/user-settings'
 import IdentityRegistrationDTO from 'mysterium-tequilapi/lib/dto/identity-registration'
 
 /**
@@ -81,6 +81,10 @@ class RendererCommunication {
 
   sendToggleFavoriteProvider (data: FavoriteProviderDTO): void {
     return this._send(messages.TOGGLE_FAVORITE_PROVIDER, data)
+  }
+
+  sendConnectionRecord (data: ConnectionRecord): void {
+    return this._send(messages.ADD_CONNECTION_RECORD, data)
   }
 
   onUserSettings (callback: UserSettings => void): void {

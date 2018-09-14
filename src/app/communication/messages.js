@@ -46,6 +46,7 @@ export default {
 
   TOGGLE_FAVORITE_PROVIDER: 'toggle.favorite.provider',
   SHOW_DISCONNECT_NOTIFICATION: 'show.disconnect.notification',
+  ADD_CONNECTION_RECORD: 'ADD_CONNECTION_RECORD',
 
   USER_SETTINGS: 'user.settings',
   USER_SETTINGS_REQUEST: 'user.settings.request',

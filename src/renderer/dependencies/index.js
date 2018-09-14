@@ -25,6 +25,7 @@ import eventsBootstrap from '../../dependencies/statistics'
 import paymentsBootstrap from '../../dependencies/payments'
 import vueBootstrap from './modules/vue'
 import applicationBootstrap from './modules/application'
+import userSettingsBootstrap from './modules/user-settings'
 import mysteriumTequilapiBootstrap from '../../dependencies/mysterium-tequilapi'
 
 /**
@@ -39,6 +40,7 @@ function bootstrap (): DIContainer {
   eventsBootstrap(container)
   paymentsBootstrap(container)
   vueBootstrap(container)
+  userSettingsBootstrap(container)
   applicationBootstrap(container)
   mysteriumTequilapiBootstrap(container)
 

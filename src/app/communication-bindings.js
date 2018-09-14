@@ -26,7 +26,7 @@ import ConnectionStatusEnum from 'mysterium-tequilapi/lib/dto/connection-status-
 import type { BugReporter } from './bug-reporting/interface'
 import StartupEventTracker from './statistics/startup-event-tracker'
 import logger from './logger'
-import { UserSettingsStore } from './user-settings/user-settings-store'
+import { UserSettingsStorage } from './user-settings/user-settings-storage'
 import Notification from './notification'
 import type { MainCommunication } from './communication/main-communication'
 
@@ -38,7 +38,7 @@ class CommunicationBindings {
     this._communication = communication
   }
 
-  showNotificationOnDisconnect (userSettingsStore: UserSettingsStore, disconnectNotification: Notification) {
+  showNotificationOnDisconnect (userSettingsStore: UserSettingsStorage, disconnectNotification: Notification) {
     this._communication.onConnectionStatusChange((status) => {
       const shouldShowNotification =
         userSettingsStore.getAll().showDisconnectNotifications &&
@@ -51,14 +51,14 @@ class CommunicationBindings {
     })
   }
 
-  syncFavorites (userSettingsStore: UserSettingsStore) {
+  syncFavorites (userSettingsStore: UserSettingsStorage) {
     this._communication.onToggleFavoriteProvider((fav) => {
       userSettingsStore.setFavorite(fav.id, fav.isFavorite)
       userSettingsStore.save()
     })
   }
 
-  syncShowDisconnectNotifications (userSettingsStore: UserSettingsStore) {
+  syncShowDisconnectNotifications (userSettingsStore: UserSettingsStorage) {
     this._communication.onUserSettingsRequest(() => {
       this._communication.sendUserSettings(userSettingsStore.getAll())
     })

@@ -39,7 +39,7 @@ import type { ConnectionStatsFetcher } from '../../../../../src/app/connection/c
 import type { Provider } from '../../../../../src/app/connection/provider'
 import { captureAsyncError } from '../../../../helpers/utils'
 import messages from '../../../../../src/app/messages'
-import { UserSettingsStore } from '../../../../../src/app/user-settings/user-settings-store'
+import { UserSettingsStorage } from '../../../../../src/app/user-settings/user-settings-storage'
 import { connectionStatuses } from '../../../../../src/app/user-settings/user-settings'
 
 type ConnectParams = {
@@ -216,7 +216,7 @@ describe('connection', () => {
 
     let bugReporterMock: BugReporterMock
     let mockConnectionEstablisher: MockConnectionEstablisher
-    let userSettingsStore: UserSettingsStore
+    let userSettingsStore: UserSettingsStorage
 
     async function executeAction (action, state = {}, payload = {}, getters = {}) {
       const mutations = []
@@ -248,7 +248,7 @@ describe('connection', () => {
 
       bugReporterMock = new BugReporterMock()
       mockConnectionEstablisher = new MockConnectionEstablisher()
-      userSettingsStore = new UserSettingsStore('')
+      userSettingsStore = new UserSettingsStorage('')
     })
 
     describe('START_ACTION_LOOPING', () => {

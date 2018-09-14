@@ -36,7 +36,7 @@ import ProcessMonitoring from '../libraries/mysterium-client/monitoring'
 import TequilapiProposalFetcher from './data-fetchers/tequilapi-proposal-fetcher'
 import CountryList from './data-fetchers/country-list'
 import type { BugReporter } from './bug-reporting/interface'
-import { UserSettingsStore } from './user-settings/user-settings-store'
+import { UserSettingsStorage } from './user-settings/user-settings-storage'
 import Notification from './notification'
 import type { EnvironmentCollector } from './bug-reporting/environment/environment-collector'
 import LogCache from './logging/log-cache'
@@ -70,7 +70,7 @@ class MysteriumVpn {
   _logger: StringLogger
   _frontendLogCache: LogCache
   _mysteriumProcessLogCache: LogCache
-  _userSettingsStore: UserSettingsStore
+  _userSettingsStore: UserSettingsStorage
   _disconnectNotification: Notification
   _startupEventTracker: StartupEventTracker
   _featureToggle: FeatureToggle

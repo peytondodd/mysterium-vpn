@@ -35,7 +35,7 @@ import { ConnectionStatsFetcher } from '../../../app/connection/connection-stats
 import type { ConnectionState } from '../../../app/connection/connection-state'
 import type { Provider } from '../../../app/connection/provider'
 import messages from '../../../app/messages'
-import { UserSettingsStore } from '../../../app/user-settings/user-settings-store'
+import { UserSettingsStorage } from '../../../app/user-settings/user-settings-storage'
 import { connectionStatuses } from '../../../app/user-settings/user-settings'
 
 type ConnectionStore = {
@@ -128,7 +128,7 @@ function actionsFactory (
   rendererCommunication: RendererCommunication,
   bugReporter: BugReporter,
   connectionEstablisher: ConnectionEstablisher,
-  userSettingsStore: UserSettingsStore
+  userSettingsStore: UserSettingsStorage
 ) {
   return {
     async [type.LOCATION] ({ commit }) {

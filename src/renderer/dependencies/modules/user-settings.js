@@ -17,18 +17,13 @@
 
 // @flow
 import type { Container } from '../../../app/di'
-import { UserSettingsStorage } from '../../../app/user-settings/user-settings-storage'
-import { join } from 'path'
-
-const userSettingsFilename = 'userSettings.json'
+import { UserSettingsProxy } from '../../../app/user-settings/user-settings-proxy'
 
 function bootstrap (container: Container) {
   container.factory(
     'userSettingsStore',
-    ['mysteriumVpnApplication.config'],
-    (mysteriumVpnConfig) => {
-      return new UserSettingsStorage(join(mysteriumVpnConfig.userDataDirectory, userSettingsFilename))
-    }
+    ['rendererCommunication'],
+    (rendererCommunication) => new UserSettingsProxy(rendererCommunication)
   )
 }
 
