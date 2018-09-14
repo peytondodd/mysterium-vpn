@@ -18,17 +18,19 @@
 // @flow
 
 import type { SerializedLogCaches } from '../../logging/log-cache-bundle'
-import type { LogDTO } from '../dto'
-import type { RavenData } from '../../bug-reporting/bug-reporter-metrics'
+import type { LogDTO, MetricDto } from '../dto'
+import type { RavenData } from '../../bug-reporting/metrics/metrics'
 
 interface SyncMainCommunication {
   onGetSerializedCaches (callback: () => SerializedLogCaches): void,
+  onSendMetric (callback: MetricDto => void): void,
   onGetMetrics (callback: () => RavenData): void,
   onLog (callback: () => void): void
 }
 
 interface SyncRendererCommunication {
   getSerializedCaches (): ?SerializedLogCaches,
+  sendMetric (dto: MetricDto): void,
   getMetrics (): RavenData,
   sendLog (dto: LogDTO): void
 }

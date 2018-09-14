@@ -21,8 +21,8 @@ import messages from '../messages'
 import type { SyncSender } from './sync'
 import type { SyncRendererCommunication } from './sync-communication'
 import type { SerializedLogCaches } from '../../logging/log-cache-bundle'
-import type { LogDTO } from '../dto'
-import type { RavenData } from '../../bug-reporting/bug-reporter-metrics'
+import type { LogDTO, MetricDto } from '../dto'
+import type { RavenData } from '../../bug-reporting/metrics/metrics'
 
 /**
  * Performs synchronous calls from renderer to main.
@@ -37,6 +37,10 @@ class SyncSenderRendererCommunication implements SyncRendererCommunication {
   getSerializedCaches (): ?SerializedLogCaches {
     const result = this._syncSender.send(messages.GET_SERIALIZED_CACHES)
     return ((result: any): SerializedLogCaches)
+  }
+
+  sendMetric (dto: MetricDto): void {
+    this._syncSender.send(messages.SEND_METRIC, dto)
   }
 
   getMetrics (): RavenData {

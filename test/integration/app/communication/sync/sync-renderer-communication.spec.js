@@ -24,8 +24,8 @@ import type { SyncReceiver, SyncSender } from '../../../../../src/app/communicat
 import SyncReceiverMainCommunication from '../../../../../src/app/communication/sync/sync-main-communication'
 import type { SerializedLogCaches } from '../../../../../src/app/logging/log-cache-bundle'
 import { CallbackRecorder } from '../../../../helpers/utils'
-import type { RavenData } from '../../../../../src/app/bug-reporting/bug-reporter-metrics'
-import { TAGS } from '../../../../../src/app/bug-reporting/bug-reporter-metrics'
+import type { RavenData } from '../../../../../src/app/bug-reporting/metrics/metrics'
+import { METRICS, TAGS } from '../../../../../src/app/bug-reporting/metrics/metrics'
 
 class MockSyncReceiver implements SyncReceiver {
   _subscribers: { [string]: (data?: mixed) => mixed } = new Map()
@@ -57,19 +57,25 @@ class MockSyncSender implements SyncSender {
 
 describe('SyncSenderRendererCommunication', () => {
   let receiver: MockSyncReceiver
+  let mainCommunication: SyncReceiverMainCommunication
+
   let sender: MockSyncSender
   let rendererCommunication: SyncSenderRendererCommunication
 
+  let recorder: CallbackRecorder
+
   beforeEach(() => {
     receiver = new MockSyncReceiver()
+    mainCommunication = new SyncReceiverMainCommunication(receiver)
+
     sender = new MockSyncSender(receiver)
     rendererCommunication = new SyncSenderRendererCommunication(sender)
+
+    recorder = new CallbackRecorder()
   })
 
   describe('.getSerializedCaches', () => {
     it('gets value from listener', () => {
-      const mainCommunication = new SyncReceiverMainCommunication(receiver)
-
       const mockLogs: SerializedLogCaches = {
         backend: { info: 'backend info', error: 'backend error' },
         frontend: { info: 'frontend info', error: 'frontend error' },
@@ -87,8 +93,6 @@ describe('SyncSenderRendererCommunication', () => {
 
   describe('.getMetrics', () => {
     it('gets value from listener', () => {
-      const mainCommunication = new SyncReceiverMainCommunication(receiver)
-
       const mockMetrics: RavenData = {
         extra: {},
         tags: { [TAGS.CLIENT_RUNNING]: true }
@@ -100,14 +104,21 @@ describe('SyncSenderRendererCommunication', () => {
 
   describe('.sendLog', () => {
     it('sends message to bus', () => {
-      const mainCommunication = new SyncReceiverMainCommunication(receiver)
-      const recorder = new CallbackRecorder()
-
       mainCommunication.onLog(recorder.getCallback())
       const log = { level: 'info', data: 'Testing renderer log' }
       rendererCommunication.sendLog(log)
       expect(recorder.invoked).to.be.true
       expect(recorder.firstArgument).to.eq(log)
+    })
+  })
+
+  describe('.sendMetric', () => {
+    it('sends message to bus', () => {
+      mainCommunication.onSendMetric(recorder.getCallback())
+      const metric = { metric: METRICS.CLIENT_RUNNING, value: true }
+      rendererCommunication.sendMetric(metric)
+      expect(recorder.invoked).to.be.true
+      expect(recorder.firstArgument).to.eql(metric)
     })
   })
 })

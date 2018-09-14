@@ -24,7 +24,8 @@ import { createWinstonCachingLogger } from '../../../app/logging/winston'
 import type { EnvironmentCollector } from '../../../app/bug-reporting/environment/environment-collector'
 import LogCache from '../../../app/logging/log-cache'
 import LogCacheBundle from '../../../app/logging/log-cache-bundle'
-import { BugReporterMetrics } from '../../../app/bug-reporting/bug-reporter-metrics'
+import type { BugReporterMetrics } from '../../../app/bug-reporting/metrics/bug-reporter-metrics'
+import BugReporterMetricsStore from '../../../app/bug-reporting/metrics/bug-reporter-metrics-store'
 
 function bootstrap (container: Container) {
   container.factory(
@@ -47,6 +48,12 @@ function bootstrap (container: Container) {
       const raven = Raven.config(sentryURL, config).install()
       return new BugReporterMain(raven)
     }
+  )
+
+  container.factory(
+    'bugReporterMetrics',
+    [],
+    (): BugReporterMetrics => new BugReporterMetricsStore()
   )
 
   container.factory(

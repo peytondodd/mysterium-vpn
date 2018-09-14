@@ -35,11 +35,13 @@ class ThresholdExecutor {
   _func: AsyncFunctionWithoutParams
   _threshold: number
   _canceled: boolean
+  _errorCallback: ?Function
 
-  constructor (func: AsyncFunctionWithoutParams, threshold: number) {
+  constructor (func: AsyncFunctionWithoutParams, threshold: number, errorCalback?: Function) {
     this._func = func
     this._threshold = threshold
     this._canceled = false
+    this._errorCallback = errorCalback
   }
 
   /**
@@ -48,10 +50,10 @@ class ThresholdExecutor {
    */
   async execute (): Promise<void> {
     const executionResult = await this._executeFunction()
-    await this._sleepRemainingTime(executionResult.duration)
-    if (executionResult.error) {
-      throw executionResult.error
+    if (executionResult.error && this._errorCallback) {
+      this._errorCallback(executionResult.error)
     }
+    await this._sleepRemainingTime(executionResult.duration)
   }
 
   /**
@@ -117,13 +119,13 @@ class FunctionLooper {
     const loop = async () => {
       // eslint-disable-next-line no-unmodified-loop-condition
       while (this._running) {
-        this._currentExecutor = new ThresholdExecutor(this._func, this._threshold)
+        this._currentExecutor = new ThresholdExecutor(
+          this._func,
+          this._threshold,
+          (err) => this._errorSubscriber.notify(err)
+        )
         this._currentPromise = this._currentExecutor.execute()
-        try {
-          await this._currentPromise
-        } catch (err) {
-          this._errorSubscriber.notify(err)
-        }
+        await this._currentPromise
       }
     }
     loop()

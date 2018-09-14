@@ -71,7 +71,6 @@ export default {
     }
   },
   async mounted () {
-    this.bugReporterMetrics.startSyncing(this.rendererCommunication)
     logger.setLogger(this.logger)
     logger.info('App view was mounted')
 

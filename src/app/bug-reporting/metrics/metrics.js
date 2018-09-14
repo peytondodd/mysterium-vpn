@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 The "mysteriumnetwork/mysterium-vpn" Authors.
+ * Copyright (C) 2018 The "mysteriumnetwork/mysterium-vpn" Authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,9 +16,6 @@
  */
 
 // @flow
-import { MapSync } from '../../libraries/map-sync'
-import type { MapSyncCommunication } from '../../libraries/map-sync'
-import { getCurrentTimeISOFormat } from '../../libraries/strings'
 
 /**
  * Used as default metric value in Sentry
@@ -50,49 +47,11 @@ Object.assign(METRICS, EXTRA)
 
 // alternative to: type Metric = 'identity_unlocked' | 'proposals_fetched' | 'last_health_check' ...
 type Metric = $Values<typeof METRICS>
-type keyValueMap = { [id: string]: mixed }
+type KeyValueMap = { [id: string]: mixed }
 type RavenData = {
-  tags: keyValueMap,
-  extra: keyValueMap,
+  tags: KeyValueMap,
+  extra: KeyValueMap,
 }
 
-/**
- * Collects and synchronizes data used in BugReporter
- */
-class BugReporterMetrics {
-  _mapSync: MapSync<Metric>
-
-  constructor (mapSync: MapSync<Metric>) {
-    this._mapSync = mapSync
-  }
-
-  startSyncing (communication: MapSyncCommunication<Metric>) {
-    this._mapSync.startSyncing(communication)
-  }
-
-  set (metric: Metric, value: mixed) {
-    this._mapSync.set(metric, value)
-  }
-
-  setWithCurrentDateTime (metric: Metric) {
-    this._mapSync.set(metric, getCurrentTimeISOFormat())
-  }
-
-  getMetrics (): RavenData {
-    const data = { tags: {}, extra: {} }
-    data.tags = this._getValues((Object.values(TAGS): any))
-    data.extra = this._getValues((Object.values(EXTRA): any))
-    return data
-  }
-
-  _getValues (metrics: Array<Metric>): keyValueMap {
-    const result = {}
-    for (let metric of metrics) {
-      result[metric] = this._mapSync.get(metric) || NOT_SET
-    }
-    return result
-  }
-}
-
-export { BugReporterMetrics, METRICS, NOT_SET, TAGS, EXTRA }
-export type { RavenData, Metric }
+export { METRICS, NOT_SET, TAGS, EXTRA }
+export type { RavenData, Metric, KeyValueMap }

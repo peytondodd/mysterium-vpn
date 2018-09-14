@@ -21,8 +21,8 @@ import messages from '../messages'
 import type { SyncReceiver } from './sync'
 import type { SyncMainCommunication } from './sync-communication'
 import type { SerializedLogCaches } from '../../logging/log-cache-bundle'
-import type { LogDTO } from '../dto'
-import type { RavenData } from '../../bug-reporting/bug-reporter-metrics'
+import type { LogDTO, MetricDto } from '../dto'
+import type { RavenData } from '../../bug-reporting/metrics/metrics'
 
 class SyncReceiverMainCommunication implements SyncMainCommunication {
   _syncReceiver: SyncReceiver
@@ -33,6 +33,10 @@ class SyncReceiverMainCommunication implements SyncMainCommunication {
 
   onGetSerializedCaches (callback: () => SerializedLogCaches): void {
     this._on(messages.GET_SERIALIZED_CACHES, callback)
+  }
+
+  onSendMetric (callback: MetricDto => void): void {
+    this._on(messages.SEND_METRIC, callback)
   }
 
   onGetMetrics (callback: () => RavenData): void {

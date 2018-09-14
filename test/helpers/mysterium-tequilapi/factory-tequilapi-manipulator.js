@@ -23,6 +23,7 @@ import ConnectionStatusDTO from '../../../src/libraries/mysterium-tequilapi/dto/
 import ConnectionIPDTO from '../../../src/libraries/mysterium-tequilapi/dto/connection-ip'
 import ConnectionStatisticsDTO from '../../../src/libraries/mysterium-tequilapi/dto/connection-statistics'
 import ConnectionStatusEnum from '../../../src/libraries/mysterium-tequilapi/dto/connection-status-enum'
+import IdentityRegistrationDTO from '../../../src/libraries/mysterium-tequilapi/dto/identity-registration'
 
 function factoryTequilapiManipulator () {
   let statusFail = false
@@ -32,6 +33,7 @@ function factoryTequilapiManipulator () {
   let connectFail = false
   let connectFailClosedRequest = false
   let connectionCancelFail = false
+  let identityRegistrationFail = false
 
   let errorMock = new Error('Mock error')
   const timeoutErrorMock = createMockTimeoutError()
@@ -89,6 +91,17 @@ function factoryTequilapiManipulator () {
         bytesSent: 0
       })
     }
+
+    async identityRegistration (identity: string): Promise<IdentityRegistrationDTO> {
+      if (identityRegistrationFail) {
+        throw errorMock
+      }
+      return new IdentityRegistrationDTO({
+        registered: false,
+        publicKey: { part1: 'part-1', part2: 'part-2' },
+        signature: { r: 'r', s: 's', v: 'v' }
+      })
+    }
   }
 
   return {
@@ -103,6 +116,9 @@ function factoryTequilapiManipulator () {
     },
     setIpTimeout () {
       ipTimeout = true
+    },
+    setIdentityRegistrationFail () {
+      identityRegistrationFail = true
     },
     setIpFail () {
       ipFail = true

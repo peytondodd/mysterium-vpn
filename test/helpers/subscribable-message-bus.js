@@ -22,8 +22,10 @@ import type { MessageBus, MessageBusCallback } from '../../src/app/communication
 class SubscribableMessageBus implements MessageBus {
   _callbacks: { [string]: ?MessageBusCallback } = {}
   _callbacksCount = 0
+  sentData: { channel: string, data: ?any }[] = []
 
   send (channel: string, data?: mixed): void {
+    this.sentData.push({ channel, data })
   }
 
   on (channel: string, callback: MessageBusCallback): void {
