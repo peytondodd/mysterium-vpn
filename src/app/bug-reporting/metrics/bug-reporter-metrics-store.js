@@ -33,7 +33,7 @@ class BugReporterMetricsStore implements BugReporterMetrics {
   }
 
   get (metric: Metric): mixed {
-    return this._metrics.get(metric) || 'N/A'
+    return this._metrics.get(metric) || NOT_SET
   }
 
   setWithCurrentDateTime (metric: Metric) {
