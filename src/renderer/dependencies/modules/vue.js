@@ -33,9 +33,9 @@ import TequilapiConnectionEstablisher from '../../../app/connection/tequilapi-co
 function bootstrap (container: Container) {
   container.service(
     'connectionEstablisher',
-    ['tequilapiClient', 'eventSender', 'bugReporter', 'userSettingsStore'],
-    (tequilapiClient, eventSender, bugReporter, userSettingsStore) => {
-      return new TequilapiConnectionEstablisher(tequilapiClient, eventSender, bugReporter, userSettingsStore)
+    ['tequilapiClient', 'eventSender', 'bugReporter'],
+    (tequilapiClient, eventSender, bugReporter) => {
+      return new TequilapiConnectionEstablisher(tequilapiClient, eventSender, bugReporter)
     }
   )
   container.service(
@@ -104,14 +104,13 @@ function bootstrap (container: Container) {
   )
   container.service(
     'vue-store.connection.actions',
-    ['tequilapiClient', 'rendererCommunication', 'bugReporter', 'connectionEstablisher', 'userSettingsStore'],
-    (tequilapiClient, rendererCommunication, bugReporter, connectionEstablisher, userSettingsStore) => {
+    ['tequilapiClient', 'rendererCommunication', 'bugReporter', 'connectionEstablisher'],
+    (tequilapiClient, rendererCommunication, bugReporter, connectionEstablisher) => {
       return actionsFactory(
         tequilapiClient,
         rendererCommunication,
         bugReporter,
-        connectionEstablisher,
-        userSettingsStore
+        connectionEstablisher
       )
     }
   )

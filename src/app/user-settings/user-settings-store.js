@@ -16,20 +16,18 @@
  */
 
 // @flow
-import type { ConnectionRecord, UserSettings } from './user-settings'
+import type { UserSettings } from './user-settings'
 import type { Callback } from '../../libraries/subscriber'
 
 const userSettingName = {
   showDisconnectNotifications: 'showDisconnectNotifications',
-  favoriteProviders: 'favoriteProviders',
-  connectionRecords: 'connectionRecords'
+  favoriteProviders: 'favoriteProviders'
 }
 
 type UserSettingName = $Values<typeof userSettingName>
 
 // TODO: use interface everywhere
 interface UserSettingsStore {
-  addConnectionRecord (connection: ConnectionRecord): void,
   setFavorite (id: string, isFavorite: boolean): Promise<void>,
   getAll (): UserSettings,
   onChange (property: UserSettingName, cb: Callback<any>): void
@@ -38,8 +36,7 @@ interface UserSettingsStore {
 function getDefaultSettings (): UserSettings {
   return {
     showDisconnectNotifications: true,
-    favoriteProviders: new Set(),
-    connectionRecords: []
+    favoriteProviders: new Set()
   }
 }
 

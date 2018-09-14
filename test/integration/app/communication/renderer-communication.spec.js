@@ -101,8 +101,7 @@ describe('RendererCommunication', () => {
       mainCommunication.onUserSettingsUpdate(recorder.getCallback())
       const settingsDto = {
         showDisconnectNotifications: true,
-        favoriteProviders: new Set(['id_123']),
-        connectionRecords: []
+        favoriteProviders: new Set(['id_123'])
       }
       rendererCommunication.sendUserSettingsUpdate(settingsDto)
       expect(recorder.invoked).to.be.true

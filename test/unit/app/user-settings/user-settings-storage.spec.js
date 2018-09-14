@@ -22,8 +22,7 @@ import { tmpdir } from 'os'
 import { join } from 'path'
 import { readFileSync, unlinkSync, writeFileSync } from 'fs'
 import { CallbackRecorder, capturePromiseError } from '../../../helpers/utils'
-import type { ConnectionRecord, UserSettings } from '../../../../src/app/user-settings/user-settings'
-import { connectionStatuses } from '../../../../src/app/user-settings/user-settings'
+import type { UserSettings } from '../../../../src/app/user-settings/user-settings'
 import { UserSettingsStorage } from '../../../../src/app/user-settings/user-settings-storage'
 import { unlinkSyncIfPresent } from '../../../helpers/file-system'
 
@@ -39,15 +38,12 @@ describe('UserSettingsStorage', () => {
       const userSettingsStore = new UserSettingsStorage(saveSettingsPath)
       await userSettingsStore.setShowDisconnectNotifications(false)
       await userSettingsStore.setFavorite('id_123', true)
-      userSettingsStore.addConnectionRecord({ country: 'us', status: connectionStatuses.unsuccessful })
-      await userSettingsStore.save()
       const data = readFileSync(saveSettingsPath, { encoding: 'utf8' })
 
       expect(data.toString()).to.eql(
         '{' +
         '"showDisconnectNotifications":false,' +
-        '"favoriteProviders":["id_123"],' +
-        '"connectionRecords":[{"country":"us","status":"unsuccessful"}]' +
+        '"favoriteProviders":["id_123"]' +
         '}'
       )
     })
@@ -61,10 +57,7 @@ describe('UserSettingsStorage', () => {
       before(() => {
         const settings: UserSettings = {
           showDisconnectNotifications: false,
-          favoriteProviders: new Set(['id_123']),
-          connectionRecords: [
-            { country: 'us', status: connectionStatuses.unsuccessful }
-          ]
+          favoriteProviders: new Set(['id_123'])
         }
         writeFileSync(
           loadSettingsPath,
@@ -88,21 +81,6 @@ describe('UserSettingsStorage', () => {
       it('loads favorite providers from json file', async () => {
         await userSettingsStore.load()
         expect(userSettingsStore.getAll().favoriteProviders).to.be.eql(new Set(['id_123']))
-      })
-
-      it('loads connection records from json file', async () => {
-        await userSettingsStore.load()
-        expect(userSettingsStore.getAll().connectionRecords).to.be.eql([
-          { country: 'us', status: connectionStatuses.unsuccessful }
-        ])
-      })
-
-      it('notifies subscribers about connection records change', async () => {
-        const cbRec = new CallbackRecorder()
-        userSettingsStore.onChange(userSettingName.connectionRecords, cbRec.getCallback())
-
-        await userSettingsStore.load()
-        expect(cbRec.invoked).to.be.true
       })
     })
 
@@ -204,26 +182,6 @@ describe('UserSettingsStorage', () => {
         expect(await userSettingsStore.load()).to.be.true
         const loadedSettings = userSettingsStore.getAll()
         expect(loadedSettings).to.eql(changedSettings)
-      })
-    })
-
-    describe('.addConnectionRecord', () => {
-      const connection: ConnectionRecord = { country: 'us', status: connectionStatuses.unsuccessful }
-
-      it('adds connection record to settings store', async () => {
-        userSettingsStore.addConnectionRecord(connection)
-        expect(userSettingsStore.getAll().connectionRecords).to.eql([
-          connection
-        ])
-      })
-
-      it('notifies subscribers about connection records change', () => {
-        const cbRec = new CallbackRecorder()
-
-        userSettingsStore.onChange(userSettingName.connectionRecords, cbRec.getCallback())
-        userSettingsStore.addConnectionRecord(connection)
-        expect(cbRec.invoked).to.be.true
-        expect(cbRec.firstArgument).to.eql([connection])
       })
     })
   })

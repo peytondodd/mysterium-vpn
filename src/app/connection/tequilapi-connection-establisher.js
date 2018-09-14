@@ -20,6 +20,7 @@
 import type { EventSender } from '../statistics/event-sender'
 import type { BugReporter } from '../bug-reporting/interface'
 import type { TequilapiClient } from 'mysterium-tequilapi/lib/client'
+import type { ConnectDetails } from '../statistics/events-connection'
 import { ConnectEventTracker, currentUserTime } from '../statistics/events-connection'
 import ConnectionStatusEnum from 'mysterium-tequilapi/lib/dto/connection-status-enum'
 import TequilapiError from 'mysterium-tequilapi/lib/tequilapi-error'
@@ -32,10 +33,7 @@ import type { ErrorMessage } from './error-message'
 import ConsumerLocationDTO from 'mysterium-tequilapi/lib/dto/consumer-location'
 import type { ConnectionState } from './connection-state'
 import type { ConnectionStatsFetcher } from './connection-stats-fetcher'
-import type { ConnectDetails } from '../statistics/events-connection'
 import type { Provider } from './provider'
-import { UserSettingsStorage } from '../user-settings/user-settings-storage'
-import { connectionStatuses } from '../user-settings/user-settings'
 
 /**
  * Allows connecting and disconnecting to provider using Tequilapi.
@@ -44,17 +42,14 @@ class TequilapiConnectionEstablisher implements ConnectionEstablisher {
   _tequilapi: TequilapiClient
   _eventSender: EventSender
   _bugReporter: BugReporter
-  _settingsStore: UserSettingsStorage
 
   constructor (
     tequilapi: TequilapiClient,
     eventSender: EventSender,
-    bugReporter: BugReporter,
-    settingsStore: UserSettingsStorage) {
+    bugReporter: BugReporter) {
     this._tequilapi = tequilapi
     this._eventSender = eventSender
     this._bugReporter = bugReporter
-    this._settingsStore = settingsStore
   }
 
   async connect (
@@ -85,13 +80,11 @@ class TequilapiConnectionEstablisher implements ConnectionEstablisher {
     } catch (err) {
       if (err instanceof TequilapiError && err.isRequestClosedError) {
         eventTracker.connectCanceled()
-        this._settingsStore.addConnectionRecord({ country: provider.country, status: connectionStatuses.cancelled })
         return
       }
 
       eventTracker.connectEnded('Error: Connection to node failed.')
       errorMessage.show(messages.connectFailed)
-      this._settingsStore.addConnectionRecord({ country: provider.country, status: connectionStatuses.unsuccessful })
       this._bugReporter.captureInfoException(err)
     } finally {
       if (actionLooper) {

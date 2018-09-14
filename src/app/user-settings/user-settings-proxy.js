@@ -18,7 +18,7 @@
 // @flow
 
 import RendererCommunication from '../communication/renderer-communication'
-import type { ConnectionRecord, FavoriteProviders, UserSettings } from './user-settings'
+import type { FavoriteProviders, UserSettings } from './user-settings'
 import type { Callback } from '../../libraries/subscriber'
 import Subscriber from '../../libraries/subscriber'
 import type { UserSettingName, UserSettingsStore } from './user-settings-store'
@@ -31,12 +31,10 @@ class UserSettingsProxy implements UserSettingsStore {
   // TODO: DRY
   _listeners: {
     showDisconnectNotifications: Subscriber<boolean>,
-    favoriteProviders: Subscriber<FavoriteProviders>,
-    connectionRecords: Subscriber<ConnectionRecord[]>
+    favoriteProviders: Subscriber<FavoriteProviders>
   } = {
     showDisconnectNotifications: new Subscriber(),
-    favoriteProviders: new Subscriber(),
-    connectionRecords: new Subscriber()
+    favoriteProviders: new Subscriber()
   }
 
   constructor (communication: RendererCommunication) {
@@ -44,13 +42,8 @@ class UserSettingsProxy implements UserSettingsStore {
     this._communication.onUserSettings((settings) => {
       this._settings = settings
       this._notify(userSettingName.showDisconnectNotifications)
-      this._notify(userSettingName.connectionRecords)
       this._notify(userSettingName.favoriteProviders)
     })
-  }
-
-  addConnectionRecord (connection: ConnectionRecord) {
-    this._communication.sendConnectionRecord(connection)
   }
 
   async setFavorite (id: string, isFavorite: boolean) {

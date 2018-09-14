@@ -31,8 +31,6 @@ import type { ConnectionStatsFetcher } from '../../../../src/app/connection/conn
 import type { ConnectionState } from '../../../../src/app/connection/connection-state'
 import type { Provider } from '../../../../src/app/connection/provider'
 import messages from '../../../../src/app/messages'
-import { UserSettingsStorage } from '../../../../src/app/user-settings/user-settings-storage'
-import { connectionStatuses } from '../../../../src/app/user-settings/user-settings'
 
 class MockConnectionState implements ConnectionState {
   connectionStatus: ?ConnectionStatus = null
@@ -78,7 +76,6 @@ describe('TequilapiConnectionEstablisher', () => {
   let fakeTequilapi = factoryTequilapiManipulator()
   let fakeEventSender: MockEventSender
   let bugReporterMock: BugReporterMock
-  let userSettingsStore: UserSettingsStorage
 
   let connectionEstablisher: TequilapiConnectionEstablisher
   let mockConnectionState: MockConnectionState
@@ -100,11 +97,10 @@ describe('TequilapiConnectionEstablisher', () => {
     fakeTequilapi = factoryTequilapiManipulator()
     fakeEventSender = new MockEventSender()
     bugReporterMock = new BugReporterMock()
-    userSettingsStore = new UserSettingsStorage('')
 
     const fakeApi = fakeTequilapi.getFakeApi()
     connectionEstablisher =
-      new TequilapiConnectionEstablisher(fakeApi, fakeEventSender, bugReporterMock, userSettingsStore)
+      new TequilapiConnectionEstablisher(fakeApi, fakeEventSender, bugReporterMock)
     mockConnectionState = new MockConnectionState()
     mockErrorMessage = new MockErrorMessage()
   })
@@ -175,15 +171,6 @@ describe('TequilapiConnectionEstablisher', () => {
           .connect(consumerId, provider, mockConnectionState, mockErrorMessage, location, actionLooper)
         expect(bugReporterMock.infoExceptions).to.have.lengthOf(1)
       })
-
-      it('adds unsuccessful connection record to settings store', async () => {
-        await connectionEstablisher
-          .connect(consumerId, provider, mockConnectionState, mockErrorMessage, location, actionLooper)
-        expect(userSettingsStore.getAll().connectionRecords).to.eql([{
-          country: 'us',
-          status: connectionStatuses.unsuccessful
-        }])
-      })
     })
 
     describe('when connection was cancelled', () => {
@@ -195,14 +182,6 @@ describe('TequilapiConnectionEstablisher', () => {
         await connectionEstablisher
           .connect(consumerId, provider, mockConnectionState, mockErrorMessage, location, actionLooper)
         expect(mockErrorMessage.messageShown).to.be.null
-      })
-
-      it('adds cancelled connection record', async () => {
-        await connectionEstablisher
-          .connect(consumerId, provider, mockConnectionState, mockErrorMessage, location, actionLooper)
-        expect(userSettingsStore.getAll().connectionRecords).to.eql([
-          { country: 'us', status: connectionStatuses.cancelled }
-        ])
       })
     })
   })

@@ -120,8 +120,7 @@ describe('CommunicationBindings', () => {
       expect(msgBus.sentData[0].channel).to.eql(messages.USER_SETTINGS)
       expect(msgBus.sentData[0].data).to.eql({
         showDisconnectNotifications: true,
-        favoriteProviders: new Set(),
-        connectionRecords: []
+        favoriteProviders: new Set()
       })
     })
 

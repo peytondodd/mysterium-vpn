@@ -17,7 +17,7 @@
 
 // @flow
 
-import type { ConnectionRecord, FavoriteProviders, UserSettings } from './user-settings'
+import type { FavoriteProviders, UserSettings } from './user-settings'
 import type { Callback } from '../../libraries/subscriber'
 import Subscriber from '../../libraries/subscriber'
 import type { UserSettingName, UserSettingsStore } from './user-settings-store'
@@ -34,12 +34,10 @@ class UserSettingsStorage implements UserSettingsStore {
 
   _listeners: {
     showDisconnectNotifications: Subscriber<boolean>,
-    favoriteProviders: Subscriber<FavoriteProviders>,
-    connectionRecords: Subscriber<ConnectionRecord[]>
+    favoriteProviders: Subscriber<FavoriteProviders>
   } = {
     showDisconnectNotifications: new Subscriber(),
-    favoriteProviders: new Subscriber(),
-    connectionRecords: new Subscriber()
+    favoriteProviders: new Subscriber()
   }
 
   constructor (path: string) {
@@ -62,10 +60,8 @@ class UserSettingsStorage implements UserSettingsStore {
     }
     this._settings.favoriteProviders = new Set(parsed.favoriteProviders)
     this._settings.showDisconnectNotifications = parsed.showDisconnectNotifications
-    this._settings.connectionRecords = parsed.connectionRecords
     this._notify(userSettingName.favoriteProviders)
     this._notify(userSettingName.showDisconnectNotifications)
-    this._notify(userSettingName.connectionRecords)
     return true
   }
 
@@ -89,11 +85,6 @@ class UserSettingsStorage implements UserSettingsStore {
     this._settings.showDisconnectNotifications = show
     this._notify(userSettingName.showDisconnectNotifications)
     await this.save()
-  }
-
-  addConnectionRecord (connection: ConnectionRecord) {
-    this._settings.connectionRecords.push(connection)
-    this._notify(userSettingName.connectionRecords)
   }
 
   getAll (): UserSettings {

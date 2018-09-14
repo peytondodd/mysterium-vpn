@@ -19,8 +19,7 @@
 import { userSettingName } from '../../../../src/app/user-settings/user-settings-store'
 import { beforeEach, describe, expect, it } from '../../../helpers/dependencies'
 import { CallbackRecorder } from '../../../helpers/utils'
-import type { ConnectionRecord, UserSettings } from '../../../../src/app/user-settings/user-settings'
-import { connectionStatuses } from '../../../../src/app/user-settings/user-settings'
+import type { UserSettings } from '../../../../src/app/user-settings/user-settings'
 import RendererCommunication from '../../../../src/app/communication/renderer-communication'
 import FakeMessageBus from '../../../helpers/fake-message-bus'
 import messages from '../../../../src/app/communication/messages'
@@ -36,20 +35,11 @@ describe('UserSettingsProxy', () => {
     settingsProxy = new UserSettingsProxy(com)
   })
 
-  describe('.addConnectionRecord', () => {
-    it('sends request to communication', () => {
-      const conn: ConnectionRecord = { country: 'lt', status: connectionStatuses.successful }
-      settingsProxy.addConnectionRecord(conn)
-      expect(msgBus.lastChannel).to.eql(messages.ADD_CONNECTION_RECORD)
-    })
-  })
-
   describe('.getAll', () => {
     it('returns default settings initially', () => {
       const defaultSettings: UserSettings = {
         showDisconnectNotifications: true,
-        favoriteProviders: new Set(),
-        connectionRecords: []
+        favoriteProviders: new Set()
       }
       expect(settingsProxy.getAll()).to.eql(defaultSettings)
     })
@@ -57,11 +47,7 @@ describe('UserSettingsProxy', () => {
     it('returns settings received from communication', () => {
       const updatedSettings: UserSettings = {
         showDisconnectNotifications: false,
-        favoriteProviders: new Set(),
-        connectionRecords: [{
-          country: 'lt',
-          status: connectionStatuses.successful
-        }]
+        favoriteProviders: new Set()
       }
       msgBus.triggerOn(messages.USER_SETTINGS, updatedSettings)
       expect(settingsProxy.getAll()).to.eql(updatedSettings)
@@ -88,28 +74,11 @@ describe('UserSettingsProxy', () => {
 
       const updatedSettings: UserSettings = {
         showDisconnectNotifications: false,
-        favoriteProviders: new Set(),
-        connectionRecords: []
+        favoriteProviders: new Set()
       }
       msgBus.triggerOn(messages.USER_SETTINGS, updatedSettings)
       expect(recorder.invoked).to.be.true
       expect(recorder.firstArgument).to.be.false
-    })
-
-    it('notifies about connection records change', () => {
-      settingsProxy.onChange(userSettingName.connectionRecords, recorder.getCallback())
-
-      const connectionRecords = [
-        { country: 'us', status: connectionStatuses.successful }
-      ]
-      const updatedSettings: UserSettings = {
-        showDisconnectNotifications: true,
-        favoriteProviders: new Set(),
-        connectionRecords
-      }
-      msgBus.triggerOn(messages.USER_SETTINGS, updatedSettings)
-      expect(recorder.invoked).to.be.true
-      expect(recorder.firstArgument).to.eql(connectionRecords)
     })
 
     it('notifies about favorite providers change', () => {
@@ -118,8 +87,7 @@ describe('UserSettingsProxy', () => {
       const favoriteProviders = new Set('new provider')
       const updatedSettings: UserSettings = {
         showDisconnectNotifications: true,
-        favoriteProviders: favoriteProviders,
-        connectionRecords: []
+        favoriteProviders: favoriteProviders
       }
       msgBus.triggerOn(messages.USER_SETTINGS, updatedSettings)
       expect(recorder.invoked).to.be.true

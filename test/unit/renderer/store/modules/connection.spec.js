@@ -39,8 +39,6 @@ import type { ConnectionStatsFetcher } from '../../../../../src/app/connection/c
 import type { Provider } from '../../../../../src/app/connection/provider'
 import { captureAsyncError } from '../../../../helpers/utils'
 import messages from '../../../../../src/app/messages'
-import { UserSettingsStorage } from '../../../../../src/app/user-settings/user-settings-storage'
-import { connectionStatuses } from '../../../../../src/app/user-settings/user-settings'
 
 type ConnectParams = {
   consumerId: string,
@@ -216,7 +214,6 @@ describe('connection', () => {
 
     let bugReporterMock: BugReporterMock
     let mockConnectionEstablisher: MockConnectionEstablisher
-    let userSettingsStore: UserSettingsStorage
 
     async function executeAction (action, state = {}, payload = {}, getters = {}) {
       const mutations = []
@@ -230,8 +227,7 @@ describe('connection', () => {
           fakeTequilapi.getFakeApi(),
           rendererCommunication,
           bugReporterMock,
-          mockConnectionEstablisher,
-          userSettingsStore
+          mockConnectionEstablisher
         )
 
         return actions[action](context, payload)
@@ -248,7 +244,6 @@ describe('connection', () => {
 
       bugReporterMock = new BugReporterMock()
       mockConnectionEstablisher = new MockConnectionEstablisher()
-      userSettingsStore = new UserSettingsStorage('')
     })
 
     describe('START_ACTION_LOOPING', () => {
@@ -499,87 +494,6 @@ describe('connection', () => {
 
         const committed = await executeAction(type.SET_CONNECTION_STATUS, state, ConnectionStatusEnum.CONNECTED)
         expect(committed).to.eql([])
-      })
-
-      it('adds connection record when disconnected intentionally', async () => {
-        const noop = async () => {}
-        const looper = new FunctionLooper(noop, 1000)
-        const state = {
-          status: ConnectionStatusEnum.DISCONNECTING,
-          actionLoopers: {
-            [type.CONNECTION_STATISTICS]: looper
-          },
-          lastConnectionProvider: {
-            id: 'provider id',
-            country: 'lt'
-          }
-        }
-
-        await executeAction(type.SET_CONNECTION_STATUS, state, ConnectionStatusEnum.NOT_CONNECTED)
-        expect(userSettingsStore.getAll().connectionRecords).to.eql([
-          {
-            country: 'lt',
-            status: connectionStatuses.successful
-          }
-        ])
-      })
-
-      it('adds connection record when disconnected unexpectedly', async () => {
-        const noop = async () => {}
-        const looper = new FunctionLooper(noop, 1000)
-        const state = {
-          status: ConnectionStatusEnum.CONNECTED,
-          actionLoopers: {
-            [type.CONNECTION_STATISTICS]: looper
-          },
-          lastConnectionProvider: {
-            id: 'provider id',
-            country: 'lt'
-          }
-        }
-
-        await executeAction(type.SET_CONNECTION_STATUS, state, ConnectionStatusEnum.NOT_CONNECTED)
-        expect(userSettingsStore.getAll().connectionRecords).to.eql([
-          {
-            country: 'lt',
-            status: connectionStatuses.successful
-          }
-        ])
-      })
-
-      it('does not add connection record when disconnecting starts', async () => {
-        const noop = async () => {}
-        const looper = new FunctionLooper(noop, 1000)
-        const state = {
-          status: ConnectionStatusEnum.CONNECTED,
-          actionLoopers: {
-            [type.CONNECTION_STATISTICS]: looper
-          },
-          lastConnectionProvider: {
-            id: 'provider id',
-            country: 'lt'
-          }
-        }
-
-        await executeAction(type.SET_CONNECTION_STATUS, state, ConnectionStatusEnum.DISCONNECTING)
-        expect(userSettingsStore.getAll().connectionRecords).to.be.empty
-      })
-
-      it('captures error if connection provider is not available when creating connection record', async () => {
-        const noop = async () => {}
-        const looper = new FunctionLooper(noop, 1000)
-        const state = {
-          status: ConnectionStatusEnum.DISCONNECTING,
-          actionLoopers: {
-            [type.CONNECTION_STATISTICS]: looper
-          }
-        }
-
-        await executeAction(type.SET_CONNECTION_STATUS, state, ConnectionStatusEnum.NOT_CONNECTED)
-        expect(userSettingsStore.getAll().connectionRecords).to.eql([])
-        expect(bugReporterMock.errorMessages).to.have.length(1)
-        expect(bugReporterMock.errorMessages[0].message)
-          .to.eql('connection.lastConnectionProvider was not present when connection finished')
       })
     })
 
