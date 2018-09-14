@@ -14,7 +14,6 @@
       ],
       "plugins": [
         "istanbul",
-        "transform-decorators-legacy",
         ["flow-runtime", {
           "assert": false,
           "annotate": false

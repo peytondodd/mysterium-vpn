@@ -16,7 +16,6 @@
  */
 
 // @flow
-// @flow-runtime
 
 const getPaymentLink = (paymentBaseUrl: string, registration: IdentityRegistrationDTO): string => {
   const { publicKey, signature } = registration
