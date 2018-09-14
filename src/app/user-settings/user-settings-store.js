@@ -30,7 +30,7 @@ type UserSettingName = $Values<typeof userSettingName>
 // TODO: use interface everywhere
 interface UserSettingsStore {
   addConnectionRecord (connection: ConnectionRecord): void,
-  setFavorite (id: string, isFavorite: boolean): void,
+  setFavorite (id: string, isFavorite: boolean): Promise<void>,
   getAll (): UserSettings,
   onChange (property: UserSettingName, cb: Callback<any>): void
 }

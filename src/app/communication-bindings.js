@@ -54,7 +54,6 @@ class CommunicationBindings {
   syncFavorites (userSettingsStore: UserSettingsStorage) {
     this._communication.onToggleFavoriteProvider((fav) => {
       userSettingsStore.setFavorite(fav.id, fav.isFavorite)
-      userSettingsStore.save()
     })
   }
 
@@ -65,7 +64,6 @@ class CommunicationBindings {
 
     this._communication.onUserSettingsShowDisconnectNotifications((show) => {
       userSettingsStore.setShowDisconnectNotifications(show)
-      userSettingsStore.save()
     })
   }
 

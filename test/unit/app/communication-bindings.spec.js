@@ -86,8 +86,8 @@ describe('CommunicationBindings', () => {
       expect(notif.showWasCalled).to.be.true
     })
 
-    it('it does not show notification when disconnecting with notifications disabled', () => {
-      userSettingsStore.setShowDisconnectNotifications(false)
+    it('it does not show notification when disconnecting with notifications disabled', async () => {
+      await userSettingsStore.setShowDisconnectNotifications(false)
       comBinds.showNotificationOnDisconnect(userSettingsStore, notif)
       msgBus.triggerOn(messages.CONNECTION_STATUS_CHANGED, {
         oldStatus: ConnectionStatusEnum.CONNECTED,

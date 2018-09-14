@@ -69,8 +69,8 @@ describe('UserSettingsProxy', () => {
   })
 
   describe('.setFavorite', () => {
-    it('sends message to change favorite', () => {
-      settingsProxy.setFavorite('provider id', true)
+    it('sends message to change favorite', async () => {
+      await settingsProxy.setFavorite('provider id', true)
       expect(msgBus.lastChannel).to.eql(messages.TOGGLE_FAVORITE_PROVIDER)
       expect(msgBus.lastData).to.eql({ id: 'provider id', isFavorite: true })
     })

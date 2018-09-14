@@ -53,7 +53,7 @@ class UserSettingsProxy implements UserSettingsStore {
     this._communication.sendConnectionRecord(connection)
   }
 
-  setFavorite (id: string, isFavorite: boolean): void {
+  async setFavorite (id: string, isFavorite: boolean) {
     this._communication.sendToggleFavoriteProvider({ id, isFavorite })
   }
 

@@ -19,10 +19,11 @@
 import type { ProposalFetcher } from '../../../../src/app/data-fetchers/proposal-fetcher'
 import ProposalDTO from 'mysterium-tequilapi/lib/dto/proposal'
 import type { Callback } from '../../../../src/libraries/subscriber'
-import { beforeEach, describe, expect, it } from '../../../helpers/dependencies'
+import { afterEach, beforeEach, describe, expect, it } from '../../../helpers/dependencies'
 import CountryList from '../../../../src/app/data-fetchers/country-list'
 import { UserSettingsStorage } from '../../../../src/app/user-settings/user-settings-storage'
 import { CallbackRecorder } from '../../../helpers/utils'
+import { unlinkSyncIfPresent } from '../../../helpers/file-system'
 
 class ProposalFetcherMock implements ProposalFetcher {
   _subscriber: Callback<ProposalDTO[]>
@@ -45,7 +46,8 @@ class ProposalFetcherMock implements ProposalFetcher {
 describe('CountryList', () => {
   let countryList, cbRec
   const proposalFetcher = new ProposalFetcherMock()
-  const store = new UserSettingsStorage('')
+  const settingsPath = 'settings.json'
+  const store = new UserSettingsStorage(settingsPath)
 
   const proposal1 = [new ProposalDTO({ id: '1', providerId: '0x1', serviceType: 'mock' })]
   const proposal2 = [new ProposalDTO({
@@ -60,6 +62,10 @@ describe('CountryList', () => {
     cbRec = new CallbackRecorder()
   })
 
+  afterEach(() => {
+    unlinkSyncIfPresent(settingsPath)
+  })
+
   describe('.onUpdate', () => {
     it('notifies subscribers with Country each time proposals arrive', () => {
       countryList.onUpdate(cbRec.getCallback())
@@ -72,12 +78,12 @@ describe('CountryList', () => {
       expect(cbRec.firstArgument).to.be.eql([{ id: '0x2', code: 'lt', name: 'Lithuania', isFavorite: false }])
     })
 
-    it('notifies subscribers when favorite providers change', () => {
+    it('notifies subscribers when favorite providers change', async () => {
       proposalFetcher.setFetchData(proposal2)
       proposalFetcher.fetch()
 
       countryList.onUpdate(cbRec.getCallback())
-      store.setFavorite('0x2', true)
+      await store.setFavorite('0x2', true)
       expect(cbRec.firstArgument).to.be.eql([{ id: '0x2', code: 'lt', name: 'Lithuania', isFavorite: true }])
     })
   })

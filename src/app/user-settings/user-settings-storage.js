@@ -46,13 +46,17 @@ class UserSettingsStorage implements UserSettingsStore {
     this._path = path
   }
 
-  async load (): Promise<void> {
+  /**
+   *
+   * @returns {Promise<boolean>} true if loading was done, false if file does not exist
+   */
+  async load (): Promise<boolean> {
     let parsed
     try {
       parsed = await loadSettings(this._path)
     } catch (e) {
       if (isFileNotExistError(e)) {
-        return
+        return false
       }
       throw e
     }
@@ -62,13 +66,15 @@ class UserSettingsStorage implements UserSettingsStore {
     this._notify(userSettingName.favoriteProviders)
     this._notify(userSettingName.showDisconnectNotifications)
     this._notify(userSettingName.connectionRecords)
+    return true
   }
 
+  // TODO: make this private
   async save (): Promise<void> {
     return saveSettings(this._path, this._settings)
   }
 
-  setFavorite (id: string, isFavorite: boolean) {
+  async setFavorite (id: string, isFavorite: boolean) {
     if (isFavorite === this._settings.favoriteProviders.has(id)) {
       return // nothing changed
     }
@@ -76,11 +82,13 @@ class UserSettingsStorage implements UserSettingsStore {
     if (isFavorite) this._settings.favoriteProviders.add(id)
     else this._settings.favoriteProviders.delete(id)
     this._notify(userSettingName.favoriteProviders)
+    await this.save()
   }
 
-  setShowDisconnectNotifications (show: boolean) {
+  async setShowDisconnectNotifications (show: boolean) {
     this._settings.showDisconnectNotifications = show
     this._notify(userSettingName.showDisconnectNotifications)
+    await this.save()
   }
 
   addConnectionRecord (connection: ConnectionRecord) {

@@ -129,7 +129,7 @@ export default {
       this.country = { ...this.country, isFavorite: !this.country.isFavorite }
       this.countryList.find((c) => c.id === this.country.id).isFavorite = this.country.isFavorite
 
-      this.userSettingsStore.setFavorite(this.country.id, this.country.isFavorite)
+      await this.userSettingsStore.setFavorite(this.country.id, this.country.isFavorite)
     },
     onCountriesUpdate (countries) {
       this.countriesAreLoading = false

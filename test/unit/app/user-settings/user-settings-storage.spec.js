@@ -17,7 +17,7 @@
 
 // @flow
 import { userSettingName } from '../../../../src/app/user-settings/user-settings-store'
-import { after, before, beforeEach, describe, expect, it } from '../../../helpers/dependencies'
+import { after, afterEach, before, beforeEach, describe, expect, it } from '../../../helpers/dependencies'
 import { tmpdir } from 'os'
 import { join } from 'path'
 import { readFileSync, unlinkSync, writeFileSync } from 'fs'
@@ -25,20 +25,20 @@ import { CallbackRecorder, capturePromiseError } from '../../../helpers/utils'
 import type { ConnectionRecord, UserSettings } from '../../../../src/app/user-settings/user-settings'
 import { connectionStatuses } from '../../../../src/app/user-settings/user-settings'
 import { UserSettingsStorage } from '../../../../src/app/user-settings/user-settings-storage'
+import { unlinkSyncIfPresent } from '../../../helpers/file-system'
 
 describe('UserSettingsStorage', () => {
   describe('.save', () => {
     const saveSettingsPath = join(tmpdir(), 'settings.test.saving.json')
-    const invalidPath = join(tmpdir(), 'some', 'dir')
 
     after(() => {
-      unlinkSync(saveSettingsPath)
+      unlinkSyncIfPresent(saveSettingsPath)
     })
 
     it('exports a valid json file', async () => {
       const userSettingsStore = new UserSettingsStorage(saveSettingsPath)
-      userSettingsStore.setShowDisconnectNotifications(false)
-      userSettingsStore.setFavorite('id_123', true)
+      await userSettingsStore.setShowDisconnectNotifications(false)
+      await userSettingsStore.setFavorite('id_123', true)
       userSettingsStore.addConnectionRecord({ country: 'us', status: connectionStatuses.unsuccessful })
       await userSettingsStore.save()
       const data = readFileSync(saveSettingsPath, { encoding: 'utf8' })
@@ -50,15 +50,6 @@ describe('UserSettingsStorage', () => {
         '"connectionRecords":[{"country":"us","status":"unsuccessful"}]' +
         '}'
       )
-    })
-
-    it('throws error if save() fails on invalid path to file', async () => {
-      const userSettingsStore = new UserSettingsStorage(invalidPath)
-      userSettingsStore.setShowDisconnectNotifications(false)
-      userSettingsStore.setFavorite('id_123', true)
-      const error = await capturePromiseError(userSettingsStore.save())
-
-      expect(error).to.be.an.instanceOf(Error)
     })
   })
 
@@ -150,40 +141,69 @@ describe('UserSettingsStorage', () => {
 
   describe('changing settings', () => {
     let userSettingsStore
+    const settingsPath = 'test-settings.json'
 
     beforeEach(() => {
-      userSettingsStore = new UserSettingsStorage('')
+      userSettingsStore = new UserSettingsStorage(settingsPath)
+    })
+
+    afterEach(() => {
+      unlinkSyncIfPresent(settingsPath)
     })
 
     describe('.setShowDisconnectNotifications', async () => {
-      it('sets showDisconnectNotification', () => {
-        userSettingsStore.setShowDisconnectNotifications(false)
+      it('sets showDisconnectNotification', async () => {
+        await userSettingsStore.setShowDisconnectNotifications(false)
         expect(userSettingsStore.getAll().showDisconnectNotifications).to.be.false
       })
 
-      it('notifies subscribers about showDisconnectNotifications change', () => {
+      it('notifies subscribers about showDisconnectNotifications change', async () => {
         const cbRec = new CallbackRecorder()
 
         userSettingsStore.onChange(userSettingName.showDisconnectNotifications, cbRec.getCallback())
-        userSettingsStore.setShowDisconnectNotifications(false)
+        await userSettingsStore.setShowDisconnectNotifications(false)
         expect(cbRec.invoked).to.be.true
         expect(cbRec.firstArgument).to.be.false
+      })
+
+      it('saves settings', async () => {
+        await userSettingsStore.setShowDisconnectNotifications(false)
+        const changedSettings = userSettingsStore.getAll()
+        expect(await userSettingsStore.load()).to.be.true
+        const loadedSettings = userSettingsStore.getAll()
+        expect(loadedSettings).to.eql(changedSettings)
+      })
+
+      it('throws error if saving fails on invalid path to file', async () => {
+        const invalidPath = join(tmpdir(), 'some', 'dir')
+        const userSettingsStore = new UserSettingsStorage(invalidPath)
+        const error = await capturePromiseError(userSettingsStore.setShowDisconnectNotifications(false))
+
+        expect(error).to.be.an.instanceOf(Error)
       })
     })
 
     describe('.setFavorite', () => {
-      it('adds favoriteId to settings store', () => {
-        userSettingsStore.setFavorite('0xfax', true)
+      it('adds favoriteId to settings store', async () => {
+        await userSettingsStore.setFavorite('0xfax', true)
         expect(userSettingsStore.getAll().favoriteProviders.has('0xfax')).to.be.true
       })
 
-      it('notifies subscribers about favorite add', () => {
+      it('notifies subscribers about favorite add', async () => {
         const cbRec = new CallbackRecorder()
 
         userSettingsStore.onChange(userSettingName.favoriteProviders, cbRec.getCallback())
-        userSettingsStore.setFavorite('0xfax', true)
+        await userSettingsStore.setFavorite('0xfax', true)
         expect(cbRec.invoked).to.be.true
         expect(cbRec.firstArgument.has('0xfax')).to.be.true
+      })
+
+      it('saves settings', async () => {
+        await userSettingsStore.setFavorite('0xfax', true)
+        const changedSettings = userSettingsStore.getAll()
+        expect(await userSettingsStore.load()).to.be.true
+        const loadedSettings = userSettingsStore.getAll()
+        expect(loadedSettings).to.eql(changedSettings)
       })
     })
 
