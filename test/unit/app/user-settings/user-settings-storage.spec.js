@@ -17,106 +17,14 @@
 
 // @flow
 import { userSettingName } from '../../../../src/app/user-settings/user-settings-store'
-import { after, afterEach, before, beforeEach, describe, expect, it } from '../../../helpers/dependencies'
+import { afterEach, beforeEach, describe, expect, it } from '../../../helpers/dependencies'
 import { tmpdir } from 'os'
 import { join } from 'path'
-import { readFileSync, unlinkSync, writeFileSync } from 'fs'
 import { CallbackRecorder, capturePromiseError } from '../../../helpers/utils'
-import type { UserSettings } from '../../../../src/app/user-settings/user-settings'
 import { UserSettingsStorage } from '../../../../src/app/user-settings/user-settings-storage'
 import { unlinkSyncIfPresent } from '../../../helpers/file-system'
 
 describe('UserSettingsStorage', () => {
-  describe('.save', () => {
-    const saveSettingsPath = join(tmpdir(), 'settings.test.saving.json')
-
-    after(() => {
-      unlinkSyncIfPresent(saveSettingsPath)
-    })
-
-    it('exports a valid json file', async () => {
-      const userSettingsStore = new UserSettingsStorage(saveSettingsPath)
-      await userSettingsStore.setShowDisconnectNotifications(false)
-      await userSettingsStore.setFavorite('id_123', true)
-      const data = readFileSync(saveSettingsPath, { encoding: 'utf8' })
-
-      expect(data.toString()).to.eql(
-        '{' +
-        '"showDisconnectNotifications":false,' +
-        '"favoriteProviders":["id_123"]' +
-        '}'
-      )
-    })
-  })
-
-  describe('.load', () => {
-    describe('with valid settings file', () => {
-      const loadSettingsPath = join(tmpdir(), 'settings.test.loading.json')
-      let userSettingsStore
-
-      before(() => {
-        const settings: UserSettings = {
-          showDisconnectNotifications: false,
-          favoriteProviders: new Set(['id_123'])
-        }
-        writeFileSync(
-          loadSettingsPath,
-          JSON.stringify(settings)
-        )
-      })
-
-      beforeEach(() => {
-        userSettingsStore = new UserSettingsStorage(loadSettingsPath)
-      })
-
-      after(() => {
-        unlinkSync(loadSettingsPath)
-      })
-
-      it('loads notification setting from json file', async () => {
-        await userSettingsStore.load()
-        expect(userSettingsStore.getAll().showDisconnectNotifications).to.be.eql(false)
-      })
-
-      it('loads favorite providers from json file', async () => {
-        await userSettingsStore.load()
-        expect(userSettingsStore.getAll().favoriteProviders).to.be.eql(new Set(['id_123']))
-      })
-    })
-
-    describe('with invalid settings file', () => {
-      const invalidJsonPath = join(tmpdir(), 'invalidJsonFile')
-
-      before(() => {
-        writeFileSync(
-          invalidJsonPath,
-          '{"notOfUserSettingsType":true}'
-        )
-      })
-      after(() => {
-        unlinkSync(invalidJsonPath)
-      })
-
-      it('throws TypeError if parsed Object from file is not of UserSettings type', async () => {
-        const userSettingsStore = new UserSettingsStorage(invalidJsonPath)
-        const error = await capturePromiseError(userSettingsStore.load())
-        expect(error).to.be.instanceOf(TypeError)
-      })
-    })
-
-    describe('with invalid path for settings file', () => {
-      const invalidPath = join(tmpdir(), 'someother', 'another')
-
-      it('falls back to default settings when invalid path to settings.json file is given', async () => {
-        const userSettingsStore = new UserSettingsStorage(invalidPath)
-
-        await userSettingsStore.load()
-        expect(userSettingsStore.getAll().showDisconnectNotifications).to.be.eql(true)
-        expect(userSettingsStore.getAll().favoriteProviders).to.be.eql(new Set())
-      })
-    })
-  })
-
   describe('changing settings', () => {
     let userSettingsStore
     const settingsPath = 'test-settings.json'

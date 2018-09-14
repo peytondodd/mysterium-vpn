@@ -22,11 +22,7 @@ import type { Callback } from '../../libraries/subscriber'
 import Subscriber from '../../libraries/subscriber'
 import type { UserSettingName, UserSettingsStore } from './user-settings-store'
 import { getDefaultSettings, userSettingName } from './user-settings-store'
-import { readFile, writeFile } from 'fs'
-import { promisify } from 'util'
-
-const readFileAsync = promisify(readFile)
-const writeFileAsync = promisify(writeFile)
+import { loadSettings, saveSettings } from './storage'
 
 class UserSettingsStorage implements UserSettingsStore {
   _settings: UserSettings = getDefaultSettings()
@@ -65,11 +61,6 @@ class UserSettingsStorage implements UserSettingsStore {
     return true
   }
 
-  // TODO: make this private
-  async save (): Promise<void> {
-    return saveSettings(this._path, this._settings)
-  }
-
   async setFavorite (id: string, isFavorite: boolean) {
     if (isFavorite === this._settings.favoriteProviders.has(id)) {
       return // nothing changed
@@ -78,13 +69,13 @@ class UserSettingsStorage implements UserSettingsStore {
     if (isFavorite) this._settings.favoriteProviders.add(id)
     else this._settings.favoriteProviders.delete(id)
     this._notify(userSettingName.favoriteProviders)
-    await this.save()
+    await this._save()
   }
 
   async setShowDisconnectNotifications (show: boolean) {
     this._settings.showDisconnectNotifications = show
     this._notify(userSettingName.showDisconnectNotifications)
-    await this.save()
+    await this._save()
   }
 
   getAll (): UserSettings {
@@ -95,30 +86,14 @@ class UserSettingsStorage implements UserSettingsStore {
     this._listeners[property].subscribe(cb)
   }
 
+  async _save (): Promise<void> {
+    return saveSettings(this._path, this._settings)
+  }
+
   _notify (propertyChanged: UserSettingName) {
     const newVal = ((this._settings[propertyChanged]): any)
     this._listeners[propertyChanged].notify(newVal)
   }
-}
-
-async function saveSettings (path: string, settings: UserSettings): Promise<void> {
-  const settingsString = JSON.stringify(settings)
-  await writeFileAsync(path, settingsString)
-}
-
-async function loadSettings (path: string): Promise<UserSettings> {
-  let data = await readFileAsync(path, { encoding: 'utf8' })
-  const parsedSettings = JSON.parse(data)
-
-  if (!validateUserSettings(parsedSettings)) {
-    throw new TypeError('UserSettings loading failed. Parsed Object is not of UserSettings type.')
-  }
-
-  return parsedSettings
-}
-
-function validateUserSettings (settings: Object): boolean {
-  return (typeof settings.showDisconnectNotifications === 'boolean')
 }
 
 function isFileNotExistError (error: Object): boolean {

@@ -46,7 +46,7 @@ class TequilapiRegistrationFetcherMock extends TequilapiRegistrationFetcher {
 class UserSettingsStoreMock extends UserSettingsStorage {
   saveWasCalled: boolean = false
 
-  async save (): Promise<void> {
+  async _save (): Promise<void> {
     this.saveWasCalled = true
   }
 }
