@@ -41,13 +41,14 @@ class BugReporterMetricsStore implements BugReporterMetrics {
   }
 
   getMetrics (): RavenData {
-    const data = { tags: {}, extra: {} }
-    data.tags = this._getValues((Object.values(TAGS): any))
-    data.extra = this._getValues((Object.values(EXTRA): any))
-    return data
+    const tagList: Metric[] = ((Object.values(TAGS): any))
+    const tags = this._getValues(tagList)
+    const extraList: Metric[] = (Object.values(EXTRA): any)
+    const extra = this._getValues(extraList)
+    return { tags, extra }
   }
 
-  _getValues (metrics: Array<Metric>): KeyValueMap {
+  _getValues (metrics: Metric[]): KeyValueMap {
     const result = {}
     for (let metric of metrics) {
       result[metric] = this._metrics.get(metric) || NOT_SET
