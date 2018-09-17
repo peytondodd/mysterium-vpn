@@ -27,6 +27,7 @@ import { getDefaultSettings, userSettingName } from './user-settings-store'
 class UserSettingsProxy implements UserSettingsStore {
   _communication: RendererCommunication
   _settings: UserSettings = getDefaultSettings()
+  _settingsListener: ?((UserSettings) => void) = null
 
   // TODO: DRY
   _listeners: {
@@ -39,11 +40,19 @@ class UserSettingsProxy implements UserSettingsStore {
 
   constructor (communication: RendererCommunication) {
     this._communication = communication
-    this._communication.onUserSettings((settings) => {
-      this._settings = settings
-      this._notify(userSettingName.showDisconnectNotifications)
-      this._notify(userSettingName.favoriteProviders)
-    })
+  }
+
+  startListening () {
+    this._settingsListener = (settings) => this._updateLocalUserSettings(settings)
+    this._communication.onUserSettings(this._settingsListener)
+  }
+
+  stopListening () {
+    if (this._settingsListener == null) {
+      throw new Error('UserSettingsProxy.deinitilize invoked without initialization')
+    }
+    this._communication.removeOnUserSettingsCallback(this._settingsListener)
+    this._settingsListener = null
   }
 
   async setFavorite (id: string, isFavorite: boolean) {
@@ -56,6 +65,12 @@ class UserSettingsProxy implements UserSettingsStore {
 
   onChange (property: UserSettingName, cb: Callback<any>) {
     this._listeners[property].subscribe(cb)
+  }
+
+  _updateLocalUserSettings (settings: UserSettings) {
+    this._settings = settings
+    this._notify(userSettingName.showDisconnectNotifications)
+    this._notify(userSettingName.favoriteProviders)
   }
 
   _notify (propertyChanged: UserSettingName) {

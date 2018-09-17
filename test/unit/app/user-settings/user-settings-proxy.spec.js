@@ -18,7 +18,7 @@
 // @flow
 import { userSettingName } from '../../../../src/app/user-settings/user-settings-store'
 import { beforeEach, describe, expect, it } from '../../../helpers/dependencies'
-import { CallbackRecorder } from '../../../helpers/utils'
+import { CallbackRecorder, captureError } from '../../../helpers/utils'
 import type { UserSettings } from '../../../../src/app/user-settings/user-settings'
 import RendererCommunication from '../../../../src/app/communication/renderer-communication'
 import FakeMessageBus from '../../../helpers/fake-message-bus'
@@ -33,6 +33,32 @@ describe('UserSettingsProxy', () => {
     msgBus = new FakeMessageBus()
     com = new RendererCommunication(msgBus)
     settingsProxy = new UserSettingsProxy(com)
+    settingsProxy.startListening()
+  })
+
+  describe('.stopListening', () => {
+    it('cleans up message bus', () => {
+      settingsProxy.stopListening()
+      expect(msgBus.noRemainingCallbacks()).to.be.true
+    })
+
+    it('throws error when invoked twice', () => {
+      settingsProxy.stopListening()
+      const err = captureError(() => settingsProxy.stopListening())
+      if (!(err instanceof Error)) {
+        throw new Error('Expected error')
+      }
+      expect(err.message).to.eql('UserSettingsProxy.deinitilize invoked without initialization')
+    })
+
+    it('throws error when invoked without initialization', () => {
+      const proxy = new UserSettingsProxy(com)
+      const err = captureError(() => proxy.stopListening())
+      if (!(err instanceof Error)) {
+        throw new Error('Expected error')
+      }
+      expect(err.message).to.eql('UserSettingsProxy.deinitilize invoked without initialization')
+    })
   })
 
   describe('.getAll', () => {
