@@ -21,9 +21,7 @@ import { beforeEach, describe, expect, it } from '../../../../helpers/dependenci
 import BugReporterAdapter from '../../../../../src/app/mysterium-tequilapi/adapters/bug-reporter-adapter'
 import type { HttpInterface } from '../../../../../src/libraries/mysterium-tequilapi/adapters/interface'
 import BugReporterMock from '../../../../helpers/bug-reporter-mock'
-import { captureAsyncError } from '../../../../helpers/utils'
 import MockHttpAdapter from '../../../../helpers/adapters/MockHttpAdapter'
-import TequilapiError from '../../../../../src/libraries/mysterium-tequilapi/tequilapi-error'
 
 describe('BugReporterAdapter', () => {
   let adapter: HttpInterface
@@ -47,29 +45,6 @@ describe('BugReporterAdapter', () => {
       expect(mockAdapter.lastQuery).to.eql({ key: 'value' })
       expect(mockAdapter.lastTimeout).to.eql(5)
     })
-
-    it('captures and re-throws http error', async () => {
-      const mockError = new TequilapiError(new Error('mock error'), 'mock-path')
-      mockAdapter.mockError = mockError
-
-      const err = await captureAsyncError(() => adapter.get('path'))
-
-      expect(bugReporter.infoExceptions.length).to.eql(1)
-      expect(bugReporter.infoExceptions[0].error).to.eql(mockError)
-
-      expect(err).to.eql(mockAdapter.mockError)
-    })
-
-    it('does not capture but rethrows unknown error', async () => {
-      const mockError = new Error('mock error')
-      mockAdapter.mockError = mockError
-
-      const err = await captureAsyncError(() => adapter.get('path'))
-
-      expect(bugReporter.infoExceptions.length).to.eql(0)
-
-      expect(err).to.eql(mockAdapter.mockError)
-    })
   })
 
   describe('.post', () => {
@@ -83,29 +58,6 @@ describe('BugReporterAdapter', () => {
       expect(mockAdapter.lastData).to.eql('some data')
       expect(mockAdapter.lastTimeout).to.eql(5)
     })
-
-    it('captures and re-throws http error', async () => {
-      const mockError = new TequilapiError(new Error('mock error'), 'mock-path')
-      mockAdapter.mockError = mockError
-
-      const err = await captureAsyncError(() => adapter.post('path'))
-
-      expect(bugReporter.infoExceptions.length).to.eql(1)
-      expect(bugReporter.infoExceptions[0].error).to.eql(mockError)
-
-      expect(err).to.eql(mockAdapter.mockError)
-    })
-
-    it('does not capture but rethrows unknown error', async () => {
-      const mockError = new Error('mock error')
-      mockAdapter.mockError = mockError
-
-      const err = await captureAsyncError(() => adapter.post('path'))
-
-      expect(bugReporter.infoExceptions.length).to.eql(0)
-
-      expect(err).to.eql(mockAdapter.mockError)
-    })
   })
 
   describe('.delete', () => {
@@ -117,29 +69,6 @@ describe('BugReporterAdapter', () => {
 
       expect(mockAdapter.lastPath).to.eql('path')
       expect(mockAdapter.lastTimeout).to.eql(5)
-    })
-
-    it('captures and re-throws http error', async () => {
-      const mockError = new TequilapiError(new Error('mock error'), 'mock-path')
-      mockAdapter.mockError = mockError
-
-      const err = await captureAsyncError(() => adapter.delete('path'))
-
-      expect(bugReporter.infoExceptions.length).to.eql(1)
-      expect(bugReporter.infoExceptions[0].error).to.eql(mockError)
-
-      expect(err).to.eql(mockAdapter.mockError)
-    })
-
-    it('does not capture but rethrows unknown error', async () => {
-      const mockError = new Error('mock error')
-      mockAdapter.mockError = mockError
-
-      const err = await captureAsyncError(() => adapter.delete('path'))
-
-      expect(bugReporter.infoExceptions.length).to.eql(0)
-
-      expect(err).to.eql(mockAdapter.mockError)
     })
   })
 
@@ -153,29 +82,6 @@ describe('BugReporterAdapter', () => {
       expect(mockAdapter.lastPath).to.eql('path')
       expect(mockAdapter.lastData).to.eql('some data')
       expect(mockAdapter.lastTimeout).to.eql(5)
-    })
-
-    it('captures and re-throws http error', async () => {
-      const mockError = new TequilapiError(new Error('mock error'), 'mock-path')
-      mockAdapter.mockError = mockError
-
-      const err = await captureAsyncError(() => adapter.put('path'))
-
-      expect(bugReporter.infoExceptions.length).to.eql(1)
-      expect(bugReporter.infoExceptions[0].error).to.eql(mockError)
-
-      expect(err).to.eql(mockAdapter.mockError)
-    })
-
-    it('does not capture but rethrows unknown error', async () => {
-      const mockError = new Error('mock error')
-      mockAdapter.mockError = mockError
-
-      const err = await captureAsyncError(() => adapter.put('path'))
-
-      expect(bugReporter.infoExceptions.length).to.eql(0)
-
-      expect(err).to.eql(mockAdapter.mockError)
     })
   })
 })
