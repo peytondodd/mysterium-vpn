@@ -54,7 +54,7 @@ class UserSettingsStorage implements UserSettingsStore {
       }
       throw e
     }
-    this._settings.favoriteProviders = new Set(parsed.favoriteProviders)
+    this._settings.favoriteProviders = parsed.favoriteProviders
     this._settings.showDisconnectNotifications = parsed.showDisconnectNotifications
     this._notify(userSettingName.favoriteProviders)
     this._notify(userSettingName.showDisconnectNotifications)

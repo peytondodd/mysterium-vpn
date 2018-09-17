@@ -78,8 +78,7 @@ describe('storage', () => {
 
       it('loads favorite providers from json file 2', async () => {
         const settings = await loadSettings(loadSettingsPath)
-        // TODO: create set internally
-        expect(new Set(settings.favoriteProviders)).to.be.eql(new Set(['id_123']))
+        expect(settings.favoriteProviders).to.be.eql(new Set(['id_123']))
       })
     })
 

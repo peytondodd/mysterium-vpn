@@ -32,6 +32,7 @@ async function saveSettings (path: string, settings: UserSettings): Promise<void
 async function loadSettings (path: string): Promise<UserSettings> {
   let data = await readFileAsync(path, { encoding: 'utf8' })
   const parsedSettings = JSON.parse(data)
+  parsedSettings.favoriteProviders = new Set(parsedSettings.favoriteProviders)
 
   if (!validateUserSettings(parsedSettings)) {
     throw new TypeError('UserSettings loading failed. Parsed Object is not of UserSettings type.')
