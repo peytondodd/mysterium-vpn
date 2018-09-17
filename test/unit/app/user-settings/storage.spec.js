@@ -18,7 +18,6 @@
 // @flow
 
 import { after, before, describe, expect, it } from '../../../helpers/dependencies'
-import { UserSettingsStorage } from '../../../../src/app/user-settings/user-settings-storage'
 import { tmpdir } from 'os'
 import { join } from 'path'
 import { unlinkSyncIfPresent } from '../../../helpers/file-system'
@@ -98,18 +97,6 @@ describe('storage', () => {
       it('throws TypeError if parsed Object from file is not of UserSettings type', async () => {
         const error = await capturePromiseError(loadSettings(invalidJsonPath))
         expect(error).to.be.instanceOf(TypeError)
-      })
-    })
-
-    describe('with invalid path for settings file', () => {
-      const invalidPath = join(tmpdir(), 'someother', 'another')
-
-      it('falls back to default settings when invalid path to settings.json file is given', async () => {
-        const userSettingsStore = new UserSettingsStorage(invalidPath)
-
-        await userSettingsStore.load()
-        expect(userSettingsStore.getAll().showDisconnectNotifications).to.be.eql(true)
-        expect(userSettingsStore.getAll().favoriteProviders).to.be.eql(new Set())
       })
     })
   })

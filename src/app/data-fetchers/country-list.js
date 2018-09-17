@@ -21,19 +21,19 @@ import Subscriber from '../../libraries/subscriber'
 import { getSortedCountryListFromProposals } from '../countries'
 import ProposalDTO from 'mysterium-tequilapi/lib/dto/proposal'
 import type { Callback } from '../../libraries/subscriber'
-import { UserSettingsStorage } from '../user-settings/user-settings-storage'
 import type { FavoriteProviders } from '../user-settings/user-settings'
 import type { ProposalFetcher } from './proposal-fetcher'
+import type { UserSettingsStore } from '../user-settings/user-settings-store'
 
 class CountryList {
   _proposalFetcher: ProposalFetcher
-  _userSettingsStore: UserSettingsStorage
+  _userSettingsStore: UserSettingsStore
   _listeners: Subscriber<Array<Country>> = new Subscriber()
 
   _proposals: ProposalDTO[] = []
   _favorites: FavoriteProviders = new Set()
 
-  constructor (proposalFetcher: ProposalFetcher, store: UserSettingsStorage) {
+  constructor (proposalFetcher: ProposalFetcher, store: UserSettingsStore) {
     this._proposalFetcher = proposalFetcher
     this._userSettingsStore = store
     this._subscribeToProposalFetches()

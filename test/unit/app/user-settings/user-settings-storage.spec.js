@@ -25,6 +25,20 @@ import { UserSettingsStorage } from '../../../../src/app/user-settings/user-sett
 import { unlinkSyncIfPresent } from '../../../helpers/file-system'
 
 describe('UserSettingsStorage', () => {
+  describe('.load', () => {
+    describe('with invalid path for settings file', () => {
+      const invalidPath = join(tmpdir(), 'someother', 'another')
+
+      it('falls back to default settings', async () => {
+        const userSettingsStore = new UserSettingsStorage(invalidPath)
+
+        await userSettingsStore.load()
+        expect(userSettingsStore.getAll().showDisconnectNotifications).to.be.eql(true)
+        expect(userSettingsStore.getAll().favoriteProviders).to.be.eql(new Set())
+      })
+    })
+  })
+
   describe('changing settings', () => {
     let userSettingsStore
     const settingsPath = 'test-settings.json'

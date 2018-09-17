@@ -24,6 +24,7 @@ import CountryList from '../../../../src/app/data-fetchers/country-list'
 import { UserSettingsStorage } from '../../../../src/app/user-settings/user-settings-storage'
 import { CallbackRecorder } from '../../../helpers/utils'
 import { unlinkSyncIfPresent } from '../../../helpers/file-system'
+import type { UserSettingsStore } from '../../../../src/app/user-settings/user-settings-store'
 
 class ProposalFetcherMock implements ProposalFetcher {
   _subscriber: Callback<ProposalDTO[]>
@@ -47,7 +48,7 @@ describe('CountryList', () => {
   let countryList, cbRec
   const proposalFetcher = new ProposalFetcherMock()
   const settingsPath = 'settings.json'
-  const store = new UserSettingsStorage(settingsPath)
+  const store: UserSettingsStore = new UserSettingsStorage(settingsPath)
 
   const proposal1 = [new ProposalDTO({ id: '1', providerId: '0x1', serviceType: 'mock' })]
   const proposal2 = [new ProposalDTO({

@@ -26,7 +26,6 @@ const userSettingName = {
 
 type UserSettingName = $Values<typeof userSettingName>
 
-// TODO: use interface everywhere
 interface UserSettingsStore {
   setFavorite (id: string, isFavorite: boolean): Promise<void>,
   setShowDisconnectNotifications (show: boolean): Promise<void>,
