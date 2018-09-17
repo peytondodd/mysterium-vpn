@@ -18,7 +18,7 @@
 // @flow
 
 import { beforeEach, describe, expect, it } from '../../../../helpers/dependencies'
-import BugReporterAdapter from '../../../../../src/app/mysterium-tequilapi/adapters/bug-reporter-adapter'
+import LoggerAdapter from '../../../../../src/app/mysterium-tequilapi/adapters/logger-adapter'
 import type { HttpInterface } from '../../../../../src/libraries/mysterium-tequilapi/adapters/interface'
 import BugReporterMock from '../../../../helpers/bug-reporter-mock'
 import MockHttpAdapter from '../../../../helpers/adapters/MockHttpAdapter'
@@ -31,7 +31,7 @@ describe('BugReporterAdapter', () => {
   beforeEach(() => {
     bugReporter = new BugReporterMock()
     mockAdapter = new MockHttpAdapter()
-    adapter = new BugReporterAdapter(mockAdapter, bugReporter)
+    adapter = new LoggerAdapter(mockAdapter, bugReporter)
   })
 
   describe('.get', () => {

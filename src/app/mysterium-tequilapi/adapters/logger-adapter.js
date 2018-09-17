@@ -25,7 +25,7 @@ import logger from '../../logger'
 /**
  * Delegates to other 'HttpInterface' and captures errors to 'BugReporter'.
  */
-class BugReporterAdapter implements HttpInterface {
+class LoggerAdapter implements HttpInterface {
   _adapter: HttpInterface
   _bugReporter: BugReporter
 
@@ -66,4 +66,4 @@ class BugReporterAdapter implements HttpInterface {
   }
 }
 
-export default BugReporterAdapter
+export default LoggerAdapter
