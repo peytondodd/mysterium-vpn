@@ -19,7 +19,6 @@
 
 import type { HttpInterface, HttpQueryParams } from '../../../libraries/mysterium-tequilapi/adapters/interface'
 import type { BugReporter } from '../../bug-reporting/interface'
-import TequilapiError from '../../../libraries/mysterium-tequilapi/tequilapi-error'
 import logger from '../../logger'
 
 /**
@@ -58,9 +57,7 @@ class LoggerAdapter implements HttpInterface {
     try {
       return await func()
     } catch (err) {
-      if (err instanceof TequilapiError) {
-        logger.info(err)
-      }
+      logger.info(err)
       throw err
     }
   }
