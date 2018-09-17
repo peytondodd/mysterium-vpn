@@ -18,7 +18,6 @@
 // @flow
 
 import type { HttpInterface, HttpQueryParams } from '../../../libraries/mysterium-tequilapi/adapters/interface'
-import type { BugReporter } from '../../bug-reporting/interface'
 import logger from '../../logger'
 
 /**
@@ -26,11 +25,9 @@ import logger from '../../logger'
  */
 class LoggerAdapter implements HttpInterface {
   _adapter: HttpInterface
-  _bugReporter: BugReporter
 
-  constructor (adapter: HttpInterface, bugReporter: BugReporter) {
+  constructor (adapter: HttpInterface) {
     this._adapter = adapter
-    this._bugReporter = bugReporter
   }
 
   async get (path: string, query: ?HttpQueryParams, timeout: ?number): Promise<?any> {

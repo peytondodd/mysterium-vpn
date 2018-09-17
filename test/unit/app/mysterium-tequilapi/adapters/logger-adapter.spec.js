@@ -20,18 +20,15 @@
 import { beforeEach, describe, expect, it } from '../../../../helpers/dependencies'
 import LoggerAdapter from '../../../../../src/app/mysterium-tequilapi/adapters/logger-adapter'
 import type { HttpInterface } from '../../../../../src/libraries/mysterium-tequilapi/adapters/interface'
-import BugReporterMock from '../../../../helpers/bug-reporter-mock'
 import MockHttpAdapter from '../../../../helpers/adapters/MockHttpAdapter'
 
 describe('LoggerAdapter', () => {
   let adapter: HttpInterface
   let mockAdapter: MockHttpAdapter
-  let bugReporter: BugReporterMock
 
   beforeEach(() => {
-    bugReporter = new BugReporterMock()
     mockAdapter = new MockHttpAdapter()
-    adapter = new LoggerAdapter(mockAdapter, bugReporter)
+    adapter = new LoggerAdapter(mockAdapter)
   })
 
   describe('.get', () => {
