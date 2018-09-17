@@ -77,11 +77,10 @@
 <script>
 
 import { shell } from 'electron'
-import { getPaymentLink } from '../../libraries/mysterium-tequilapi/dto/identity-registration'
 
 export default {
   name: 'IdentityRegistration',
-  dependencies: ['rendererCommunication', 'paymentBaseUrl'],
+  dependencies: ['rendererCommunication', 'getPaymentLink'],
   data () {
     return {
       registration: null,
@@ -97,7 +96,7 @@ export default {
       }
     },
     openPaymentsUrl () {
-      const url = getPaymentLink(this.paymentBaseUrl, this.registration)
+      const url = this.getPaymentLink(this.registration)
       shell.openExternal(url)
     }
   },
