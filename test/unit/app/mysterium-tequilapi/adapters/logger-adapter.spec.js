@@ -23,7 +23,7 @@ import type { HttpInterface } from '../../../../../src/libraries/mysterium-tequi
 import BugReporterMock from '../../../../helpers/bug-reporter-mock'
 import MockHttpAdapter from '../../../../helpers/adapters/MockHttpAdapter'
 
-describe('BugReporterAdapter', () => {
+describe('LoggerAdapter', () => {
   let adapter: HttpInterface
   let mockAdapter: MockHttpAdapter
   let bugReporter: BugReporterMock
