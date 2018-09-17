@@ -22,6 +22,7 @@ import FakeMessageBus from '../../../helpers/fake-message-bus'
 import DisconnectNotificationSetting from '@/components/disconnect-notification-setting'
 import { afterEach, beforeEach } from '../../../helpers/dependencies'
 import messages from '../../../../src/app/communication/messages'
+import { UserSettingsProxy } from '../../../../src/app/user-settings/user-settings-proxy'
 
 // TODO: extract this out to DRY with other occurances
 function mountWith (rendererCommunication) {
@@ -29,6 +30,7 @@ function mountWith (rendererCommunication) {
 
   const dependencies = new DIContainer(vue)
   dependencies.constant('rendererCommunication', rendererCommunication)
+  dependencies.constant('userSettingsStore', new UserSettingsProxy(rendererCommunication))
 
   return mount(DisconnectNotificationSetting, {
     localVue: vue

@@ -59,6 +59,10 @@ class UserSettingsProxy implements UserSettingsStore {
     this._communication.sendToggleFavoriteProvider({ id, isFavorite })
   }
 
+  async setShowDisconnectNotifications (show: boolean) {
+    this._communication.sendUserSettingsShowDisconnectNotifications(show)
+  }
+
   getAll (): UserSettings {
     return this._settings
   }

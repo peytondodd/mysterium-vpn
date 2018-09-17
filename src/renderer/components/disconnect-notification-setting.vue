@@ -35,13 +35,14 @@
 <script>
 export default {
   name: 'DisconnectNotificationSetting',
-  dependencies: ['rendererCommunication'],
+  dependencies: ['rendererCommunication', 'userSettingsStore'],
   data () {
     return {
       isDisconnectNotificationEnabled: true
     }
   },
   mounted () {
+    // TODO: use store
     this.rendererCommunication.onUserSettings(this.updateUserSettings)
     this.rendererCommunication.sendUserSettingsRequest()
   },
@@ -51,7 +52,7 @@ export default {
   methods: {
     toggle () {
       this.isDisconnectNotificationEnabled = !this.isDisconnectNotificationEnabled
-      this.rendererCommunication.sendUserSettingsShowDisconnectNotifications(this.isDisconnectNotificationEnabled)
+      this.userSettingsStore.setShowDisconnectNotifications(this.isDisconnectNotificationEnabled)
     },
     updateUserSettings (settings) {
       this.isDisconnectNotificationEnabled = settings.showDisconnectNotifications

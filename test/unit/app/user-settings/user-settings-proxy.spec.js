@@ -88,6 +88,14 @@ describe('UserSettingsProxy', () => {
     })
   })
 
+  describe('.setShowDisconnectNotifications', () => {
+    it('sends message to set value', async () => {
+      await settingsProxy.setShowDisconnectNotifications(false)
+      expect(msgBus.lastChannel).to.eql(messages.SHOW_DISCONNECT_NOTIFICATION)
+      expect(msgBus.lastData).to.eql(false)
+    })
+  })
+
   describe('.onChange', () => {
     let recorder
 
