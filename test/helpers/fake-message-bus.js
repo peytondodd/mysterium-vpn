@@ -27,6 +27,7 @@ export default class FakeMessageBus extends SubscribableMessageBus {
     this.lastData = data
   }
 
+  // TODO: remove this method, create new instances instead
   clean () {
     this.lastChannel = null
     this.lastData = null
