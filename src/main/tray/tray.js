@@ -20,8 +20,8 @@ import path from 'path'
 import { Tray as ElectronTray } from 'electron'
 import TrayMenuBuilder from './menu-builder'
 import translations from './translations'
-import ConnectionStatusEnum from '../../libraries/mysterium-tequilapi/dto/connection-status-enum'
-import type { ConnectionStatus } from '../../libraries/mysterium-tequilapi/dto/connection-status-enum'
+import ConnectionStatusEnum from 'mysterium-tequilapi/lib/dto/connection-status-enum'
+import type { ConnectionStatus } from 'mysterium-tequilapi/lib/dto/connection-status-enum'
 import type { Country } from '../../app/countries'
 
 const TrayIcon = {

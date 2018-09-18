@@ -24,7 +24,7 @@ import processLogLevels from '../../../../../src/libraries/mysterium-client/log-
 import { describe, xdescribe, it, before, after, expect } from '../../../../helpers/dependencies'
 import path from 'path'
 import os from 'os'
-import TequilapiClientFactory from '../../../../../src/libraries/mysterium-tequilapi/tequilapi-client-factory'
+import TequilapiClientFactory from 'mysterium-tequilapi/lib/tequilapi-client-factory'
 
 xdescribe('Standalone Process', () => {
   let process, tequilapi

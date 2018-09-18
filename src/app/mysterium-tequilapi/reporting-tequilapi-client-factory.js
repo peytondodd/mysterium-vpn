@@ -17,10 +17,10 @@
 
 // @flow
 
-import TequilapiClientFactory, { TEQUILAPI_URL } from '../../libraries/mysterium-tequilapi/tequilapi-client-factory'
-import type { HttpInterface } from '../../libraries/mysterium-tequilapi/adapters/interface'
+import TequilapiClientFactory, { TEQUILAPI_URL } from 'mysterium-tequilapi'
+import type { HttpInterface } from 'mysterium-tequilapi/lib/adapters/interface'
 import LoggerAdapter from './adapters/logger-adapter'
-import { TIMEOUT_DEFAULT } from '../../libraries/mysterium-tequilapi/timeouts'
+import { TIMEOUT_DEFAULT } from 'mysterium-tequilapi/lib/timeouts'
 import logger from '../logger'
 
 class ReportingTequilapiClientFactory extends TequilapiClientFactory {

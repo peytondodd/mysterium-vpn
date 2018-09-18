@@ -20,8 +20,8 @@
 import { before, beforeEach, after, describe, expect, it } from '../../../helpers/dependencies'
 import lolex from 'lolex'
 import EmptyTequilapiClientMock from '../../renderer/store/modules/empty-tequilapi-client-mock'
-import NodeBuildInfoDTO from '../../../../src/libraries/mysterium-tequilapi/dto/node-build-info'
-import type { NodeHealthcheckDTO } from '../../../../src/libraries/mysterium-tequilapi/dto/node-healthcheck'
+import NodeBuildInfoDTO from 'mysterium-tequilapi/lib/dto/node-build-info'
+import type { NodeHealthcheckDTO } from 'mysterium-tequilapi/lib/dto/node-healthcheck'
 import Monitoring, { waitForStatusUp } from '../../../../src/libraries/mysterium-client/monitoring'
 import { captureAsyncError, nextTick } from '../../../helpers/utils'
 

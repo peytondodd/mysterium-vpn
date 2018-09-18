@@ -17,8 +17,8 @@
 
 import { describe, it } from '../../../../helpers/dependencies'
 import { expect } from 'chai'
-import IdentitiesResponseDTO from '../../../../../src/libraries/mysterium-tequilapi/dto/identities-response'
-import IdentityDTO from '../../../../../src/libraries/mysterium-tequilapi/dto/identity'
+import IdentitiesResponseDTO from 'mysterium-tequilapi/lib/dto/identities-response'
+import IdentityDTO from 'mysterium-tequilapi/lib/dto/identity'
 
 describe('TequilapiClient DTO', () => {
   describe('IdentitiesResponseDTO', () => {

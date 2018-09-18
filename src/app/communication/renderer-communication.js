@@ -31,7 +31,7 @@ import type {
 } from './dto'
 
 import type { UserSettings } from '../user-settings/user-settings'
-import IdentityRegistrationDTO from '../../libraries/mysterium-tequilapi/dto/identity-registration'
+import IdentityRegistrationDTO from 'mysterium-tequilapi/lib/dto/identity-registration'
 
 /**
  * This allows renderer process communicating with main process.

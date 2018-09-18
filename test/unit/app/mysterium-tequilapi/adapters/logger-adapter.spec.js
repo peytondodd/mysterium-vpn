@@ -19,7 +19,7 @@
 
 import { beforeEach, describe, expect, it } from '../../../../helpers/dependencies'
 import LoggerAdapter from '../../../../../src/app/mysterium-tequilapi/adapters/logger-adapter'
-import type { HttpInterface } from '../../../../../src/libraries/mysterium-tequilapi/adapters/interface'
+import type { HttpInterface } from 'mysterium-tequilapi/lib/adapters/interface'
 import MockHttpAdapter from '../../../../helpers/adapters/MockHttpAdapter'
 import type { StringLogger } from '../../../../../src/app/logging/string-logger'
 import { Logger } from '../../../../../src/app/logger'

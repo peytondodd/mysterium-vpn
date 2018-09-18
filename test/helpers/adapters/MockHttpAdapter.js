@@ -17,7 +17,7 @@
 
 // @flow
 
-import type { HttpInterface, HttpQueryParams } from '../../../src/libraries/mysterium-tequilapi/adapters/interface'
+import type { HttpInterface, HttpQueryParams } from 'mysterium-tequilapi/lib/adapters/interface'
 
 class MockHttpAdapter implements HttpInterface {
   mockError: ?Error = null

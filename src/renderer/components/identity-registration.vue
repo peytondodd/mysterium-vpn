@@ -77,7 +77,7 @@
 <script>
 
 import { shell } from 'electron'
-import { getPaymentLink } from '../../libraries/mysterium-tequilapi/dto/identity-registration'
+import { getPaymentLink } from 'mysterium-tequilapi/lib/dto/identity-registration'
 
 export default {
   name: 'IdentityRegistration',

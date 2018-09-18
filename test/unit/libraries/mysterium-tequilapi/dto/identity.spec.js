@@ -16,7 +16,7 @@
  */
 
 import { expect } from 'chai'
-import IdentityDTO from '../../../../../src/libraries/mysterium-tequilapi/dto/identity'
+import IdentityDTO from 'mysterium-tequilapi/lib/dto/identity'
 
 describe('TequilapiClient DTO', () => {
   describe('IdentityDTO', () => {

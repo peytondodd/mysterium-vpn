@@ -31,7 +31,7 @@ import BugReporterMock from '../../helpers/bug-reporter-mock'
 import factoryTequilapiManipulator from '../../helpers/mysterium-tequilapi/factory-tequilapi-manipulator'
 import { UserSettingsStore } from '../../../src/app/user-settings/user-settings-store'
 import Notification from '../../../src/app/notification'
-import ConnectionStatusEnum from '../../../src/libraries/mysterium-tequilapi/dto/connection-status-enum'
+import ConnectionStatusEnum from 'mysterium-tequilapi/lib/dto/connection-status-enum'
 import { nextTick } from '../../helpers/utils'
 
 class TequilapiRegistrationFetcherMock extends TequilapiRegistrationFetcher {

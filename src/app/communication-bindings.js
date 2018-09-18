@@ -17,12 +17,12 @@
 
 // @flow
 
-import IdentityRegistrationDTO from '../libraries/mysterium-tequilapi/dto/identity-registration'
+import IdentityRegistrationDTO from 'mysterium-tequilapi/lib/dto/identity-registration'
 import type { CurrentIdentityChangeDTO } from './communication/dto'
 import TequilapiRegistrationFetcher from './data-fetchers/tequilapi-registration-fetcher'
-import IdentityDTO from '../libraries/mysterium-tequilapi/dto/identity'
+import IdentityDTO from 'mysterium-tequilapi/lib/dto/identity'
 import FeatureToggle from './features/feature-toggle'
-import ConnectionStatusEnum from '../libraries/mysterium-tequilapi/dto/connection-status-enum'
+import ConnectionStatusEnum from 'mysterium-tequilapi/lib/dto/connection-status-enum'
 import type { BugReporter } from './bug-reporting/interface'
 import StartupEventTracker from './statistics/startup-event-tracker'
 import logger from './logger'

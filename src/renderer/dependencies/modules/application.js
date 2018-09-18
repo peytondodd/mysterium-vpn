@@ -21,7 +21,7 @@ import RendererCommunication from '../../../app/communication/renderer-communica
 import RendererIpc from '../../../app/communication/ipc/renderer-ipc'
 import { remote } from 'electron'
 import VpnInitializer from '../../../app/vpn-initializer'
-import type { TequilapiClient } from '../../../libraries/mysterium-tequilapi/client'
+import type { TequilapiClient } from 'mysterium-tequilapi/lib/client'
 import realSleep from '../../../libraries/sleep'
 import IpcMessageBus from '../../../app/communication/ipc-message-bus'
 

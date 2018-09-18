@@ -17,8 +17,8 @@
 
 // @flow
 import type from '../types'
-import type { TequilapiClient } from '../../../libraries/mysterium-tequilapi/client'
-import IdentityDTO from '../../../libraries/mysterium-tequilapi/dto/identity'
+import type { TequilapiClient } from 'mysterium-tequilapi/lib/client'
+import IdentityDTO from 'mysterium-tequilapi/lib/dto/identity'
 import type { Container } from '../../../app/di'
 
 type State = {

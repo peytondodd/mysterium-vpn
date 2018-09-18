@@ -20,7 +20,7 @@
 import { describe, expect, it } from '../../../../helpers/dependencies'
 import { getters } from '../../../../../src/renderer/store/modules/identity'
 import type { State } from '../../../../../src/renderer/store/modules/identity'
-import IdentityDTO from '../../../../../src/libraries/mysterium-tequilapi/dto/identity'
+import IdentityDTO from 'mysterium-tequilapi/lib/dto/identity'
 import { captureError } from '../../../../helpers/utils'
 
 describe('getters', () => {

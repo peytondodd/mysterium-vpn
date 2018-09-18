@@ -17,7 +17,7 @@
 
 // @flow
 
-import IdentityDTO from '../../libraries/mysterium-tequilapi/dto/identity'
+import IdentityDTO from 'mysterium-tequilapi/lib/dto/identity'
 
 export interface BugReporter {
   setUser (IdentityDTO): void,

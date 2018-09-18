@@ -18,11 +18,11 @@
 // @flow
 
 import { beforeEach, describe, expect, it } from '../../../helpers/dependencies'
-import ConnectionStatusEnum from '../../../../src/libraries/mysterium-tequilapi/dto/connection-status-enum'
+import ConnectionStatusEnum from 'mysterium-tequilapi/lib/dto/connection-status-enum'
 import MockEventSender from '../../../helpers/statistics/mock-event-sender'
 import BugReporterMock from '../../../helpers/bug-reporter-mock'
-import ConsumerLocationDTO from '../../../../src/libraries/mysterium-tequilapi/dto/consumer-location'
-import type { ConnectionStatus } from '../../../../src/libraries/mysterium-tequilapi/dto/connection-status-enum'
+import ConsumerLocationDTO from 'mysterium-tequilapi/lib/dto/consumer-location'
+import type { ConnectionStatus } from 'mysterium-tequilapi/lib/dto/connection-status-enum'
 import factoryTequilapiManipulator from '../../../helpers/mysterium-tequilapi/factory-tequilapi-manipulator'
 import TequilapiConnectionEstablisher from '../../../../src/app/connection/tequilapi-connection-establisher'
 import type { ErrorMessage } from '../../../../src/app/connection/error-message'

@@ -16,8 +16,8 @@
  */
 
 import { expect } from 'chai'
-import { parseHealthcheckResponse } from '../../../../../src/libraries/mysterium-tequilapi/dto/node-healthcheck'
-import NodeBuildInfoDTO from '../../../../../src/libraries/mysterium-tequilapi/dto/node-build-info'
+import { parseHealthcheckResponse } from 'mysterium-tequilapi/lib/dto/node-healthcheck'
+import NodeBuildInfoDTO from 'mysterium-tequilapi/lib/dto/node-build-info'
 import { captureError } from '../../../../helpers/utils'
 
 describe('TequilapiClient DTO', () => {

@@ -17,7 +17,7 @@
 
 // @flow
 
-import type { HttpInterface, HttpQueryParams } from '../../../libraries/mysterium-tequilapi/adapters/interface'
+import type { HttpInterface, HttpQueryParams } from 'mysterium-tequilapi/lib/adapters/interface'
 import { Logger } from '../../logger'
 
 /**
