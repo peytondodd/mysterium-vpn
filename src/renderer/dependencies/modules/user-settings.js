@@ -23,7 +23,11 @@ function bootstrap (container: Container) {
   container.factory(
     'userSettingsStore',
     ['rendererCommunication'],
-    (rendererCommunication) => new UserSettingsProxy(rendererCommunication)
+    (rendererCommunication) => {
+      const proxy = new UserSettingsProxy(rendererCommunication)
+      proxy.startListening()
+      return proxy
+    }
   )
 }
 
