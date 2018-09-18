@@ -54,8 +54,18 @@ describe('TequilapiProposalFetcher', () => {
   let clock
   const interval = 1001
   const tequilapi = new IdentityTequilapiClientMock([
-    new ProposalDTO({ id: '0x1' }),
-    new ProposalDTO({ id: '0x2' })
+    new ProposalDTO({
+      id: '0x1',
+      providerId: '0x1',
+      serviceType: 'openvpn',
+      serviceDefinition: {}
+    }),
+    new ProposalDTO({
+      id: '0x2',
+      providerId: '0x2',
+      serviceType: 'openvpn',
+      serviceDefinition: {}
+    })
   ])
   let fetcher
 
@@ -102,8 +112,18 @@ describe('TequilapiProposalFetcher', () => {
       await tickWithDelay(1000)
 
       expect(proposals.length).to.equal(2)
-      expect(proposals[0]).to.deep.equal(new ProposalDTO({ id: '0x1' }))
-      expect(proposals[1]).to.deep.equal(new ProposalDTO({ id: '0x2' }))
+      expect(proposals[0]).to.deep.equal({
+        id: '0x1',
+        providerId: '0x1',
+        serviceType: 'openvpn',
+        serviceDefinition: {}
+      })
+      expect(proposals[1]).to.deep.equal({
+        id: '0x2',
+        providerId: '0x2',
+        serviceType: 'openvpn',
+        serviceDefinition: {}
+      })
     })
 
     describe('when proposal fetching fails', () => {
@@ -157,8 +177,18 @@ describe('TequilapiProposalFetcher', () => {
       const proposals = await fetcher.fetch()
 
       expect(proposals.length).to.equal(2)
-      expect(proposals[0]).to.deep.equal(new ProposalDTO({ id: '0x1' }))
-      expect(proposals[1]).to.deep.equal(new ProposalDTO({ id: '0x2' }))
+      expect(proposals[0]).to.deep.equal({
+        id: '0x1',
+        providerId: '0x1',
+        serviceType: 'openvpn',
+        serviceDefinition: {}
+      })
+      expect(proposals[1]).to.deep.equal({
+        id: '0x2',
+        providerId: '0x2',
+        serviceType: 'openvpn',
+        serviceDefinition: {}
+      })
     })
   })
 })
