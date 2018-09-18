@@ -74,7 +74,11 @@ class ObservableUserSettings {
     return (Object.values(userSettingName): any)
   }
 
-  _changeSettings (settings: UserSettings) {
+  _getPropertyValue (property: UserSettingName): any {
+    return ((this._observables[property].value): any)
+  }
+
+  _updateAllProperties (settings: UserSettings) {
     this._getProperties().forEach(property => {
       this._updateProperty(property, settings[property])
     })
@@ -82,10 +86,6 @@ class ObservableUserSettings {
 
   _updateProperty (property: UserSettingName, value: any) {
     this._observables[property].value = value
-  }
-
-  _getPropertyValue (property: UserSettingName): any {
-    return ((this._observables[property].value): any)
   }
 }
 

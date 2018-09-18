@@ -24,7 +24,6 @@ import Subscriber from './subscriber'
 /**
  * Stores value and allows subscribing to value changes.
  */
-// TODO: unit-test?
 class Observable<T> {
   _value: T
   _subscriber: Subscriber<T> = new Subscriber()

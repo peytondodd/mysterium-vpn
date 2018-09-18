@@ -200,6 +200,7 @@ class MysteriumVpn {
     this._communicationBindings.syncFavorites(this._userSettingsStore)
     this._communicationBindings.syncShowDisconnectNotifications(this._userSettingsStore)
     this._communicationBindings.showNotificationOnDisconnect(this._userSettingsStore, this._disconnectNotification)
+    // TODO: load in DI?
     await this._loadUserSettings()
     this._disconnectNotification.onReconnect(() => this._communication.sendReconnectRequest())
   }

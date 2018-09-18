@@ -22,6 +22,10 @@ import { userSettingName } from './user-settings-store'
 import { loadSettings, saveSettings } from './storage'
 import ObservableUserSettings from './observable-user-settings'
 
+/**
+ * Stores settings locally and in file.
+ */
+// TODO: changing settings should send update to communication
 class UserSettingsStorage extends ObservableUserSettings implements UserSettingsStore {
   _path: string
 
@@ -44,7 +48,7 @@ class UserSettingsStorage extends ObservableUserSettings implements UserSettings
       }
       throw e
     }
-    this._changeSettings(parsed)
+    this._updateAllProperties(parsed)
     return true
   }
 
