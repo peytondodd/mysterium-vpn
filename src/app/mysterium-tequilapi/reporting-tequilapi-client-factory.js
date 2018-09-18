@@ -19,24 +19,20 @@
 
 import TequilapiClientFactory, { TEQUILAPI_URL } from '../../libraries/mysterium-tequilapi/tequilapi-client-factory'
 import type { HttpInterface } from '../../libraries/mysterium-tequilapi/adapters/interface'
-import BugReporterAdapter from './adapters/bug-reporter-adapter'
-import type { BugReporter } from '../../app/bug-reporting/interface'
+import LoggerAdapter from './adapters/logger-adapter'
 import { TIMEOUT_DEFAULT } from '../../libraries/mysterium-tequilapi/timeouts'
+import logger from '../logger'
 
 class ReportingTequilapiClientFactory extends TequilapiClientFactory {
-  _bugReporter: BugReporter
-
   constructor (
-    bugReporter: BugReporter,
     baseUrl: string = TEQUILAPI_URL,
     defaultTimeout: number = TIMEOUT_DEFAULT) {
     super(baseUrl, defaultTimeout)
-    this._bugReporter = bugReporter
   }
 
   _buildAdapter (): HttpInterface {
     const adapter = super._buildAdapter()
-    return new BugReporterAdapter(adapter, this._bugReporter)
+    return new LoggerAdapter(logger, adapter)
   }
 }
 

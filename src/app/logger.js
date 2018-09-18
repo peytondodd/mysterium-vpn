@@ -60,4 +60,5 @@ class Logger {
 
 const logger = new Logger()
 
+export { Logger }
 export default logger

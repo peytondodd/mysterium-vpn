@@ -445,11 +445,9 @@ class MysteriumVpn {
       logException('Proposal fetching failed', error)
     }
     this._communication.onProposalUpdateRequest(() => {
-      try {
-        this._proposalFetcher.fetch()
-      } catch (error) {
-        handleProposalFetchError(error)
-      }
+      this._proposalFetcher.fetch().catch((err: Error) => {
+        handleProposalFetchError(err)
+      })
     })
     this._proposalFetcher.onFetchingError(handleProposalFetchError)
 
