@@ -33,31 +33,40 @@ describe('UserSettingsProxy', () => {
     msgBus = new FakeMessageBus()
     com = new RendererCommunication(msgBus)
     settingsProxy = new UserSettingsProxy(com)
-    settingsProxy.startListening()
+  })
+
+  describe('.startListening', () => {
+    it('requests initial settings', () => {
+      const proxy = new UserSettingsProxy(com)
+      proxy.startListening()
+
+      expect(msgBus.lastChannel).to.eql(messages.USER_SETTINGS_REQUEST)
+    })
   })
 
   describe('.stopListening', () => {
     it('cleans up message bus', () => {
+      settingsProxy.startListening()
       settingsProxy.stopListening()
       expect(msgBus.noRemainingCallbacks()).to.be.true
     })
 
     it('throws error when invoked twice', () => {
+      settingsProxy.startListening()
       settingsProxy.stopListening()
       const err = captureError(() => settingsProxy.stopListening())
       if (!(err instanceof Error)) {
         throw new Error('Expected error')
       }
-      expect(err.message).to.eql('UserSettingsProxy.deinitilize invoked without initialization')
+      expect(err.message).to.eql('UserSettingsProxy.stopListening invoked without initialization')
     })
 
     it('throws error when invoked without initialization', () => {
-      const proxy = new UserSettingsProxy(com)
-      const err = captureError(() => proxy.stopListening())
+      const err = captureError(() => settingsProxy.stopListening())
       if (!(err instanceof Error)) {
         throw new Error('Expected error')
       }
-      expect(err.message).to.eql('UserSettingsProxy.deinitilize invoked without initialization')
+      expect(err.message).to.eql('UserSettingsProxy.stopListening invoked without initialization')
     })
   })
 
@@ -71,6 +80,7 @@ describe('UserSettingsProxy', () => {
     })
 
     it('returns settings received from communication', () => {
+      settingsProxy.startListening()
       const updatedSettings: UserSettings = {
         showDisconnectNotifications: false,
         favoriteProviders: new Set()
@@ -101,6 +111,7 @@ describe('UserSettingsProxy', () => {
 
     beforeEach(() => {
       recorder = new CallbackRecorder()
+      settingsProxy.startListening()
     })
 
     it('notifies about notification setting change', () => {

@@ -45,11 +45,12 @@ class UserSettingsProxy implements UserSettingsStore {
   startListening () {
     this._settingsListener = (settings) => this._updateLocalUserSettings(settings)
     this._communication.onUserSettings(this._settingsListener)
+    this._communication.sendUserSettingsRequest()
   }
 
   stopListening () {
     if (this._settingsListener == null) {
-      throw new Error('UserSettingsProxy.deinitilize invoked without initialization')
+      throw new Error('UserSettingsProxy.stopListening invoked without initialization')
     }
     this._communication.removeOnUserSettingsCallback(this._settingsListener)
     this._settingsListener = null
