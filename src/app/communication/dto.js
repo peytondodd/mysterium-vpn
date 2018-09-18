@@ -22,7 +22,7 @@ import type { Country } from '../countries'
 import type { Metric } from '../bug-reporting/metrics/metrics'
 
 export type ConnectionStatusChangeDTO = {
-  oldStatus: ?ConnectionStatus,
+  oldStatus: ConnectionStatus,
   newStatus: ConnectionStatus
 }
 
