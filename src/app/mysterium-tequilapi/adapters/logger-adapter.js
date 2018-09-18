@@ -21,7 +21,7 @@ import type { HttpInterface, HttpQueryParams } from '../../../libraries/mysteriu
 import { Logger } from '../../logger'
 
 /**
- * Delegates to other 'HttpInterface' and captures errors to 'BugReporter'.
+ * Delegates to other 'HttpInterface' and logs errors.
  */
 class LoggerAdapter implements HttpInterface {
   _logger: Logger
