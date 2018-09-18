@@ -126,7 +126,7 @@ describe('UserSettingsProxy', () => {
       })
     })
 
-    it('notifies about notification setting change', () => {
+    it('notifies about setting change', () => {
       settingsProxy.onChange(userSettingName.showDisconnectNotifications, recorder.getCallback())
 
       const updatedSettings: UserSettings = {

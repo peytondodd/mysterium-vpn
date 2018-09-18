@@ -47,6 +47,9 @@ class Observable<T> {
   }
 
   set value (value: T) {
+    if (value === this._value) {
+      return
+    }
     this._value = value
     this._subscriber.notify(value)
   }
