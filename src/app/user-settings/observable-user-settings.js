@@ -39,7 +39,6 @@ type ObservableSettings = {
  * Keeps user settings and notifies subscribers when settings change.
  */
 class ObservableUserSettings {
-  _settings: UserSettings = getDefaultSettings()
   _observables: ObservableSettings
 
   constructor () {
@@ -63,9 +62,10 @@ class ObservableUserSettings {
   }
 
   _buildObservables (): ObservableSettings {
+    const settings = getDefaultSettings()
     const observables = {}
     this._getProperties().forEach(setting => {
-      observables[setting] = new Observable(this._getPropertyValue(setting))
+      observables[setting] = new Observable(settings[setting])
     })
     return (observables: any)
   }
@@ -74,20 +74,18 @@ class ObservableUserSettings {
     return (Object.values(userSettingName): any)
   }
 
-  // TODO: notify only when property changes
   _changeSettings (settings: UserSettings) {
-    this._settings = settings
-    this._notify(userSettingName.showDisconnectNotifications)
-    this._notify(userSettingName.favoriteProviders)
+    this._getProperties().forEach(property => {
+      this._updateProperty(property, settings[property])
+    })
   }
 
-  _notify (propertyChanged: UserSettingName) {
-    const newVal = this._getPropertyValue(propertyChanged)
-    this._observables[propertyChanged].value = newVal
+  _updateProperty (property: UserSettingName, value: any) {
+    this._observables[property].value = value
   }
 
   _getPropertyValue (property: UserSettingName): any {
-    return ((this._settings[property]): any)
+    return ((this._observables[property].value): any)
   }
 }
 

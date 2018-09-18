@@ -49,24 +49,26 @@ class UserSettingsStorage extends ObservableUserSettings implements UserSettings
   }
 
   async setFavorite (id: string, isFavorite: boolean) {
-    if (isFavorite === this._settings.favoriteProviders.has(id)) {
+    const oldProviders = this._getPropertyValue(userSettingName.favoriteProviders)
+    if (isFavorite === oldProviders.has(id)) {
       return // nothing changed
     }
 
-    if (isFavorite) this._settings.favoriteProviders.add(id)
-    else this._settings.favoriteProviders.delete(id)
-    this._notify(userSettingName.favoriteProviders)
+    const newProviders = new Set(oldProviders)
+
+    if (isFavorite) newProviders.add(id)
+    else newProviders.delete(id)
+    this._updateProperty(userSettingName.favoriteProviders, newProviders)
     await this._save()
   }
 
   async setShowDisconnectNotifications (show: boolean) {
-    this._settings.showDisconnectNotifications = show
-    this._notify(userSettingName.showDisconnectNotifications)
+    this._updateProperty(userSettingName.showDisconnectNotifications, show)
     await this._save()
   }
 
   async _save (): Promise<void> {
-    return saveSettings(this._path, this._settings)
+    return saveSettings(this._path, this.getAll())
   }
 }
 

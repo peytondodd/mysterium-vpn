@@ -20,7 +20,7 @@ import { userSettingName } from '../../../../src/app/user-settings/user-settings
 import { afterEach, beforeEach, describe, expect, it } from '../../../helpers/dependencies'
 import { tmpdir } from 'os'
 import { join } from 'path'
-import { CallbackRecorder, capturePromiseError, RepeatableCallbackRecorder } from '../../../helpers/utils'
+import { capturePromiseError, RepeatableCallbackRecorder } from '../../../helpers/utils'
 import { UserSettingsStorage } from '../../../../src/app/user-settings/user-settings-storage'
 import { unlinkSyncIfPresent } from '../../../helpers/file-system'
 
@@ -89,12 +89,12 @@ describe('UserSettingsStorage', () => {
       })
 
       it('notifies subscribers about favorite add', async () => {
-        const cbRec = new CallbackRecorder()
+        const cbRec = new RepeatableCallbackRecorder()
 
         userSettingsStore.onChange(userSettingName.favoriteProviders, cbRec.getCallback())
         await userSettingsStore.setFavorite('0xfax', true)
-        expect(cbRec.invoked).to.be.true
-        expect(cbRec.firstArgument.has('0xfax')).to.be.true
+        expect(cbRec.invokesCount).to.eql(2)
+        expect(cbRec.lastArguments[0].has('0xfax')).to.be.true
       })
 
       it('saves settings', async () => {

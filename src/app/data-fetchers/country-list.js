@@ -24,6 +24,7 @@ import type { Callback } from '../../libraries/subscriber'
 import type { FavoriteProviders } from '../user-settings/user-settings'
 import type { ProposalFetcher } from './proposal-fetcher'
 import type { UserSettingsStore } from '../user-settings/user-settings-store'
+import { userSettingName } from '../user-settings/user-settings-store'
 
 class CountryList {
   _proposalFetcher: ProposalFetcher
@@ -45,7 +46,7 @@ class CountryList {
   }
 
   _subscribeToFavoriteChanges () {
-    this._userSettingsStore.onChange('favoriteProviders', (favorites) => {
+    this._userSettingsStore.onChange(userSettingName.favoriteProviders, (favorites) => {
       this._favorites = favorites
       this._notify()
     })
