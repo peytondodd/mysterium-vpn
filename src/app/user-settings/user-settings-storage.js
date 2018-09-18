@@ -17,26 +17,16 @@
 
 // @flow
 
-import type { FavoriteProviders, UserSettings } from './user-settings'
-import type { Callback } from '../../libraries/subscriber'
-import Subscriber from '../../libraries/subscriber'
-import type { UserSettingName, UserSettingsStore } from './user-settings-store'
-import { getDefaultSettings, userSettingName } from './user-settings-store'
+import type { UserSettingsStore } from './user-settings-store'
+import { userSettingName } from './user-settings-store'
 import { loadSettings, saveSettings } from './storage'
+import ObservableUserSettings from './observable-user-settings'
 
-class UserSettingsStorage implements UserSettingsStore {
-  _settings: UserSettings = getDefaultSettings()
+class UserSettingsStorage extends ObservableUserSettings implements UserSettingsStore {
   _path: string
 
-  _listeners: {
-    showDisconnectNotifications: Subscriber<boolean>,
-    favoriteProviders: Subscriber<FavoriteProviders>
-  } = {
-    showDisconnectNotifications: new Subscriber(),
-    favoriteProviders: new Subscriber()
-  }
-
   constructor (path: string) {
+    super()
     this._path = path
   }
 
@@ -54,10 +44,7 @@ class UserSettingsStorage implements UserSettingsStore {
       }
       throw e
     }
-    this._settings.favoriteProviders = parsed.favoriteProviders
-    this._settings.showDisconnectNotifications = parsed.showDisconnectNotifications
-    this._notify(userSettingName.favoriteProviders)
-    this._notify(userSettingName.showDisconnectNotifications)
+    this._changeSettings(parsed)
     return true
   }
 
@@ -78,21 +65,8 @@ class UserSettingsStorage implements UserSettingsStore {
     await this._save()
   }
 
-  getAll (): UserSettings {
-    return this._settings
-  }
-
-  onChange (property: UserSettingName, cb: Callback<any>) {
-    this._listeners[property].subscribe(cb)
-  }
-
   async _save (): Promise<void> {
     return saveSettings(this._path, this._settings)
-  }
-
-  _notify (propertyChanged: UserSettingName) {
-    const newVal = ((this._settings[propertyChanged]): any)
-    this._listeners[propertyChanged].notify(newVal)
   }
 }
 

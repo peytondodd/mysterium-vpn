@@ -18,32 +18,24 @@
 // @flow
 
 import RendererCommunication from '../communication/renderer-communication'
-import type { FavoriteProviders, UserSettings } from './user-settings'
-import type { Callback } from '../../libraries/subscriber'
-import Subscriber from '../../libraries/subscriber'
-import type { UserSettingName, UserSettingsStore } from './user-settings-store'
-import { getDefaultSettings, userSettingName } from './user-settings-store'
+import type { UserSettings } from './user-settings'
+import type { UserSettingsStore } from './user-settings-store'
+import ObservableUserSettings from './observable-user-settings'
 
-class UserSettingsProxy implements UserSettingsStore {
+/**
+ * Caches local settings synced via communication channel, and notifies when settings change.
+ */
+class UserSettingsProxy extends ObservableUserSettings implements UserSettingsStore {
   _communication: RendererCommunication
-  _settings: UserSettings = getDefaultSettings()
   _settingsListener: ?((UserSettings) => void) = null
 
-  // TODO: DRY
-  _listeners: {
-    showDisconnectNotifications: Subscriber<boolean>,
-    favoriteProviders: Subscriber<FavoriteProviders>
-  } = {
-    showDisconnectNotifications: new Subscriber(),
-    favoriteProviders: new Subscriber()
-  }
-
   constructor (communication: RendererCommunication) {
+    super()
     this._communication = communication
   }
 
   startListening () {
-    this._settingsListener = (settings) => this._updateLocalUserSettings(settings)
+    this._settingsListener = (settings) => this._changeSettings(settings)
     this._communication.onUserSettings(this._settingsListener)
     this._communication.sendUserSettingsRequest()
   }
@@ -62,25 +54,6 @@ class UserSettingsProxy implements UserSettingsStore {
 
   async setShowDisconnectNotifications (show: boolean) {
     this._communication.sendUserSettingsShowDisconnectNotifications(show)
-  }
-
-  getAll (): UserSettings {
-    return this._settings
-  }
-
-  onChange (property: UserSettingName, cb: Callback<any>) {
-    this._listeners[property].subscribe(cb)
-  }
-
-  _updateLocalUserSettings (settings: UserSettings) {
-    this._settings = settings
-    this._notify(userSettingName.showDisconnectNotifications)
-    this._notify(userSettingName.favoriteProviders)
-  }
-
-  _notify (propertyChanged: UserSettingName) {
-    const newVal = ((this._settings[propertyChanged]): any)
-    this._listeners[propertyChanged].notify(newVal)
   }
 }
 

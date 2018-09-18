@@ -33,12 +33,5 @@ interface UserSettingsStore {
   onChange (property: UserSettingName, cb: Callback<any>): void
 }
 
-function getDefaultSettings (): UserSettings {
-  return {
-    showDisconnectNotifications: true,
-    favoriteProviders: new Set()
-  }
-}
-
 export type { UserSettingsStore, UserSettingName }
-export { userSettingName, getDefaultSettings }
+export { userSettingName }
