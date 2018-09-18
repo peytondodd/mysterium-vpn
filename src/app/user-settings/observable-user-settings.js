@@ -48,13 +48,17 @@ class ObservableUserSettings {
     return this._settings
   }
 
-  onChange (property: UserSettingName, cb: Callback<any>) {
-    this._listeners[property].subscribe(cb)
+  onChange (property: UserSettingName, callback: Callback<any>) {
+    this._listeners[property].subscribe(callback)
     try {
-      cb(this._getPropertyValue(property))
+      callback(this._getPropertyValue(property))
     } catch (err) {
       logger.error('Callback call in ObservableUserSettings failed')
     }
+  }
+
+  removeOnChange (property: UserSettingName, callback: Callback<any>) {
+    this._listeners[property].unsubscribe(callback)
   }
 
   // TODO: notify only when property changes

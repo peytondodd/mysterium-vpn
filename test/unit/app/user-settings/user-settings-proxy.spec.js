@@ -151,4 +151,32 @@ describe('UserSettingsProxy', () => {
       expect(recorder.lastArguments).to.eql([favoriteProviders])
     })
   })
+
+  describe('.removeOnChange', () => {
+    it('unsubscribes from change updates', () => {
+      const recorder = new RepeatableCallbackRecorder()
+      settingsProxy.startListening()
+      settingsProxy.onChange(userSettingName.showDisconnectNotifications, recorder.getCallback())
+      settingsProxy.removeOnChange(userSettingName.showDisconnectNotifications, recorder.getCallback())
+
+      const updatedSettings: UserSettings = {
+        showDisconnectNotifications: false,
+        favoriteProviders: new Set()
+      }
+      msgBus.triggerOn(messages.USER_SETTINGS, updatedSettings)
+      expect(recorder.invokesCount).to.eql(1)
+      expect(recorder.lastArguments).to.eql([true])
+    })
+
+    it('throws error when unsubscribing unknown callback', () => {
+      settingsProxy.startListening()
+      const subscribe = () => { settingsProxy.removeOnChange(userSettingName.showDisconnectNotifications, () => {}) }
+
+      const err = captureError(subscribe)
+      if (!(err instanceof Error)) {
+        throw new Error('Expected error')
+      }
+      expect(err.message).to.eql('Callback being unsubscribed was not found')
+    })
+  })
 })

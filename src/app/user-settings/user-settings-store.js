@@ -30,7 +30,8 @@ interface UserSettingsStore {
   setFavorite (id: string, isFavorite: boolean): Promise<void>,
   setShowDisconnectNotifications (show: boolean): Promise<void>,
   getAll (): UserSettings,
-  onChange (property: UserSettingName, cb: Callback<any>): void
+  onChange (property: UserSettingName, callback: Callback<any>): void,
+  removeOnChange (property: UserSettingName, callback: Callback<any>): void
 }
 
 export type { UserSettingsStore, UserSettingName }
