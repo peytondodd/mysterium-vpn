@@ -22,6 +22,7 @@ import Subscriber from '../../libraries/subscriber'
 import type { UserSettingName } from './user-settings-store'
 import type { Callback } from '../../libraries/subscriber'
 import { userSettingName } from './user-settings-store'
+import logger from '../logger'
 
 function getDefaultSettings (): UserSettings {
   return {
@@ -49,6 +50,11 @@ class ObservableUserSettings {
 
   onChange (property: UserSettingName, cb: Callback<any>) {
     this._listeners[property].subscribe(cb)
+    try {
+      cb(this._getPropertyValue(property))
+    } catch (err) {
+      logger.error('Callback call in ObservableUserSettings failed')
+    }
   }
 
   // TODO: notify only when property changes
@@ -59,8 +65,12 @@ class ObservableUserSettings {
   }
 
   _notify (propertyChanged: UserSettingName) {
-    const newVal = ((this._settings[propertyChanged]): any)
+    const newVal = this._getPropertyValue(propertyChanged)
     this._listeners[propertyChanged].notify(newVal)
+  }
+
+  _getPropertyValue (property: UserSettingName): any {
+    return ((this._settings[property]): any)
   }
 }
 

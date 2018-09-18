@@ -20,7 +20,7 @@ import { userSettingName } from '../../../../src/app/user-settings/user-settings
 import { afterEach, beforeEach, describe, expect, it } from '../../../helpers/dependencies'
 import { tmpdir } from 'os'
 import { join } from 'path'
-import { CallbackRecorder, capturePromiseError } from '../../../helpers/utils'
+import { CallbackRecorder, capturePromiseError, RepeatableCallbackRecorder } from '../../../helpers/utils'
 import { UserSettingsStorage } from '../../../../src/app/user-settings/user-settings-storage'
 import { unlinkSyncIfPresent } from '../../../helpers/file-system'
 
@@ -58,12 +58,11 @@ describe('UserSettingsStorage', () => {
       })
 
       it('notifies subscribers about showDisconnectNotifications change', async () => {
-        const cbRec = new CallbackRecorder()
+        const cbRec = new RepeatableCallbackRecorder()
 
         userSettingsStore.onChange(userSettingName.showDisconnectNotifications, cbRec.getCallback())
         await userSettingsStore.setShowDisconnectNotifications(false)
-        expect(cbRec.invoked).to.be.true
-        expect(cbRec.firstArgument).to.be.false
+        expect(cbRec.lastArguments).to.eql([false])
       })
 
       it('saves settings', async () => {

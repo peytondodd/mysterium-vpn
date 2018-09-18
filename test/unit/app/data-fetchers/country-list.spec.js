@@ -22,7 +22,7 @@ import type { Callback } from '../../../../src/libraries/subscriber'
 import { afterEach, beforeEach, describe, expect, it } from '../../../helpers/dependencies'
 import CountryList from '../../../../src/app/data-fetchers/country-list'
 import { UserSettingsStorage } from '../../../../src/app/user-settings/user-settings-storage'
-import { CallbackRecorder } from '../../../helpers/utils'
+import { RepeatableCallbackRecorder } from '../../../helpers/utils'
 import { unlinkSyncIfPresent } from '../../../helpers/file-system'
 import type { UserSettingsStore } from '../../../../src/app/user-settings/user-settings-store'
 
@@ -60,7 +60,7 @@ describe('CountryList', () => {
 
   beforeEach(() => {
     countryList = new CountryList(proposalFetcher, store)
-    cbRec = new CallbackRecorder()
+    cbRec = new RepeatableCallbackRecorder()
   })
 
   afterEach(() => {
@@ -72,11 +72,15 @@ describe('CountryList', () => {
       countryList.onUpdate(cbRec.getCallback())
       proposalFetcher.setFetchData(proposal1)
       proposalFetcher.fetch()
-      expect(cbRec.firstArgument).to.be.eql([{ id: '0x1', code: null, name: 'N/A', isFavorite: false }])
+      expect(cbRec.lastArguments).to.be.eql([
+        [{ id: '0x1', code: null, name: 'N/A', isFavorite: false }]
+      ])
 
       proposalFetcher.setFetchData(proposal2)
       proposalFetcher.fetch()
-      expect(cbRec.firstArgument).to.be.eql([{ id: '0x2', code: 'lt', name: 'Lithuania', isFavorite: false }])
+      expect(cbRec.lastArguments).to.be.eql([
+        [{ id: '0x2', code: 'lt', name: 'Lithuania', isFavorite: false }]
+      ])
     })
 
     it('notifies subscribers when favorite providers change', async () => {
@@ -85,7 +89,10 @@ describe('CountryList', () => {
 
       countryList.onUpdate(cbRec.getCallback())
       await store.setFavorite('0x2', true)
-      expect(cbRec.firstArgument).to.be.eql([{ id: '0x2', code: 'lt', name: 'Lithuania', isFavorite: true }])
+      expect(cbRec.invokesCount).to.eql(1)
+      expect(cbRec.lastArguments).to.be.eql([
+        [{ id: '0x2', code: 'lt', name: 'Lithuania', isFavorite: true }]
+      ])
     })
   })
 })

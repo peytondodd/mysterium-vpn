@@ -18,7 +18,7 @@
 // @flow
 import { userSettingName } from '../../../../src/app/user-settings/user-settings-store'
 import { beforeEach, describe, expect, it } from '../../../helpers/dependencies'
-import { CallbackRecorder, captureError } from '../../../helpers/utils'
+import { captureError, RepeatableCallbackRecorder } from '../../../helpers/utils'
 import type { UserSettings } from '../../../../src/app/user-settings/user-settings'
 import RendererCommunication from '../../../../src/app/communication/renderer-communication'
 import FakeMessageBus from '../../../helpers/fake-message-bus'
@@ -110,8 +110,20 @@ describe('UserSettingsProxy', () => {
     let recorder
 
     beforeEach(() => {
-      recorder = new CallbackRecorder()
+      recorder = new RepeatableCallbackRecorder()
       settingsProxy.startListening()
+    })
+
+    it('notifies listener instantly with current setting value', () => {
+      settingsProxy.onChange(userSettingName.showDisconnectNotifications, recorder.getCallback())
+      expect(recorder.invokesCount).to.eql(1)
+      expect(recorder.lastArguments).to.eql([true])
+    })
+
+    it('does not throw error when callback throws error', () => {
+      settingsProxy.onChange(userSettingName.showDisconnectNotifications, () => {
+        throw new Error('mock error')
+      })
     })
 
     it('notifies about notification setting change', () => {
@@ -122,8 +134,8 @@ describe('UserSettingsProxy', () => {
         favoriteProviders: new Set()
       }
       msgBus.triggerOn(messages.USER_SETTINGS, updatedSettings)
-      expect(recorder.invoked).to.be.true
-      expect(recorder.firstArgument).to.be.false
+      expect(recorder.invokesCount).to.eql(2)
+      expect(recorder.lastArguments).to.eql([false])
     })
 
     it('notifies about favorite providers change', () => {
@@ -135,8 +147,8 @@ describe('UserSettingsProxy', () => {
         favoriteProviders: favoriteProviders
       }
       msgBus.triggerOn(messages.USER_SETTINGS, updatedSettings)
-      expect(recorder.invoked).to.be.true
-      expect(recorder.firstArgument).to.eql(favoriteProviders)
+      expect(recorder.invokesCount).to.eql(2)
+      expect(recorder.lastArguments).to.eql([favoriteProviders])
     })
   })
 })
