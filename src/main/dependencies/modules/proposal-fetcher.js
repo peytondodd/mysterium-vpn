@@ -19,8 +19,8 @@
 
 import TequilapiProposalFetcher from '../../../app/data-fetchers/tequilapi-proposal-fetcher'
 import type { Container } from '../../../app/di'
-import { UserSettingsStorage } from '../../../app/user-settings/user-settings-storage'
 import CountryList from '../../../app/data-fetchers/country-list'
+import type { UserSettingsStore } from '../../../app/user-settings/user-settings-store'
 
 function bootstrap (container: Container) {
   container.constant(
@@ -40,7 +40,7 @@ function bootstrap (container: Container) {
   container.factory(
     'countryList',
     ['proposalFetcher', 'userSettingsStore'],
-    (proposalFetcher: TequilapiProposalFetcher, userSettingsStore: UserSettingsStorage) => {
+    (proposalFetcher: TequilapiProposalFetcher, userSettingsStore: UserSettingsStore) => {
       return new CountryList(proposalFetcher, userSettingsStore)
     }
   )

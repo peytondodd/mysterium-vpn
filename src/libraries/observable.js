@@ -28,6 +28,18 @@ class Observable<T> {
   _value: T
   _subscriber: Subscriber<T> = new Subscriber()
 
+  get value (): T {
+    return this._value
+  }
+
+  set value (value: T) {
+    if (value === this._value) {
+      return
+    }
+    this._value = value
+    this._subscriber.notify(value)
+  }
+
   constructor (initialValue: T) {
     this._value = initialValue
   }
@@ -43,18 +55,6 @@ class Observable<T> {
 
   unsubscribe (callback: Callback<T>) {
     this._subscriber.unsubscribe(callback)
-  }
-
-  set value (value: T) {
-    if (value === this._value) {
-      return
-    }
-    this._value = value
-    this._subscriber.notify(value)
-  }
-
-  get value (): T {
-    return this._value
   }
 }
 
