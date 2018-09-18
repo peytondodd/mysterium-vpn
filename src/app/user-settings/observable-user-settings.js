@@ -18,11 +18,10 @@
 // @flow
 
 import type { FavoriteProviders, UserSettings } from './user-settings'
-import Subscriber from '../../libraries/subscriber'
+import { Observable } from '../../libraries/observable'
 import type { UserSettingName } from './user-settings-store'
 import type { Callback } from '../../libraries/subscriber'
 import { userSettingName } from './user-settings-store'
-import logger from '../logger'
 
 function getDefaultSettings (): UserSettings {
   return {
@@ -31,34 +30,48 @@ function getDefaultSettings (): UserSettings {
   }
 }
 
+type ObservableSettings = {
+  showDisconnectNotifications: Observable<boolean>,
+  favoriteProviders: Observable<FavoriteProviders>
+}
+
 /**
  * Keeps user settings and notifies subscribers when settings change.
  */
 class ObservableUserSettings {
   _settings: UserSettings = getDefaultSettings()
-  _listeners: {
-    showDisconnectNotifications: Subscriber<boolean>,
-    favoriteProviders: Subscriber<FavoriteProviders>
-  } = {
-    showDisconnectNotifications: new Subscriber(),
-    favoriteProviders: new Subscriber()
+  _observables: ObservableSettings
+
+  constructor () {
+    this._observables = this._buildObservables()
   }
 
   getAll (): UserSettings {
-    return this._settings
+    const settings = {}
+    this._getProperties().forEach(property => {
+      settings[property] = this._getPropertyValue(property)
+    })
+    return (settings: any)
   }
 
   onChange (property: UserSettingName, callback: Callback<any>) {
-    this._listeners[property].subscribe(callback)
-    try {
-      callback(this._getPropertyValue(property))
-    } catch (err) {
-      logger.error('Callback call in ObservableUserSettings failed')
-    }
+    this._observables[property].subscribe(callback)
   }
 
   removeOnChange (property: UserSettingName, callback: Callback<any>) {
-    this._listeners[property].unsubscribe(callback)
+    this._observables[property].unsubscribe(callback)
+  }
+
+  _buildObservables (): ObservableSettings {
+    const observables = {}
+    this._getProperties().forEach(setting => {
+      observables[setting] = new Observable(this._getPropertyValue(setting))
+    })
+    return (observables: any)
+  }
+
+  _getProperties (): UserSettingName[] {
+    return (Object.values(userSettingName): any)
   }
 
   // TODO: notify only when property changes
@@ -70,7 +83,7 @@ class ObservableUserSettings {
 
   _notify (propertyChanged: UserSettingName) {
     const newVal = this._getPropertyValue(propertyChanged)
-    this._listeners[propertyChanged].notify(newVal)
+    this._observables[propertyChanged].value = newVal
   }
 
   _getPropertyValue (property: UserSettingName): any {
