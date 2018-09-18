@@ -21,6 +21,7 @@ import TequilapiClientFactory, { TEQUILAPI_URL } from '../../libraries/mysterium
 import type { HttpInterface } from '../../libraries/mysterium-tequilapi/adapters/interface'
 import LoggerAdapter from './adapters/logger-adapter'
 import { TIMEOUT_DEFAULT } from '../../libraries/mysterium-tequilapi/timeouts'
+import logger from '../logger'
 
 class ReportingTequilapiClientFactory extends TequilapiClientFactory {
   constructor (
@@ -31,7 +32,7 @@ class ReportingTequilapiClientFactory extends TequilapiClientFactory {
 
   _buildAdapter (): HttpInterface {
     const adapter = super._buildAdapter()
-    return new LoggerAdapter(adapter)
+    return new LoggerAdapter(logger, adapter)
   }
 }
 

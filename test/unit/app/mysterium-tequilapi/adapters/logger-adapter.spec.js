@@ -21,14 +21,47 @@ import { beforeEach, describe, expect, it } from '../../../../helpers/dependenci
 import LoggerAdapter from '../../../../../src/app/mysterium-tequilapi/adapters/logger-adapter'
 import type { HttpInterface } from '../../../../../src/libraries/mysterium-tequilapi/adapters/interface'
 import MockHttpAdapter from '../../../../helpers/adapters/MockHttpAdapter'
+import type { StringLogger } from '../../../../../src/app/logging/string-logger'
+import { Logger } from '../../../../../src/app/logger'
+import { captureAsyncError } from '../../../../helpers/utils'
+
+class MockStringLogger implements StringLogger {
+  logs: {level: string, message: string}[] = []
+
+  info (message: string): void {
+    this._log('info', message)
+  }
+
+  warn (message: string): void {
+    this._log('warn', message)
+  }
+
+  error (message: string): void {
+    this._log('error', message)
+  }
+
+  debug (message: string) {
+    this._log('debug', message)
+  }
+
+  _log (level: string, message: string) {
+    this.logs.push({ level: 'info', message })
+  }
+}
 
 describe('LoggerAdapter', () => {
   let adapter: HttpInterface
   let mockAdapter: MockHttpAdapter
+  let mockStringLogger: MockStringLogger
 
   beforeEach(() => {
     mockAdapter = new MockHttpAdapter()
-    adapter = new LoggerAdapter(mockAdapter)
+
+    mockStringLogger = new MockStringLogger()
+    const logger = new Logger()
+    logger.setLogger(mockStringLogger)
+
+    adapter = new LoggerAdapter(logger, mockAdapter)
   })
 
   describe('.get', () => {
@@ -41,6 +74,17 @@ describe('LoggerAdapter', () => {
       expect(mockAdapter.lastPath).to.eql('path')
       expect(mockAdapter.lastQuery).to.eql({ key: 'value' })
       expect(mockAdapter.lastTimeout).to.eql(5)
+    })
+
+    it('logs error', async () => {
+      mockAdapter.mockError = new Error('mock error')
+      await captureAsyncError(() => adapter.get('path'))
+      expect(mockStringLogger.logs).to.eql([
+        {
+          level: 'info',
+          message: 'Error: mock error'
+        }
+      ])
     })
   })
 
@@ -55,6 +99,17 @@ describe('LoggerAdapter', () => {
       expect(mockAdapter.lastData).to.eql('some data')
       expect(mockAdapter.lastTimeout).to.eql(5)
     })
+
+    it('logs error', async () => {
+      mockAdapter.mockError = new Error('mock error')
+      await captureAsyncError(() => adapter.post('path'))
+      expect(mockStringLogger.logs).to.eql([
+        {
+          level: 'info',
+          message: 'Error: mock error'
+        }
+      ])
+    })
   })
 
   describe('.delete', () => {
@@ -66,6 +121,17 @@ describe('LoggerAdapter', () => {
 
       expect(mockAdapter.lastPath).to.eql('path')
       expect(mockAdapter.lastTimeout).to.eql(5)
+    })
+
+    it('logs error', async () => {
+      mockAdapter.mockError = new Error('mock error')
+      await captureAsyncError(() => adapter.delete('path'))
+      expect(mockStringLogger.logs).to.eql([
+        {
+          level: 'info',
+          message: 'Error: mock error'
+        }
+      ])
     })
   })
 
@@ -79,6 +145,17 @@ describe('LoggerAdapter', () => {
       expect(mockAdapter.lastPath).to.eql('path')
       expect(mockAdapter.lastData).to.eql('some data')
       expect(mockAdapter.lastTimeout).to.eql(5)
+    })
+
+    it('logs error', async () => {
+      mockAdapter.mockError = new Error('mock error')
+      await captureAsyncError(() => adapter.put('path'))
+      expect(mockStringLogger.logs).to.eql([
+        {
+          level: 'info',
+          message: 'Error: mock error'
+        }
+      ])
     })
   })
 })

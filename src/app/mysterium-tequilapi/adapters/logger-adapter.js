@@ -18,15 +18,17 @@
 // @flow
 
 import type { HttpInterface, HttpQueryParams } from '../../../libraries/mysterium-tequilapi/adapters/interface'
-import logger from '../../logger'
+import { Logger } from '../../logger'
 
 /**
  * Delegates to other 'HttpInterface' and captures errors to 'BugReporter'.
  */
 class LoggerAdapter implements HttpInterface {
+  _logger: Logger
   _adapter: HttpInterface
 
-  constructor (adapter: HttpInterface) {
+  constructor (logger: Logger, adapter: HttpInterface) {
+    this._logger = logger
     this._adapter = adapter
   }
 
@@ -54,7 +56,7 @@ class LoggerAdapter implements HttpInterface {
     try {
       return await func()
     } catch (err) {
-      logger.info(err)
+      this._logger.info(err)
       throw err
     }
   }
