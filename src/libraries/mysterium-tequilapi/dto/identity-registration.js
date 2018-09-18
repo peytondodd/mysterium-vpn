@@ -37,7 +37,7 @@ class PublicKeyDTO {
 class SignatureDTO {
   r: string
   s: string
-  v: string
+  v: number
 
   constructor (data: Object) {
     this.r = data.r

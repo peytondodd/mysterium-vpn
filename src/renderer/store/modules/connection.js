@@ -37,11 +37,11 @@ import type { Provider } from '../../../app/connection/provider'
 import messages from '../../../app/messages'
 
 type ConnectionStore = {
-  ip: ?string,
-  location: ?ConsumerLocationDTO,
+  ip?: ?string,
+  location?: ?ConsumerLocationDTO,
   status: ConnectionStatus,
   statistics: Object,
-  lastConnectionProvider: ?Provider,
+  lastConnectionProvider?: ?Provider,
   actionLoopers: { [string]: FunctionLooper }
 }
 

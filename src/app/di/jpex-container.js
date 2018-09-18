@@ -24,7 +24,7 @@ import constants from 'jpex/src/constants'
  * Implementation of DI container which works via Jpex library.
  */
 class JpexContainer implements Container {
-  jpex: Jpex
+  jpex: any
 
   constructor () {
     this.jpex = Jpex.extend({

@@ -81,7 +81,16 @@ describe('TequilapiConnectionEstablisher', () => {
   let mockConnectionState: MockConnectionState
   let mockErrorMessage: MockErrorMessage
 
-  const location = new ConsumerLocationDTO({ original: { country: 'lt' }, current: {} })
+  const location = new ConsumerLocationDTO({
+    original: {
+      ip: 'ORIGINAL_IP',
+      country: 'lt'
+    },
+    current: {
+      ip: 'CURRENT_IP',
+      country: 'CURRENT_COUNTRY'
+    }
+  })
   const actionLooper: ?FunctionLooper = null
 
   beforeEach(() => {
