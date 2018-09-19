@@ -20,7 +20,7 @@
 import VpnInitializer from '../../../src/app/vpn-initializer'
 import { beforeEach, describe, expect, it } from '../../helpers/dependencies'
 import type { State as IdentityState } from '../../../src/renderer/store/modules/identity'
-import IdentityDTO from '../../../src/libraries/mysterium-tequilapi/dto/identity'
+import IdentityDTO from 'mysterium-tequilapi/lib/dto/identity'
 import types from '../../../src/renderer/store/types'
 import { capturePromiseError } from '../../helpers/utils'
 import IdentityManager from '../../../src/app/identity-manager'

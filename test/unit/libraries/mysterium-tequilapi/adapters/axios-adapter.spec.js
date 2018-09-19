@@ -16,10 +16,10 @@
  */
 
 import axios from 'axios/index'
-import AxiosAdapter from '../../../../../src/libraries/mysterium-tequilapi/adapters/axios-adapter'
+import AxiosAdapter from 'mysterium-tequilapi/lib/adapters/axios-adapter'
 import MockAdapter from 'axios-mock-adapter'
 import { capturePromiseError } from '../../../../helpers/utils'
-import TequilapiError from '../../../../../src/libraries/mysterium-tequilapi/tequilapi-error'
+import TequilapiError from 'mysterium-tequilapi/lib/tequilapi-error'
 
 describe('TequilapiClient AxiosAdapter', () => {
   let adapter

@@ -31,7 +31,7 @@ import VpnLoader from '@/pages/vpn-loader'
 import { describe, it, beforeEach, before } from '../../../helpers/dependencies'
 import messages from '../../../../src/app/messages'
 import types from '@/store/types'
-import type { TequilapiClient } from '../../../../src/libraries/mysterium-tequilapi/client'
+import type { TequilapiClient } from 'mysterium-tequilapi/lib/client'
 
 import DIContainer from '../../../../src/app/di/vue-container'
 import BugReporterMock from '../../../helpers/bug-reporter-mock'
@@ -39,7 +39,7 @@ import type { BugReporter } from '../../../../src/app/bug-reporting/interface'
 import { nextTick } from '../../../helpers/utils'
 import RendererCommunication from '../../../../src/app/communication/renderer-communication'
 import FakeMessageBus from '../../../helpers/fake-message-bus'
-import TequilapiError from '../../../../src/libraries/mysterium-tequilapi/tequilapi-error'
+import TequilapiError from 'mysterium-tequilapi/lib/tequilapi-error'
 
 describe('VpnLoader', () => {
   const tequilapi = tequilapiMockCreate()

@@ -24,8 +24,8 @@ import type from '@/store/types'
 import EmptyTequilapiClientMock from './empty-tequilapi-client-mock'
 import { describe, it } from '../../../../helpers/dependencies'
 import { CallbackRecorder } from '../../../../helpers/utils'
-import type { NodeHealthcheckDTO } from '../../../../../src/libraries/mysterium-tequilapi/dto/node-healthcheck'
-import NodeBuildInfoDTO from '../../../../../src/libraries/mysterium-tequilapi/dto/node-build-info'
+import type { NodeHealthcheckDTO } from 'mysterium-tequilapi/lib/dto/node-healthcheck'
+import NodeBuildInfoDTO from 'mysterium-tequilapi/lib/dto/node-build-info'
 
 function initialState () {
   return {

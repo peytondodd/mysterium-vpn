@@ -16,19 +16,19 @@
  */
 
 import { describe, beforeEach, it } from '../../../helpers/dependencies'
-import HttpTequilapiClient from '../../../../src/libraries/mysterium-tequilapi/client'
-import IdentityDTO from '../../../../src/libraries/mysterium-tequilapi/dto/identity'
-import ProposalDTO from '../../../../src/libraries/mysterium-tequilapi/dto/proposal'
-import AxiosAdapter from '../../../../src/libraries/mysterium-tequilapi/adapters/axios-adapter'
+import HttpTequilapiClient from 'mysterium-tequilapi/lib/client'
+import IdentityDTO from 'mysterium-tequilapi/lib/dto/identity'
+import ProposalDTO from 'mysterium-tequilapi/lib/dto/proposal'
+import AxiosAdapter from 'mysterium-tequilapi/lib/adapters/axios-adapter'
 import axios from 'axios/index'
 import MockAdapter from 'axios-mock-adapter'
 import { capturePromiseError } from '../../../helpers/utils'
-import { parseHealthcheckResponse } from '../../../../src/libraries/mysterium-tequilapi/dto/node-healthcheck'
-import ConnectionStatisticsDTO from '../../../../src/libraries/mysterium-tequilapi/dto/connection-statistics'
-import ConnectionIPDTO from '../../../../src/libraries/mysterium-tequilapi/dto/connection-ip'
-import ConnectionStatusDTO from '../../../../src/libraries/mysterium-tequilapi/dto/connection-status'
-import ConnectionRequestDTO from '../../../../src/libraries/mysterium-tequilapi/dto/connection-request'
-import ConsumerLocationDTO from '../../../../src/libraries/mysterium-tequilapi/dto/consumer-location'
+import { parseHealthcheckResponse } from 'mysterium-tequilapi/lib/dto/node-healthcheck'
+import ConnectionStatisticsDTO from 'mysterium-tequilapi/lib/dto/connection-statistics'
+import ConnectionIPDTO from 'mysterium-tequilapi/lib/dto/connection-ip'
+import ConnectionStatusDTO from 'mysterium-tequilapi/lib/dto/connection-status'
+import ConnectionRequestDTO from 'mysterium-tequilapi/lib/dto/connection-request'
+import ConsumerLocationDTO from 'mysterium-tequilapi/lib/dto/consumer-location'
 
 describe('HttpTequilapiClient', () => {
   let api

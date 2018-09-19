@@ -16,7 +16,7 @@
  */
 
 import { expect } from 'chai'
-import ProposalsResponseDTO from '../../../../../src/libraries/mysterium-tequilapi/dto/proposals-response'
+import ProposalsResponseDTO from 'mysterium-tequilapi/lib/dto/proposals-response'
 
 describe('TequilapiClient DTO', () => {
   describe('ProposalsResponseDTO', () => {

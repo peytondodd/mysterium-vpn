@@ -16,17 +16,17 @@
  */
 
 // @flow
-import ConnectionIPDTO from '../../../../../src/libraries/mysterium-tequilapi/dto/connection-ip'
-import ConnectionStatusDTO from '../../../../../src/libraries/mysterium-tequilapi/dto/connection-status'
-import ConnectionStatisticsDTO from '../../../../../src/libraries/mysterium-tequilapi/dto/connection-statistics'
-import type { TequilapiClient } from '../../../../../src/libraries/mysterium-tequilapi/client'
-import IdentityDTO from '../../../../../src/libraries/mysterium-tequilapi/dto/identity'
-import ProposalsFilter from '../../../../../src/libraries/mysterium-tequilapi/dto/proposals-filter'
-import ProposalDTO from '../../../../../src/libraries/mysterium-tequilapi/dto/proposal'
-import ConsumerLocationDTO from '../../../../../src/libraries/mysterium-tequilapi/dto/consumer-location'
-import type { NodeHealthcheckDTO } from '../../../../../src/libraries/mysterium-tequilapi/dto/node-healthcheck'
-import NodeBuildInfoDTO from '../../../../../src/libraries/mysterium-tequilapi/dto/node-build-info'
-import IdentityRegistrationDTO from '../../../../../src/libraries/mysterium-tequilapi/dto/identity-registration'
+import ConnectionIPDTO from 'mysterium-tequilapi/lib/dto/connection-ip'
+import ConnectionStatusDTO from 'mysterium-tequilapi/lib/dto/connection-status'
+import ConnectionStatisticsDTO from 'mysterium-tequilapi/lib/dto/connection-statistics'
+import type { TequilapiClient } from 'mysterium-tequilapi/lib/client'
+import IdentityDTO from 'mysterium-tequilapi/lib/dto/identity'
+import ProposalsFilter from 'mysterium-tequilapi/lib/dto/proposals-filter'
+import ProposalDTO from 'mysterium-tequilapi/lib/dto/proposal'
+import ConsumerLocationDTO from 'mysterium-tequilapi/lib/dto/consumer-location'
+import type { NodeHealthcheckDTO } from 'mysterium-tequilapi/lib/dto/node-healthcheck'
+import NodeBuildInfoDTO from 'mysterium-tequilapi/lib/dto/node-build-info'
+import IdentityRegistrationDTO from 'mysterium-tequilapi/lib/dto/identity-registration'
 
 class EmptyTequilapiClientMock implements TequilapiClient {
   async healthCheck (_timeout: ?number): Promise<NodeHealthcheckDTO> {

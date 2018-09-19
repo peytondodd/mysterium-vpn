@@ -17,7 +17,7 @@
 
 // @flow
 import { promisify } from 'util'
-import type { TequilapiClient } from '../mysterium-tequilapi/client'
+import type { TequilapiClient } from 'mysterium-tequilapi/lib/client'
 import sleep from '../sleep'
 
 const HEALTH_CHECK_INTERVAL = 1500

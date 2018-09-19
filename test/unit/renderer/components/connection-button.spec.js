@@ -20,7 +20,7 @@
 import Vuex from 'vuex'
 import ConnectionButton from '../../../../src/renderer/components/connection-button'
 import type from '../../../../src/renderer/store/types'
-import ConnectionStatusEnum from '../../../../src/libraries/mysterium-tequilapi/dto/connection-status-enum'
+import ConnectionStatusEnum from 'mysterium-tequilapi/lib/dto/connection-status-enum'
 import { state, mutations, getters } from '@/store/modules/connection'
 import { createLocalVue, mount } from '@vue/test-utils'
 import { describe, expect, it } from '../../../helpers/dependencies'

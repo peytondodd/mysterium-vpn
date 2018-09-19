@@ -19,7 +19,7 @@
 import { describe, it, expect, before, beforeEach, after } from '../../../helpers/dependencies'
 import lolex from 'lolex'
 import TequilapiProposalFetcher from '../../../../src/app/data-fetchers/tequilapi-proposal-fetcher'
-import ProposalDTO from '../../../../src/libraries/mysterium-tequilapi/dto/proposal'
+import ProposalDTO from 'mysterium-tequilapi/lib/dto/proposal'
 import { nextTick } from '../../../helpers/utils'
 import EmptyTequilapiClientMock from '../../renderer/store/modules/empty-tequilapi-client-mock'
 import logger from '../../../../src/app/logger'

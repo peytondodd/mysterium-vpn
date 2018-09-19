@@ -17,7 +17,7 @@
 
 // @flow
 import TrayMenuBuilder from '../../../../src/main/tray/menu-builder'
-import ConnectionStatusEnum from '../../../../src/libraries/mysterium-tequilapi/dto/connection-status-enum'
+import ConnectionStatusEnum from 'mysterium-tequilapi/lib/dto/connection-status-enum'
 import translations from '../../../../src/main/tray/translations'
 import { describe, it, expect, beforeEach } from '../../../helpers/dependencies'
 import FakeMainCommunication from '../../../helpers/fake-main-communication'

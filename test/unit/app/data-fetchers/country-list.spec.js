@@ -17,7 +17,7 @@
 
 // @flow
 import type { ProposalFetcher } from '../../../../src/app/data-fetchers/proposal-fetcher'
-import ProposalDTO from '../../../../src/libraries/mysterium-tequilapi/dto/proposal'
+import ProposalDTO from 'mysterium-tequilapi/lib/dto/proposal'
 import type { Callback } from '../../../../src/libraries/subscriber'
 import { beforeEach, describe, expect, it } from '../../../helpers/dependencies'
 import CountryList from '../../../../src/app/data-fetchers/country-list'

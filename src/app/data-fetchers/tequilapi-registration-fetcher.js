@@ -17,12 +17,12 @@
 
 // @flow
 
-import type { TequilapiClient } from '../../libraries/mysterium-tequilapi/client'
+import type { TequilapiClient } from 'mysterium-tequilapi/lib/client'
 import { FunctionLooper } from '../../libraries/function-looper'
 import type { Callback } from '../../libraries/subscriber'
 import Subscriber from '../../libraries/subscriber'
 import type { RegistrationFetcher } from './registration-fetcher'
-import IdentityRegistrationDTO from '../../libraries/mysterium-tequilapi/dto/identity-registration'
+import IdentityRegistrationDTO from 'mysterium-tequilapi/lib/dto/identity-registration'
 
 class TequilapiRegistrationFetcher implements RegistrationFetcher {
   _api: TequilapiClient

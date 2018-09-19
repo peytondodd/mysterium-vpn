@@ -17,7 +17,7 @@
 
 // @flow
 
-import type { TequilapiClient } from '../../mysterium-tequilapi/client'
+import type { TequilapiClient } from 'mysterium-tequilapi/lib/client'
 import type { LogCallback, Process } from '../index'
 import axios from 'axios'
 import ClientLogSubscriber from '../client-log-subscriber'

@@ -18,7 +18,7 @@
 // @flow
 import type { Container } from '../app/di'
 import TequilapiClientWithMetrics from '../app/bug-reporting/tequilapi-client-with-metrics'
-import type { TequilapiClient } from '../libraries/mysterium-tequilapi/client'
+import type { TequilapiClient } from 'mysterium-tequilapi/lib/client'
 import ReportingTequilapiClientFactory from '../app/mysterium-tequilapi/reporting-tequilapi-client-factory'
 import type { BugReporterMetrics } from '../app/bug-reporting/metrics/bug-reporter-metrics'
 

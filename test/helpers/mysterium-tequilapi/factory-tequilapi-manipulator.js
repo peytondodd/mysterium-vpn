@@ -17,13 +17,13 @@
 
 // @flow
 
-import TequilapiError from '../../../src/libraries/mysterium-tequilapi/tequilapi-error'
+import TequilapiError from 'mysterium-tequilapi/lib/tequilapi-error'
 import EmptyTequilapiClientMock from '../../unit/renderer/store/modules/empty-tequilapi-client-mock'
-import ConnectionStatusDTO from '../../../src/libraries/mysterium-tequilapi/dto/connection-status'
-import ConnectionIPDTO from '../../../src/libraries/mysterium-tequilapi/dto/connection-ip'
-import ConnectionStatisticsDTO from '../../../src/libraries/mysterium-tequilapi/dto/connection-statistics'
-import ConnectionStatusEnum from '../../../src/libraries/mysterium-tequilapi/dto/connection-status-enum'
-import IdentityRegistrationDTO from '../../../src/libraries/mysterium-tequilapi/dto/identity-registration'
+import ConnectionStatusDTO from 'mysterium-tequilapi/lib/dto/connection-status'
+import ConnectionIPDTO from 'mysterium-tequilapi/lib/dto/connection-ip'
+import ConnectionStatisticsDTO from 'mysterium-tequilapi/lib/dto/connection-statistics'
+import ConnectionStatusEnum from 'mysterium-tequilapi/lib/dto/connection-status-enum'
+import IdentityRegistrationDTO from 'mysterium-tequilapi/lib/dto/identity-registration'
 
 function factoryTequilapiManipulator () {
   let statusFail = false

@@ -18,8 +18,8 @@
 // @flow
 
 import { describe, expect, it } from '../../../helpers/dependencies'
-import TequilapiError from '../../../../src/libraries/mysterium-tequilapi/tequilapi-error'
-import type { AxiosError } from '../../../../src/libraries/mysterium-tequilapi/tequilapi-error'
+import TequilapiError from 'mysterium-tequilapi/lib/tequilapi-error'
+import type { AxiosError } from 'mysterium-tequilapi/lib/tequilapi-error'
 
 function createTequilapiErrorWithCode (code: string): TequilapiError {
   const error = new Error('test error')

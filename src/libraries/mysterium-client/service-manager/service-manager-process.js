@@ -19,7 +19,7 @@
 
 import logger from '../../../app/logger'
 import type { LogCallback, Process } from '../index'
-import type { TequilapiClient } from '../../mysterium-tequilapi/client'
+import type { TequilapiClient } from 'mysterium-tequilapi/lib/client'
 import type { System } from '../system'
 import ClientLogSubscriber from '../client-log-subscriber'
 import Monitoring, { HEALTH_CHECK_INTERVAL, waitForStatusUp } from '../monitoring'
