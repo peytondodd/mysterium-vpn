@@ -17,7 +17,7 @@
 
 // @flow
 import type { Container } from '../app/di'
-import IdentityRegistrationDTO, { getPaymentLink } from '../libraries/mysterium-tequilapi/dto/identity-registration'
+import IdentityRegistrationDTO, { getPaymentLink } from 'mysterium-tequilapi/lib/dto/identity-registration'
 
 function bootstrap (container: Container) {
   container.constant(
