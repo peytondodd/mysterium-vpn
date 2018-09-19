@@ -18,7 +18,7 @@
 // @flow
 
 import type { ErrorMessage } from './error-message'
-import ConsumerLocationDTO from '../../libraries/mysterium-tequilapi/dto/consumer-location'
+import ConsumerLocationDTO from 'mysterium-tequilapi/lib/dto/consumer-location'
 import { FunctionLooper } from '../../libraries/function-looper'
 import type { ConnectionState } from './connection-state'
 import type { ConnectionStatsFetcher } from './connection-stats-fetcher'

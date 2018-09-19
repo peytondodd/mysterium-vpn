@@ -28,7 +28,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import type from '../store/types'
-import ConnectionStatusEnum from '../../libraries/mysterium-tequilapi/dto/connection-status-enum'
+import ConnectionStatusEnum from 'mysterium-tequilapi/lib/dto/connection-status-enum'
 import messages from '../../app/messages'
 
 export default {

@@ -17,20 +17,19 @@
 
 // @flow
 
-import type { HttpInterface, HttpQueryParams } from '../../../libraries/mysterium-tequilapi/adapters/interface'
-import type { BugReporter } from '../../bug-reporting/interface'
-import TequilapiError from '../../../libraries/mysterium-tequilapi/tequilapi-error'
+import type { HttpInterface, HttpQueryParams } from 'mysterium-tequilapi/lib/adapters/interface'
+import { Logger } from '../../logger'
 
 /**
- * Delegates to other 'HttpInterface' and captures errors to 'BugReporter'.
+ * Delegates to other 'HttpInterface' and logs errors.
  */
-class BugReporterAdapter implements HttpInterface {
+class LoggerAdapter implements HttpInterface {
+  _logger: Logger
   _adapter: HttpInterface
-  _bugReporter: BugReporter
 
-  constructor (adapter: HttpInterface, bugReporter: BugReporter) {
+  constructor (logger: Logger, adapter: HttpInterface) {
+    this._logger = logger
     this._adapter = adapter
-    this._bugReporter = bugReporter
   }
 
   async get (path: string, query: ?HttpQueryParams, timeout: ?number): Promise<?any> {
@@ -57,12 +56,10 @@ class BugReporterAdapter implements HttpInterface {
     try {
       return await func()
     } catch (err) {
-      if (err instanceof TequilapiError) {
-        this._bugReporter.captureInfoException(err)
-      }
+      this._logger.info(err)
       throw err
     }
   }
 }
 
-export default BugReporterAdapter
+export default LoggerAdapter

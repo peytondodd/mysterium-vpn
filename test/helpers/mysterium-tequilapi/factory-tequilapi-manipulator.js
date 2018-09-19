@@ -17,12 +17,13 @@
 
 // @flow
 
-import TequilapiError from '../../../src/libraries/mysterium-tequilapi/tequilapi-error'
+import TequilapiError from 'mysterium-tequilapi/lib/tequilapi-error'
 import EmptyTequilapiClientMock from '../../unit/renderer/store/modules/empty-tequilapi-client-mock'
-import ConnectionStatusDTO from '../../../src/libraries/mysterium-tequilapi/dto/connection-status'
-import ConnectionIPDTO from '../../../src/libraries/mysterium-tequilapi/dto/connection-ip'
-import ConnectionStatisticsDTO from '../../../src/libraries/mysterium-tequilapi/dto/connection-statistics'
-import IdentityRegistrationDTO from '../../../src/libraries/mysterium-tequilapi/dto/identity-registration'
+import ConnectionStatusDTO from 'mysterium-tequilapi/lib/dto/connection-status'
+import ConnectionIPDTO from 'mysterium-tequilapi/lib/dto/connection-ip'
+import ConnectionStatisticsDTO from 'mysterium-tequilapi/lib/dto/connection-statistics'
+import ConnectionStatusEnum from 'mysterium-tequilapi/lib/dto/connection-status-enum'
+import IdentityRegistrationDTO from 'mysterium-tequilapi/lib/dto/identity-registration'
 
 function factoryTequilapiManipulator () {
   let statusFail = false
@@ -46,7 +47,10 @@ function factoryTequilapiManipulator () {
       if (connectFail) {
         throw errorMock
       }
-      return new ConnectionStatusDTO({})
+      return new ConnectionStatusDTO({
+        sessionId: 'mock session',
+        status: ConnectionStatusEnum.CONNECTING
+      })
     }
 
     async connectionStatus (): Promise<ConnectionStatusDTO> {
@@ -54,7 +58,8 @@ function factoryTequilapiManipulator () {
         throw errorMock
       }
       return new ConnectionStatusDTO({
-        status: 'mock status'
+        sessionId: 'mock session',
+        status: ConnectionStatusEnum.NOT_CONNECTED
       })
     }
 
@@ -80,7 +85,11 @@ function factoryTequilapiManipulator () {
       if (statisticsFail) {
         throw errorMock
       }
-      return new ConnectionStatisticsDTO({ duration: 1 })
+      return new ConnectionStatisticsDTO({
+        duration: 1,
+        bytesReceived: 0,
+        bytesSent: 0
+      })
     }
 
     async identityRegistration (identity: string): Promise<IdentityRegistrationDTO> {

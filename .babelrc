@@ -12,7 +12,13 @@
         }],
         "stage-0"
       ],
-      "plugins": ["istanbul"]
+      "plugins": [
+        "istanbul",
+        ["flow-runtime", {
+          "assert": false,
+          "annotate": false
+        }]
+      ]
     },
     "main": {
       "presets": [

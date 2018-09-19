@@ -18,7 +18,7 @@
 // @flow
 
 import type { BugReporter } from '../../src/app/bug-reporting/interface'
-import IdentityDTO from '../../src/libraries/mysterium-tequilapi/dto/identity'
+import IdentityDTO from 'mysterium-tequilapi/lib/dto/identity'
 
 type ErrorCapture = {
   error: Error,

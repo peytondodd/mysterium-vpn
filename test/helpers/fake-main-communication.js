@@ -24,7 +24,7 @@ import type {
   RequestTermsDTO, TermsAnsweredDTO, RequestConnectionDTO, FavoriteProviderDTO
 } from '../../src/app/communication/dto'
 import type { UserSettings } from '../../src/app/user-settings/user-settings'
-import IdentityRegistrationDTO from '../../src/libraries/mysterium-tequilapi/dto/identity-registration'
+import IdentityRegistrationDTO from 'mysterium-tequilapi/lib/dto/identity-registration'
 
 /**
  * Allows tracking method invocations.

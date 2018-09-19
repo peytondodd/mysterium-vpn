@@ -25,7 +25,7 @@ import messages from '../../app/messages'
 import logger from '../../app/logger'
 import DelayedRetrier from '../../app/delayed-retrier'
 import config from '../config'
-import TequilapiError from '../../libraries/mysterium-tequilapi/tequilapi-error'
+import TequilapiError from 'mysterium-tequilapi/lib/tequilapi-error'
 import IdentityManager from '../../app/identity-manager'
 
 export default {

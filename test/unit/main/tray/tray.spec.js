@@ -18,7 +18,7 @@
 import translations from '../../../../src/main/tray/translations'
 import Tray from '../../../../src/main/tray/tray'
 import { expect } from '../../../helpers/dependencies'
-import ConnectionStatusEnum from '../../../../src/libraries/mysterium-tequilapi/dto/connection-status-enum'
+import ConnectionStatusEnum from 'mysterium-tequilapi/lib/dto/connection-status-enum'
 
 describe('tray', () => {
   describe('Tray', () => {

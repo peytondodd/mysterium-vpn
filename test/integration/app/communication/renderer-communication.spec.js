@@ -23,7 +23,7 @@ import type { MessageBus } from '../../../../src/app/communication/message-bus'
 import RendererCommunication from '../../../../src/app/communication/renderer-communication'
 import { CallbackRecorder } from '../../../helpers/utils'
 import type { MainCommunication } from '../../../../src/app/communication/main-communication'
-import ConnectionStatusEnum from '../../../../src/libraries/mysterium-tequilapi/dto/connection-status-enum'
+import ConnectionStatusEnum from 'mysterium-tequilapi/lib/dto/connection-status-enum'
 import DirectMessageBus from '../../../helpers/direct-message-bus'
 
 describe('RendererCommunication', () => {

@@ -18,7 +18,7 @@
 // @flow
 import type { BugReporter } from './interface'
 import Raven from 'raven'
-import IdentityDTO from '../../libraries/mysterium-tequilapi/dto/identity'
+import IdentityDTO from 'mysterium-tequilapi/lib/dto/identity'
 
 class BugReporterRenderer implements BugReporter {
   raven: Raven

@@ -17,9 +17,9 @@
 
 // @flow
 
-import IdentityDTO from '../libraries/mysterium-tequilapi/dto/identity'
+import IdentityDTO from 'mysterium-tequilapi/lib/dto/identity'
 import IdentityManager from './identity-manager'
-import type { TequilapiClient } from '../libraries/mysterium-tequilapi/client'
+import type { TequilapiClient } from 'mysterium-tequilapi/lib/client'
 
 /**
  * Creates or re-uses identity and unlocks it for future operations requiring identity.

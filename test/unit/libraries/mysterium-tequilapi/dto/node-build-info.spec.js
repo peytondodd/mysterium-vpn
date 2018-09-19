@@ -16,7 +16,7 @@
  */
 
 import { expect } from 'chai'
-import NodeBuildInfoDTO from '../../../../../src/libraries/mysterium-tequilapi/dto/node-build-info'
+import NodeBuildInfoDTO from 'mysterium-tequilapi/lib/dto/node-build-info'
 
 describe('TequilapiClient DTO', () => {
   describe('NodeBuildInfoDTO', () => {

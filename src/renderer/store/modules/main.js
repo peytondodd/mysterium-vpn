@@ -18,7 +18,7 @@
 // @flow
 // TODO: rename to `vpn.js` to be consistent with `Vpn.vue`
 import type from '../types'
-import type { TequilapiClient } from '../../../libraries/mysterium-tequilapi/client'
+import type { TequilapiClient } from 'mysterium-tequilapi/lib/client'
 
 type State = {
   init: string,

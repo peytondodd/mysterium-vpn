@@ -17,7 +17,7 @@
 
 // @flow
 import countries from './list'
-import ProposalDTO from '../../libraries/mysterium-tequilapi/dto/proposal'
+import ProposalDTO from 'mysterium-tequilapi/lib/dto/proposal'
 import type { FavoriteProviders } from '../user-settings/user-settings'
 
 const COUNTRY_NAME_UNRESOLVED = 'N/A'

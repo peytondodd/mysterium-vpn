@@ -18,7 +18,7 @@
 // @flow
 
 import type { Callback } from '../../libraries/subscriber'
-import ProposalDTO from '../../libraries/mysterium-tequilapi/dto/proposal'
+import ProposalDTO from 'mysterium-tequilapi/lib/dto/proposal'
 
 interface ProposalFetcher {
   fetch(): Promise<ProposalDTO[]>,

@@ -21,7 +21,7 @@ import lolex from 'lolex'
 import { capturePromiseError, nextTick } from '../../../helpers/utils'
 import EmptyTequilapiClientMock from '../../renderer/store/modules/empty-tequilapi-client-mock'
 import logger from '../../../../src/app/logger'
-import IdentityRegistrationDTO from '../../../../src/libraries/mysterium-tequilapi/dto/identity-registration'
+import IdentityRegistrationDTO from 'mysterium-tequilapi/lib/dto/identity-registration'
 import TequilapiRegistrationFetcher from '../../../../src/app/data-fetchers/tequilapi-registration-fetcher'
 
 const IDENTITY_ID = 'identity-id-123'

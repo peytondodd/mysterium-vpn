@@ -21,14 +21,14 @@ import type from '../types'
 import { FunctionLooper } from '../../../libraries/function-looper'
 import config from '@/config'
 import RendererCommunication from '../../../app/communication/renderer-communication'
-import type { TequilapiClient } from '../../../libraries/mysterium-tequilapi/client'
-import type { ConnectionStatus } from '../../../libraries/mysterium-tequilapi/dto/connection-status-enum'
-import ConnectionStatusEnum from '../../../libraries/mysterium-tequilapi/dto/connection-status-enum'
-import ConnectionStatisticsDTO from '../../../libraries/mysterium-tequilapi/dto/connection-statistics'
-import ConsumerLocationDTO from '../../../libraries/mysterium-tequilapi/dto/consumer-location'
+import type { TequilapiClient } from 'mysterium-tequilapi/lib/client'
+import type { ConnectionStatus } from 'mysterium-tequilapi/lib/dto/connection-status-enum'
+import ConnectionStatusEnum from 'mysterium-tequilapi/lib/dto/connection-status-enum'
+import ConnectionStatisticsDTO from 'mysterium-tequilapi/lib/dto/connection-statistics'
+import ConsumerLocationDTO from 'mysterium-tequilapi/lib/dto/consumer-location'
 import type { BugReporter } from '../../../app/bug-reporting/interface'
 import logger from '../../../app/logger'
-import TequilapiError from '../../../libraries/mysterium-tequilapi/tequilapi-error'
+import TequilapiError from 'mysterium-tequilapi/lib/tequilapi-error'
 import type { ConnectionEstablisher } from '../../../app/connection/connection-establisher'
 import type { ErrorMessage } from '../../../app/connection/error-message'
 import { ConnectionStatsFetcher } from '../../../app/connection/connection-stats-fetcher'
@@ -37,11 +37,11 @@ import type { Provider } from '../../../app/connection/provider'
 import messages from '../../../app/messages'
 
 type ConnectionStore = {
-  ip: ?string,
-  location: ?ConsumerLocationDTO,
+  ip?: ?string,
+  location?: ?ConsumerLocationDTO,
   status: ConnectionStatus,
   statistics: Object,
-  lastConnectionProvider: ?Provider,
+  lastConnectionProvider?: ?Provider,
   actionLoopers: { [string]: FunctionLooper }
 }
 
