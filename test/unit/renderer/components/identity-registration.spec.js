@@ -44,7 +44,7 @@ describe('IdentityRegistration', () => {
     const dependencies = new DIContainer(vm)
     rendererCommunication = new FakeRendererCommunication()
     dependencies.constant('rendererCommunication', rendererCommunication)
-    dependencies.constant('paymentBaseUrl', '')
+    dependencies.constant('getPaymentLink', () => {})
     vue = mount(IdentityRegistration, {
       localVue: vm
     })

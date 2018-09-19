@@ -17,13 +17,22 @@
 
 // @flow
 import type { Container } from '../app/di'
+import IdentityRegistrationDTO, { getPaymentLink } from 'mysterium-tequilapi/lib/dto/identity-registration'
 
 function bootstrap (container: Container) {
   container.constant(
     'paymentBaseUrl',
     process.env.NODE_ENV === 'development'
       ? 'http://wallet-dev.mysterium.network/'
-      : 'http://walletx.mysterium.network/'
+      : 'http://wallet.mysterium.network/'
+  )
+
+  container.service(
+    'getPaymentLink',
+    ['paymentBaseUrl'],
+    (paymentBaseUrl: string) =>
+      (identityRegistration: IdentityRegistrationDTO) =>
+        getPaymentLink(paymentBaseUrl, identityRegistration)
   )
 }
 
