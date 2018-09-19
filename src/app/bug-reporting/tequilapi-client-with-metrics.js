@@ -116,6 +116,29 @@ class TequilapiClientWithMetrics implements TequilapiClient {
   async location (timeout: ?number): Promise<ConsumerLocationDTO> {
     return this._client.location(timeout)
   }
+
+  async connectionHistoryList () {
+    return [
+      {
+        id: '1',
+        identity: '0x3b03a513fba4bd4868edd340f77da0c920150f3e',
+        start: '2018.09.24 14:23:23',
+        status: 'Successful',
+        duration: '00:35:00',
+        sent: '1MB',
+        received: '5MB'
+      },
+      {
+        id: '2',
+        identity: '0x1b03b513fba4bd4868edd340f77da0c920150f0a',
+        start: '2018.09.24 14:23:23',
+        status: 'Successful',
+        duration: '00:35:00',
+        sent: '1MB',
+        received: '5MB'
+      }
+    ]
+  }
 }
 
 export default TequilapiClientWithMetrics

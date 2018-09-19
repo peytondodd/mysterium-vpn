@@ -21,6 +21,7 @@ import VpnLoader from '@/pages/vpn-loader'
 import AppLoading from '@/pages/app-loading'
 import Vpn from '@/pages/vpn'
 import Terms from '@/pages/terms'
+import ConnectionHistory from '@/pages/connection-history'
 import About from '@/pages/about'
 import logger from '../../app/logger'
 
@@ -62,6 +63,11 @@ function factory (store) {
         meta: {
           navVisible: false
         }
+      },
+      {
+        path: '/connection-history',
+        name: 'connection-history',
+        component: ConnectionHistory
       },
       {
         path: '/about',

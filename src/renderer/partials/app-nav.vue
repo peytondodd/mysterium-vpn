@@ -51,6 +51,15 @@
             slot="item"
             class="nav__trigger"
             href="#"
+            @click="showConnectionHistory">
+            <icon-eye class="nav__icon nav__icon--eye"/>
+            <span class="nav__text">connection history</span>
+          </a>
+        </li>
+        <li class="nav__item">
+          <a
+            class="nav__trigger"
+            href="#"
             @click="reportIssue">
             <icon-issue class="nav__icon nav__icon--issue"/>
             <span class="nav__text">report issue</span>
@@ -120,6 +129,9 @@ export default {
     },
     openRemoteLink (url) {
       shell.openExternal(url)
+    },
+    showConnectionHistory () {
+      this.$router.push('/connection-history')
     },
     reportIssue () {
       this.feedbackForm.show()
