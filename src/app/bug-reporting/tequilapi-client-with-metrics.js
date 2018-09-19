@@ -138,7 +138,67 @@ class TequilapiClientWithMetrics implements TequilapiClient {
         duration: '00:35:00',
         sent: '1MB',
         received: '5MB'
-      }
+      },
+      {
+        id: '3',
+        identity: '0x1b03b513fba4bd4868edd340f77da0c920150f0a',
+        country: 'us',
+        start: '2018.09.24 14:23:23',
+        status: 'Successful',
+        duration: '00:35:00',
+        sent: '1MB',
+        received: '5MB'
+      },
+      {
+        id: '4',
+        identity: '0x1b03b513fba4bd4868edd340f77da0c920150f0a',
+        country: 'us',
+        start: '2018.09.24 14:23:23',
+        status: 'Successful',
+        duration: '00:35:00',
+        sent: '1MB',
+        received: '5MB'
+      },
+      {
+        id: '5',
+        identity: '0x1b03b513fba4bd4868edd340f77da0c920150f0a',
+        country: 'us',
+        start: '2018.09.24 14:23:23',
+        status: 'Successful',
+        duration: '00:35:00',
+        sent: '1MB',
+        received: '5MB'
+      },
+      {
+        id: '6',
+        identity: '0x1b03b513fba4bd4868edd340f77da0c920150f0a',
+        country: 'us',
+        start: '2018.09.24 14:23:23',
+        status: 'Successful',
+        duration: '00:35:00',
+        sent: '1MB',
+        received: '5MB'
+      },
+      {
+        id: '7',
+        identity: '0x1b03b513fba4bd4868edd340f77da0c920150f0a',
+        country: 'us',
+        start: '2018.09.24 14:23:23',
+        status: 'Successful',
+        duration: '00:35:00',
+        sent: '1MB',
+        received: '5MB'
+      },
+      {
+        id: '8',
+        identity: '0x1b03b513fba4bd4868edd340f77da0c920150f0a',
+        country: 'us',
+        start: '2018.09.24 14:23:23',
+        status: 'Successful',
+        duration: '00:35:00',
+        sent: '1MB',
+        received: '5MB'
+      },
     ]
   }
 }
