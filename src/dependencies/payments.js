@@ -17,7 +17,7 @@
 
 // @flow
 import type { Container } from '../app/di'
-import { getPaymentLink } from '../libraries/mysterium-tequilapi/dto/identity-registration'
+import IdentityRegistrationDTO, { getPaymentLink } from '../libraries/mysterium-tequilapi/dto/identity-registration'
 
 function bootstrap (container: Container) {
   container.constant(
@@ -30,7 +30,9 @@ function bootstrap (container: Container) {
   container.service(
     'getPaymentLink',
     ['paymentBaseUrl'],
-    (paymentBaseUrl) => getPaymentLink.bind(null, paymentBaseUrl)
+    (paymentBaseUrl: string) =>
+      (identityRegistration: IdentityRegistrationDTO) =>
+        getPaymentLink(paymentBaseUrl, identityRegistration)
   )
 }
 
