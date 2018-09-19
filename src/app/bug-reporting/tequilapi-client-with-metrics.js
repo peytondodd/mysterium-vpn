@@ -198,7 +198,7 @@ class TequilapiClientWithMetrics implements TequilapiClient {
         duration: '00:35:00',
         sent: '1MB',
         received: '5MB'
-      },
+      }
     ]
   }
 }

@@ -58,7 +58,7 @@ describe('ConnectionHistory', () => {
     expect(wrapper).to.be.ok
   })
 
-  it('renders table with header and list of records', async () => {
+  it('renders table with headers and list of records', async () => {
     await wrapper.vm.$nextTick()
     expect(wrapper.findAll('tr')).to.have.length(1 + mockedRecords.length)
   })
@@ -68,5 +68,11 @@ describe('ConnectionHistory', () => {
     await wrapper.vm.$nextTick()
     const nodeText = wrapper.findAll('tr').at(1).findAll('td').at(1).element.innerText
     expect(nodeText).to.have.string('[lt]')
+  })
+
+  it('renders shortened identities', async () => {
+    await wrapper.vm.$nextTick()
+    const nodeText = wrapper.findAll('tr').at(1).findAll('td').at(1).element.innerText
+    expect(nodeText).to.eql('[lt]0x3b03a513f...')
   })
 })

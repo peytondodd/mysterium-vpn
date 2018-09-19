@@ -33,7 +33,7 @@
             v-for="record in records"
             :key="record.id">
             <td/>
-            <td>[{{ record.country }}]{{ record.identity }}</td>
+            <td>[{{ record.country }}]{{ record.short_identity }}</td>
             <td>{{ record.start }}</td>
             <td>{{ record.status }}</td>
             <td>{{ record.duration }}</td>
@@ -56,6 +56,10 @@ export default {
   },
   created: function () {
     this.tequilapiClient.connectionHistoryList().then(records => {
+      records.forEach(record => {
+        // TODO: extract ConnectionRecord component, make this as a computed property
+        record.short_identity = record.identity.slice(0, 11) + '...'
+      })
       this.records = records
     })
   }
