@@ -33,7 +33,7 @@
             v-for="record in records"
             :key="record.id">
             <td/>
-            <td>{{ record.identity }}</td>
+            <td>[{{ record.country }}]{{ record.identity }}</td>
             <td>{{ record.start }}</td>
             <td>{{ record.status }}</td>
             <td>{{ record.duration }}</td>

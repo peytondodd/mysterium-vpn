@@ -122,6 +122,7 @@ class TequilapiClientWithMetrics implements TequilapiClient {
       {
         id: '1',
         identity: '0x3b03a513fba4bd4868edd340f77da0c920150f3e',
+        country: 'lt',
         start: '2018.09.24 14:23:23',
         status: 'Successful',
         duration: '00:35:00',
@@ -131,6 +132,7 @@ class TequilapiClientWithMetrics implements TequilapiClient {
       {
         id: '2',
         identity: '0x1b03b513fba4bd4868edd340f77da0c920150f0a',
+        country: 'us',
         start: '2018.09.24 14:23:23',
         status: 'Successful',
         duration: '00:35:00',

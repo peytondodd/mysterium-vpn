@@ -24,22 +24,25 @@ import DIContainer from '../../../../src/app/di/vue-container'
 describe('ConnectionHistory', () => {
   let wrapper
 
+  const mockedRecords = [
+    {
+      id: '1',
+      identity: '0x3b03a513fba4bd4868edd340f77da0c920150f3e',
+      country: 'lt',
+      start: '2018.09.24 14:23:23',
+      status: 'Successful',
+      duration: '00:35:00',
+      sent: '1MB',
+      received: '5MB'
+    }
+  ]
+
   function mountConnectionHistory () {
     const localVue = createLocalVue()
     const dependencies = new DIContainer(localVue)
     dependencies.constant('tequilapiClient', {
       async connectionHistoryList () {
-        return [
-          {
-            id: '1',
-            identity: '0x3b03a513fba4bd4868edd340f77da0c920150f3e',
-            start: '2018.09.24 14:23:23',
-            status: 'Successful',
-            duration: '00:35:00',
-            sent: '1MB',
-            received: '5MB'
-          }
-        ]
+        return mockedRecords
       }
     })
     return mount(ConnectionHistory, {
@@ -51,9 +54,19 @@ describe('ConnectionHistory', () => {
     wrapper = mountConnectionHistory()
   })
 
-  it('renders list of records', async () => {
-    await wrapper.vm.$nextTick()
+  it('renders successfully', () => {
     expect(wrapper).to.be.ok
-    expect(wrapper.findAll('tr')).to.have.length(2)
+  })
+
+  it('renders table with header and list of records', async () => {
+    await wrapper.vm.$nextTick()
+    expect(wrapper.findAll('tr')).to.have.length(1 + mockedRecords.length)
+  })
+
+  it('renders countries', async () => {
+    // TODO: render icons instead
+    await wrapper.vm.$nextTick()
+    const nodeText = wrapper.findAll('tr').at(1).findAll('td').at(1).element.innerText
+    expect(nodeText).to.have.string('[lt]')
   })
 })
