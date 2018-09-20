@@ -17,7 +17,7 @@
 
 // @flow
 import type { Container } from '../../../app/di'
-import { UserSettingsStore } from '../../../app/user-settings/user-settings-store'
+import { UserSettingsStorage } from '../../../app/user-settings/user-settings-storage'
 import { join } from 'path'
 
 const userSettingsFilename = 'userSettings.json'
@@ -27,7 +27,7 @@ function bootstrap (container: Container) {
     'userSettingsStore',
     ['mysteriumVpnApplication.config'],
     (mysteriumVpnConfig) => {
-      return new UserSettingsStore(join(mysteriumVpnConfig.userDataDirectory, userSettingsFilename))
+      return new UserSettingsStorage(join(mysteriumVpnConfig.userDataDirectory, userSettingsFilename))
     }
   )
 }

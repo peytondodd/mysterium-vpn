@@ -29,7 +29,7 @@ import EmptyTequilapiClientMock from '../renderer/store/modules/empty-tequilapi-
 import FeatureToggle from '../../../src/app/features/feature-toggle'
 import BugReporterMock from '../../helpers/bug-reporter-mock'
 import factoryTequilapiManipulator from '../../helpers/mysterium-tequilapi/factory-tequilapi-manipulator'
-import { UserSettingsStore } from '../../../src/app/user-settings/user-settings-store'
+import { UserSettingsStorage } from '../../../src/app/user-settings/user-settings-storage'
 import Notification from '../../../src/app/notification'
 import ConnectionStatusEnum from 'mysterium-tequilapi/lib/dto/connection-status-enum'
 import { nextTick } from '../../helpers/utils'
@@ -43,10 +43,10 @@ class TequilapiRegistrationFetcherMock extends TequilapiRegistrationFetcher {
   }
 }
 
-class UserSettingsStoreMock extends UserSettingsStore {
+class UserSettingsStoreMock extends UserSettingsStorage {
   saveWasCalled: boolean = false
 
-  async save (): Promise<void> {
+  async _save (): Promise<void> {
     this.saveWasCalled = true
   }
 }
@@ -86,8 +86,8 @@ describe('CommunicationBindings', () => {
       expect(notif.showWasCalled).to.be.true
     })
 
-    it('it does not show notification when disconnecting with notifications disabled', () => {
-      userSettingsStore.setShowDisconnectNotifications(false)
+    it('it does not show notification when disconnecting with notifications disabled', async () => {
+      await userSettingsStore.setShowDisconnectNotifications(false)
       comBinds.showNotificationOnDisconnect(userSettingsStore, notif)
       msgBus.triggerOn(messages.CONNECTION_STATUS_CHANGED, {
         oldStatus: ConnectionStatusEnum.CONNECTED,
@@ -118,7 +118,10 @@ describe('CommunicationBindings', () => {
       msgBus.triggerOn(messages.USER_SETTINGS_REQUEST)
 
       expect(msgBus.sentData[0].channel).to.eql(messages.USER_SETTINGS)
-      expect(msgBus.sentData[0].data).to.eql({ showDisconnectNotifications: true, favoriteProviders: new Set() })
+      expect(msgBus.sentData[0].data).to.eql({
+        showDisconnectNotifications: true,
+        favoriteProviders: new Set()
+      })
     })
 
     it('saves disconnect notification setting that was received from communication', () => {

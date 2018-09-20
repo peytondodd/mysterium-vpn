@@ -106,7 +106,12 @@ function bootstrap (container: Container) {
     'vue-store.connection.actions',
     ['tequilapiClient', 'rendererCommunication', 'bugReporter', 'connectionEstablisher'],
     (tequilapiClient, rendererCommunication, bugReporter, connectionEstablisher) => {
-      return actionsFactory(tequilapiClient, rendererCommunication, bugReporter, connectionEstablisher)
+      return actionsFactory(
+        tequilapiClient,
+        rendererCommunication,
+        bugReporter,
+        connectionEstablisher
+      )
     }
   )
   container.constant('vue-store.errors', errors)

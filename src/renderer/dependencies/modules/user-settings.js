@@ -16,23 +16,19 @@
  */
 
 // @flow
-import type { UserSettings } from './user-settings'
-import type { Callback } from '../../libraries/subscriber'
+import type { Container } from '../../../app/di'
+import { UserSettingsProxy } from '../../../app/user-settings/user-settings-proxy'
 
-const userSettingName = {
-  showDisconnectNotifications: 'showDisconnectNotifications',
-  favoriteProviders: 'favoriteProviders'
+function bootstrap (container: Container) {
+  container.factory(
+    'userSettingsStore',
+    ['rendererCommunication'],
+    (rendererCommunication) => {
+      const proxy = new UserSettingsProxy(rendererCommunication)
+      proxy.startListening()
+      return proxy
+    }
+  )
 }
 
-type UserSettingName = $Values<typeof userSettingName>
-
-interface UserSettingsStore {
-  setFavorite (id: string, isFavorite: boolean): Promise<void>,
-  setShowDisconnectNotifications (show: boolean): Promise<void>,
-  getAll (): UserSettings,
-  onChange (property: UserSettingName, callback: Callback<any>): void,
-  removeOnChange (property: UserSettingName, callback: Callback<any>): void
-}
-
-export type { UserSettingsStore, UserSettingName }
-export { userSettingName }
+export default bootstrap

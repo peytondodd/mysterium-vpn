@@ -20,6 +20,7 @@
 import type { EventSender } from '../statistics/event-sender'
 import type { BugReporter } from '../bug-reporting/interface'
 import type { TequilapiClient } from 'mysterium-tequilapi/lib/client'
+import type { ConnectDetails } from '../statistics/events-connection'
 import { ConnectEventTracker, currentUserTime } from '../statistics/events-connection'
 import ConnectionStatusEnum from 'mysterium-tequilapi/lib/dto/connection-status-enum'
 import TequilapiError from 'mysterium-tequilapi/lib/tequilapi-error'
@@ -32,7 +33,6 @@ import type { ErrorMessage } from './error-message'
 import ConsumerLocationDTO from 'mysterium-tequilapi/lib/dto/consumer-location'
 import type { ConnectionState } from './connection-state'
 import type { ConnectionStatsFetcher } from './connection-stats-fetcher'
-import type { ConnectDetails } from '../statistics/events-connection'
 import type { Provider } from './provider'
 
 /**
@@ -43,7 +43,10 @@ class TequilapiConnectionEstablisher implements ConnectionEstablisher {
   _eventSender: EventSender
   _bugReporter: BugReporter
 
-  constructor (tequilapi: TequilapiClient, eventSender: EventSender, bugReporter: BugReporter) {
+  constructor (
+    tequilapi: TequilapiClient,
+    eventSender: EventSender,
+    bugReporter: BugReporter) {
     this._tequilapi = tequilapi
     this._eventSender = eventSender
     this._bugReporter = bugReporter
@@ -80,10 +83,8 @@ class TequilapiConnectionEstablisher implements ConnectionEstablisher {
         return
       }
 
-      errorMessage.show(messages.connectFailed)
-
       eventTracker.connectEnded('Error: Connection to node failed.')
-
+      errorMessage.show(messages.connectFailed)
       this._bugReporter.captureInfoException(err)
     } finally {
       if (actionLooper) {

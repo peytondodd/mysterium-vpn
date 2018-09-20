@@ -99,7 +99,8 @@ describe('TequilapiConnectionEstablisher', () => {
     bugReporterMock = new BugReporterMock()
 
     const fakeApi = fakeTequilapi.getFakeApi()
-    connectionEstablisher = new TequilapiConnectionEstablisher(fakeApi, fakeEventSender, bugReporterMock)
+    connectionEstablisher =
+      new TequilapiConnectionEstablisher(fakeApi, fakeEventSender, bugReporterMock)
     mockConnectionState = new MockConnectionState()
     mockErrorMessage = new MockErrorMessage()
   })
@@ -127,7 +128,7 @@ describe('TequilapiConnectionEstablisher', () => {
       expect(mockErrorMessage.hidden).to.be.true
     })
 
-    it('persistes provider id', async () => {
+    it('persists provider id', async () => {
       await connectionEstablisher
         .connect(consumerId, provider, mockConnectionState, mockErrorMessage, location, actionLooper)
       expect(mockConnectionState.lastConnectionProvider).to.eql({ id: 'provider id', country: 'us' })

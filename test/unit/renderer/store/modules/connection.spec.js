@@ -223,8 +223,12 @@ describe('connection', () => {
 
       const dispatch = (action, payload = {}) => {
         const context = { commit, dispatch, state, getters }
-        const actions =
-          actionsFactory(fakeTequilapi.getFakeApi(), rendererCommunication, bugReporterMock, mockConnectionEstablisher)
+        const actions = actionsFactory(
+          fakeTequilapi.getFakeApi(),
+          rendererCommunication,
+          bugReporterMock,
+          mockConnectionEstablisher
+        )
 
         return actions[action](context, payload)
       }

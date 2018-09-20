@@ -22,6 +22,7 @@ import FakeMessageBus from '../../../helpers/fake-message-bus'
 import DisconnectNotificationSetting from '@/components/disconnect-notification-setting'
 import { afterEach, beforeEach } from '../../../helpers/dependencies'
 import messages from '../../../../src/app/communication/messages'
+import { UserSettingsProxy } from '../../../../src/app/user-settings/user-settings-proxy'
 
 // TODO: extract this out to DRY with other occurances
 function mountWith (rendererCommunication) {
@@ -29,6 +30,9 @@ function mountWith (rendererCommunication) {
 
   const dependencies = new DIContainer(vue)
   dependencies.constant('rendererCommunication', rendererCommunication)
+  const userSettingsProxy = new UserSettingsProxy(rendererCommunication)
+  userSettingsProxy.startListening()
+  dependencies.constant('userSettingsStore', userSettingsProxy)
 
   return mount(DisconnectNotificationSetting, {
     localVue: vue
@@ -36,11 +40,11 @@ function mountWith (rendererCommunication) {
 }
 
 describe('DisconnectNotificationSetting', () => {
-  const fakeMessageBus = new FakeMessageBus()
+  let fakeMessageBus
   let communication, wrapper
 
   beforeEach(() => {
-    fakeMessageBus.clean()
+    fakeMessageBus = new FakeMessageBus()
     communication = new RendererCommunication(fakeMessageBus)
     wrapper = mountWith(communication)
   })
@@ -51,12 +55,6 @@ describe('DisconnectNotificationSetting', () => {
     expect(fakeMessageBus.lastChannel).to.eql(messages.USER_SETTINGS_REQUEST)
   })
 
-  it('cleans all message bus callbacks after being destroyed', async () => {
-    expect(fakeMessageBus._callbacksCount).to.eql(1)
-    wrapper.destroy()
-    expect(fakeMessageBus.noRemainingCallbacks()).to.be.true
-  })
-
   describe('.toggle()', () => {
     it('sends disconnectNotification update via communication channel', () => {
       wrapper.vm.toggle()
@@ -65,10 +63,11 @@ describe('DisconnectNotificationSetting', () => {
       expect(fakeMessageBus.lastData).to.be.false
     })
   })
-  describe('.updateUserSettings()', () => {
-    it('assingns showDisconnectNotification setting from settings to this.isDisconnectNotificationEnabled', () => {
+
+  describe('.updateNotificationSetting()', () => {
+    it('updates setting', () => {
       expect(wrapper.vm.isDisconnectNotificationEnabled).to.be.true
-      wrapper.vm.updateUserSettings({ showDisconnectNotifications: false })
+      wrapper.vm.updateNotificationSetting(false)
       expect(wrapper.vm.isDisconnectNotificationEnabled).to.be.false
     })
   })

@@ -16,9 +16,11 @@
  */
 
 // @flow
-export type FavoriteProviders = Set<string>
+type FavoriteProviders = Set<string>
 
-export type UserSettings = {
+type UserSettings = {
   showDisconnectNotifications: boolean,
   favoriteProviders: FavoriteProviders
 }
+
+export type { UserSettings, FavoriteProviders }

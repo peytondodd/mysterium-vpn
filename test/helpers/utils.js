@@ -52,14 +52,14 @@ async function captureAsyncError (func: () => Promise<any>) {
 }
 
 /**
- * Records callback invocation. Useful for asserting that callback was invoked.
+ * Records multiple invocations of callback. Useful for asserting that callback was invoked multiple times.
  */
-class CallbackRecorder {
-  _arguments: ?Array<any> = null
+class RepeatableCallbackRecorder {
+  _arguments: any[][] = []
   _boundCallback: (any) => void
 
   /**
-   * Returns function, which records it's invocation and argument
+   * Returns function, which records its invocation and arguments
    * into current instance.
    *
    * @returns Function
@@ -69,8 +69,38 @@ class CallbackRecorder {
     return this._boundCallback
   }
 
-  _record (...args: Array<any>): void {
-    this._arguments = args
+  get invokesCount (): number {
+    return this._arguments.length
+  }
+
+  get lastArguments (): any[] {
+    if (this._arguments.length === 0) {
+      throw new Error('Callback of RepeatableCallbackRecorder was not invoked, last arguments are not available.')
+    }
+    return this._arguments[this._arguments.length - 1]
+  }
+
+  _record (...args: any[]): void {
+    this._arguments.push(args)
+  }
+}
+
+/**
+ * Records invocation of callback. Useful for asserting that callback was invoked single time.
+ */
+class CallbackRecorder {
+  _arguments: ?Array<any> = null
+  _boundCallback: (any) => void
+
+  /**
+   * Returns function, which records its invocation and arguments
+   * into current instance.
+   *
+   * @returns Function
+   */
+  getCallback (): (any) => void {
+    this._boundCallback = this._boundCallback || this._record.bind(this)
+    return this._boundCallback
   }
 
   get invoked (): boolean {
@@ -87,10 +117,20 @@ class CallbackRecorder {
     }
     return this._arguments
   }
+
+  _record (...args: Array<any>): void {
+    if (this._arguments != null) {
+      throw new Error('Callback of CallbackRecorder already invoked!')
+    }
+    this._arguments = args
+  }
 }
 
-export { nextTick,
+export {
+  nextTick,
   capturePromiseError,
   captureAsyncError,
   captureError,
-  CallbackRecorder }
+  CallbackRecorder,
+  RepeatableCallbackRecorder
+}

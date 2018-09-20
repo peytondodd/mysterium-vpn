@@ -16,23 +16,15 @@
  */
 
 // @flow
-import type { UserSettings } from './user-settings'
-import type { Callback } from '../../libraries/subscriber'
 
-const userSettingName = {
-  showDisconnectNotifications: 'showDisconnectNotifications',
-  favoriteProviders: 'favoriteProviders'
+import { unlinkSync } from 'fs'
+
+function unlinkSyncIfPresent (path: string) {
+  try {
+    unlinkSync(path)
+  } catch (_err) {
+    // if fails, we assume it's not present
+  }
 }
 
-type UserSettingName = $Values<typeof userSettingName>
-
-interface UserSettingsStore {
-  setFavorite (id: string, isFavorite: boolean): Promise<void>,
-  setShowDisconnectNotifications (show: boolean): Promise<void>,
-  getAll (): UserSettings,
-  onChange (property: UserSettingName, callback: Callback<any>): void,
-  removeOnChange (property: UserSettingName, callback: Callback<any>): void
-}
-
-export type { UserSettingsStore, UserSettingName }
-export { userSettingName }
+export { unlinkSyncIfPresent }

@@ -19,10 +19,12 @@
 import type { ProposalFetcher } from '../../../../src/app/data-fetchers/proposal-fetcher'
 import ProposalDTO from 'mysterium-tequilapi/lib/dto/proposal'
 import type { Callback } from '../../../../src/libraries/subscriber'
-import { beforeEach, describe, expect, it } from '../../../helpers/dependencies'
+import { afterEach, beforeEach, describe, expect, it } from '../../../helpers/dependencies'
 import CountryList from '../../../../src/app/data-fetchers/country-list'
-import { UserSettingsStore } from '../../../../src/app/user-settings/user-settings-store'
-import { CallbackRecorder } from '../../../helpers/utils'
+import { UserSettingsStorage } from '../../../../src/app/user-settings/user-settings-storage'
+import { RepeatableCallbackRecorder } from '../../../helpers/utils'
+import { unlinkSyncIfPresent } from '../../../helpers/file-system'
+import type { UserSettingsStore } from '../../../../src/app/user-settings/user-settings-store'
 
 class ProposalFetcherMock implements ProposalFetcher {
   _subscriber: Callback<ProposalDTO[]>
@@ -45,7 +47,8 @@ class ProposalFetcherMock implements ProposalFetcher {
 describe('CountryList', () => {
   let countryList, cbRec
   const proposalFetcher = new ProposalFetcherMock()
-  const store = new UserSettingsStore('')
+  const settingsPath = 'settings.json'
+  const store: UserSettingsStore = new UserSettingsStorage(settingsPath)
 
   const proposal1 = [new ProposalDTO({ id: '1', providerId: '0x1', serviceType: 'mock' })]
   const proposal2 = [new ProposalDTO({
@@ -57,7 +60,11 @@ describe('CountryList', () => {
 
   beforeEach(() => {
     countryList = new CountryList(proposalFetcher, store)
-    cbRec = new CallbackRecorder()
+    cbRec = new RepeatableCallbackRecorder()
+  })
+
+  afterEach(() => {
+    unlinkSyncIfPresent(settingsPath)
   })
 
   describe('.onUpdate', () => {
@@ -65,20 +72,27 @@ describe('CountryList', () => {
       countryList.onUpdate(cbRec.getCallback())
       proposalFetcher.setFetchData(proposal1)
       proposalFetcher.fetch()
-      expect(cbRec.firstArgument).to.be.eql([{ id: '0x1', code: null, name: 'N/A', isFavorite: false }])
+      expect(cbRec.lastArguments).to.be.eql([
+        [{ id: '0x1', code: null, name: 'N/A', isFavorite: false }]
+      ])
 
       proposalFetcher.setFetchData(proposal2)
       proposalFetcher.fetch()
-      expect(cbRec.firstArgument).to.be.eql([{ id: '0x2', code: 'lt', name: 'Lithuania', isFavorite: false }])
+      expect(cbRec.lastArguments).to.be.eql([
+        [{ id: '0x2', code: 'lt', name: 'Lithuania', isFavorite: false }]
+      ])
     })
 
-    it('notifies subscribers when favorite providers change', () => {
+    it('notifies subscribers when favorite providers change', async () => {
       proposalFetcher.setFetchData(proposal2)
       proposalFetcher.fetch()
 
       countryList.onUpdate(cbRec.getCallback())
-      store.setFavorite('0x2', true)
-      expect(cbRec.firstArgument).to.be.eql([{ id: '0x2', code: 'lt', name: 'Lithuania', isFavorite: true }])
+      await store.setFavorite('0x2', true)
+      expect(cbRec.invokesCount).to.eql(1)
+      expect(cbRec.lastArguments).to.be.eql([
+        [{ id: '0x2', code: 'lt', name: 'Lithuania', isFavorite: true }]
+      ])
     })
   })
 })

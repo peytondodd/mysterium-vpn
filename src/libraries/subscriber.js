@@ -31,6 +31,14 @@ class Subscriber<T> {
     this._callbacks.push(callback)
   }
 
+  unsubscribe (callback: Callback<T>) {
+    const index = this._callbacks.indexOf(callback)
+    if (index === -1) {
+      throw new Error('Callback being unsubscribed was not found')
+    }
+    this._callbacks.splice(index, 1)
+  }
+
   notify (data: T) {
     this._callbacks.forEach((callback: Callback<T>) => {
       try {

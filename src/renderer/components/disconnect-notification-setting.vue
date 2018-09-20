@@ -33,28 +33,29 @@
 </template>
 
 <script>
+import { userSettingName } from '../../app/user-settings/user-settings-store'
+
 export default {
   name: 'DisconnectNotificationSetting',
-  dependencies: ['rendererCommunication'],
+  dependencies: ['rendererCommunication', 'userSettingsStore'],
   data () {
     return {
       isDisconnectNotificationEnabled: true
     }
   },
   mounted () {
-    this.rendererCommunication.onUserSettings(this.updateUserSettings)
-    this.rendererCommunication.sendUserSettingsRequest()
+    this.userSettingsStore.onChange(userSettingName.showDisconnectNotifications, this.updateNotificationSetting)
   },
   beforeDestroy () {
-    this.rendererCommunication.removeOnUserSettingsCallback(this.updateUserSettings)
+    this.userSettingsStore.removeOnChange(userSettingName.showDisconnectNotifications, this.updateNotificationSetting)
   },
   methods: {
     toggle () {
       this.isDisconnectNotificationEnabled = !this.isDisconnectNotificationEnabled
-      this.rendererCommunication.sendUserSettingsShowDisconnectNotifications(this.isDisconnectNotificationEnabled)
+      this.userSettingsStore.setShowDisconnectNotifications(this.isDisconnectNotificationEnabled)
     },
-    updateUserSettings (settings) {
-      this.isDisconnectNotificationEnabled = settings.showDisconnectNotifications
+    updateNotificationSetting (showNotifications) {
+      this.isDisconnectNotificationEnabled = showNotifications
     }
   }
 }
