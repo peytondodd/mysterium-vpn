@@ -19,7 +19,7 @@
   <div class="page">
     <div class="page__post post">
       <h1>Connection History</h1>
-      <div class="post__content">
+      <div class="post__content connection-history">
         <table>
           <tr>
             <th/>
@@ -35,7 +35,13 @@
             <td/>
             <td>[{{ record.country }}]{{ record.short_identity }}</td>
             <td>{{ record.start }}</td>
-            <td>{{ record.status }}</td>
+            <td class="status">
+              <div
+                class="connection-history__status"
+                :class="`connection-history__status--${record.status_modifier}`">
+                {{ record.status }}
+              </div>
+            </td>
             <td>{{ record.duration }}</td>
             <td>{{ record.sent }}/{{ record.received }}</td>
           </tr>
@@ -59,6 +65,7 @@ export default {
       records.forEach(record => {
         // TODO: extract ConnectionRecord component, make this as a computed property
         record.short_identity = record.identity.slice(0, 11) + '...'
+        record.status_modifier = record.status === 'Successful' ? 'success' : 'failure'
       })
       this.records = records
     })

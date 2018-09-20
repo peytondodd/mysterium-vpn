@@ -1,0 +1,63 @@
+/*
+ * Copyright (C) 2017 The "mysteriumnetwork/mysterium-vpn" Authors.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+@greyBright: @greyLighter;
+
+@border: @g8;
+
+@headerTextColor: @g6;
+
+@success: #82be37;
+@failure: @g8;
+
+.connection-history {
+  table, th, td {
+    border-collapse: collapse;
+    border-spacing: 1px;
+    border: solid 1px @border;
+  }
+
+  table {
+    margin-top: 20px;
+  }
+
+  th {
+    background-color: @greyBright;
+    color: @headerTextColor;
+    padding: 1em;
+  }
+
+  td {
+    text-align: center;
+    vertical-align: middle;
+    padding: 0.5em;
+  }
+
+  &__status {
+    color: @white;
+    padding: 4px;
+    border-radius: 3px;
+
+    &--success {
+      background-color: @success;
+    }
+
+    &--failure {
+      background-color: @failure;
+    }
+  }
+}
