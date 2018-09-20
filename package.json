@@ -1,7 +1,7 @@
 {
   "name": "MysteriumVPN",
   "version": "0.4.0",
-  "author": "Andrej Novikov <jazzaiman@gmail.com>",
+  "author": "Mysterium Network <team@netsys.technology>",
   "description": "Mysterium VPN is a desktop application for accessing Mysterium Network - decentralized VPN built on blockchain.",
   "license": "GPL-3.0",
   "main": "./dist/electron/main.js",
