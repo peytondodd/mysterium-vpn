@@ -49,7 +49,7 @@ class Observable<T> {
     try {
       callback(this._value)
     } catch (err) {
-      logger.error('Callback call in Observable failed')
+      logger.error('Callback call in Observable failed', err)
     }
   }
 

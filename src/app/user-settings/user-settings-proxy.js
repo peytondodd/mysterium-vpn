@@ -35,7 +35,7 @@ class UserSettingsProxy extends ObservableUserSettings implements UserSettingsSt
   }
 
   startListening () {
-    this._settingsListener = (settings) => this._updateAllProperties(settings)
+    this._settingsListener = settings => this._updateAllProperties(settings)
     this._communication.onUserSettings(this._settingsListener)
     this._communication.sendUserSettingsRequest()
   }

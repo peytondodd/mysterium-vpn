@@ -75,7 +75,7 @@ class ObservableUserSettings {
   }
 
   _getPropertyValue (property: UserSettingName): any {
-    return ((this._observables[property].value): any)
+    return this._observables[property].value
   }
 
   _updateAllProperties (settings: UserSettings) {

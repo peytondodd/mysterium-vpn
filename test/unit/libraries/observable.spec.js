@@ -23,8 +23,8 @@ import { RepeatableCallbackRecorder } from '../../helpers/utils'
 
 describe('Observable', () => {
   describe('.subscribe', () => {
-    let observable
-    let recorder
+    let observable: Observable<number>
+    let recorder: RepeatableCallbackRecorder
 
     beforeEach(() => {
       observable = new Observable(5)
