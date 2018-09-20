@@ -33,7 +33,7 @@ class Observable<T> {
   }
 
   set value (value: T) {
-    if (value === this._value) {
+    if (JSON.stringify(value) === JSON.stringify(this._value)) {
       return
     }
     this._value = value

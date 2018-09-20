@@ -23,30 +23,30 @@ import { RepeatableCallbackRecorder } from '../../helpers/utils'
 
 describe('Observable', () => {
   describe('.subscribe', () => {
-    let observable: Observable<number>
+    let observable: Observable<Object>
     let recorder: RepeatableCallbackRecorder
 
     beforeEach(() => {
-      observable = new Observable(5)
+      observable = new Observable({ hey: 'how' })
       recorder = new RepeatableCallbackRecorder()
     })
 
     it('invokes callback instantly with current value', () => {
       observable.subscribe(recorder.getCallback())
       expect(recorder.invokesCount).to.eql(1)
-      expect(recorder.lastArguments).to.eql([5])
+      expect(recorder.lastArguments).to.eql([{ hey: 'how' }])
     })
 
     it('invokes callback with new value when it changes', () => {
       observable.subscribe(recorder.getCallback())
-      observable.value = 3
+      observable.value = { hello: 'world' }
       expect(recorder.invokesCount).to.eql(2)
-      expect(recorder.lastArguments).to.eql([3])
+      expect(recorder.lastArguments).to.eql([{ hello: 'world' }])
     })
 
     it('does not invoke callback when same value is set', () => {
       observable.subscribe(recorder.getCallback())
-      observable.value = 5
+      observable.value = { hey: 'how' }
       expect(recorder.invokesCount).to.eql(1)
     })
   })
