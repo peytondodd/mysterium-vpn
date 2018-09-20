@@ -71,7 +71,7 @@ class UserSettingsStorage extends ObservableUserSettings implements UserSettings
     await this._save()
   }
 
-  async _save (): Promise<void> {
+  async _save () {
     return saveSettings(this._path, this.getAll())
   }
 }
