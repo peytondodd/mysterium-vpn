@@ -287,18 +287,21 @@ class MysteriumVpn {
   }
 
   _makeSureOnlySingleInstanceIsRunning () {
-    // this hook is fired when someone tries to launch another instance of the app
-    const secondInstanceIsRunning = app.makeSingleInstance(() => {
-      // display the existing instance's app window
+    const instanceLockObtained = app.requestSingleInstanceLock()
+
+    // quit if this isn't the first instance of the app
+    if (!instanceLockObtained) {
+      app.quit()
+      return
+    }
+
+    // when a second app instance is launched, the new process will quit
+    // but the first one will trigger this callback
+    app.on('second-instance', () => {
       if (this._window.exists()) {
         this._window.show()
       }
     })
-
-    // quit all new app instances
-    if (secondInstanceIsRunning) {
-      app.quit()
-    }
   }
 
   onWindowsClosed () {
