@@ -88,28 +88,7 @@
         </div>
 
         <div>
-          <h3>{{registration.publicKey.part1}} - {{registration.publicKey.part2}}</h3>
-          <h3>{{registration.signature.r}} - {{registration.signature.s}}</h3>
-        </div>
-        <p>
-          In order to use Mysterium VPN you need to have registered ID in Mysterium Blockchain
-          by staking your MYST tokens on it (i.e. paying for it).
-        </p>
-        <p>
-          To pay for the ID we suggest to use MetaMask wallet. Please follow below instructions to proceed further:
-        </p>
-        <ul>
-          <li>1. Click on the “Register Your ID” button</li>
-          <li>2. Claim MYST and ETH test tokens</li>
-          <li>3. Allow Mysterium SmartContract to reserve MYST tokens</li>
-          <li>4. Register your ID by clicking on “Pay & Register For ID”</li>
-          <li>5. Wait for few minutes until the payment is processed</li>
-        </ul>
-        <div
-          class="btn"
-          v-if="registration"
-          @click="openPaymentsUrl()">
-          Register Your ID
+          <span>{{consumerId}}</span>
         </div>
       </div>
       <transition name="fade">
@@ -125,6 +104,7 @@
 <script>
 
 import { shell } from 'electron'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'IdentityRegistration',
@@ -155,7 +135,10 @@ export default {
         return null
       }
       return this.registration.registered
-    }
+    },
+    ...mapGetters({
+      consumerId: 'currentIdentity'
+    }),
   },
   mounted () {
     this.rendererCommunication.onRegistrationUpdate(registration => {
