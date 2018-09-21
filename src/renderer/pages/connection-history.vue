@@ -52,6 +52,20 @@
 </template>
 <script>
 
+// TODO: handle unknown statuses
+function getStatusModifier (status) {
+  if (status === 'Successful') {
+    return 'success'
+  }
+  if (status === 'Unsuccessful') {
+    return 'failure'
+  }
+  if (status === 'Cancelled') {
+    return 'cancelled'
+  }
+  return ''
+}
+
 export default {
   name: 'ConnectionHistory',
   dependencies: ['tequilapiClient'],
@@ -65,7 +79,7 @@ export default {
       records.forEach(record => {
         // TODO: extract ConnectionRecord component, make this as a computed property
         record.short_identity = record.identity.slice(0, 11) + '...'
-        record.status_modifier = record.status === 'Successful' ? 'success' : 'failure'
+        record.status_modifier =  getStatusModifier(record.status)
       })
       this.records = records
     })

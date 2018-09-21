@@ -22,7 +22,8 @@
 @headerTextColor: @g6;
 
 @success: #82be37;
-@failure: @g8;
+@failure: #eaa521;
+@cancelled: @g8;
 
 .connection-history {
   table, th, td {
@@ -58,6 +59,10 @@
 
     &--failure {
       background-color: @failure;
+    }
+
+    &--cancelled {
+      background-color: @cancelled;
     }
   }
 }
