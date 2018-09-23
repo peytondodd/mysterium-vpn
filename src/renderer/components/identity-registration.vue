@@ -20,8 +20,8 @@
     <div
       class="identity-registration"
       :class="{'identity-registered': registered, 'identity-unregistered': !registered}"
-      @click="openPaymentsOrShowInstructions()"
-      v-if="registration && !showInstructions && !showInfoRegistered">
+      @click="showInfoWindow()"
+      v-if="registration && !showInfo">
       <div class="identity-text">ID</div>
       <div
         class="identity-tooltip">{{ registered ? 'Check your balance' : 'Please activate your ID' }}</div>
@@ -30,74 +30,53 @@
     <div
       class="app__nav nav"
       id="registration-instructions"
-      :class="{'is-open': showInstructions}">
+      :class="{'is-open': showInfo}">
       <div
         class="nav__content"
-        :class="{'is-open': showInstructions}">
+        :class="{'is-open': showInfo}">
         <div
           class="nav__burger burger"
-          @click="showInstructions = false">
+          @click="showInfo = false">
           <i class="burger__bar burger__bar--1"/>
           <i class="burger__bar burger__bar--2"/>
           <i class="burger__bar burger__bar--3"/>
         </div>
 
-        <h2>Activate your ID</h2>
-        <p>
-          In order to use Mysterium VPN you need to have registered ID in Mysterium Blockchain
-          by staking your MYST tokens on it (i.e. paying for it).
-        </p>
-        <p>
-          To pay for the ID we suggest to use MetaMask wallet. Please follow below instructions to proceed further:
-        </p>
-        <ul>
-          <li>1. Click on the “Register Your ID” button</li>
-          <li>2. Claim MYST and ETH test tokens</li>
-          <li>3. Allow Mysterium SmartContract to reserve MYST tokens</li>
-          <li>4. Register your ID by clicking on “Pay & Register For ID”</li>
-          <li>5. Wait for few minutes until the payment is processed</li>
-        </ul>
-        <div
-          class="btn"
-          v-if="registration"
-          @click="openPaymentsUrl()">
-          Register Your ID
-        </div>
-      </div>
-      <transition name="fade">
-        <div
-          v-if="showInstructions"
-          class="nav__backdrop"
-          @click="showInstructions = false"/>
-      </transition>
-    </div>
-
-    <div
-      class="app__nav nav"
-      id="info-registered"
-      :class="{'is-open': showInfoRegistered}">
-      <div
-        class="nav__content"
-        :class="{'is-open': showInfoRegistered}">
-        <div
-          class="nav__burger burger"
-          @click="showInfoRegistered = false">
-          <i class="burger__bar burger__bar--1"/>
-          <i class="burger__bar burger__bar--2"/>
-          <i class="burger__bar burger__bar--3"/>
-        </div>
-
-        <div>
+        <div v-if="registered">
           <span>{{consumerId}}</span>
         </div>
+        <div v-else>
+          <h2>Activate your ID</h2>
+          <p>
+            In order to use Mysterium VPN you need to have registered ID in Mysterium Blockchain
+            by staking your MYST tokens on it (i.e. paying for it).
+          </p>
+          <p>
+            To pay for the ID we suggest to use MetaMask wallet. Please follow below instructions to proceed further:
+          </p>
+          <ul>
+            <li>1. Click on the “Register Your ID” button</li>
+            <li>2. Claim MYST and ETH test tokens</li>
+            <li>3. Allow Mysterium SmartContract to reserve MYST tokens</li>
+            <li>4. Register your ID by clicking on “Pay & Register For ID”</li>
+            <li>5. Wait for few minutes until the payment is processed</li>
+          </ul>
+          <div
+            class="btn"
+            v-if="registration"
+            @click="openPaymentsUrl()">
+            Register Your ID
+          </div>
+        </div>
       </div>
       <transition name="fade">
         <div
-          v-if="showInfoRegistered"
+          v-if="showInfo"
           class="nav__backdrop"
-          @click="showInfoRegistered = false"/>
+          @click="showInfo = false"/>
       </transition>
     </div>
+
   </div>
 </template>
 
@@ -112,17 +91,12 @@ export default {
   data () {
     return {
       registration: null,
-      showInstructions: false,
-      showInfoRegistered: false
+      showInfo: false
     }
   },
   methods: {
-    openPaymentsOrShowInstructions () {
-      if (this.registered) {
-        this.showInfoRegistered = true
-      } else {
-        this.showInstructions = true
-      }
+    showInfoWindow () {
+      this.showInfo = true;
     },
     openPaymentsUrl () {
       const url = this.getPaymentLink(this.registration)
