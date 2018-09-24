@@ -18,7 +18,7 @@
 <template>
   <tr>
     <td/>
-    <td>[{{ record.country }}]{{ shortIdentity }}</td>
+    <td>[{{ record.provider.country }}]{{ shortIdentity }}</td>
     <td>{{ record.start }}</td>
     <td class="status">
       <div
@@ -73,7 +73,7 @@ export default {
       return received.value + received.units
     },
     shortIdentity: function () {
-      return this.record.identity.slice(0, 11) + '...'
+      return this.record.provider.identity.slice(0, 11) + '...'
     }
   }
 }

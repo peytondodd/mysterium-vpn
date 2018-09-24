@@ -33,8 +33,10 @@ import type { BugReporterMetrics } from './metrics/bug-reporter-metrics'
 import { METRICS } from './metrics/metrics'
 
 type ConnectionRecordDto = {
-  identity: string,
-  country: string,
+  provider: {
+    identity: string,
+    country: string
+  },
   start: string,
   status: string,
   duration: number,
@@ -128,11 +130,12 @@ class TequilapiClientWithMetrics implements TequilapiClient {
   }
 
   async connectionHistoryList (): Promise<ConnectionRecordDto[]> {
-    // TODO: nest country, identity into provider: { country, identity }
     return [
       {
-        identity: '0x3b03a513fba4bd4868edd340f77da0c920150f3e',
-        country: 'lt',
+        provider: {
+          identity: '0x3b03a513fba4bd4868edd340f77da0c920150f3e',
+          country: 'lt'
+        },
         start: '2018.09.24 14:23:23',
         status: 'Successful',
         duration: 35 * 60,
@@ -140,8 +143,10 @@ class TequilapiClientWithMetrics implements TequilapiClient {
         bytesReceived: 6000
       },
       {
-        identity: '0x1b03b513fba4bd4868edd340f77da0c920150f0a',
-        country: 'us',
+        provider: {
+          identity: '0x1b03b513fba4bd4868edd340f77da0c920150f0a',
+          country: 'us'
+        },
         start: '2018.09.24 14:23:23',
         status: 'Unsuccessful',
         duration: 35 * 60,
@@ -149,8 +154,10 @@ class TequilapiClientWithMetrics implements TequilapiClient {
         bytesReceived: 6000
       },
       {
-        identity: '0x1b03b513fba4bd4868edd340f77da0c920150f0a',
-        country: 'us',
+        provider: {
+          identity: '0x1b03b513fba4bd4868edd340f77da0c920150f0a',
+          country: 'us'
+        },
         start: '2018.09.24 14:23:23',
         status: 'Cancelled',
         duration: 35 * 60,
@@ -158,8 +165,10 @@ class TequilapiClientWithMetrics implements TequilapiClient {
         bytesReceived: 6000
       },
       {
-        identity: '0x1b03b513fba4bd4868edd340f77da0c920150f0a',
-        country: 'us',
+        provider: {
+          identity: '0x1b03b513fba4bd4868edd340f77da0c920150f0a',
+          country: 'us'
+        },
         start: '2018.09.24 14:23:23',
         status: 'Successful',
         duration: 35 * 60,
@@ -167,8 +176,10 @@ class TequilapiClientWithMetrics implements TequilapiClient {
         bytesReceived: 6000
       },
       {
-        identity: '0x1b03b513fba4bd4868edd340f77da0c920150f0a',
-        country: 'us',
+        provider: {
+          identity: '0x1b03b513fba4bd4868edd340f77da0c920150f0a',
+          country: 'us'
+        },
         start: '2018.09.24 14:23:23',
         status: 'Successful',
         duration: 35 * 60,
@@ -176,8 +187,10 @@ class TequilapiClientWithMetrics implements TequilapiClient {
         bytesReceived: 6000
       },
       {
-        identity: '0x1b03b513fba4bd4868edd340f77da0c920150f0a',
-        country: 'us',
+        provider: {
+          identity: '0x1b03b513fba4bd4868edd340f77da0c920150f0a',
+          country: 'us'
+        },
         start: '2018.09.24 14:23:23',
         status: 'Successful',
         duration: 35 * 60,
@@ -185,8 +198,10 @@ class TequilapiClientWithMetrics implements TequilapiClient {
         bytesReceived: 6000
       },
       {
-        identity: '0x1b03b513fba4bd4868edd340f77da0c920150f0a',
-        country: 'us',
+        provider: {
+          identity: '0x1b03b513fba4bd4868edd340f77da0c920150f0a',
+          country: 'us'
+        },
         start: '2018.09.24 14:23:23',
         status: 'Successful',
         duration: 35 * 60,
@@ -194,8 +209,10 @@ class TequilapiClientWithMetrics implements TequilapiClient {
         bytesReceived: 6000
       },
       {
-        identity: '0x1b03b513fba4bd4868edd340f77da0c920150f0a',
-        country: 'us',
+        provider: {
+          identity: '0x1b03b513fba4bd4868edd340f77da0c920150f0a',
+          country: 'us'
+        },
         start: '2018.09.24 14:23:23',
         status: 'Successful',
         duration: 35 * 60,

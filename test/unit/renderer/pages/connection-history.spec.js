@@ -20,14 +20,17 @@ import { createLocalVue, mount } from '@vue/test-utils'
 import { beforeEach, describe, it, expect } from '../../../helpers/dependencies'
 import ConnectionHistory from '../../../../src/renderer/pages/connection-history'
 import DIContainer from '../../../../src/app/di/vue-container'
+import type { ConnectionRecordDto } from '../../../../src/app/bug-reporting/tequilapi-client-with-metrics'
 
 describe('ConnectionHistory', () => {
   let wrapper
 
-  const mockedRecords = [
+  const mockedRecords: ConnectionRecordDto[] = [
     {
-      identity: '0x3b03a513fba4bd4868edd340f77da0c920150f3e',
-      country: 'lt',
+      provider: {
+        identity: '0x3b03a513fba4bd4868edd340f77da0c920150f3e',
+        country: 'lt'
+      },
       start: '2018.09.24 14:23:23',
       status: 'Successful',
       duration: 35 * 60,
@@ -35,8 +38,10 @@ describe('ConnectionHistory', () => {
       bytesReceived: 6000
     },
     {
-      identity: '0x3b03a513fba4bd4868edd340f77da0c920150f3e',
-      country: 'lt',
+      provider: {
+        identity: '0x3b03a513fba4bd4868edd340f77da0c920150f3e',
+        country: 'lt'
+      },
       start: '2018.09.24 14:23:23',
       status: 'Successful',
       duration: 35 * 60,
