@@ -34,19 +34,44 @@
       <div
         class="nav__content"
         :class="{'is-open': showInfo}">
-        <div
-          class="nav__burger burger"
-          @click="showInfo = false">
-          <i class="burger__bar burger__bar--1"/>
-          <i class="burger__bar burger__bar--2"/>
-          <i class="burger__bar burger__bar--3"/>
+
+        <div class="registration-instructions-top-row">
+          <div
+            class="nav__burger burger"
+            @click="showInfo = false">
+            <i class="burger__bar burger__bar--1"/>
+            <i class="burger__bar burger__bar--2"/>
+            <i class="burger__bar burger__bar--3"/>
+          </div>
         </div>
 
-        <div v-if="registered">
-          <span>{{consumerId}}</span>
+        <hr>
+
+        <h1>Mysterium ID</h1>
+
+        <div
+          class="consumer-identity-id-container"
+          :class="{registered: registered}">
+          <div class="consumer-identity-id-item">
+            <span>
+              <head-visual class="nav__icon nav__icon--eye"/>
+            </span>
+          </div>
+          <div class="consumer-identity-id-item">
+            <span class="consumer-identity-id">{{ consumerId }}</span>
+          </div>
+          <div>
+            <span
+              class="consumer-identity-id-item consumer-identity-id-copy"
+              @click="copyId">
+              <icon-copy class="nav__icon nav__icon--eye"/>
+            </span>
+          </div>
         </div>
-        <div v-else>
-          <h2>Activate your ID</h2>
+
+        <div
+          class="consumer-identity-registration"
+          v-if="!registered">
           <p>
             In order to use Mysterium VPN you need to have registered ID in Mysterium Blockchain
             by staking your MYST tokens on it (i.e. paying for it).
@@ -82,12 +107,18 @@
 
 <script>
 
-import { shell } from 'electron'
+import { shell, clipboard } from 'electron'
 import { mapGetters } from 'vuex'
+import IconCopy from '@/assets/img/icon--copy.svg'
+import headVisual from '@/assets/img/visual--head.svg'
 
 export default {
   name: 'IdentityRegistration',
   dependencies: ['rendererCommunication', 'getPaymentLink'],
+  components: {
+    IconCopy,
+    headVisual
+  },
   data () {
     return {
       registration: null,
@@ -96,11 +127,14 @@ export default {
   },
   methods: {
     showInfoWindow () {
-      this.showInfo = true;
+      this.showInfo = true
     },
     openPaymentsUrl () {
       const url = this.getPaymentLink(this.registration)
       shell.openExternal(url)
+    },
+    copyId () {
+      clipboard.writeText(this.consumerId)
     }
   },
   computed: {
@@ -112,7 +146,7 @@ export default {
     },
     ...mapGetters({
       consumerId: 'currentIdentity'
-    }),
+    })
   },
   mounted () {
     this.rendererCommunication.onRegistrationUpdate(registration => {

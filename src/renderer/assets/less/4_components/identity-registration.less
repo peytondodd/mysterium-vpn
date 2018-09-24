@@ -56,11 +56,45 @@
   }
 }
 
-#registration-instructions, #info-registered {
+.registration-instructions-top-row {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.consumer-identity-id-container {
+  margin-top: 2em;
+  display: flex;
+  justify-content: center;
+  .consumer-identity-id {
+    color: red;
+    font-size: 1.2em;
+    user-select: text;
+  }
+  .consumer-identity-id-item {
+    padding-right: 0.5em;
+  }
+  .consumer-identity-id-copy {
+    cursor: pointer;
+  }
+}
+
+.consumer-identity-id-container.registered {
+  .consumer-identity-id {
+    color: black;
+  }
+}
+
+.consumer-identity-registration {
+  margin-top: 3em;
+}
+
+#registration-instructions {
   left: auto;
   right: 0;
+  min-width: 60vw;
 
   .nav__content {
+    min-width: 80vw;
     left: auto;
     right: 0;
     padding: 1.1em;
