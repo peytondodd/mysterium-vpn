@@ -32,6 +32,17 @@ import IdentityRegistrationDTO from 'mysterium-tequilapi/lib/dto/identity-regist
 import type { BugReporterMetrics } from './metrics/bug-reporter-metrics'
 import { METRICS } from './metrics/metrics'
 
+type ConnectionRecordDto = {
+  id: string,
+  identity: string,
+  country: string,
+  start: string,
+  status: string,
+  duration: number,
+  bytesSent: number,
+  bytesReceived: number
+}
+
 class TequilapiClientWithMetrics implements TequilapiClient {
   _bugReporterMetrics: BugReporterMetrics
   _client: TequilapiClient
@@ -117,7 +128,7 @@ class TequilapiClientWithMetrics implements TequilapiClient {
     return this._client.location(timeout)
   }
 
-  async connectionHistoryList () {
+  async connectionHistoryList (): Promise<ConnectionRecordDto[]> {
     // TODO: remove id
     // TODO: nest country, identity into provider: { country, identity }
     return [
