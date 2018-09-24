@@ -29,46 +29,21 @@
             <th>Duration</th>
             <th>Sent/Received</th>
           </tr>
-          <tr
+          <connection-record
             v-for="record in records"
-            :key="record.id">
-            <td/>
-            <td>[{{ record.country }}]{{ record.short_identity }}</td>
-            <td>{{ record.start }}</td>
-            <td class="status">
-              <div
-                class="connection-history__status"
-                :class="`connection-history__status--${record.status_modifier}`">
-                {{ record.status }}
-              </div>
-            </td>
-            <td>{{ record.duration_string }}</td>
-            <td>{{ record.sent }}/{{ record.received }}</td>
-          </tr>
+            :key="record.id"
+            :record="record"/>
         </table>
       </div>
     </div>
   </div>
 </template>
 <script>
-import { bytesReadableOrDefault, timeDisplayOrDefault } from '../../libraries/unit-converter'
-
-// TODO: handle unknown statuses
-function getStatusModifier (status) {
-  if (status === 'Successful') {
-    return 'success'
-  }
-  if (status === 'Unsuccessful') {
-    return 'failure'
-  }
-  if (status === 'Cancelled') {
-    return 'cancelled'
-  }
-  return ''
-}
+import ConnectionRecord from '../components/connection-record'
 
 export default {
   name: 'ConnectionHistory',
+  components: { ConnectionRecord },
   dependencies: ['tequilapiClient'],
   data: function () {
     return {
@@ -77,16 +52,6 @@ export default {
   },
   created: function () {
     this.tequilapiClient.connectionHistoryList().then(records => {
-      records.forEach(record => {
-        // TODO: extract ConnectionRecord component, make this as a computed property
-        record.short_identity = record.identity.slice(0, 11) + '...'
-        record.status_modifier = getStatusModifier(record.status)
-        const sent = bytesReadableOrDefault(record.bytesSent)
-        record.sent = sent.value + sent.units
-        const received = bytesReadableOrDefault(record.bytesReceived)
-        record.received = received.value + received.units
-        record.duration_string = timeDisplayOrDefault(record.duration)
-      })
       this.records = records
     })
   }
