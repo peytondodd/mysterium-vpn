@@ -54,27 +54,23 @@ describe('ConnectionRecord', () => {
     expect(wrapper).to.be.ok
   })
 
-  it('renders shortened identity', async () => {
-    await wrapper.vm.$nextTick()
+  it('renders shortened identity', () => {
     const nodeText = wrapper.findAll('td').at(1).element.innerText
     expect(nodeText).to.eql('[lt]0x3b03a513f...')
   })
 
-  it('renders countries', async () => {
+  it('renders countries', () => {
     // TODO: render icons instead
-    await wrapper.vm.$nextTick()
     const nodeText = wrapper.findAll('td').at(1).element.innerText
     expect(nodeText).to.have.string('[lt]')
   })
 
-  it('renders duration time', async () => {
-    await wrapper.vm.$nextTick()
+  it('renders duration time', () => {
     const duration = wrapper.findAll('td').at(4).element.innerText
     expect(duration).to.eql('00:35:00')
   })
 
-  it('renders sent and received amounts', async () => {
-    await wrapper.vm.$nextTick()
+  it('renders sent and received amounts', () => {
     const traffic = wrapper.findAll('td').at(5).element.innerText
     expect(traffic).to.eql('1.00KB/5.86KB')
   })
