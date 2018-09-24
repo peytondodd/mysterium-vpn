@@ -32,8 +32,8 @@ describe('ConnectionHistory', () => {
       start: '2018.09.24 14:23:23',
       status: 'Successful',
       duration: '00:35:00',
-      sent: '1MB',
-      received: '5MB'
+      bytesSent: 1024,
+      bytesReceived: 6000
     }
   ]
 
@@ -74,5 +74,11 @@ describe('ConnectionHistory', () => {
     await wrapper.vm.$nextTick()
     const nodeText = wrapper.findAll('tr').at(1).findAll('td').at(1).element.innerText
     expect(nodeText).to.eql('[lt]0x3b03a513f...')
+  })
+
+  it('renders sent and received amounts', async () => {
+    await wrapper.vm.$nextTick()
+    const traffic = wrapper.findAll('tr').at(1).findAll('td').at(5).element.innerText
+    expect(traffic).to.eql('1.00KB/5.86KB')
   })
 })

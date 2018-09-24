@@ -126,8 +126,8 @@ class TequilapiClientWithMetrics implements TequilapiClient {
         start: '2018.09.24 14:23:23',
         status: 'Successful',
         duration: '00:35:00',
-        sent: '1MB',
-        received: '5MB'
+        bytesSent: 1024,
+        bytesReceived: 6000
       },
       {
         id: '2',
@@ -136,8 +136,8 @@ class TequilapiClientWithMetrics implements TequilapiClient {
         start: '2018.09.24 14:23:23',
         status: 'Unsuccessful',
         duration: '00:35:00',
-        sent: '1MB',
-        received: '5MB'
+        bytesSent: 1024,
+        bytesReceived: 6000
       },
       {
         id: '3',
@@ -146,8 +146,8 @@ class TequilapiClientWithMetrics implements TequilapiClient {
         start: '2018.09.24 14:23:23',
         status: 'Cancelled',
         duration: '00:35:00',
-        sent: '1MB',
-        received: '5MB'
+        bytesSent: 1024,
+        bytesReceived: 6000
       },
       {
         id: '4',
@@ -156,8 +156,8 @@ class TequilapiClientWithMetrics implements TequilapiClient {
         start: '2018.09.24 14:23:23',
         status: 'Successful',
         duration: '00:35:00',
-        sent: '1MB',
-        received: '5MB'
+        bytesSent: 1024,
+        bytesReceived: 6000
       },
       {
         id: '5',
@@ -166,8 +166,8 @@ class TequilapiClientWithMetrics implements TequilapiClient {
         start: '2018.09.24 14:23:23',
         status: 'Successful',
         duration: '00:35:00',
-        sent: '1MB',
-        received: '5MB'
+        bytesSent: 1024,
+        bytesReceived: 6000
       },
       {
         id: '6',
@@ -176,8 +176,8 @@ class TequilapiClientWithMetrics implements TequilapiClient {
         start: '2018.09.24 14:23:23',
         status: 'Successful',
         duration: '00:35:00',
-        sent: '1MB',
-        received: '5MB'
+        bytesSent: 1024,
+        bytesReceived: 6000
       },
       {
         id: '7',
@@ -186,8 +186,8 @@ class TequilapiClientWithMetrics implements TequilapiClient {
         start: '2018.09.24 14:23:23',
         status: 'Successful',
         duration: '00:35:00',
-        sent: '1MB',
-        received: '5MB'
+        bytesSent: 1024,
+        bytesReceived: 6000
       },
       {
         id: '8',
@@ -196,8 +196,8 @@ class TequilapiClientWithMetrics implements TequilapiClient {
         start: '2018.09.24 14:23:23',
         status: 'Successful',
         duration: '00:35:00',
-        sent: '1MB',
-        received: '5MB'
+        bytesSent: 1024,
+        bytesReceived: 6000
       }
     ]
   }

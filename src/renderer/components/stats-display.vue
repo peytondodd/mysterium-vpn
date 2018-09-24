@@ -36,38 +36,22 @@
 </template>
 
 <script>
-import { bytesReadable, timeDisplay } from '../../libraries/unit-converter'
+import { bytesReadableOrDefault, timeDisplayOrDefault } from '../../libraries/unit-converter'
 
 export default {
   name: 'StatsDisplay',
   props: {
     connection: {
       type: Object,
-      default () { return { stats: {} } }
+      default () { return { statistics: {} } }
     }
   },
   computed: {
     duration () {
-      try {
-        return timeDisplay(this.connection.statistics.duration)
-      } catch (err) {
-        return '--:--:--'
-      }
+      return timeDisplayOrDefault(this.connection.statistics.duration)
     },
-    received (vm) {
-      try {
-        return bytesReadable(vm.connection.statistics.bytesReceived)
-      } catch (err) {
-        return { value: '-', units: 'KB' }
-      }
-    },
-    sent (vm) {
-      try {
-        return bytesReadable(vm.connection.statistics.bytesSent)
-      } catch (err) {
-        return { value: '-', units: 'KB' }
-      }
-    }
+    received: vm => bytesReadableOrDefault(vm.connection.statistics.bytesReceived),
+    sent: vm => bytesReadableOrDefault(vm.connection.statistics.bytesSent)
   }
 }
 </script>

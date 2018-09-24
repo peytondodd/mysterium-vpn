@@ -15,7 +15,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+// @flow
+
 import size from 'file-size'
+
+type Bytes = {
+  value: string,
+  units: string
+}
 
 /**
  * @function
@@ -24,7 +31,7 @@ import size from 'file-size'
  * @throws if argument is null
  */
 
-function bytesReadable (val) {
+function bytesReadable (val: number): Bytes {
   if (typeof val !== 'number') {
     throw new Error('provide valid input for conversion')
   }
@@ -35,13 +42,23 @@ function bytesReadable (val) {
   }
 }
 
+const bytesReadableDefault: Bytes = { value: '-', units: 'KB' }
+
+function bytesReadableOrDefault (val: number): Bytes {
+  try {
+    return bytesReadable(val)
+  } catch (err) {
+    return bytesReadableDefault
+  }
+}
+
 /**
  * @function
  * @param {number} val
  * @returns {string} readable in --:--:-- format
  * @throws {Error} if argument is null
  */
-function timeDisplay (val) {
+function timeDisplay (val: number): string {
   if (typeof val !== 'number' || val < 0) {
     throw new Error('invalid input')
   }
@@ -54,7 +71,19 @@ function timeDisplay (val) {
   return `${h}:${m}:${s}`
 }
 
+const timeDisplayDefault = '--:--:--'
+
+function timeDisplayOrDefault (val: number): string {
+  try {
+    return timeDisplay(val)
+  } catch (err) {
+    return timeDisplayDefault
+  }
+}
+
 export {
+  bytesReadableOrDefault,
   bytesReadable,
+  timeDisplayOrDefault,
   timeDisplay
 }

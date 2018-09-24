@@ -51,6 +51,7 @@
   </div>
 </template>
 <script>
+import { bytesReadableOrDefault } from '../../libraries/unit-converter'
 
 // TODO: handle unknown statuses
 function getStatusModifier (status) {
@@ -79,7 +80,11 @@ export default {
       records.forEach(record => {
         // TODO: extract ConnectionRecord component, make this as a computed property
         record.short_identity = record.identity.slice(0, 11) + '...'
-        record.status_modifier =  getStatusModifier(record.status)
+        record.status_modifier = getStatusModifier(record.status)
+        const sent = bytesReadableOrDefault(record.bytesSent)
+        record.sent = sent.value + sent.units
+        const received = bytesReadableOrDefault(record.bytesReceived)
+        record.received = received.value + received.units
       })
       this.records = records
     })
