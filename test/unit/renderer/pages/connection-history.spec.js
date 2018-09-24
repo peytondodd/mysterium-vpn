@@ -31,7 +31,7 @@ describe('ConnectionHistory', () => {
       country: 'lt',
       start: '2018.09.24 14:23:23',
       status: 'Successful',
-      duration: '00:35:00',
+      duration: 35 * 60,
       bytesSent: 1024,
       bytesReceived: 6000
     }
@@ -80,5 +80,11 @@ describe('ConnectionHistory', () => {
     await wrapper.vm.$nextTick()
     const traffic = wrapper.findAll('tr').at(1).findAll('td').at(5).element.innerText
     expect(traffic).to.eql('1.00KB/5.86KB')
+  })
+
+  it('renders duration time', async () => {
+    await wrapper.vm.$nextTick()
+    const duration = wrapper.findAll('tr').at(1).findAll('td').at(4).element.innerText
+    expect(duration).to.eql('00:35:00')
   })
 })

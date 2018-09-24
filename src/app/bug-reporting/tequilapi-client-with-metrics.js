@@ -118,6 +118,8 @@ class TequilapiClientWithMetrics implements TequilapiClient {
   }
 
   async connectionHistoryList () {
+    // TODO: remove id
+    // TODO: nest country, identity into provider: { country, identity }
     return [
       {
         id: '1',
@@ -125,7 +127,7 @@ class TequilapiClientWithMetrics implements TequilapiClient {
         country: 'lt',
         start: '2018.09.24 14:23:23',
         status: 'Successful',
-        duration: '00:35:00',
+        duration: 35 * 60,
         bytesSent: 1024,
         bytesReceived: 6000
       },
@@ -135,7 +137,7 @@ class TequilapiClientWithMetrics implements TequilapiClient {
         country: 'us',
         start: '2018.09.24 14:23:23',
         status: 'Unsuccessful',
-        duration: '00:35:00',
+        duration: 35 * 60,
         bytesSent: 1024,
         bytesReceived: 6000
       },
@@ -145,7 +147,7 @@ class TequilapiClientWithMetrics implements TequilapiClient {
         country: 'us',
         start: '2018.09.24 14:23:23',
         status: 'Cancelled',
-        duration: '00:35:00',
+        duration: 35 * 60,
         bytesSent: 1024,
         bytesReceived: 6000
       },
@@ -155,7 +157,7 @@ class TequilapiClientWithMetrics implements TequilapiClient {
         country: 'us',
         start: '2018.09.24 14:23:23',
         status: 'Successful',
-        duration: '00:35:00',
+        duration: 35 * 60,
         bytesSent: 1024,
         bytesReceived: 6000
       },
@@ -165,7 +167,7 @@ class TequilapiClientWithMetrics implements TequilapiClient {
         country: 'us',
         start: '2018.09.24 14:23:23',
         status: 'Successful',
-        duration: '00:35:00',
+        duration: 35 * 60,
         bytesSent: 1024,
         bytesReceived: 6000
       },
@@ -175,7 +177,7 @@ class TequilapiClientWithMetrics implements TequilapiClient {
         country: 'us',
         start: '2018.09.24 14:23:23',
         status: 'Successful',
-        duration: '00:35:00',
+        duration: 35 * 60,
         bytesSent: 1024,
         bytesReceived: 6000
       },
@@ -185,7 +187,7 @@ class TequilapiClientWithMetrics implements TequilapiClient {
         country: 'us',
         start: '2018.09.24 14:23:23',
         status: 'Successful',
-        duration: '00:35:00',
+        duration: 35 * 60,
         bytesSent: 1024,
         bytesReceived: 6000
       },
@@ -195,7 +197,7 @@ class TequilapiClientWithMetrics implements TequilapiClient {
         country: 'us',
         start: '2018.09.24 14:23:23',
         status: 'Successful',
-        duration: '00:35:00',
+        duration: 35 * 60,
         bytesSent: 1024,
         bytesReceived: 6000
       }

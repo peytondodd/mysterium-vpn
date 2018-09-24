@@ -26,16 +26,16 @@ type Bytes = {
 
 /**
  * @function
- * @param {number} val
+ * @param {number} bytes
  * @returns {{value:number,units:string}} result - holds value and units
  * @throws if argument is null
  */
 
-function bytesReadable (val: number): Bytes {
-  if (typeof val !== 'number') {
+function bytesReadable (bytes: number): Bytes {
+  if (typeof bytes !== 'number') {
     throw new Error('provide valid input for conversion')
   }
-  const calculated = size(val).calculate('jedec')
+  const calculated = size(bytes).calculate('jedec')
   return {
     value: calculated.fixed,
     units: calculated.suffix.replace('i', '')
@@ -44,9 +44,9 @@ function bytesReadable (val: number): Bytes {
 
 const bytesReadableDefault: Bytes = { value: '-', units: 'KB' }
 
-function bytesReadableOrDefault (val: number): Bytes {
+function bytesReadableOrDefault (bytes: number): Bytes {
   try {
-    return bytesReadable(val)
+    return bytesReadable(bytes)
   } catch (err) {
     return bytesReadableDefault
   }
@@ -54,28 +54,28 @@ function bytesReadableOrDefault (val: number): Bytes {
 
 /**
  * @function
- * @param {number} val
+ * @param {number} seconds
  * @returns {string} readable in --:--:-- format
  * @throws {Error} if argument is null
  */
-function timeDisplay (val: number): string {
-  if (typeof val !== 'number' || val < 0) {
+function timeDisplay (seconds: number): string {
+  if (typeof seconds !== 'number' || seconds < 0) {
     throw new Error('invalid input')
   }
-  let h = Math.floor(val / 3600)
+  let h = Math.floor(seconds / 3600)
   h = h > 9 ? h : '0' + h
-  let m = Math.floor((val % 3600) / 60)
+  let m = Math.floor((seconds % 3600) / 60)
   m = m > 9 ? m : '0' + m
-  let s = (val % 60)
+  let s = (seconds % 60)
   s = s > 9 ? s : '0' + s
   return `${h}:${m}:${s}`
 }
 
 const timeDisplayDefault = '--:--:--'
 
-function timeDisplayOrDefault (val: number): string {
+function timeDisplayOrDefault (seconds: number): string {
   try {
-    return timeDisplay(val)
+    return timeDisplay(seconds)
   } catch (err) {
     return timeDisplayDefault
   }

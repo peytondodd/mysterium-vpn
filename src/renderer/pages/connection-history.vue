@@ -42,7 +42,7 @@
                 {{ record.status }}
               </div>
             </td>
-            <td>{{ record.duration }}</td>
+            <td>{{ record.duration_string }}</td>
             <td>{{ record.sent }}/{{ record.received }}</td>
           </tr>
         </table>
@@ -51,7 +51,7 @@
   </div>
 </template>
 <script>
-import { bytesReadableOrDefault } from '../../libraries/unit-converter'
+import { bytesReadableOrDefault, timeDisplayOrDefault } from '../../libraries/unit-converter'
 
 // TODO: handle unknown statuses
 function getStatusModifier (status) {
@@ -85,6 +85,7 @@ export default {
         record.sent = sent.value + sent.units
         const received = bytesReadableOrDefault(record.bytesReceived)
         record.received = received.value + received.units
+        record.duration_string = timeDisplayOrDefault(record.duration)
       })
       this.records = records
     })
