@@ -216,4 +216,5 @@ class TequilapiClientWithMetrics implements TequilapiClient {
   }
 }
 
+export type { ConnectionRecordDto }
 export default TequilapiClientWithMetrics

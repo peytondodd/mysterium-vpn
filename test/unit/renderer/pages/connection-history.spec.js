@@ -62,29 +62,4 @@ describe('ConnectionHistory', () => {
     await wrapper.vm.$nextTick()
     expect(wrapper.findAll('tr')).to.have.length(1 + mockedRecords.length)
   })
-
-  it('renders countries', async () => {
-    // TODO: render icons instead
-    await wrapper.vm.$nextTick()
-    const nodeText = wrapper.findAll('tr').at(1).findAll('td').at(1).element.innerText
-    expect(nodeText).to.have.string('[lt]')
-  })
-
-  it('renders shortened identities', async () => {
-    await wrapper.vm.$nextTick()
-    const nodeText = wrapper.findAll('tr').at(1).findAll('td').at(1).element.innerText
-    expect(nodeText).to.eql('[lt]0x3b03a513f...')
-  })
-
-  it('renders sent and received amounts', async () => {
-    await wrapper.vm.$nextTick()
-    const traffic = wrapper.findAll('tr').at(1).findAll('td').at(5).element.innerText
-    expect(traffic).to.eql('1.00KB/5.86KB')
-  })
-
-  it('renders duration time', async () => {
-    await wrapper.vm.$nextTick()
-    const duration = wrapper.findAll('tr').at(1).findAll('td').at(4).element.innerText
-    expect(duration).to.eql('00:35:00')
-  })
 })
