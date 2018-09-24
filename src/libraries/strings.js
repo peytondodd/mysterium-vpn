@@ -33,8 +33,18 @@ function toISOString (date: Date): string {
   return date.toISOString()
 }
 
+function getReadableDate (date: Date): string {
+  return date.toLocaleDateString()
+}
+
+function getReadableTime (date: Date): string {
+  return date.toLocaleTimeString()
+}
+
 export {
   prependWithFn,
   getCurrentTimeISOFormat,
-  toISOString
+  toISOString,
+  getReadableDate,
+  getReadableTime
 }

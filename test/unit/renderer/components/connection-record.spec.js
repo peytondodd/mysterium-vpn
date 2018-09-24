@@ -30,7 +30,7 @@ function mountConnectionRecord () {
       identity: '0x3b03a513fba4bd4868edd340f77da0c920150f3e',
       country: 'lt'
     },
-    start: '2018.09.24 14:23:23',
+    start: 1537787035230,
     status: 'Successful',
     duration: 35 * 60,
     bytesSent: 1024,
@@ -63,6 +63,11 @@ describe('ConnectionRecord', () => {
     // TODO: render icons instead
     const nodeText = wrapper.findAll('td').at(1).element.innerText
     expect(nodeText).to.have.string('[lt]')
+  })
+
+  it('renders start date and time', () => {
+    const startText = wrapper.findAll('td').at(2).element.innerText
+    expect(startText).to.eql('24/09/2018\n14:03:55')
   })
 
   it('renders duration time', () => {

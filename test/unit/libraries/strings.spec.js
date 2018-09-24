@@ -20,6 +20,8 @@
 import { describe, it, expect } from '../../helpers/dependencies'
 import {
   getCurrentTimeISOFormat,
+  getReadableDate,
+  getReadableTime,
   prependWithFn,
   toISOString
 } from '../../../src/libraries/strings'
@@ -50,6 +52,20 @@ describe('strings', () => {
     const datetime = new Date(Date.parse('04 Dec 1995 00:12:00 GMT'))
     it('returns ISO formatted string from datetime number', () => {
       expect(toISOString(datetime)).to.eql('1995-12-04T00:12:00.000Z')
+    })
+  })
+
+  describe('.getReadableTime', () => {
+    it('returns readable time', () => {
+      const date = new Date(1537787035230)
+      expect(getReadableTime(date)).to.eql('14:03:55')
+    })
+  })
+
+  describe('.getReadableDate', () => {
+    it('returns readable date', () => {
+      const date = new Date(1537787035230)
+      expect(getReadableDate(date)).to.eql('24/09/2018')
     })
   })
 })

@@ -19,7 +19,7 @@
   <tr>
     <td/>
     <td>[{{ record.provider.country }}]{{ shortIdentity }}</td>
-    <td>{{ record.start }}</td>
+    <td>{{ startString }}</td>
     <td class="status">
       <div
         class="connection-history__status"
@@ -34,6 +34,7 @@
 
 <script>
 import { bytesReadableOrDefault, timeDisplayOrDefault } from '../../libraries/unit-converter'
+import { getReadableDate, getReadableTime } from '../../libraries/strings'
 
 // TODO: handle unknown statuses
 function getStatusModifier (status) {
@@ -74,6 +75,10 @@ export default {
     },
     shortIdentity: function () {
       return this.record.provider.identity.slice(0, 11) + '...'
+    },
+    startString: function () {
+      const date = new Date(this.record.start)
+      return getReadableDate(date) + '\n' + getReadableTime(date)
     }
   }
 }
