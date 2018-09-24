@@ -33,7 +33,6 @@ import type { BugReporterMetrics } from './metrics/bug-reporter-metrics'
 import { METRICS } from './metrics/metrics'
 
 type ConnectionRecordDto = {
-  id: string,
   identity: string,
   country: string,
   start: string,
@@ -129,11 +128,9 @@ class TequilapiClientWithMetrics implements TequilapiClient {
   }
 
   async connectionHistoryList (): Promise<ConnectionRecordDto[]> {
-    // TODO: remove id
     // TODO: nest country, identity into provider: { country, identity }
     return [
       {
-        id: '1',
         identity: '0x3b03a513fba4bd4868edd340f77da0c920150f3e',
         country: 'lt',
         start: '2018.09.24 14:23:23',
@@ -143,7 +140,6 @@ class TequilapiClientWithMetrics implements TequilapiClient {
         bytesReceived: 6000
       },
       {
-        id: '2',
         identity: '0x1b03b513fba4bd4868edd340f77da0c920150f0a',
         country: 'us',
         start: '2018.09.24 14:23:23',
@@ -153,7 +149,6 @@ class TequilapiClientWithMetrics implements TequilapiClient {
         bytesReceived: 6000
       },
       {
-        id: '3',
         identity: '0x1b03b513fba4bd4868edd340f77da0c920150f0a',
         country: 'us',
         start: '2018.09.24 14:23:23',
@@ -163,7 +158,6 @@ class TequilapiClientWithMetrics implements TequilapiClient {
         bytesReceived: 6000
       },
       {
-        id: '4',
         identity: '0x1b03b513fba4bd4868edd340f77da0c920150f0a',
         country: 'us',
         start: '2018.09.24 14:23:23',
@@ -173,7 +167,6 @@ class TequilapiClientWithMetrics implements TequilapiClient {
         bytesReceived: 6000
       },
       {
-        id: '5',
         identity: '0x1b03b513fba4bd4868edd340f77da0c920150f0a',
         country: 'us',
         start: '2018.09.24 14:23:23',
@@ -183,7 +176,6 @@ class TequilapiClientWithMetrics implements TequilapiClient {
         bytesReceived: 6000
       },
       {
-        id: '6',
         identity: '0x1b03b513fba4bd4868edd340f77da0c920150f0a',
         country: 'us',
         start: '2018.09.24 14:23:23',
@@ -193,7 +185,6 @@ class TequilapiClientWithMetrics implements TequilapiClient {
         bytesReceived: 6000
       },
       {
-        id: '7',
         identity: '0x1b03b513fba4bd4868edd340f77da0c920150f0a',
         country: 'us',
         start: '2018.09.24 14:23:23',
@@ -203,7 +194,6 @@ class TequilapiClientWithMetrics implements TequilapiClient {
         bytesReceived: 6000
       },
       {
-        id: '8',
         identity: '0x1b03b513fba4bd4868edd340f77da0c920150f0a',
         country: 'us',
         start: '2018.09.24 14:23:23',

@@ -52,6 +52,9 @@ export default {
   },
   created: function () {
     this.tequilapiClient.connectionHistoryList().then(records => {
+      records.forEach((record, index) => {
+        record.id = index
+      })
       this.records = records
     })
   }
