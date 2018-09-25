@@ -20,12 +20,12 @@ import { createLocalVue, mount } from '@vue/test-utils'
 import { beforeEach, describe, it, expect } from '../../../helpers/dependencies'
 import ConnectionHistory from '../../../../src/renderer/pages/connection-history'
 import DIContainer from '../../../../src/app/di/vue-container'
-import type { ConnectionRecordDto } from '../../../../src/app/bug-reporting/tequilapi-client-with-metrics'
+import type { SessionDto } from '../../../../src/app/bug-reporting/tequilapi-client-with-metrics'
 
 describe('ConnectionHistory', () => {
   let wrapper
 
-  const mockedRecords: ConnectionRecordDto[] = [
+  const mockedSessions: SessionDto[] = [
     {
       id: '5fefd260-c096-11e8-b371-ebde26989839',
       provider: {
@@ -56,8 +56,8 @@ describe('ConnectionHistory', () => {
     const localVue = createLocalVue()
     const dependencies = new DIContainer(localVue)
     dependencies.constant('tequilapiClient', {
-      async connectionHistoryList () {
-        return mockedRecords
+      async sessionsList () {
+        return mockedSessions
       }
     })
     return mount(ConnectionHistory, {
@@ -73,8 +73,8 @@ describe('ConnectionHistory', () => {
     expect(wrapper).to.be.ok
   })
 
-  it('renders table with headers and list of records', async () => {
+  it('renders table with headers and list of sessions', async () => {
     await wrapper.vm.$nextTick()
-    expect(wrapper.findAll('tr')).to.have.length(1 + mockedRecords.length)
+    expect(wrapper.findAll('tr')).to.have.length(1 + mockedSessions.length)
   })
 })

@@ -29,30 +29,30 @@
             <th>Duration</th>
             <th>Sent/Received</th>
           </tr>
-          <connection-record
-            v-for="record in records"
-            :key="record.id"
-            :record="record"/>
+          <session-item
+            v-for="session in sessions"
+            :key="session.id"
+            :session="session"/>
         </table>
       </div>
     </div>
   </div>
 </template>
 <script>
-import ConnectionRecord from '../components/connection-record'
+import SessionItem from '../components/session-item'
 
 export default {
   name: 'ConnectionHistory',
-  components: { ConnectionRecord },
+  components: { SessionItem },
   dependencies: ['tequilapiClient'],
   data: function () {
     return {
-      records: []
+      sessions: []
     }
   },
   created: function () {
-    this.tequilapiClient.connectionHistoryList().then(records => {
-      this.records = records
+    this.tequilapiClient.sessionsList().then(sessions => {
+      this.sessions = sessions
     })
   }
 }

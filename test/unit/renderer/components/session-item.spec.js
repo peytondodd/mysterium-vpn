@@ -17,15 +17,15 @@
 
 // @flow
 
-import ConnectionRecord from '../../../../src/renderer/components/connection-record'
+import SessionItem from '../../../../src/renderer/components/session-item'
 import { createLocalVue, mount } from '@vue/test-utils'
 import { beforeEach, describe, expect, it } from '../../../helpers/dependencies'
-import type { ConnectionRecordDto } from '../../../../src/app/bug-reporting/tequilapi-client-with-metrics'
+import type { SessionDto } from '../../../../src/app/bug-reporting/tequilapi-client-with-metrics'
 
-function mountConnectionRecord () {
+function mountSessionItem () {
   const localVue = createLocalVue()
 
-  const record: ConnectionRecordDto = {
+  const session: SessionDto = {
     id: '691bb110-c096-11e8-b371-ebde26989839',
     provider: {
       identity: '0x3b03a513fba4bd4868edd340f77da0c920150f3e',
@@ -38,17 +38,17 @@ function mountConnectionRecord () {
     bytesReceived: 6000
   }
 
-  return mount(ConnectionRecord, {
+  return mount(SessionItem, {
     localVue,
-    propsData: { record }
+    propsData: { session }
   })
 }
 
-describe('ConnectionRecord', () => {
+describe('SessionItem', () => {
   let wrapper
 
   beforeEach(() => {
-    wrapper = mountConnectionRecord()
+    wrapper = mountSessionItem()
   })
 
   it('renders successfully', () => {

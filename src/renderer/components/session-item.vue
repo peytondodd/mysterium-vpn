@@ -18,13 +18,13 @@
 <template>
   <tr>
     <td/>
-    <td>[{{ record.provider.country }}]{{ shortIdentity }}</td>
+    <td>[{{ session.provider.country }}]{{ shortIdentity }}</td>
     <td>{{ startString }}</td>
     <td class="status">
       <div
         class="connection-history__status"
         :class="`connection-history__status--${status_modifier}`">
-        {{ record.status }}
+        {{ session.status }}
       </div>
     </td>
     <td>{{ durationString }}</td>
@@ -51,33 +51,33 @@ function getStatusModifier (status) {
 }
 
 export default {
-  name: 'ConnectionRecord',
+  name: 'SessionItem',
   props: {
-    record: {
+    session: {
       type: Object,
       required: true
     }
   },
   computed: {
     durationString: function () {
-      return timeDisplayOrDefault(this.record.duration)
+      return timeDisplayOrDefault(this.session.duration)
     },
     status_modifier: function () {
-      return getStatusModifier(this.record.status)
+      return getStatusModifier(this.session.status)
     },
     sent: function () {
-      const sent = bytesReadableOrDefault(this.record.bytesSent)
+      const sent = bytesReadableOrDefault(this.session.bytesSent)
       return sent.value + sent.units
     },
     received: function () {
-      const received = bytesReadableOrDefault(this.record.bytesReceived)
+      const received = bytesReadableOrDefault(this.session.bytesReceived)
       return received.value + received.units
     },
     shortIdentity: function () {
-      return this.record.provider.identity.slice(0, 11) + '...'
+      return this.session.provider.identity.slice(0, 11) + '...'
     },
     startString: function () {
-      const date = new Date(this.record.start)
+      const date = new Date(this.session.start)
       return getReadableDate(date) + '\n' + getReadableTime(date)
     }
   }

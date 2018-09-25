@@ -32,7 +32,7 @@ import IdentityRegistrationDTO from 'mysterium-tequilapi/lib/dto/identity-regist
 import type { BugReporterMetrics } from './metrics/bug-reporter-metrics'
 import { METRICS } from './metrics/metrics'
 
-type ConnectionRecordDto = {
+type SessionDto = {
   id: string,
   provider: {
     identity: string,
@@ -130,7 +130,7 @@ class TequilapiClientWithMetrics implements TequilapiClient {
     return this._client.location(timeout)
   }
 
-  async connectionHistoryList (): Promise<ConnectionRecordDto[]> {
+  async sessionsList (): Promise<SessionDto[]> {
     return [
       {
         id: '30f610a0-c096-11e8-b371-ebde26989839',
@@ -232,5 +232,5 @@ class TequilapiClientWithMetrics implements TequilapiClient {
   }
 }
 
-export type { ConnectionRecordDto }
+export type { SessionDto }
 export default TequilapiClientWithMetrics
