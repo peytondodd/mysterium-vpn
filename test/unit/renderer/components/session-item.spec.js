@@ -32,7 +32,6 @@ function mountSessionItem () {
       country: 'lt'
     },
     start: 1537787035230,
-    status: 'Successful',
     duration: 35 * 60,
     bytesSent: 1024,
     bytesReceived: 6000
@@ -72,12 +71,12 @@ describe('SessionItem', () => {
   })
 
   it('renders duration time', () => {
-    const duration = wrapper.findAll('td').at(4).element.innerText
+    const duration = wrapper.findAll('td').at(3).element.innerText
     expect(duration).to.eql('00:35:00')
   })
 
   it('renders sent and received amounts', () => {
-    const traffic = wrapper.findAll('td').at(5).element.innerText
+    const traffic = wrapper.findAll('td').at(4).element.innerText
     expect(traffic).to.eql('1.00KB/5.86KB')
   })
 })

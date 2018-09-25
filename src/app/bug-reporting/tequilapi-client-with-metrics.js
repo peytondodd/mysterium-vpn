@@ -38,7 +38,6 @@ type SessionDto = {
     identity: string,
     country: string
   },
-  status: string,
   start: number,
   duration: number,
   bytesSent: number,
@@ -138,7 +137,6 @@ class TequilapiClientWithMetrics implements TequilapiClient {
           identity: '0x3b03a513fba4bd4868edd340f77da0c920150f3e',
           country: 'lt'
         },
-        status: 'Successful',
         start: 1537787035230,
         duration: 35 * 60,
         bytesSent: 1024,
@@ -150,7 +148,6 @@ class TequilapiClientWithMetrics implements TequilapiClient {
           identity: '0x1b03b513fba4bd4868edd340f77da0c920150f0a',
           country: 'us'
         },
-        status: 'Unsuccessful',
         start: 1537787035230,
         duration: 35 * 60,
         bytesSent: 1024,
@@ -163,7 +160,6 @@ class TequilapiClientWithMetrics implements TequilapiClient {
           country: 'us'
         },
         start: 1537787035230,
-        status: 'Cancelled',
         duration: 35 * 60,
         bytesSent: 1024,
         bytesReceived: 6000
@@ -174,7 +170,6 @@ class TequilapiClientWithMetrics implements TequilapiClient {
           identity: '0x1b03b513fba4bd4868edd340f77da0c920150f0a',
           country: 'us'
         },
-        status: 'Successful',
         start: 1537787035230,
         duration: 35 * 60,
         bytesSent: 1024,
@@ -186,7 +181,6 @@ class TequilapiClientWithMetrics implements TequilapiClient {
           identity: '0x1b03b513fba4bd4868edd340f77da0c920150f0a',
           country: 'us'
         },
-        status: 'Successful',
         start: 1537787035230,
         duration: 35 * 60,
         bytesSent: 1024,
@@ -198,7 +192,6 @@ class TequilapiClientWithMetrics implements TequilapiClient {
           identity: '0x1b03b513fba4bd4868edd340f77da0c920150f0a',
           country: 'us'
         },
-        status: 'Successful',
         start: 1537787035230,
         duration: 35 * 60,
         bytesSent: 1024,
@@ -210,7 +203,6 @@ class TequilapiClientWithMetrics implements TequilapiClient {
           identity: '0x1b03b513fba4bd4868edd340f77da0c920150f0a',
           country: 'us'
         },
-        status: 'Successful',
         start: 1537787035230,
         duration: 35 * 60,
         bytesSent: 1024,
@@ -222,7 +214,6 @@ class TequilapiClientWithMetrics implements TequilapiClient {
           identity: '0x1b03b513fba4bd4868edd340f77da0c920150f0a',
           country: 'us'
         },
-        status: 'Successful',
         start: 1537787035230,
         duration: 35 * 60,
         bytesSent: 1024,

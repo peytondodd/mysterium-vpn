@@ -25,7 +25,6 @@
             <th/>
             <th>Node</th>
             <th>Date/Time</th>
-            <th>Connection</th>
             <th>Duration</th>
             <th>Sent/Received</th>
           </tr>

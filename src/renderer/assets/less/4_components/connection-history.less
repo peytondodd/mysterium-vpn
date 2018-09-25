@@ -21,10 +21,6 @@
 
 @headerTextColor: @g6;
 
-@success: #82be37;
-@failure: #eaa521;
-@cancelled: @g8;
-
 .connection-history {
   table, th, td {
     border-collapse: collapse;
@@ -46,23 +42,5 @@
     text-align: center;
     vertical-align: middle;
     padding: 0.5em;
-  }
-
-  &__status {
-    color: @white;
-    padding: 4px;
-    border-radius: 3px;
-
-    &--success {
-      background-color: @success;
-    }
-
-    &--failure {
-      background-color: @failure;
-    }
-
-    &--cancelled {
-      background-color: @cancelled;
-    }
   }
 }

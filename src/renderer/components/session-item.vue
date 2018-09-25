@@ -20,13 +20,6 @@
     <td/>
     <td>[{{ session.provider.country }}]{{ shortIdentity }}</td>
     <td>{{ startString }}</td>
-    <td class="status">
-      <div
-        class="connection-history__status"
-        :class="`connection-history__status--${status_modifier}`">
-        {{ session.status }}
-      </div>
-    </td>
     <td>{{ durationString }}</td>
     <td>{{ sent }}/{{ received }}</td>
   </tr>
@@ -35,20 +28,6 @@
 <script>
 import { bytesReadableOrDefault, timeDisplayOrDefault } from '../../libraries/unit-converter'
 import { getReadableDate, getReadableTime } from '../../libraries/strings'
-
-// TODO: handle unknown statuses
-function getStatusModifier (status) {
-  if (status === 'Successful') {
-    return 'success'
-  }
-  if (status === 'Unsuccessful') {
-    return 'failure'
-  }
-  if (status === 'Cancelled') {
-    return 'cancelled'
-  }
-  return ''
-}
 
 export default {
   name: 'SessionItem',
@@ -61,9 +40,6 @@ export default {
   computed: {
     durationString: function () {
       return timeDisplayOrDefault(this.session.duration)
-    },
-    status_modifier: function () {
-      return getStatusModifier(this.session.status)
     },
     sent: function () {
       const sent = bytesReadableOrDefault(this.session.bytesSent)
