@@ -33,6 +33,7 @@ import type { BugReporterMetrics } from './metrics/bug-reporter-metrics'
 import { METRICS } from './metrics/metrics'
 
 type ConnectionRecordDto = {
+  id: string,
   provider: {
     identity: string,
     country: string
@@ -132,6 +133,7 @@ class TequilapiClientWithMetrics implements TequilapiClient {
   async connectionHistoryList (): Promise<ConnectionRecordDto[]> {
     return [
       {
+        id: '30f610a0-c096-11e8-b371-ebde26989839',
         provider: {
           identity: '0x3b03a513fba4bd4868edd340f77da0c920150f3e',
           country: 'lt'
@@ -143,6 +145,7 @@ class TequilapiClientWithMetrics implements TequilapiClient {
         bytesReceived: 6000
       },
       {
+        id: '76fca3dc-28d0-4f00-b06e-a7d6050699ae',
         provider: {
           identity: '0x1b03b513fba4bd4868edd340f77da0c920150f0a',
           country: 'us'
@@ -154,6 +157,7 @@ class TequilapiClientWithMetrics implements TequilapiClient {
         bytesReceived: 6000
       },
       {
+        id: 'ffbfb796-5483-4a1b-82c8-10d6b85d4d62',
         provider: {
           identity: '0x1b03b513fba4bd4868edd340f77da0c920150f0a',
           country: 'us'
@@ -165,6 +169,7 @@ class TequilapiClientWithMetrics implements TequilapiClient {
         bytesReceived: 6000
       },
       {
+        id: '27f49b3a-070b-4d2e-881b-5163b9ab0a74',
         provider: {
           identity: '0x1b03b513fba4bd4868edd340f77da0c920150f0a',
           country: 'us'
@@ -176,6 +181,7 @@ class TequilapiClientWithMetrics implements TequilapiClient {
         bytesReceived: 6000
       },
       {
+        id: '0b2d1dba-264f-4fb6-b1a3-63c5c40db848',
         provider: {
           identity: '0x1b03b513fba4bd4868edd340f77da0c920150f0a',
           country: 'us'
@@ -187,6 +193,7 @@ class TequilapiClientWithMetrics implements TequilapiClient {
         bytesReceived: 6000
       },
       {
+        id: '03b876cd-e262-4491-9ddf-ed98fedb9b99',
         provider: {
           identity: '0x1b03b513fba4bd4868edd340f77da0c920150f0a',
           country: 'us'
@@ -198,6 +205,7 @@ class TequilapiClientWithMetrics implements TequilapiClient {
         bytesReceived: 6000
       },
       {
+        id: '8593c811-3988-437b-809c-46e6124278c1',
         provider: {
           identity: '0x1b03b513fba4bd4868edd340f77da0c920150f0a',
           country: 'us'
@@ -209,6 +217,7 @@ class TequilapiClientWithMetrics implements TequilapiClient {
         bytesReceived: 6000
       },
       {
+        id: 'b97038dd-03c3-44e5-be33-479af4ebb91e',
         provider: {
           identity: '0x1b03b513fba4bd4868edd340f77da0c920150f0a',
           country: 'us'

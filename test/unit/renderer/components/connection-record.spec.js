@@ -26,6 +26,7 @@ function mountConnectionRecord () {
   const localVue = createLocalVue()
 
   const record: ConnectionRecordDto = {
+    id: '691bb110-c096-11e8-b371-ebde26989839',
     provider: {
       identity: '0x3b03a513fba4bd4868edd340f77da0c920150f3e',
       country: 'lt'
