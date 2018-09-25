@@ -15,6 +15,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+ .identity-tooltip-generic(@positionTop, @positionRight) {
+  display: none;
+  position: fixed;
+  top: @positionTop;
+  right: @positionRight;
+  color: @grey;
+  font-size: 16px;
+  text-align: right;
+ }
+
 .identity-registration {
   position: absolute;
   top: 1.1rem;
@@ -32,13 +42,7 @@
   }
 
   .identity-tooltip {
-    display: none;
-    position: fixed;
-    top: 3.5em;
-    right: 1.1em;
-    color: @grey;
-    font-size: 16px;
-    text-align: right;
+    .identity-tooltip-generic(3.5em, 1.1em);
   }
 
   &:hover {
@@ -77,15 +81,8 @@
     cursor: pointer;
 
     .identity-tooltip {
-      display: none;
-      position: fixed;
-      top: 10em;
-      right: 1.1em;
-      color: @grey;
-      font-size: 16px;
-      text-align: right;
+      .identity-tooltip-generic(10em, 1.1em);
     }
-
     &:hover {
       .identity-tooltip {
         display: block;
