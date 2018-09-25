@@ -19,7 +19,7 @@
   <tr>
     <td/>
     <td>[{{ session.provider.country }}]{{ shortIdentity }}</td>
-    <td>{{ startString }}</td>
+    <td>{{ startDate }}<br>{{ startTime }}</td>
     <td>{{ durationString }}</td>
     <td>{{ sent }}/{{ received }}</td>
   </tr>
@@ -52,9 +52,14 @@ export default {
     shortIdentity: function () {
       return this.session.provider.identity.slice(0, 11) + '...'
     },
-    startString: function () {
-      const date = new Date(this.session.start)
-      return getReadableDate(date) + '\n' + getReadableTime(date)
+    startDate: function () {
+      return getReadableDate(this.dateObject)
+    },
+    startTime: function () {
+      return getReadableTime(this.dateObject)
+    },
+    dateObject: function () {
+      return new Date(this.session.start)
     }
   }
 }
