@@ -63,8 +63,9 @@
           <div>
             <span
               class="consumer-identity-id-item consumer-identity-id-copy"
-              @click="copyId">
+              @click="copyId()">
               <icon-copy class="nav__icon nav__icon--eye"/>
+              <span class="identity-tooltip">Copy to Clipboard</span>
             </span>
           </div>
         </div>

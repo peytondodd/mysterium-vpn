@@ -75,6 +75,22 @@
   }
   .consumer-identity-id-copy {
     cursor: pointer;
+
+    .identity-tooltip {
+      display: none;
+      position: fixed;
+      top: 10em;
+      right: 1.1em;
+      color: @grey;
+      font-size: 16px;
+      text-align: right;
+    }
+
+    &:hover {
+      .identity-tooltip {
+        display: block;
+      }
+    }
   }
 }
 
