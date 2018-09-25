@@ -18,7 +18,7 @@
 <template>
   <tr>
     <td/>
-    <td>[{{ session.provider.country }}]{{ shortIdentity }}</td>
+    <td>[{{ session.location.country }}]{{ shortIdentity }}</td>
     <td>{{ startDate }}<br>{{ startTime }}</td>
     <td>{{ durationString }}</td>
     <td>{{ sent }}/{{ received }}</td>
@@ -39,18 +39,18 @@ export default {
   },
   computed: {
     durationString: function () {
-      return timeDisplayOrDefault(this.session.duration)
+      return timeDisplayOrDefault(this.session.statistics.duration)
     },
     sent: function () {
-      const sent = bytesReadableOrDefault(this.session.bytesSent)
+      const sent = bytesReadableOrDefault(this.session.statistics.bytesSent)
       return sent.value + sent.units
     },
     received: function () {
-      const received = bytesReadableOrDefault(this.session.bytesReceived)
+      const received = bytesReadableOrDefault(this.session.statistics.bytesReceived)
       return received.value + received.units
     },
     shortIdentity: function () {
-      return this.session.provider.identity.slice(0, 11) + '...'
+      return this.session.proposal.providerId.slice(0, 11) + '...'
     },
     startDate: function () {
       return getReadableDate(this.dateObject)
@@ -59,7 +59,7 @@ export default {
       return getReadableTime(this.dateObject)
     },
     dateObject: function () {
-      return new Date(this.session.start)
+      return new Date(this.session.statistics.dateStart)
     }
   }
 }
