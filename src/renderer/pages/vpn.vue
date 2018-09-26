@@ -23,8 +23,10 @@
           :class="{'is-grey':statusCode===-1}"
           v-text="statusTitle"/>
         <div
-          class="control__location"
-          v-if="ip">current IP: {{ ip }}</div>
+          class="control__location">
+          current IP:
+          <span :class="{'text-blurry': ip}">{{ ip || 'Refreshing..' }}</span>
+        </div>
       </div>
 
       <div class="control__bottom">

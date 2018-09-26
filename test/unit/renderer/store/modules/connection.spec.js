@@ -367,7 +367,7 @@ describe('connection', () => {
         expect(committed[0].value).to.eql(ConnectionStatusEnum.NOT_CONNECTED)
 
         expect(committed[1].key).to.eql(type.CONNECTION_IP)
-        expect(committed[1].value).to.eql('Refreshing...')
+        expect(committed[1].value).to.eql(null)
       })
 
       it('commits error when api fails', async () => {
@@ -426,7 +426,7 @@ describe('connection', () => {
           value: ConnectionStatusEnum.CONNECTED
         })
         expect(committed[1].key).to.eql(type.CONNECTION_IP)
-        expect(committed[1].value).to.eql('Refreshing...')
+        expect(committed[1].value).to.eql(null)
         expect(committed[2].key).to.eql(type.SET_ACTION_LOOPER)
         expect(committed[2].value.action).to.eql(type.CONNECTION_STATISTICS)
         const looper = committed[2].value.looper
@@ -452,7 +452,7 @@ describe('connection', () => {
           },
           {
             key: type.CONNECTION_IP,
-            value: 'Refreshing...'
+            value: null
           }
         ])
       })

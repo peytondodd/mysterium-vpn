@@ -68,8 +68,6 @@ class ActionLooperConfig {
 const defaultStatistics = {
 }
 
-const IP_REFRESHING = 'Refreshing...'
-
 const state: ConnectionStore = {
   ip: null,
   location: null,
@@ -191,13 +189,13 @@ function actionsFactory (
       rendererCommunication.sendConnectionStatusChange({ oldStatus, newStatus })
 
       if (newStatus === ConnectionStatusEnum.CONNECTED) {
-        commit(type.CONNECTION_IP, IP_REFRESHING)
+        commit(type.CONNECTION_IP, null)
         const statisticsLooperConfig =
           new ActionLooperConfig(type.CONNECTION_STATISTICS, config.statisticsUpdateThreshold)
         await dispatch(type.START_ACTION_LOOPING, statisticsLooperConfig)
       }
       if (newStatus === ConnectionStatusEnum.NOT_CONNECTED) {
-        commit(type.CONNECTION_IP, IP_REFRESHING)
+        commit(type.CONNECTION_IP, null)
       }
       if (oldStatus === ConnectionStatusEnum.CONNECTED) {
         await dispatch(type.STOP_ACTION_LOOPING, type.CONNECTION_STATISTICS)
