@@ -54,7 +54,12 @@
           :class="{registered: registered}">
           <div class="consumer-identity-id-item">
             <span>
-              <head-visual class="nav__icon nav__icon--eye"/>
+              <icon-logo-active
+                v-if="registered"
+                class="icon-logo"/>
+              <icon-logo-inactive
+                v-else
+                class="icon-logo"/>
             </span>
           </div>
           <div class="consumer-identity-id-item">
@@ -112,13 +117,17 @@ import { shell, clipboard } from 'electron'
 import { mapGetters } from 'vuex'
 import IconCopy from '@/assets/img/icon--copy.svg'
 import headVisual from '@/assets/img/visual--head.svg'
+import IconLogoActive from '@/assets/img/icon--logo-active.svg'
+import IconLogoInactive from '@/assets/img/icon--logo-inactive.svg'
 
 export default {
   name: 'IdentityRegistration',
   dependencies: ['rendererCommunication', 'getPaymentLink'],
   components: {
     IconCopy,
-    headVisual
+    headVisual,
+    IconLogoActive,
+    IconLogoInactive
   },
   data () {
     return {
