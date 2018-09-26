@@ -16,6 +16,7 @@
  */
 
 // @flow
+import Vuex from 'vuex'
 import { beforeEach, describe, expect, it } from '../../../helpers/dependencies'
 import DIContainer from '../../../../src/app/di/vue-container'
 import IdentityRegistration from '@/components/identity-registration'
@@ -41,12 +42,31 @@ describe('IdentityRegistration', () => {
 
   beforeEach(() => {
     const vm = createLocalVue()
+    vm.use(Vuex)
+    const store = new Vuex.Store({
+      modules: {
+        identity: {
+          state: {
+            current: {
+              id: '0x1'
+            }
+          },
+          getters: {
+            currentIdentity (state) {
+              return state.current.id
+            }
+          }
+        }
+      }
+    })
+
     const dependencies = new DIContainer(vm)
     rendererCommunication = new FakeRendererCommunication()
     dependencies.constant('rendererCommunication', rendererCommunication)
     dependencies.constant('getPaymentLink', () => {})
     vue = mount(IdentityRegistration, {
-      localVue: vm
+      localVue: vm,
+      store
     })
   })
 
