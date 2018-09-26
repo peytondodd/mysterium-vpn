@@ -49,6 +49,7 @@ import MainBufferedIpc from './communication/ipc/main-buffered-ipc'
 import CommunicationBindings from './communication-bindings'
 import { METRICS, TAGS } from './bug-reporting/metrics/metrics'
 import type { BugReporterMetrics } from './bug-reporting/metrics/bug-reporter-metrics'
+import type { MainTransport } from './communication/transport/main-transport'
 
 const LOG_PREFIX = '[MysteriumVpn] '
 const MYSTERIUM_CLIENT_STARTUP_THRESHOLD = 10000
@@ -77,6 +78,7 @@ class MysteriumVpn {
 
   _window: Window
   _communication: MainMessageBusCommunication
+  _mainTransport: MainTransport
   _ipc: MainBufferedIpc
   _syncCallbacksInitializer: SyncCallbacksInitializer
   _communicationBindings: CommunicationBindings
@@ -105,6 +107,7 @@ class MysteriumVpn {
 
     this._ipc = params.mainIpc
     this._communication = params.mainCommunication
+    this._mainTransport = params.mainTransport
     this._syncCallbacksInitializer = params.syncCallbacksInitializer
     this._communicationBindings = params.communicationBindings
   }
@@ -352,7 +355,7 @@ class MysteriumVpn {
     })
 
     const termsAnsweredDTO = await onFirstEvent((callback) => {
-      this._communication.onTermsAnswered(callback)
+      this._mainTransport.termsAnsweredReceiver.on(callback)
     })
     const termsAnswer = termsAnsweredDTO.isAccepted
     if (!termsAnswer) {

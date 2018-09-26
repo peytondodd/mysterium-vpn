@@ -21,7 +21,7 @@ import type { MainCommunication } from '../../src/app/communication/main-communi
 import type {
   AppErrorDTO, ConnectionStatusChangeDTO, CurrentIdentityChangeDTO,
   CountriesDTO,
-  RequestTermsDTO, TermsAnsweredDTO, RequestConnectionDTO, FavoriteProviderDTO
+  RequestTermsDTO, RequestConnectionDTO, FavoriteProviderDTO
 } from '../../src/app/communication/dto'
 import type { UserSettings } from '../../src/app/user-settings/user-settings'
 import IdentityRegistrationDTO from 'mysterium-tequilapi/lib/dto/identity-registration'
@@ -110,10 +110,6 @@ class FakeMainCommunication implements MainCommunication {
 
   onProposalUpdateRequest (callback: () => void): void {
     this._registerMethod(this.onProposalUpdateRequest)
-  }
-
-  onTermsAnswered (callback: (TermsAnsweredDTO) => void): void {
-    this._registerMethod(this.onTermsAnswered)
   }
 
   onUserSettingsRequest (callback: () => void): void {

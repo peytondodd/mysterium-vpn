@@ -25,7 +25,6 @@ import type {
   RequestConnectionDTO,
   CountriesDTO,
   RequestTermsDTO,
-  TermsAnsweredDTO,
   AppErrorDTO,
   FavoriteProviderDTO
 } from './dto'
@@ -61,10 +60,6 @@ class RendererCommunication {
 
   sendProposalUpdateRequest () {
     return this._send(messages.PROPOSALS_UPDATE)
-  }
-
-  sendTermsAnswered (dto: TermsAnsweredDTO): void {
-    return this._send(messages.TERMS_ANSWERED, dto)
   }
 
   sendUserSettingsRequest (): void {

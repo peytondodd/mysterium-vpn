@@ -23,7 +23,6 @@ import type {
   CurrentIdentityChangeDTO,
   CountriesDTO,
   RequestTermsDTO,
-  TermsAnsweredDTO,
   AppErrorDTO,
   FavoriteProviderDTO
 } from './dto'
@@ -124,10 +123,6 @@ class MainMessageBusCommunication implements MainCommunication {
 
   onProposalUpdateRequest (callback: () => void) {
     this._on(messages.PROPOSALS_UPDATE, callback)
-  }
-
-  onTermsAnswered (callback: (TermsAnsweredDTO) => void) {
-    this._on(messages.TERMS_ANSWERED, callback)
   }
 
   onUserSettingsRequest (callback: () => void): void {

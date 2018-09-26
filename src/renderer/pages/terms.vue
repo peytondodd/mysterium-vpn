@@ -42,7 +42,7 @@ import { mapGetters } from 'vuex'
 
 export default {
   name: 'Terms',
-  dependencies: ['rendererCommunication'],
+  dependencies: ['rendererCommunication', 'rendererTransport'],
   methods: {
     accept () {
       this._answerTerms(true)
@@ -51,7 +51,7 @@ export default {
       this._answerTerms(false)
     },
     _answerTerms (answer) {
-      this.rendererCommunication.sendTermsAnswered({ isAccepted: answer })
+      this.rendererTransport.termsAnsweredSender.send({ isAccepted: answer })
     }
   },
   computed: {

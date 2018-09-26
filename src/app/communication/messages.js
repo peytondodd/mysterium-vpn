@@ -30,7 +30,6 @@ export default {
   MYSTERIUM_VPN_BACKEND_LOG: 'MYSTERIUM_VPN_BACKEND_LOG',
 
   TERMS_REQUESTED: 'terms.requested',
-  TERMS_ANSWERED: 'terms.answered',
   TERMS_ACCEPTED: 'terms.accepted',
 
   RENDERER_BOOTED: 'renderer.booted',

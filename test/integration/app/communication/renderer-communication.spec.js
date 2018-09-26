@@ -78,16 +78,6 @@ describe('RendererCommunication', () => {
     })
   })
 
-  describe('sendTermsAnswered', () => {
-    it('sends message through message bus', () => {
-      mainCommunication.onTermsAnswered(recorder.getCallback())
-      const answeredDto = { isAccepted: true }
-      rendererCommunication.sendTermsAnswered(answeredDto)
-      expect(recorder.invoked).to.be.true
-      expect(recorder.firstArgument).to.eql(answeredDto)
-    })
-  })
-
   describe('sendUserSettingsRequest', () => {
     it('sends message through message bus', () => {
       mainCommunication.onUserSettingsRequest(recorder.getCallback())

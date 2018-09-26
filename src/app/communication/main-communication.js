@@ -23,7 +23,6 @@ import type {
   CurrentIdentityChangeDTO,
   CountriesDTO,
   RequestTermsDTO,
-  TermsAnsweredDTO,
   AppErrorDTO, FavoriteProviderDTO
 } from './dto'
 import type { UserSettings } from '../user-settings/user-settings'
@@ -67,8 +66,6 @@ interface MainCommunication {
   onCurrentIdentityChangeOnce (callback: (CurrentIdentityChangeDTO) => void): void,
 
   onProposalUpdateRequest (callback: () => void): void,
-
-  onTermsAnswered (callback: (TermsAnsweredDTO) => void): void,
 
   onUserSettingsUpdate (callback: (UserSettings) => void): void,
 

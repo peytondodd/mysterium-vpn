@@ -90,6 +90,7 @@ function bootstrap (container: Container) {
       'startupEventTracker',
       'mainIpc',
       'mainCommunication',
+      'mainTransport',
       'syncCallbacksInitializer',
       'communicationBindings'
     ],
@@ -113,6 +114,7 @@ function bootstrap (container: Container) {
       startupEventTracker,
       mainIpc,
       mainCommunication,
+      mainTransport,
       syncCallbacksInitializer,
       communicationBindings
     ) => {
@@ -139,6 +141,7 @@ function bootstrap (container: Container) {
         startupEventTracker,
         mainIpc,
         mainCommunication,
+        mainTransport,
         syncCallbacksInitializer,
         communicationBindings
       })

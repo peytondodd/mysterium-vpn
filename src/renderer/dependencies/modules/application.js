@@ -24,19 +24,31 @@ import VpnInitializer from '../../../app/vpn-initializer'
 import type { TequilapiClient } from 'mysterium-tequilapi/lib/client'
 import realSleep from '../../../libraries/sleep'
 import IpcMessageBus from '../../../app/communication/ipc-message-bus'
+import { buildRendererTransport } from '../../../app/communication/transport/renderer-transport'
 
 function bootstrap (container: Container) {
   const mysteriumVpnReleaseID = remote.getGlobal('__mysteriumVpnReleaseID')
   container.constant('mysteriumVpnReleaseID', mysteriumVpnReleaseID)
 
   container.service(
-    'rendererCommunication',
+    'messageBus',
     [],
     () => {
       const ipc = new RendererIpc()
-      const messageBus = new IpcMessageBus(ipc)
-      return new RendererCommunication(messageBus)
+      return new IpcMessageBus(ipc)
     }
+  )
+
+  container.service(
+    'rendererCommunication',
+    ['messageBus'],
+    (messageBus) => new RendererCommunication(messageBus)
+  )
+
+  container.service(
+    'rendererTransport',
+    ['messageBus'],
+    (messageBus) => buildRendererTransport(messageBus)
   )
 
   container.service(
