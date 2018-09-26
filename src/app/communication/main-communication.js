@@ -21,7 +21,6 @@ import type {
   RequestConnectionDTO,
   ConnectionStatusChangeDTO,
   CurrentIdentityChangeDTO,
-  CountriesDTO,
   RequestTermsDTO,
   AppErrorDTO, FavoriteProviderDTO
 } from './dto'
@@ -40,8 +39,6 @@ interface MainCommunication {
   sendMysteriumClientUp (): void,
 
   sendMysteriumClientDown (): void,
-
-  sendCountries (countries: CountriesDTO): void,
 
   sendRegistration (registered: IdentityRegistrationDTO): void,
 

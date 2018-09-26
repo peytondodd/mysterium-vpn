@@ -89,7 +89,9 @@ export default {
     StatsDisplay,
     AppError
   },
-  dependencies: ['bugReporter', 'rendererCommunication', 'startupEventTracker', 'userSettingsStore'],
+  dependencies: [
+    'bugReporter', 'rendererCommunication', 'startupEventTracker', 'userSettingsStore', 'rendererTransport'
+  ],
   data () {
     return {
       country: null,
@@ -143,7 +145,7 @@ export default {
   },
   async mounted () {
     this.startupEventTracker.sendAppStartSuccessEvent()
-    this.rendererCommunication.onCountriesUpdate(this.onCountriesUpdate)
+    this.rendererTransport.countryUpdateReceiver.on(this.onCountriesUpdate)
 
     const ipConfig = new ActionLooperConfig(type.CONNECTION_IP, config.ipUpdateThreshold)
     this.$store.dispatch(type.START_ACTION_LOOPING, ipConfig)
@@ -151,7 +153,7 @@ export default {
     this.$store.dispatch(type.START_ACTION_LOOPING, statusConfig)
   },
   beforeDestroy () {
-    this.rendererCommunication.removeCountriesUpdateCallback(this.onCountriesUpdate)
+    this.rendererTransport.countryUpdateReceiver.removeCallback(this.onCountriesUpdate)
   }
 }
 </script>

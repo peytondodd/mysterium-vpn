@@ -84,18 +84,6 @@ describe('MainMessageBusCommunication', () => {
     })
   })
 
-  describe('sendCountries', () => {
-    it('sends message through message bus', () => {
-      rendererCommunication.onCountriesUpdate(recorder.getCallback())
-      const countriesDto = [
-        { id: '1', code: 'lt', name: 'Country', isFavorite: false }
-      ]
-      mainCommunication.sendCountries(countriesDto)
-      expect(recorder.invoked).to.be.true
-      expect(recorder.firstArgument).to.eql(countriesDto)
-    })
-  })
-
   describe('sendConnectionCancelRequest', () => {
     it('sends message through message bus', () => {
       rendererCommunication.onDisconnectionRequest(recorder.getCallback())

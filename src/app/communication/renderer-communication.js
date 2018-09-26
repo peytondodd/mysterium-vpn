@@ -23,7 +23,6 @@ import type {
   ConnectionStatusChangeDTO,
   CurrentIdentityChangeDTO,
   RequestConnectionDTO,
-  CountriesDTO,
   RequestTermsDTO,
   AppErrorDTO,
   FavoriteProviderDTO
@@ -101,14 +100,6 @@ class RendererCommunication {
   // TODO: unify naming 'disconnection' and 'connection cancel'
   onDisconnectionRequest (callback: () => void) {
     this._on(messages.CONNECTION_CANCEL, callback)
-  }
-
-  onCountriesUpdate (callback: CountriesDTO => void) {
-    this._on(messages.COUNTRY_UPDATE, callback)
-  }
-
-  removeCountriesUpdateCallback (callback: UserSettings => void): void {
-    this._removeCallback(messages.COUNTRY_UPDATE, callback)
   }
 
   onRegistrationUpdate (callback: IdentityRegistrationDTO => void) {

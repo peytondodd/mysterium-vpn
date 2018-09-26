@@ -29,6 +29,7 @@ import Vue from 'vue'
 import StartupEventTracker from '../../../../src/app/statistics/startup-event-tracker'
 import MockEventSender from '../../../helpers/statistics/mock-event-sender'
 import { UserSettingsProxy } from '../../../../src/app/user-settings/user-settings-proxy'
+import { buildRendererTransport } from '../../../../src/app/communication/transport/renderer-transport'
 Vue.use(Vuex)
 
 describe('Vpn', () => {
@@ -42,7 +43,9 @@ describe('Vpn', () => {
     const dependencies = new DIContainer(vue)
     const startupEventTracker = new StartupEventTracker(new MockEventSender())
     const communication = new RendererCommunication(fakeMessageBus)
+    const transport = buildRendererTransport(fakeMessageBus)
     dependencies.constant('rendererCommunication', communication)
+    dependencies.constant('rendererTransport', transport)
     dependencies.constant('bugReporter', bugReporterMock)
     dependencies.constant('startupEventTracker', startupEventTracker)
     dependencies.constant('userSettingsStore', new UserSettingsProxy(communication))
@@ -85,7 +88,6 @@ describe('Vpn', () => {
       })
 
       vpnWrapper = mountWith(store)
-      fakeMessageBus.clean()
     })
 
     it('it shows error when empty proposal list is received', async () => {

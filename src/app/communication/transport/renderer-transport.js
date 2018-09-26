@@ -18,16 +18,18 @@
 // @flow
 import type { MessageBus } from '../message-bus'
 import { buildMessageTransports } from './message-transport'
-import type { TermsAnsweredDTO } from '../dto'
-import type { MessageSender } from './message-transport'
+import type { CountriesDTO, TermsAnsweredDTO } from '../dto'
+import type { MessageReceiver, MessageSender } from './message-transport'
 
 export type RendererTransport = {
-  termsAnsweredSender: MessageSender<TermsAnsweredDTO>
+  termsAnsweredSender: MessageSender<TermsAnsweredDTO>,
+  countryUpdateReceiver: MessageReceiver<CountriesDTO>
 }
 
 export function buildRendererTransport (messageBus: MessageBus): RendererTransport {
   const messages = buildMessageTransports(messageBus)
   return {
-    termsAnsweredSender: messages.termsAnswered
+    termsAnsweredSender: messages.termsAnswered,
+    countryUpdateReceiver: messages.countryUpdate
   }
 }

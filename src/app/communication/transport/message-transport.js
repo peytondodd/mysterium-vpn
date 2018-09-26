@@ -18,7 +18,8 @@
 // @flow
 
 import type { MessageBus } from '../message-bus'
-import type { TermsAnsweredDTO } from '../dto'
+import type { CountriesDTO, TermsAnsweredDTO } from '../dto'
+import messages from '../messages'
 
 export interface MessageSender<T> {
   send (data: T): void
@@ -58,7 +59,9 @@ export default MessageTransport
 
 export function buildMessageTransports (messageBus: MessageBus) {
   const termsAnswered: MessageTransport<TermsAnsweredDTO> = new MessageTransport('terms.answered', messageBus)
+  const countryUpdate: MessageTransport<CountriesDTO> = new MessageTransport(messages.COUNTRY_UPDATE, messageBus)
   return {
-    termsAnswered
+    termsAnswered,
+    countryUpdate
   }
 }

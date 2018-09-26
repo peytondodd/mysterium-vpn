@@ -21,7 +21,6 @@ import type {
   RequestConnectionDTO,
   ConnectionStatusChangeDTO,
   CurrentIdentityChangeDTO,
-  CountriesDTO,
   RequestTermsDTO,
   AppErrorDTO,
   FavoriteProviderDTO
@@ -71,10 +70,6 @@ class MainMessageBusCommunication implements MainCommunication {
 
   sendMysteriumClientDown () {
     this._send(messages.HEALTHCHECK_DOWN)
-  }
-
-  sendCountries (countries: CountriesDTO) {
-    this._send(messages.COUNTRY_UPDATE, countries)
   }
 
   sendRegistration (registration: IdentityRegistrationDTO) {

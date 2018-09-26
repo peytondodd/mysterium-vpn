@@ -446,7 +446,7 @@ class MysteriumVpn {
   }
 
   _subscribeProposals () {
-    this._countryList.onUpdate((countries) => this._communication.sendCountries(countries))
+    this._countryList.onUpdate((countries) => this._mainTransport.countryUpdateSender.send(countries))
 
     const handleProposalFetchError = (error: Error) => {
       logException('Proposal fetching failed', error)

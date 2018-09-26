@@ -41,16 +41,6 @@ describe('RendererCommunication', () => {
     })
   })
 
-  describe('.removeCountriesUpdateCallback', () => {
-    it('removes callback', () => {
-      rendererCommunication.onCountriesUpdate(callback)
-      expect(messageBus.noRemainingCallbacks()).to.be.false
-
-      rendererCommunication.removeCountriesUpdateCallback(callback)
-      expect(messageBus.noRemainingCallbacks()).to.be.true
-    })
-  })
-
   describe('.removeConnectionRequestCallback', () => {
     it('removes callback', () => {
       rendererCommunication.onConnectionRequest(callback)

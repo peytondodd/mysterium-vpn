@@ -19,16 +19,18 @@
 
 import type { MessageBus } from '../message-bus'
 import { buildMessageTransports } from './message-transport'
-import type { TermsAnsweredDTO } from '../dto'
-import type { MessageReceiver } from './message-transport'
+import type { CountriesDTO, TermsAnsweredDTO } from '../dto'
+import type { MessageReceiver, MessageSender } from './message-transport'
 
 export type MainTransport = {
-  termsAnsweredReceiver: MessageReceiver<TermsAnsweredDTO>
+  termsAnsweredReceiver: MessageReceiver<TermsAnsweredDTO>,
+  countryUpdateSender: MessageSender<CountriesDTO>
 }
 
 export function buildMainTransport (messageBus: MessageBus): MainTransport {
   const messages = buildMessageTransports(messageBus)
   return {
-    termsAnsweredReceiver: messages.termsAnswered
+    termsAnsweredReceiver: messages.termsAnswered,
+    countryUpdateSender: messages.countryUpdate
   }
 }
