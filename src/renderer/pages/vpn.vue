@@ -25,7 +25,7 @@
         <div
           class="control__location">
           current IP:
-          <span :class="{'text-blurry': ip}">{{ ip ? ip : 'Refreshing..' }}</span>
+          <span :class="{'text-blurry': ip}">{{ ip || 'Refreshing..' }}</span>
         </div>
       </div>
 
