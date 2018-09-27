@@ -17,43 +17,43 @@
 
 // @flow
 
-import RendererCommunication from '../communication/renderer-communication'
 import type { UserSettings } from './user-settings'
 import type { UserSettingsStore } from './user-settings-store'
 import ObservableUserSettings from './observable-user-settings'
+import type { RendererTransport } from '../communication/transport/renderer-transport'
 
 /**
  * Caches local settings synced via communication channel, and notifies when settings change.
  */
 class UserSettingsProxy extends ObservableUserSettings implements UserSettingsStore {
-  _communication: RendererCommunication
+  _transport: RendererTransport
   _settingsListener: ?((UserSettings) => void) = null
 
-  constructor (communication: RendererCommunication) {
+  constructor (transport: RendererTransport) {
     super()
-    this._communication = communication
+    this._transport = transport
   }
 
   startListening () {
     this._settingsListener = settings => this._updateAllProperties(settings)
-    this._communication.onUserSettings(this._settingsListener)
-    this._communication.sendUserSettingsRequest()
+    this._transport.userSettingsReceiver.on(this._settingsListener)
+    this._transport.userSettingsRequestSender.send()
   }
 
   stopListening () {
     if (this._settingsListener == null) {
       throw new Error('UserSettingsProxy.stopListening invoked without initialization')
     }
-    this._communication.removeOnUserSettingsCallback(this._settingsListener)
+    this._transport.userSettingsReceiver.removeCallback(this._settingsListener)
     this._settingsListener = null
   }
 
   async setFavorite (id: string, isFavorite: boolean) {
-    this._communication.sendToggleFavoriteProvider({ id, isFavorite })
+    this._transport.toggleFavoriteProviderSender.send({ id, isFavorite })
   }
 
   async setShowDisconnectNotifications (show: boolean) {
-    this._communication.sendUserSettingsShowDisconnectNotifications(show)
+    this._transport.showDisconnectNotificationSender.send(show)
   }
 }
 

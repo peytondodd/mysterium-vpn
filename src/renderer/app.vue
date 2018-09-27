@@ -63,9 +63,7 @@ export default {
     AppModal,
     IdentityRegistration
   },
-  dependencies: [
-    'rendererCommunication', 'rendererTransport', 'syncCommunication', 'logger', 'bugReporterMetrics', 'featureToggle'
-  ],
+  dependencies: ['rendererTransport', 'syncCommunication', 'logger', 'bugReporterMetrics', 'featureToggle'],
   computed: {
     ...mapGetters(['navVisible', 'loading', 'visual', 'overlayError']),
     paymentsAreEnabled () {
@@ -77,7 +75,7 @@ export default {
     logger.info('App view was mounted')
 
     // we need to notify the main process that we're up
-    this.rendererCommunication.sendRendererBooted()
+    this.rendererTransport.rendererBootedSender.send()
 
     this.rendererTransport.reconnectRequestReceiver.on(() => {
       this.$store.dispatch(type.RECONNECT)
@@ -95,26 +93,26 @@ export default {
       this.$store.dispatch(type.DISCONNECT)
     })
 
-    this.rendererCommunication.onTermsRequest((terms) => {
+    this.rendererTransport.termsRequestedReceiver.on((terms) => {
       this.$store.dispatch(type.TERMS, terms)
       this.$router.push('/terms')
     })
 
-    this.rendererCommunication.onMysteriumClientIsReady(() => {
+    this.rendererTransport.mysteriumClientReadyReceiver.on(() => {
       this.$router.push('/load')
     })
 
-    this.rendererCommunication.onTermsAccepted(() => {
+    this.rendererTransport.termsAcceptedReceiver.on(() => {
       this.$router.push('/')
     })
 
-    this.rendererCommunication.onShowRendererError((error) => {
+    this.rendererTransport.rendererShowErrorReceiver.on((error) => {
       logger.info('App error received from communication:', error.hint, error.message, 'fatal:', error.fatal)
       this.$store.dispatch(type.OVERLAY_ERROR, error)
     })
 
     // if the client was down, but now up, we need to unlock the identity once again
-    this.rendererCommunication.onMysteriumClientUp(() => {
+    this.rendererTransport.healthcheckUpReceiver.on(() => {
       this.$store.dispatch('setClientRunningState', true)
 
       // TODO Such conditional behaviour should be dropped at all
@@ -124,7 +122,7 @@ export default {
         this.$router.push('/load')
       }
     })
-    this.rendererCommunication.onMysteriumClientDown(() => {
+    this.rendererTransport.healthcheckDownReceiver.on(() => {
       this.$store.dispatch('setClientRunningState', false)
 
       // TODO Such conditional behaviour should be dropped at all

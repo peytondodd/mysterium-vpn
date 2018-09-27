@@ -20,7 +20,6 @@ import type from '../types'
 
 import { FunctionLooper } from '../../../libraries/function-looper'
 import config from '@/config'
-import RendererCommunication from '../../../app/communication/renderer-communication'
 import type { TequilapiClient } from 'mysterium-tequilapi/lib/client'
 import type { ConnectionStatus } from 'mysterium-tequilapi/lib/dto/connection-status-enum'
 import ConnectionStatusEnum from 'mysterium-tequilapi/lib/dto/connection-status-enum'
@@ -122,7 +121,6 @@ const mutations = {
 
 function actionsFactory (
   tequilapi: TequilapiClient,
-  rendererCommunication: RendererCommunication,
   transport: RendererTransport,
   bugReporter: BugReporter,
   connectionEstablisher: ConnectionEstablisher

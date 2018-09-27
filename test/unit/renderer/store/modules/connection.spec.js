@@ -24,7 +24,6 @@ import { describe, it, beforeEach } from '../../../../helpers/dependencies'
 import { FunctionLooper } from '@/../libraries/function-looper'
 import ConnectionStatusEnum from 'mysterium-tequilapi/lib/dto/connection-status-enum'
 import communication from '@/../app/communication/messages'
-import RendererCommunication from '@/../app/communication/renderer-communication'
 import FakeMessageBus from '../../../../helpers/fake-message-bus'
 import { ActionLooper, ActionLooperConfig } from '../../../../../src/renderer/store/modules/connection'
 import type { ConnectionStore } from '../../../../../src/renderer/store/modules/connection'
@@ -211,7 +210,6 @@ describe('connection', () => {
   describe('actions', () => {
     let fakeTequilapi
     let fakeMessageBus
-    let rendererCommunication
     let transport
 
     let bugReporterMock: BugReporterMock
@@ -227,7 +225,6 @@ describe('connection', () => {
         const context = { commit, dispatch, state, getters }
         const actions = actionsFactory(
           fakeTequilapi.getFakeApi(),
-          rendererCommunication,
           transport,
           bugReporterMock,
           mockConnectionEstablisher
@@ -243,7 +240,6 @@ describe('connection', () => {
     beforeEach(() => {
       fakeTequilapi = factoryTequilapiManipulator()
       fakeMessageBus = new FakeMessageBus()
-      rendererCommunication = new RendererCommunication(fakeMessageBus)
       transport = buildRendererTransport(fakeMessageBus)
 
       bugReporterMock = new BugReporterMock()

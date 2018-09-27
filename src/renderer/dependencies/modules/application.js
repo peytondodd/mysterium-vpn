@@ -17,7 +17,6 @@
 
 // @flow
 import { Container } from '../../../app/di'
-import RendererCommunication from '../../../app/communication/renderer-communication'
 import RendererIpc from '../../../app/communication/ipc/renderer-ipc'
 import { remote } from 'electron'
 import VpnInitializer from '../../../app/vpn-initializer'
@@ -37,12 +36,6 @@ function bootstrap (container: Container) {
       const ipc = new RendererIpc()
       return new IpcMessageBus(ipc)
     }
-  )
-
-  container.service(
-    'rendererCommunication',
-    ['messageBus'],
-    (messageBus) => new RendererCommunication(messageBus)
   )
 
   container.service(

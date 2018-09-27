@@ -80,7 +80,7 @@ import { shell } from 'electron'
 
 export default {
   name: 'IdentityRegistration',
-  dependencies: ['rendererCommunication', 'getPaymentLink'],
+  dependencies: ['rendererTransport', 'getPaymentLink'],
   data () {
     return {
       registration: null,
@@ -109,7 +109,7 @@ export default {
     }
   },
   mounted () {
-    this.rendererCommunication.onRegistrationUpdate(registration => {
+    this.rendererTransport.identityRegistrationReceiver.on(registration => {
       this.registration = registration
     })
   }

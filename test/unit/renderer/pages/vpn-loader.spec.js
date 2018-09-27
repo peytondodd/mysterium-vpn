@@ -37,9 +37,9 @@ import DIContainer from '../../../../src/app/di/vue-container'
 import BugReporterMock from '../../../helpers/bug-reporter-mock'
 import type { BugReporter } from '../../../../src/app/bug-reporting/interface'
 import { nextTick } from '../../../helpers/utils'
-import RendererCommunication from '../../../../src/app/communication/renderer-communication'
 import FakeMessageBus from '../../../helpers/fake-message-bus'
 import TequilapiError from 'mysterium-tequilapi/lib/tequilapi-error'
+import { buildRendererTransport } from '../../../../src/app/communication/transport/renderer-transport'
 
 describe('VpnLoader', () => {
   const tequilapi = tequilapiMockCreate()
@@ -52,11 +52,11 @@ describe('VpnLoader', () => {
     const fakeSleeper = {
       async sleep (_time: number): Promise<void> {}
     }
-    const rendererCommunication = new RendererCommunication(new FakeMessageBus())
+    const transport = buildRendererTransport(new FakeMessageBus())
     dependencies.constant('bugReporter', bugReporter)
     dependencies.constant('vpnInitializer', vpnInitializer)
     dependencies.constant('sleeper', fakeSleeper)
-    dependencies.constant('rendererCommunication', rendererCommunication)
+    dependencies.constant('rendererTransport', transport)
     dependencies.constant('tequilapiClient', tequilapi)
 
     localVue.use(Router)

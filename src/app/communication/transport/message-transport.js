@@ -91,6 +91,7 @@ export function buildMessageTransports (messageBus: MessageBus) {
   const proposalsUpdate: MessageTransport<void> = build(messages.PROPOSALS_UPDATE)
   const countryUpdate: MessageTransport<CountriesDTO> = build(messages.COUNTRY_UPDATE)
 
+  // TODO: handle class serialization
   const identityRegistration: MessageTransport<IdentityRegistrationDTO> = build(messages.IDENTITY_REGISTRATION)
 
   const toggleFavoriteProvider: MessageTransport<FavoriteProviderDTO> = build(messages.TOGGLE_FAVORITE_PROVIDER)

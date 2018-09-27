@@ -42,7 +42,7 @@ import { mapGetters } from 'vuex'
 
 export default {
   name: 'Terms',
-  dependencies: ['rendererCommunication', 'rendererTransport'],
+  dependencies: ['rendererTransport'],
   methods: {
     accept () {
       this._answerTerms(true)

@@ -21,7 +21,6 @@ import { beforeEach, describe, it, expect } from '../../../helpers/dependencies'
 import Vpn from '../../../../src/renderer/pages/vpn'
 import Vuex, { Store } from 'vuex'
 import DIContainer from '../../../../src/app/di/vue-container'
-import RendererCommunication from '../../../../src/app/communication/renderer-communication'
 import messages from '../../../../src/app/communication/messages'
 import FakeMessageBus from '../../../helpers/fake-message-bus'
 import BugReporterMock from '../../../helpers/bug-reporter-mock'
@@ -42,13 +41,11 @@ describe('Vpn', () => {
     fakeMessageBus = new FakeMessageBus()
     const dependencies = new DIContainer(vue)
     const startupEventTracker = new StartupEventTracker(new MockEventSender())
-    const communication = new RendererCommunication(fakeMessageBus)
     const transport = buildRendererTransport(fakeMessageBus)
-    dependencies.constant('rendererCommunication', communication)
     dependencies.constant('rendererTransport', transport)
     dependencies.constant('bugReporter', bugReporterMock)
     dependencies.constant('startupEventTracker', startupEventTracker)
-    dependencies.constant('userSettingsStore', new UserSettingsProxy(communication))
+    dependencies.constant('userSettingsStore', new UserSettingsProxy(transport))
 
     return mount(Vpn, {
       localVue: vue,

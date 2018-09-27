@@ -20,30 +20,27 @@ import { beforeEach, describe, expect, it } from '../../../helpers/dependencies'
 import DIContainer from '../../../../src/app/di/vue-container'
 import IdentityRegistration from '@/components/identity-registration'
 import { createLocalVue, mount } from '@vue/test-utils'
-import RendererCommunication from '../../../../src/app/communication/renderer-communication'
 import DirectMessageBus from '../../../helpers/direct-message-bus'
-
-class FakeRendererCommunication extends RendererCommunication {
-  callback: IdentityRegistration => void
-
-  constructor () {
-    super(new DirectMessageBus())
-  }
-
-  onRegistrationUpdate (callback: IdentityRegistration => void) {
-    this.callback = callback
-  }
-}
+import { buildRendererTransport } from '../../../../src/app/communication/transport/renderer-transport'
+import { buildMainTransport } from '../../../../src/app/communication/transport/main-transport'
+import type { RendererTransport } from '../../../../src/app/communication/transport/renderer-transport'
+import type { MainTransport } from '../../../../src/app/communication/transport/main-transport'
+import IdentityRegistrationDTO from 'mysterium-tequilapi/lib/dto/identity-registration'
 
 describe('IdentityRegistration', () => {
-  let rendererCommunication: FakeRendererCommunication
+  let rendererTransport: RendererTransport
+  let mainTransport: MainTransport
   let vue: IdentityRegistration
 
   beforeEach(() => {
     const vm = createLocalVue()
     const dependencies = new DIContainer(vm)
-    rendererCommunication = new FakeRendererCommunication()
-    dependencies.constant('rendererCommunication', rendererCommunication)
+
+    const messageBus = new DirectMessageBus()
+    rendererTransport = buildRendererTransport(messageBus)
+    mainTransport = buildMainTransport(messageBus)
+
+    dependencies.constant('rendererTransport', rendererTransport)
     dependencies.constant('getPaymentLink', () => {})
     vue = mount(IdentityRegistration, {
       localVue: vm
@@ -53,26 +50,26 @@ describe('IdentityRegistration', () => {
   describe('HTML rendering', () => {
     it('renders no ID icon until registration state comes from communication', () => {
       expect(vue.findAll('.identity-registration')).to.have.lengthOf(0)
-      rendererCommunication.callback({ registered: true })
+      mainTransport.identityRegistrationSender.send(new IdentityRegistrationDTO({ registered: true }))
       expect(vue.findAll('.identity-registration')).to.have.lengthOf(1)
     })
 
     it('renders ID icon when identity becomes registered', () => {
-      rendererCommunication.callback({ registered: true })
+      mainTransport.identityRegistrationSender.send(new IdentityRegistrationDTO({ registered: true }))
       expect(vue.findAll('.identity-registration')).to.have.lengthOf(1)
       expect(vue.findAll('.identity-registered')).to.have.lengthOf(1)
       expect(vue.findAll('.identity-unregistered')).to.have.lengthOf(0)
     })
 
     it('renders ID icon when identity becomes unregistered', () => {
-      rendererCommunication.callback({ registered: false })
+      mainTransport.identityRegistrationSender.send(new IdentityRegistrationDTO({ registered: false }))
       expect(vue.findAll('.identity-registration')).to.have.lengthOf(1)
       expect(vue.findAll('.identity-registered')).to.have.lengthOf(0)
       expect(vue.findAll('.identity-unregistered')).to.have.lengthOf(1)
     })
 
     it('renders instructions on unregistered ID click', () => {
-      rendererCommunication.callback({ registered: false })
+      mainTransport.identityRegistrationSender.send(new IdentityRegistrationDTO({ registered: false }))
       expect(vue.findAll('#registration-instructions.is-open')).to.have.lengthOf(0)
       vue.findAll('.identity-registration').trigger('click')
       expect(vue.findAll('#registration-instructions.is-open')).to.have.lengthOf(1)

@@ -205,7 +205,7 @@ class MysteriumVpn {
     this._communicationBindings.showNotificationOnDisconnect(this._userSettingsStore, this._disconnectNotification)
     // TODO: load in DI?
     await this._loadUserSettings()
-    this._disconnectNotification.onReconnect(() => this._transport.reconnectRequesSender.send())
+    this._disconnectNotification.onReconnect(() => this._transport.reconnectRequestSender.send())
   }
 
   _getWindowSize (showTerms: boolean) {

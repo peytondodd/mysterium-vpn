@@ -21,12 +21,15 @@ import type { MessageBus } from '../message-bus'
 import { buildMessageTransports } from './message-transport'
 import type { ConnectionStatusChangeDTO, CountriesDTO, RequestConnectionDTO, TermsAnsweredDTO } from '../dto'
 import type { MessageReceiver, MessageSender } from './message-transport'
+import IdentityRegistrationDTO from 'mysterium-tequilapi/lib/dto/identity-registration'
 
 export type MainTransport = {
   connectionStatusChangedReceiver: MessageReceiver<ConnectionStatusChangeDTO>,
   connectionRequestSender: MessageSender<RequestConnectionDTO>,
   connectionCancelSender: MessageSender<void>,
-  reconnectRequesSender: MessageSender<void>,
+  reconnectRequestSender: MessageSender<void>,
+
+  identityRegistrationSender: MessageSender<IdentityRegistrationDTO>,
 
   termsAnsweredReceiver: MessageReceiver<TermsAnsweredDTO>,
   countryUpdateSender: MessageSender<CountriesDTO>,
@@ -38,7 +41,9 @@ export function buildMainTransport (messageBus: MessageBus): MainTransport {
     connectionStatusChangedReceiver: messages.connectionStatusChanged,
     connectionRequestSender: messages.connectionRequest,
     connectionCancelSender: messages.connectionCancel,
-    reconnectRequesSender: messages.reconnectRequest,
+    reconnectRequestSender: messages.reconnectRequest,
+
+    identityRegistrationSender: messages.identityRegistration,
 
     termsAnsweredReceiver: messages.termsAnswered,
     countryUpdateSender: messages.countryUpdate

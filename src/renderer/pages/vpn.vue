@@ -89,9 +89,7 @@ export default {
     StatsDisplay,
     AppError
   },
-  dependencies: [
-    'bugReporter', 'rendererCommunication', 'startupEventTracker', 'userSettingsStore', 'rendererTransport'
-  ],
+  dependencies: ['bugReporter', 'rendererTransport', 'startupEventTracker', 'userSettingsStore'],
   data () {
     return {
       country: null,
@@ -126,7 +124,7 @@ export default {
     setCountry (data) { this.country = data },
     fetchCountries () {
       this.countriesAreLoading = true
-      this.rendererCommunication.sendProposalUpdateRequest()
+      this.rendererTransport.proposalsUpdateSender.send()
     },
     async toggleFavorite () {
       if (!this.country) return
