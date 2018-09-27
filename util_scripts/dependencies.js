@@ -29,6 +29,7 @@ const printPackageInfo = ({ name, current, latest }) => {
   console.log('\x1b[31m%s\x1b[0m - current: %s, latest: %s', name, current, latest)
 }
 
+// JSON from `yarn outdated --json` command is piped into this script
 const stdin = process.openStdin()
 
 let data = ''
@@ -36,6 +37,8 @@ let data = ''
 stdin.on('data', (chunk) => {
   data += chunk
 }).on('end', () => {
+  // yarn outdated returns two JSON lines
+  // we can ignore the first one
   [_, json] = data.split('\n')
 
   console.log('Outdated packages:')
