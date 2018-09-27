@@ -18,8 +18,16 @@
 // @flow
 import type { MessageBus } from '../message-bus'
 import { buildMessageTransports } from './message-transport'
-import type { ConnectionStatusChangeDTO, CountriesDTO, RequestConnectionDTO, TermsAnsweredDTO } from '../dto'
+import type {
+  AppErrorDTO,
+  ConnectionStatusChangeDTO,
+  CountriesDTO, CurrentIdentityChangeDTO, FavoriteProviderDTO,
+  RequestConnectionDTO, RequestTermsDTO,
+  TermsAnsweredDTO
+} from '../dto'
+import IdentityRegistrationDTO from 'mysterium-tequilapi/lib/dto/identity-registration'
 import type { MessageReceiver, MessageSender } from './message-transport'
+import type { UserSettings } from '../../user-settings/user-settings'
 
 export type RendererTransport = {
   connectionStatusChangedSender: MessageSender<ConnectionStatusChangeDTO>,
@@ -27,8 +35,31 @@ export type RendererTransport = {
   connectionCancelReceiver: MessageReceiver<void>,
   reconnectRequestReceiver: MessageReceiver<void>,
 
+  mysteriumClientReadyReceiver: MessageReceiver<void>,
+  currentIdentityChangedSender: MessageSender<CurrentIdentityChangeDTO>,
+
+  termsRequestedReceiver: MessageReceiver<RequestTermsDTO>,
   termsAnsweredSender: MessageSender<TermsAnsweredDTO>,
-  countryUpdateReceiver: MessageReceiver<CountriesDTO>
+  termsAcceptedReceiver: MessageReceiver<void>,
+
+  rendererBootedSender: MessageSender<void>,
+  rendererShowErrorReceiver: MessageReceiver<AppErrorDTO>,
+
+  healthcheckUpReceiver: MessageReceiver<void>,
+  healthcheckDownReceiver: MessageReceiver<void>,
+
+  proposalsUpdateSender: MessageSender<void>,
+  countryUpdateReceiver: MessageReceiver<CountriesDTO>,
+
+  identityRegistrationReceiver: MessageReceiver<IdentityRegistrationDTO>,
+
+  toggleFavoriteProviderSender: MessageSender<FavoriteProviderDTO>,
+  showDisconnectNotificationSender: MessageSender<boolean>,
+
+  userSettingsSender: MessageSender<UserSettings>,
+  userSettingsReceiver: MessageReceiver<UserSettings>,
+  userSettingsRequestSender: MessageSender<void>,
+  userSettingsUpdateSender: MessageSender<UserSettings>
 }
 
 export function buildRendererTransport (messageBus: MessageBus): RendererTransport {
@@ -39,7 +70,30 @@ export function buildRendererTransport (messageBus: MessageBus): RendererTranspo
     connectionCancelReceiver: messages.connectionCancel,
     reconnectRequestReceiver: messages.reconnectRequest,
 
+    mysteriumClientReadyReceiver: messages.mysteriumClientReady,
+    currentIdentityChangedSender: messages.currentIdentityChanged,
+
+    termsRequestedReceiver: messages.termsRequested,
     termsAnsweredSender: messages.termsAnswered,
-    countryUpdateReceiver: messages.countryUpdate
+    termsAcceptedReceiver: messages.termsAccepted,
+
+    rendererBootedSender: messages.rendererBooted,
+    rendererShowErrorReceiver: messages.rendererShowError,
+
+    healthcheckUpReceiver: messages.healthcheckUp,
+    healthcheckDownReceiver: messages.healthcheckDown,
+
+    proposalsUpdateSender: messages.proposalsUpdate,
+    countryUpdateReceiver: messages.countryUpdate,
+
+    identityRegistrationReceiver: messages.identityRegistration,
+
+    toggleFavoriteProviderSender: messages.toggleFavoriteProvider,
+    showDisconnectNotificationSender: messages.showDisconnectNotification,
+
+    userSettingsSender: messages.userSettings,
+    userSettingsReceiver: messages.userSettings,
+    userSettingsRequestSender: messages.userSettingsRequest,
+    userSettingsUpdateSender: messages.userSettingsUpdate
   }
 }
