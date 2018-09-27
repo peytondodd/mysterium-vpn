@@ -29,17 +29,21 @@ import logger from './logger'
 import Notification from './notification'
 import type { MainCommunication } from './communication/main-communication'
 import type { UserSettingsStore } from './user-settings/user-settings-store'
+import type { MainTransport } from './communication/transport/main-transport'
 
 const LOG_PREFIX = '[CommunicationBindings] '
 
 class CommunicationBindings {
   _communication: MainCommunication
-  constructor (communication: MainCommunication) {
+  _transport: MainTransport
+
+  constructor (communication: MainCommunication, transport: MainTransport) {
     this._communication = communication
+    this._transport = transport
   }
 
   showNotificationOnDisconnect (userSettingsStore: UserSettingsStore, disconnectNotification: Notification) {
-    this._communication.onConnectionStatusChange((status) => {
+    this._transport.connectionStatusChangedReceiver.on((status) => {
       const shouldShowNotification =
         userSettingsStore.getAll().showDisconnectNotifications &&
         (status.newStatus === ConnectionStatusEnum.NOT_CONNECTED &&

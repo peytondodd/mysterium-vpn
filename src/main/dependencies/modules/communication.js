@@ -65,9 +65,9 @@ function bootstrap (container: Container) {
 
   container.factory(
     'communicationBindings',
-    ['mainCommunication'],
-    (communication) => {
-      return new CommunicationBindings(communication)
+    ['mainCommunication', 'mainTransport'],
+    (mainCommunication, mainTransport) => {
+      return new CommunicationBindings(mainCommunication, mainTransport)
     }
   )
 }

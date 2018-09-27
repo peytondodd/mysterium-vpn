@@ -18,10 +18,15 @@
 // @flow
 import type { MessageBus } from '../message-bus'
 import { buildMessageTransports } from './message-transport'
-import type { CountriesDTO, TermsAnsweredDTO } from '../dto'
+import type { ConnectionStatusChangeDTO, CountriesDTO, RequestConnectionDTO, TermsAnsweredDTO } from '../dto'
 import type { MessageReceiver, MessageSender } from './message-transport'
 
 export type RendererTransport = {
+  connectionStatusChangedSender: MessageSender<ConnectionStatusChangeDTO>,
+  connectionRequestReceiver: MessageReceiver<RequestConnectionDTO>,
+  connectionCancelReceiver: MessageReceiver<void>,
+  reconnectRequestReceiver: MessageReceiver<void>,
+
   termsAnsweredSender: MessageSender<TermsAnsweredDTO>,
   countryUpdateReceiver: MessageReceiver<CountriesDTO>
 }
@@ -29,6 +34,11 @@ export type RendererTransport = {
 export function buildRendererTransport (messageBus: MessageBus): RendererTransport {
   const messages = buildMessageTransports(messageBus)
   return {
+    connectionStatusChangedSender: messages.connectionStatusChanged,
+    connectionRequestReceiver: messages.connectionRequest,
+    connectionCancelReceiver: messages.connectionCancel,
+    reconnectRequestReceiver: messages.reconnectRequest,
+
     termsAnsweredSender: messages.termsAnswered,
     countryUpdateReceiver: messages.countryUpdate
   }

@@ -19,17 +19,27 @@
 
 import type { MessageBus } from '../message-bus'
 import { buildMessageTransports } from './message-transport'
-import type { CountriesDTO, TermsAnsweredDTO } from '../dto'
+import type { ConnectionStatusChangeDTO, CountriesDTO, RequestConnectionDTO, TermsAnsweredDTO } from '../dto'
 import type { MessageReceiver, MessageSender } from './message-transport'
 
 export type MainTransport = {
+  connectionStatusChangedReceiver: MessageReceiver<ConnectionStatusChangeDTO>,
+  connectionRequestSender: MessageSender<RequestConnectionDTO>,
+  connectionCancelSender: MessageSender<void>,
+  reconnectRequesSender: MessageSender<void>,
+
   termsAnsweredReceiver: MessageReceiver<TermsAnsweredDTO>,
-  countryUpdateSender: MessageSender<CountriesDTO>
+  countryUpdateSender: MessageSender<CountriesDTO>,
 }
 
 export function buildMainTransport (messageBus: MessageBus): MainTransport {
   const messages = buildMessageTransports(messageBus)
   return {
+    connectionStatusChangedReceiver: messages.connectionStatusChanged,
+    connectionRequestSender: messages.connectionRequest,
+    connectionCancelSender: messages.connectionCancel,
+    reconnectRequesSender: messages.reconnectRequest,
+
     termsAnsweredReceiver: messages.termsAnswered,
     countryUpdateSender: messages.countryUpdate
   }

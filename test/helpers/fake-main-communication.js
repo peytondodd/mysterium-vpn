@@ -19,8 +19,7 @@
 
 import type { MainCommunication } from '../../src/app/communication/main-communication'
 import type {
-  AppErrorDTO, ConnectionStatusChangeDTO, CurrentIdentityChangeDTO,
-  RequestTermsDTO, RequestConnectionDTO, FavoriteProviderDTO
+  AppErrorDTO, CurrentIdentityChangeDTO, RequestTermsDTO, FavoriteProviderDTO
 } from '../../src/app/communication/dto'
 import type { UserSettings } from '../../src/app/user-settings/user-settings'
 import IdentityRegistrationDTO from 'mysterium-tequilapi/lib/dto/identity-registration'
@@ -75,14 +74,6 @@ class FakeMainCommunication implements MainCommunication {
     this._registerMethod(this.sendRegistration, registration)
   }
 
-  sendConnectionCancelRequest () {
-    this._registerMethod(this.sendConnectionCancelRequest)
-  }
-
-  sendConnectionRequest (data: RequestConnectionDTO) {
-    this._registerMethod(this.sendConnectionRequest, data)
-  }
-
   sendTermsRequest (data: RequestTermsDTO): void {
     this._registerMethod(this.sendTermsRequest, data)
   }
@@ -93,10 +84,6 @@ class FakeMainCommunication implements MainCommunication {
 
   sendUserSettings (data: UserSettings): void {
     this._registerMethod(this.sendUserSettings, data)
-  }
-
-  onConnectionStatusChange (callback: (ConnectionStatusChangeDTO) => void): void {
-    this._registerMethod(this.onConnectionStatusChange)
   }
 
   onCurrentIdentityChange (callback: (CurrentIdentityChangeDTO) => void): void {

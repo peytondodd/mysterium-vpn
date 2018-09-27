@@ -18,7 +18,7 @@
 // @flow
 
 import type { MessageBus } from '../message-bus'
-import type { CountriesDTO, TermsAnsweredDTO } from '../dto'
+import type { ConnectionStatusChangeDTO, CountriesDTO, RequestConnectionDTO, TermsAnsweredDTO } from '../dto'
 import messages from '../messages'
 
 export interface MessageSender<T> {
@@ -58,9 +58,22 @@ class MessageTransport<T> implements MessageSender<T>, MessageReceiver<T> {
 export default MessageTransport
 
 export function buildMessageTransports (messageBus: MessageBus) {
-  const termsAnswered: MessageTransport<TermsAnsweredDTO> = new MessageTransport('terms.answered', messageBus)
-  const countryUpdate: MessageTransport<CountriesDTO> = new MessageTransport(messages.COUNTRY_UPDATE, messageBus)
+  const build = (channel: string): MessageTransport<any> => {
+    return new MessageTransport(channel, messageBus)
+  }
+  const connectionStatusChanged: MessageTransport<ConnectionStatusChangeDTO> = build(messages.CONNECTION_STATUS_CHANGED)
+  const connectionRequest: MessageTransport<RequestConnectionDTO> = build(messages.CONNECTION_REQUEST)
+  const connectionCancel: MessageTransport<void> = build(messages.CONNECTION_CANCEL)
+  const reconnectRequest: MessageTransport<void> = build(messages.RECONNECT_REQUEST)
+
+  const termsAnswered: MessageTransport<TermsAnsweredDTO> = build('terms.answered')
+  const countryUpdate: MessageTransport<CountriesDTO> = build(messages.COUNTRY_UPDATE)
   return {
+    connectionStatusChanged,
+    connectionRequest,
+    connectionCancel,
+    reconnectRequest,
+
     termsAnswered,
     countryUpdate
   }

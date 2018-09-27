@@ -20,9 +20,7 @@
 import messages from './messages'
 import type { MessageBus } from './message-bus'
 import type {
-  ConnectionStatusChangeDTO,
   CurrentIdentityChangeDTO,
-  RequestConnectionDTO,
   RequestTermsDTO,
   AppErrorDTO,
   FavoriteProviderDTO
@@ -47,10 +45,6 @@ class RendererCommunication {
 
   onShowRendererError (callback: AppErrorDTO => void): void {
     this._on(messages.RENDERER_SHOW_ERROR, callback)
-  }
-
-  sendConnectionStatusChange (dto: ConnectionStatusChangeDTO): void {
-    return this._send(messages.CONNECTION_STATUS_CHANGED, dto)
   }
 
   sendCurrentIdentityChange (dto: CurrentIdentityChangeDTO): void {
@@ -83,23 +77,6 @@ class RendererCommunication {
 
   removeOnUserSettingsCallback (callback: UserSettings => void): void {
     this._removeCallback(messages.USER_SETTINGS, callback)
-  }
-
-  onReconnectRequest (callback: () => void): void {
-    this._on(messages.RECONNECT_REQUEST, callback)
-  }
-
-  onConnectionRequest (callback: RequestConnectionDTO => void) {
-    this._on(messages.CONNECTION_REQUEST, callback)
-  }
-
-  removeConnectionRequestCallback (callback: UserSettings => void): void {
-    this._removeCallback(messages.CONNECTION_REQUEST, callback)
-  }
-
-  // TODO: unify naming 'disconnection' and 'connection cancel'
-  onDisconnectionRequest (callback: () => void) {
-    this._on(messages.CONNECTION_CANCEL, callback)
   }
 
   onRegistrationUpdate (callback: IdentityRegistrationDTO => void) {

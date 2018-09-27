@@ -39,6 +39,7 @@ import type { ConnectionStatsFetcher } from '../../../../../src/app/connection/c
 import type { Provider } from '../../../../../src/app/connection/provider'
 import { captureAsyncError } from '../../../../helpers/utils'
 import messages from '../../../../../src/app/messages'
+import { buildRendererTransport } from '../../../../../src/app/communication/transport/renderer-transport'
 
 type ConnectParams = {
   consumerId: string,
@@ -208,9 +209,10 @@ describe('connection', () => {
   })
 
   describe('actions', () => {
-    let fakeTequilapi = factoryTequilapiManipulator()
-    let fakeMessageBus = new FakeMessageBus()
-    let rendererCommunication = new RendererCommunication(fakeMessageBus)
+    let fakeTequilapi
+    let fakeMessageBus
+    let rendererCommunication
+    let transport
 
     let bugReporterMock: BugReporterMock
     let mockConnectionEstablisher: MockConnectionEstablisher
@@ -226,6 +228,7 @@ describe('connection', () => {
         const actions = actionsFactory(
           fakeTequilapi.getFakeApi(),
           rendererCommunication,
+          transport,
           bugReporterMock,
           mockConnectionEstablisher
         )
@@ -241,6 +244,7 @@ describe('connection', () => {
       fakeTequilapi = factoryTequilapiManipulator()
       fakeMessageBus = new FakeMessageBus()
       rendererCommunication = new RendererCommunication(fakeMessageBus)
+      transport = buildRendererTransport(fakeMessageBus)
 
       bugReporterMock = new BugReporterMock()
       mockConnectionEstablisher = new MockConnectionEstablisher()

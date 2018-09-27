@@ -78,7 +78,7 @@ class MysteriumVpn {
 
   _window: Window
   _communication: MainMessageBusCommunication
-  _mainTransport: MainTransport
+  _transport: MainTransport
   _ipc: MainBufferedIpc
   _syncCallbacksInitializer: SyncCallbacksInitializer
   _communicationBindings: CommunicationBindings
@@ -107,7 +107,7 @@ class MysteriumVpn {
 
     this._ipc = params.mainIpc
     this._communication = params.mainCommunication
-    this._mainTransport = params.mainTransport
+    this._transport = params.mainTransport
     this._syncCallbacksInitializer = params.syncCallbacksInitializer
     this._communicationBindings = params.communicationBindings
   }
@@ -205,7 +205,7 @@ class MysteriumVpn {
     this._communicationBindings.showNotificationOnDisconnect(this._userSettingsStore, this._disconnectNotification)
     // TODO: load in DI?
     await this._loadUserSettings()
-    this._disconnectNotification.onReconnect(() => this._communication.sendReconnectRequest())
+    this._disconnectNotification.onReconnect(() => this._transport.reconnectRequesSender.send())
   }
 
   _getWindowSize (showTerms: boolean) {
@@ -355,7 +355,7 @@ class MysteriumVpn {
     })
 
     const termsAnsweredDTO = await onFirstEvent((callback) => {
-      this._mainTransport.termsAnsweredReceiver.on(callback)
+      this._transport.termsAnsweredReceiver.on(callback)
     })
     const termsAnswer = termsAnsweredDTO.isAccepted
     if (!termsAnswer) {
@@ -446,7 +446,7 @@ class MysteriumVpn {
   }
 
   _subscribeProposals () {
-    this._countryList.onUpdate((countries) => this._mainTransport.countryUpdateSender.send(countries))
+    this._countryList.onUpdate((countries) => this._transport.countryUpdateSender.send(countries))
 
     const handleProposalFetchError = (error: Error) => {
       logException('Proposal fetching failed', error)
@@ -470,7 +470,7 @@ class MysteriumVpn {
   _buildTray () {
     logInfo('Building tray')
     trayFactory(
-      this._communication,
+      this._transport,
       this._countryList,
       this._window,
       path.join(this._config.staticDirectory, 'icons')

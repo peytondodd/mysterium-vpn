@@ -70,7 +70,7 @@ import IconWorld from '@/assets/img/icon--world.svg'
 
 export default {
   name: 'CountrySelect',
-  dependencies: ['rendererCommunication', 'bugReporter'],
+  dependencies: ['rendererTransport', 'bugReporter'],
   props: {
     countryList: {
       type: Array,
@@ -133,10 +133,10 @@ export default {
     }
   },
   mounted () {
-    this.rendererCommunication.onConnectionRequest(this.onConnectionRequest)
+    this.rendererTransport.connectionRequestReceiver.on(this.onConnectionRequest)
   },
   beforeDestroy () {
-    this.rendererCommunication.removeConnectionRequestCallback(this.onConnectionRequest)
+    this.rendererTransport.connectionRequestReceiver.removeCallback(this.onConnectionRequest)
   }
 }
 </script>

@@ -40,14 +40,4 @@ describe('RendererCommunication', () => {
       expect(messageBus.noRemainingCallbacks()).to.be.true
     })
   })
-
-  describe('.removeConnectionRequestCallback', () => {
-    it('removes callback', () => {
-      rendererCommunication.onConnectionRequest(callback)
-      expect(messageBus.noRemainingCallbacks()).to.be.false
-
-      rendererCommunication.removeConnectionRequestCallback(callback)
-      expect(messageBus.noRemainingCallbacks()).to.be.true
-    })
-  })
 })

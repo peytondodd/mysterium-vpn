@@ -18,7 +18,6 @@
 // @flow
 
 import type { Country } from '../../app/countries/index'
-import type { MainCommunication } from '../../app/communication/main-communication'
 import { getCountryLabel } from '../../app/countries/index'
 import ConnectionStatusEnum from 'mysterium-tequilapi/lib/dto/connection-status-enum'
 import type { ConnectionStatus } from 'mysterium-tequilapi/lib/dto/connection-status-enum'
@@ -27,18 +26,19 @@ import TrayMenuItem from './menu-item'
 import TrayMenuSeparator from './menu-item-separator'
 import translations from './translations'
 import messages from '../../app/messages'
+import type { MainTransport } from '../../app/communication/transport/main-transport'
 
 function getMenuItems (
   appQuit: Function,
   showWindow: Function,
   toggleDevTools: Function,
-  communication: MainCommunication,
+  transport: MainTransport,
   countries: Array<Country>,
   connectionStatus: ConnectionStatus
 ) {
   const disconnect = new TrayMenuItem(
     translations.disconnect,
-    () => communication.sendConnectionCancelRequest()
+    () => transport.connectionCancelSender.send()
   )
 
   const connectSubmenu = new TrayMenu()
@@ -49,7 +49,7 @@ function getMenuItems (
       label = '* ' + label
     }
     connectSubmenu.add(label, () => {
-      communication.sendConnectionRequest({ providerId: country.id, providerCountry: country.code })
+      transport.connectionRequestSender.send({ providerId: country.id, providerCountry: country.code })
     })
   })
 
@@ -116,15 +116,15 @@ class TrayMenuBuilder {
   _appQuit: Function
   _showWindow: Function
   _toggleDevTools: Function
-  _communication: MainCommunication
+  _transport: MainTransport
   _countries: Array<Country> = []
   _connectionStatus: ConnectionStatus
 
-  constructor (appQuit: Function, showWindow: Function, toggleDevTools: Function, communication: MainCommunication) {
+  constructor (appQuit: Function, showWindow: Function, toggleDevTools: Function, transport: MainTransport) {
     this._appQuit = appQuit
     this._showWindow = showWindow
     this._toggleDevTools = toggleDevTools
-    this._communication = communication
+    this._transport = transport
   }
 
   updateCountries (proposals: Array<Country>): this {
@@ -144,7 +144,7 @@ class TrayMenuBuilder {
       this._appQuit,
       this._showWindow,
       this._toggleDevTools,
-      this._communication,
+      this._transport,
       this._countries,
       this._connectionStatus
     )

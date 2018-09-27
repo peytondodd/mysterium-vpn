@@ -20,7 +20,11 @@ import TrayMenuBuilder from '../../../../src/main/tray/menu-builder'
 import ConnectionStatusEnum from 'mysterium-tequilapi/lib/dto/connection-status-enum'
 import translations from '../../../../src/main/tray/translations'
 import { describe, it, expect, beforeEach } from '../../../helpers/dependencies'
-import FakeMainCommunication from '../../../helpers/fake-main-communication'
+import { buildMainTransport } from '../../../../src/app/communication/transport/main-transport'
+import DirectMessageBus from '../../../helpers/direct-message-bus'
+import { buildRendererTransport } from '../../../../src/app/communication/transport/renderer-transport'
+import { CallbackRecorder } from '../../../helpers/utils'
+import type { MessageReceiver } from '../../../../src/app/communication/transport/message-transport'
 
 class FakeApplicationQuitter {
   didQuit: boolean = false
@@ -30,10 +34,29 @@ class FakeApplicationQuitter {
   }
 }
 
+class MessageRecorder<T> {
+  _recorder: CallbackRecorder
+
+  constructor (transport: MessageReceiver<T>) {
+    this._recorder = new CallbackRecorder()
+    transport.on(this._recorder.getCallback())
+  }
+
+  get invoked (): boolean {
+    return this._recorder.invoked
+  }
+
+  get argument (): T {
+    return this._recorder.firstArgument
+  }
+}
+
 describe('tray', () => {
   describe('TrayMenuBuilder', () => {
     let appQuitter
-    let communication
+    let transport
+    let rendererTransport
+    let messageBus
     let builder
     let windowIsVisible = false
 
@@ -51,9 +74,11 @@ describe('tray', () => {
     beforeEach(() => {
       windowIsVisible = false
       devToolsToggled = false
-      communication = new FakeMainCommunication()
+      messageBus = new DirectMessageBus()
+      transport = buildMainTransport(messageBus)
+      rendererTransport = buildRendererTransport(messageBus)
       appQuitter = new FakeApplicationQuitter()
-      builder = new TrayMenuBuilder(() => appQuitter.quit(), showWindow, toggleDevTools, communication)
+      builder = new TrayMenuBuilder(() => appQuitter.quit(), showWindow, toggleDevTools, transport)
     })
 
     describe('.build', () => {
@@ -117,18 +142,20 @@ describe('tray', () => {
         ])
 
         const items = builder.build()
-        expect(communication.wasInvoked(communication.sendConnectionCancelRequest)).to.equal(false)
+
+        const recorder = new MessageRecorder(rendererTransport.connectionRequestReceiver)
+        expect(recorder.invoked).to.be.false
         items[2].submenu[0].click()
-        expect(communication.wasInvoked(communication.sendConnectionRequest)).to.equal(true)
-        expect(communication.getLastPayload(communication.sendConnectionRequest))
-          .to.eql([{ providerId: 'proposalId_123', providerCountry: 'LT' }])
+        expect(recorder.invoked).to.be.true
+        expect(recorder.argument).to.eql({ providerId: 'proposalId_123', providerCountry: 'LT' })
       })
 
       it('disconnects', () => {
         const items = builder.updateConnectionStatus(ConnectionStatusEnum.CONNECTED).build()
-        expect(communication.wasInvoked(communication.sendConnectionCancelRequest)).to.equal(false)
+        const recorder = new MessageRecorder(rendererTransport.connectionCancelReceiver)
+        expect(recorder.invoked).to.be.false
         items[2].click()
-        expect(communication.wasInvoked(communication.sendConnectionCancelRequest)).to.equal(true)
+        expect(recorder.invoked).to.be.true
       })
 
       it('shows window', () => {

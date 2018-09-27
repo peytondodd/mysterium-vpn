@@ -18,8 +18,6 @@
 // @flow
 
 import type {
-  RequestConnectionDTO,
-  ConnectionStatusChangeDTO,
   CurrentIdentityChangeDTO,
   RequestTermsDTO,
   AppErrorDTO, FavoriteProviderDTO
@@ -42,10 +40,6 @@ interface MainCommunication {
 
   sendRegistration (registered: IdentityRegistrationDTO): void,
 
-  sendConnectionCancelRequest (): void,
-
-  sendConnectionRequest (data: RequestConnectionDTO): void,
-
   sendTermsRequest (data: RequestTermsDTO): void,
 
   sendTermsAccepted (): void,
@@ -55,8 +49,6 @@ interface MainCommunication {
   onToggleFavoriteProvider (callback: (FavoriteProviderDTO) => void): void,
 
   onUserSettingsShowDisconnectNotifications (callback: (boolean) => void): void,
-
-  onConnectionStatusChange (callback: (ConnectionStatusChangeDTO) => void): void,
 
   onCurrentIdentityChange (callback: (CurrentIdentityChangeDTO) => void): void,
 

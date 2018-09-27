@@ -63,7 +63,9 @@ export default {
     AppModal,
     IdentityRegistration
   },
-  dependencies: ['rendererCommunication', 'syncCommunication', 'logger', 'bugReporterMetrics', 'featureToggle'],
+  dependencies: [
+    'rendererCommunication', 'rendererTransport', 'syncCommunication', 'logger', 'bugReporterMetrics', 'featureToggle'
+  ],
   computed: {
     ...mapGetters(['navVisible', 'loading', 'visual', 'overlayError']),
     paymentsAreEnabled () {
@@ -77,11 +79,11 @@ export default {
     // we need to notify the main process that we're up
     this.rendererCommunication.sendRendererBooted()
 
-    this.rendererCommunication.onReconnectRequest(() => {
+    this.rendererTransport.reconnectRequestReceiver.on(() => {
       this.$store.dispatch(type.RECONNECT)
     })
 
-    this.rendererCommunication.onConnectionRequest((proposal) => {
+    this.rendererTransport.connectionRequestReceiver.on((proposal) => {
       const provider = {
         id: proposal.providerId,
         country: proposal.providerCountry
@@ -89,7 +91,7 @@ export default {
       this.$store.dispatch(type.CONNECT, provider)
     })
 
-    this.rendererCommunication.onDisconnectionRequest(() => {
+    this.rendererTransport.connectionCancelReceiver.on(() => {
       this.$store.dispatch(type.DISCONNECT)
     })
 

@@ -35,6 +35,7 @@ import { ConnectionStatsFetcher } from '../../../app/connection/connection-stats
 import type { ConnectionState } from '../../../app/connection/connection-state'
 import type { Provider } from '../../../app/connection/provider'
 import messages from '../../../app/messages'
+import type { RendererTransport } from '../../../app/communication/transport/renderer-transport'
 
 type ConnectionStore = {
   ip?: ?string,
@@ -122,6 +123,7 @@ const mutations = {
 function actionsFactory (
   tequilapi: TequilapiClient,
   rendererCommunication: RendererCommunication,
+  transport: RendererTransport,
   bugReporter: BugReporter,
   connectionEstablisher: ConnectionEstablisher
 ) {
@@ -186,7 +188,7 @@ function actionsFactory (
         return
       }
       commit(type.SET_CONNECTION_STATUS, newStatus)
-      rendererCommunication.sendConnectionStatusChange({ oldStatus, newStatus })
+      transport.connectionStatusChangedSender.send({ oldStatus, newStatus })
 
       if (newStatus === ConnectionStatusEnum.CONNECTED) {
         commit(type.CONNECTION_IP, null)

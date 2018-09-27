@@ -18,8 +18,6 @@
 // @flow
 
 import type {
-  RequestConnectionDTO,
-  ConnectionStatusChangeDTO,
   CurrentIdentityChangeDTO,
   RequestTermsDTO,
   AppErrorDTO,
@@ -76,18 +74,6 @@ class MainMessageBusCommunication implements MainCommunication {
     this._send(messages.IDENTITY_REGISTRATION, registration)
   }
 
-  sendConnectionCancelRequest () {
-    this._send(messages.CONNECTION_CANCEL)
-  }
-
-  sendReconnectRequest () {
-    this._send(messages.RECONNECT_REQUEST)
-  }
-
-  sendConnectionRequest (data: RequestConnectionDTO) {
-    this._send(messages.CONNECTION_REQUEST, data)
-  }
-
   sendTermsRequest (data: RequestTermsDTO) {
     this._send(messages.TERMS_REQUESTED, data)
   }
@@ -98,10 +84,6 @@ class MainMessageBusCommunication implements MainCommunication {
 
   sendUserSettings (data: UserSettings): void {
     this._send(messages.USER_SETTINGS, data)
-  }
-
-  onConnectionStatusChange (callback: (ConnectionStatusChangeDTO) => void): void {
-    this._on(messages.CONNECTION_STATUS_CHANGED, callback)
   }
 
   onCurrentIdentityChange (callback: (CurrentIdentityChangeDTO) => void) {
