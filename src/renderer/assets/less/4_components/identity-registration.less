@@ -17,6 +17,10 @@
 
  .identity-tooltip-generic(@positionTop, @positionRight) {
   display: none;
+  background-color: lightgrey;
+  color: black;
+  border-radius: 30px;
+  padding: 0.5em;
   position: fixed;
   top: @positionTop;
   right: @positionRight;
@@ -42,7 +46,7 @@
   }
 
   .identity-tooltip {
-    .identity-tooltip-generic(3.5em, 1.1em);
+    .identity-tooltip-generic(3.5em, 0.7em);
   }
 
   &:hover {
@@ -88,7 +92,7 @@
     cursor: pointer;
 
     .identity-tooltip {
-      .identity-tooltip-generic(10em, 1.1em);
+      .identity-tooltip-generic(10.5em, 1.2em);
     }
     &:hover {
       .identity-tooltip {
@@ -105,7 +109,7 @@
 }
 
 .consumer-identity-registration {
-  margin-top: 3em;
+  margin-top: 2em;
 }
 
 #registration-instructions {
