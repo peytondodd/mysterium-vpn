@@ -24,12 +24,10 @@ export default {
   RECONNECT_REQUEST: 'reconnect.request',
 
   MYSTERIUM_CLIENT_READY: 'mysterium-client.ready',
-  MYSTERIUM_CLIENT_LOG: 'mysterium-client.log',
   CURRENT_IDENTITY_CHANGED: 'current.identity.changed',
 
-  MYSTERIUM_VPN_BACKEND_LOG: 'MYSTERIUM_VPN_BACKEND_LOG',
-
   TERMS_REQUESTED: 'terms.requested',
+  TERMS_ANSWERED: 'terms.answered',
   TERMS_ACCEPTED: 'terms.accepted',
 
   RENDERER_BOOTED: 'renderer.booted',
