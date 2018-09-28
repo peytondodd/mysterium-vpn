@@ -29,18 +29,9 @@ import logger from './logger'
 import Notification from './notification'
 import type { UserSettingsStore } from './user-settings/user-settings-store'
 import type { MainCommunication } from './communication/main-communication'
-import type { MessageReceiver } from './communication/message-transport'
+import { onceOnMessage } from './communication/utils'
 
 const LOG_PREFIX = '[CommunicationBindings] '
-
-// TODO: test, extract
-function once<T> (receiver: MessageReceiver<T>, callback: T => void) {
-  const wrapperCallback = (data: T) => {
-    callback(data)
-    receiver.removeCallback(wrapperCallback)
-  }
-  receiver.on(wrapperCallback)
-}
 
 class CommunicationBindings {
   _communication: MainCommunication
@@ -79,7 +70,7 @@ class CommunicationBindings {
   }
 
   setCurrentIdentityForEventTracker (startupEventTracker: StartupEventTracker) {
-    once(this._communication.currentIdentityChangedReceiver, (identityChange: CurrentIdentityChangeDTO) => {
+    onceOnMessage(this._communication.currentIdentityChangedReceiver, (identityChange: CurrentIdentityChangeDTO) => {
       startupEventTracker.sendRuntimeEnvironmentDetails(identityChange.id)
     })
   }
@@ -87,7 +78,7 @@ class CommunicationBindings {
   startRegistrationFetcherOnCurrentIdentity (
     featureToggle: FeatureToggle,
     registrationFetcher: TequilapiRegistrationFetcher) {
-    once(this._communication.currentIdentityChangedReceiver, (identityChange: CurrentIdentityChangeDTO) => {
+    onceOnMessage(this._communication.currentIdentityChangedReceiver, (identityChange: CurrentIdentityChangeDTO) => {
       const identity = new IdentityDTO({ id: identityChange.id })
       if (featureToggle.paymentsAreEnabled()) {
         registrationFetcher.start(identity.id)
