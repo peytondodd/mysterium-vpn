@@ -58,7 +58,6 @@ function onFirstEventOrTimeout (subscriber: Subscriber, timeout: number): Promis
   })
 }
 
-// TODO: test
 function onceOnMessage<T> (receiver: MessageReceiver<T>, callback: T => void) {
   const wrapperCallback = (data: T) => {
     callback(data)
