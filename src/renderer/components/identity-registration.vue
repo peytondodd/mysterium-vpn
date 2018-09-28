@@ -34,13 +34,7 @@
       <div
         class="nav__content"
         :class="{'is-open': showInstructions}">
-        <div
-          class="nav__burger burger"
-          @click="showInstructions = false">
-          <i class="burger__bar burger__bar--1"/>
-          <i class="burger__bar burger__bar--2"/>
-          <i class="burger__bar burger__bar--3"/>
-        </div>
+        <close-button :click="hideInstructions"/>
 
         <h2>Activate your ID</h2>
         <p>
@@ -77,9 +71,11 @@
 <script>
 
 import { shell } from 'electron'
+import CloseButton from './close-button'
 
 export default {
   name: 'IdentityRegistration',
+  components: { CloseButton },
   dependencies: ['rendererCommunication', 'getPaymentLink'],
   data () {
     return {
@@ -98,6 +94,9 @@ export default {
     openPaymentsUrl () {
       const url = this.getPaymentLink(this.registration)
       shell.openExternal(url)
+    },
+    hideInstructions () {
+      this.showInstructions = false
     }
   },
   computed: {
