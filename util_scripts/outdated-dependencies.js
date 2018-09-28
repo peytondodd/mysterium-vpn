@@ -25,20 +25,18 @@ const needsToBeUpdated = (current, latest) => {
   return false
 }
 
-const printPackageInfo = ({ name, current, latest }) => {
-  console.log('\x1b[31m%s\x1b[0m - current: %s, latest: %s', name, current, latest)
+const formatPackageLineText = ({ name, current, latest }) => {
+  return `\x1b[31m${name}\x1b[0m - current: ${current}, latest: ${latest}`
 }
 
-const listOutdatedPackages = (packages) => {
-  packages.data.body.forEach((pkg) => {
-    if (needsToBeUpdated(pkg[1], pkg[3])) {
-      printPackageInfo({
-        name: pkg[0],
-        current: pkg[1],
-        latest: pkg[3]
-      })
-    }
-  })
+const getOutdatedPackages = (packages) => {
+  return packages.data.body
+    .filter((pkg) => needsToBeUpdated(pkg[1], pkg[3]))
+    .map((pkg) => formatPackageLineText({
+      name: pkg[0],
+      current: pkg[1],
+      latest: pkg[3]
+    }))
 }
 
 // JSON from `yarn outdated --json` command is piped into this script
@@ -56,5 +54,7 @@ stdin.on('data', (chunk) => {
   console.log('Outdated packages:')
 
   const packages = JSON.parse(json)
-  listOutdatedPackages(packages)
+  const outdated = getOutdatedPackages(packages).join('\n')
+
+  console.log(outdated)
 })
