@@ -17,16 +17,10 @@
 
 <template>
   <div>
-    <div
-      class="identity-registration"
-      :class="{'identity-registered': registered, 'identity-unregistered': !registered}"
-      @click="openPaymentsOrShowInstructions()"
-      v-if="registration && !showInstructions">
-      <div class="identity-text">ID</div>
-      <div
-        class="identity-tooltip">{{ registered ? 'Check your balance' : 'Please activate your ID' }}</div>
-    </div>
-
+    <identity-button
+      v-if="registration && !showInstructions"
+      :registered="registered"
+      :click="openPaymentsOrShowInstructions"/>
     <div
       class="app__nav nav"
       id="registration-instructions"
@@ -72,10 +66,11 @@
 
 import { shell } from 'electron'
 import CloseButton from './close-button'
+import IdentityButton from './identity-button'
 
 export default {
   name: 'IdentityRegistration',
-  components: { CloseButton },
+  components: { IdentityButton, CloseButton },
   dependencies: ['rendererCommunication', 'getPaymentLink'],
   data () {
     return {
