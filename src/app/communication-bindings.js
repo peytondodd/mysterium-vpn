@@ -27,18 +27,25 @@ import type { BugReporter } from './bug-reporting/interface'
 import StartupEventTracker from './statistics/startup-event-tracker'
 import logger from './logger'
 import Notification from './notification'
-import type { MainCommunication } from './communication/main-communication'
 import type { UserSettingsStore } from './user-settings/user-settings-store'
 import type { MainTransport } from './communication/transport/main-transport'
+import type { MessageReceiver } from './communication/transport/message-transport'
 
 const LOG_PREFIX = '[CommunicationBindings] '
 
+// TODO: test, extract
+function once<T> (receiver: MessageReceiver<T>, callback: T => void) {
+  const wrapperCallback = (data: T) => {
+    callback(data)
+    receiver.removeCallback(wrapperCallback)
+  }
+  receiver.on(wrapperCallback)
+}
+
 class CommunicationBindings {
-  _communication: MainCommunication
   _transport: MainTransport
 
-  constructor (communication: MainCommunication, transport: MainTransport) {
-    this._communication = communication
+  constructor (transport: MainTransport) {
     this._transport = transport
   }
 
@@ -56,23 +63,23 @@ class CommunicationBindings {
   }
 
   syncFavorites (userSettingsStore: UserSettingsStore) {
-    this._communication.onToggleFavoriteProvider((fav) => {
+    this._transport.toggleFavoriteProviderReceiver.on(fav => {
       userSettingsStore.setFavorite(fav.id, fav.isFavorite)
     })
   }
 
   syncShowDisconnectNotifications (userSettingsStore: UserSettingsStore) {
-    this._communication.onUserSettingsRequest(() => {
-      this._communication.sendUserSettings(userSettingsStore.getAll())
+    this._transport.userSettingsRequestReceiver.on(() => {
+      this._transport.userSettingsSender.send(userSettingsStore.getAll())
     })
 
-    this._communication.onUserSettingsShowDisconnectNotifications((show) => {
+    this._transport.showDisconnectNotificationReceiver.on((show) => {
       userSettingsStore.setShowDisconnectNotifications(show)
     })
   }
 
   setCurrentIdentityForEventTracker (startupEventTracker: StartupEventTracker) {
-    this._communication.onCurrentIdentityChangeOnce((identityChange: CurrentIdentityChangeDTO) => {
+    once(this._transport.currentIdentityChangedReceiver, (identityChange: CurrentIdentityChangeDTO) => {
       startupEventTracker.sendRuntimeEnvironmentDetails(identityChange.id)
     })
   }
@@ -80,7 +87,7 @@ class CommunicationBindings {
   startRegistrationFetcherOnCurrentIdentity (
     featureToggle: FeatureToggle,
     registrationFetcher: TequilapiRegistrationFetcher) {
-    this._communication.onCurrentIdentityChangeOnce((identityChange: CurrentIdentityChangeDTO) => {
+    once(this._transport.currentIdentityChangedReceiver, (identityChange: CurrentIdentityChangeDTO) => {
       const identity = new IdentityDTO({ id: identityChange.id })
       if (featureToggle.paymentsAreEnabled()) {
         registrationFetcher.start(identity.id)
@@ -90,7 +97,7 @@ class CommunicationBindings {
   }
 
   syncCurrentIdentityForBugReporter (bugReporter: BugReporter) {
-    this._communication.onCurrentIdentityChange((identityChange: CurrentIdentityChangeDTO) => {
+    this._transport.currentIdentityChangedReceiver.on((identityChange: CurrentIdentityChangeDTO) => {
       const identity = new IdentityDTO({ id: identityChange.id })
       bugReporter.setUser(identity)
     })
@@ -98,7 +105,7 @@ class CommunicationBindings {
 
   syncRegistrationStatus (registrationFetcher: TequilapiRegistrationFetcher, bugReporter: BugReporter) {
     registrationFetcher.onFetchedRegistration((registration: IdentityRegistrationDTO) => {
-      this._communication.sendRegistration(registration)
+      this._transport.identityRegistrationSender.send(registration)
     })
     registrationFetcher.onFetchingError((error: Error) => {
       logger.error(`${LOG_PREFIX}Identity registration fetching failed`, error)

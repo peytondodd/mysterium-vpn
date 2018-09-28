@@ -25,7 +25,6 @@ import trayFactory from '../main/tray/factory'
 import { SUDO_PROMT_PERMISSION_DENIED } from '../libraries/mysterium-client/launch-daemon/launch-daemon-installer'
 import FeatureToggle from './features/feature-toggle'
 import translations from './messages'
-import MainMessageBusCommunication from './communication/main-message-bus-communication'
 import { onFirstEvent, onFirstEventOrTimeout } from './communication/utils'
 import path from 'path'
 import type { Size } from './window'
@@ -77,7 +76,6 @@ class MysteriumVpn {
   _featureToggle: FeatureToggle
 
   _window: Window
-  _communication: MainMessageBusCommunication
   _transport: MainTransport
   _ipc: MainBufferedIpc
   _syncCallbacksInitializer: SyncCallbacksInitializer
@@ -106,7 +104,6 @@ class MysteriumVpn {
     this._featureToggle = params.featureToggle
 
     this._ipc = params.mainIpc
-    this._communication = params.mainCommunication
     this._transport = params.mainTransport
     this._syncCallbacksInitializer = params.syncCallbacksInitializer
     this._communicationBindings = params.communicationBindings
@@ -191,7 +188,7 @@ class MysteriumVpn {
     this._startProcessMonitoring()
     this._onProcessReady(() => {
       logInfo(`Notify that 'mysterium_client' process is ready`)
-      this._communication.sendMysteriumClientIsReady()
+      this._transport.mysteriumClientReadySender.send()
     })
 
     this._subscribeProposals()
@@ -256,7 +253,7 @@ class MysteriumVpn {
   async _onRendererLoaded () {
     logInfo('Waiting for window to be rendered')
     try {
-      await onFirstEvent(this._communication.onRendererBooted.bind(this._communication))
+      await onFirstEvent(this._transport.rendererBootedReceiver.on.bind(this._transport.rendererBootedReceiver))
     } catch (e) {
       // TODO: add an error wrapper method
       throw new Error('Failed to load app. ' + e)
@@ -275,7 +272,7 @@ class MysteriumVpn {
         if (e.message === SUDO_PROMT_PERMISSION_DENIED) {
           messageForUser = translations.processInstallationPermissionsError
         }
-        this._communication.sendRendererShowErrorMessage(messageForUser)
+        this._transport.rendererShowErrorSender.send(messageForUser)
         throw new Error("Failed to install 'mysterium_client' process. " + e)
       }
     }
@@ -343,14 +340,14 @@ class MysteriumVpn {
         return false
       }
     } catch (e) {
-      this._communication.sendRendererShowErrorMessage(e.message)
+      this._transport.rendererShowErrorSender.send(e.message)
       throw new Error('Failed to accept terms. ' + e)
     }
     return true
   }
 
   async _acceptTerms () {
-    this._communication.sendTermsRequest({
+    this._transport.termsRequestedSender.send({
       htmlContent: this._terms.getContent()
     })
 
@@ -362,7 +359,7 @@ class MysteriumVpn {
       return false
     }
 
-    this._communication.sendTermsAccepted()
+    this._transport.termsAcceptedSender.send()
 
     try {
       this._terms.accept()
@@ -401,12 +398,12 @@ class MysteriumVpn {
   _startProcessMonitoring () {
     this._monitoring.onStatusUp(() => {
       logInfo("'mysterium_client' is up")
-      this._communication.sendMysteriumClientUp()
+      this._transport.healthcheckUpSender.send()
       this._bugReporterMetrics.set(METRICS.CLIENT_RUNNING, true)
     })
     this._monitoring.onStatusDown(() => {
       logInfo("'mysterium_client' is down")
-      this._communication.sendMysteriumClientDown()
+      this._transport.healthcheckDownSender.send()
       this._bugReporterMetrics.set(METRICS.CLIENT_RUNNING, false)
     })
     this._monitoring.onStatus(status => {
@@ -426,7 +423,7 @@ class MysteriumVpn {
     } catch (e) {
       this._monitoring.stop()
       this._bugReporter.captureErrorException(e)
-      this._communication.sendRendererShowError({
+      this._transport.rendererShowErrorSender.send({
         message: e.toString(),
         hint: 'Try to restart application',
         fatal: true
@@ -439,7 +436,7 @@ class MysteriumVpn {
       .then(callback)
       .catch(err => {
         if (this._monitoring.isStarted) {
-          this._communication.sendRendererShowErrorMessage(translations.processStartError)
+          this._transport.rendererShowErrorSender.send(translations.processStartError)
         }
         logException("Failed to start 'mysterium_client' process", err)
       })
@@ -451,7 +448,7 @@ class MysteriumVpn {
     const handleProposalFetchError = (error: Error) => {
       logException('Proposal fetching failed', error)
     }
-    this._communication.onProposalUpdateRequest(() => {
+    this._transport.proposalsUpdateReceiver.on(() => {
       this._proposalFetcher.fetch().catch((err: Error) => {
         handleProposalFetchError(err)
       })

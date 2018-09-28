@@ -21,7 +21,6 @@ import { beforeEach, describe, expect, it } from '../../helpers/dependencies'
 import CommunicationBindings from '../../../src/app/communication-bindings'
 import StartupEventTracker from '../../../src/app/statistics/startup-event-tracker'
 import MockEventSender from '../../helpers/statistics/mock-event-sender'
-import MainMessageBusCommunication from '../../../src/app/communication/main-message-bus-communication'
 import SubscribableMessageBus from '../../helpers/subscribable-message-bus'
 import messages from '../../../src/app/communication/messages'
 import TequilapiRegistrationFetcher from '../../../src/app/data-fetchers/tequilapi-registration-fetcher'
@@ -65,9 +64,8 @@ describe('CommunicationBindings', () => {
 
   beforeEach(() => {
     msgBus = new SubscribableMessageBus()
-    const com = new MainMessageBusCommunication(msgBus)
     const transport = buildMainTransport(msgBus)
-    comBinds = new CommunicationBindings(com, transport)
+    comBinds = new CommunicationBindings(transport)
   })
 
   describe('.showNotificationOnDisconnect', () => {

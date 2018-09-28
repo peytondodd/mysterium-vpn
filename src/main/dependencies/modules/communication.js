@@ -17,7 +17,6 @@
 
 // @flow
 import IpcMessageBus from '../../../app/communication/ipc-message-bus'
-import MainMessageBusCommunication from '../../../app/communication/main-message-bus-communication'
 import MainBufferedIpc from '../../../app/communication/ipc/main-buffered-ipc'
 import SyncCallbacksInitializer from '../../../app/sync-callbacks-initializer'
 import { SyncIpcReceiver } from '../../../app/communication/sync/sync-ipc'
@@ -32,15 +31,6 @@ function bootstrap (container: Container) {
     ['bugReporter'],
     (bugReporter) => {
       return new MainBufferedIpc(bugReporter.captureException)
-    }
-  )
-
-  container.factory(
-    'mainCommunication',
-    ['mainIpc'],
-    (ipc) => {
-      const messageBus = new IpcMessageBus(ipc)
-      return new MainMessageBusCommunication(messageBus)
     }
   )
 
@@ -65,9 +55,9 @@ function bootstrap (container: Container) {
 
   container.factory(
     'communicationBindings',
-    ['mainCommunication', 'mainTransport'],
-    (mainCommunication, mainTransport) => {
-      return new CommunicationBindings(mainCommunication, mainTransport)
+    ['mainTransport'],
+    (mainTransport) => {
+      return new CommunicationBindings(mainTransport)
     }
   )
 }
