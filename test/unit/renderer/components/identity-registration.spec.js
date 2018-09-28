@@ -49,29 +49,29 @@ describe('IdentityRegistration', () => {
 
   describe('HTML rendering', () => {
     it('renders no ID icon until registration state comes from communication', () => {
-      expect(vue.findAll('.identity-registration')).to.have.lengthOf(0)
+      expect(vue.findAll('.identity-button')).to.have.lengthOf(0)
       mainCommunication.identityRegistration.send(new IdentityRegistrationDTO({ registered: true }))
-      expect(vue.findAll('.identity-registration')).to.have.lengthOf(1)
+      expect(vue.findAll('.identity-button')).to.have.lengthOf(1)
     })
 
     it('renders ID icon when identity becomes registered', () => {
       mainCommunication.identityRegistration.send(new IdentityRegistrationDTO({ registered: true }))
-      expect(vue.findAll('.identity-registration')).to.have.lengthOf(1)
-      expect(vue.findAll('.identity-registered')).to.have.lengthOf(1)
-      expect(vue.findAll('.identity-unregistered')).to.have.lengthOf(0)
+      expect(vue.findAll('.identity-button')).to.have.lengthOf(1)
+      expect(vue.findAll('.identity-button--registered')).to.have.lengthOf(1)
+      expect(vue.findAll('.identity-button--unregistered')).to.have.lengthOf(0)
     })
 
     it('renders ID icon when identity becomes unregistered', () => {
       mainCommunication.identityRegistration.send(new IdentityRegistrationDTO({ registered: false }))
-      expect(vue.findAll('.identity-registration')).to.have.lengthOf(1)
-      expect(vue.findAll('.identity-registered')).to.have.lengthOf(0)
-      expect(vue.findAll('.identity-unregistered')).to.have.lengthOf(1)
+      expect(vue.findAll('.identity-button')).to.have.lengthOf(1)
+      expect(vue.findAll('.identity-button--registered')).to.have.lengthOf(0)
+      expect(vue.findAll('.identity-button--unregistered')).to.have.lengthOf(1)
     })
 
     it('renders instructions on unregistered ID click', () => {
       mainCommunication.identityRegistration.send(new IdentityRegistrationDTO({ registered: false }))
       expect(vue.findAll('#registration-instructions.is-open')).to.have.lengthOf(0)
-      vue.findAll('.identity-registration').trigger('click')
+      vue.findAll('.identity-button').trigger('click')
       expect(vue.findAll('#registration-instructions.is-open')).to.have.lengthOf(1)
     })
   })

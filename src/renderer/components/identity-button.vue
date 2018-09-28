@@ -17,12 +17,12 @@
 
 <template>
   <div
-    class="identity-registration"
-    :class="{'identity-registered': registered, 'identity-unregistered': !registered}"
+    class="identity-button"
+    :class="{'identity-button--registered': registered, 'identity-button--unregistered': !registered}"
     @click="this.click">
-    <div class="identity-text">ID</div>
+    <div class="identity-button__text">ID</div>
     <div
-      class="identity-tooltip">{{ registered ? 'Check your balance' : 'Please activate your ID' }}</div>
+      class="identity-button__tooltip">{{ registered ? 'Check your balance' : 'Please activate your ID' }}</div>
   </div>
 </template>
 
