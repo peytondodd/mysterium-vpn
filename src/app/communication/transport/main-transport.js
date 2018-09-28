@@ -19,9 +19,17 @@
 
 import type { MessageBus } from '../message-bus'
 import { buildMessageTransports } from './message-transport'
-import type { ConnectionStatusChangeDTO, CountriesDTO, RequestConnectionDTO, TermsAnsweredDTO } from '../dto'
+import type {
+  AppErrorDTO,
+  ConnectionStatusChangeDTO,
+  CountriesDTO,
+  CurrentIdentityChangeDTO, FavoriteProviderDTO,
+  RequestConnectionDTO, RequestTermsDTO,
+  TermsAnsweredDTO
+} from '../dto'
 import type { MessageReceiver, MessageSender } from './message-transport'
 import IdentityRegistrationDTO from 'mysterium-tequilapi/lib/dto/identity-registration'
+import type { UserSettings } from '../../user-settings/user-settings'
 
 export type MainTransport = {
   connectionStatusChangedReceiver: MessageReceiver<ConnectionStatusChangeDTO>,
@@ -29,10 +37,31 @@ export type MainTransport = {
   connectionCancelSender: MessageSender<void>,
   reconnectRequestSender: MessageSender<void>,
 
+  mysteriumClientReadySender: MessageSender<void>,
+  currentIdentityChangedReceiver: MessageReceiver<CurrentIdentityChangeDTO>,
+
+  termsRequestedSender: MessageSender<RequestTermsDTO>,
+  termsAnsweredReceiver: MessageReceiver<TermsAnsweredDTO>,
+  termsAcceptedSender: MessageSender<void>,
+
+  rendererBootedReceiver: MessageReceiver<void>,
+  rendererShowErrorSender: MessageSender<AppErrorDTO>,
+
+  healthcheckUpSender: MessageSender<void>,
+  healthcheckDownSender: MessageSender<void>,
+
+  proposalsUpdateReceiver: MessageReceiver<void>,
+  countryUpdateSender: MessageSender<CountriesDTO>,
+
   identityRegistrationSender: MessageSender<IdentityRegistrationDTO>,
 
-  termsAnsweredReceiver: MessageReceiver<TermsAnsweredDTO>,
-  countryUpdateSender: MessageSender<CountriesDTO>,
+  toggleFavoriteProviderReceiver: MessageReceiver<FavoriteProviderDTO>,
+  showDisconnectNotificationReceiver: MessageReceiver<boolean>,
+
+  userSettingsReceiver: MessageReceiver<UserSettings>,
+  userSettingsSender: MessageSender<UserSettings>,
+  userSettingsRequestReceiver: MessageReceiver<void>,
+  userSettingsUpdateReceiver: MessageReceiver<UserSettings>
 }
 
 export function buildMainTransport (messageBus: MessageBus): MainTransport {
@@ -43,9 +72,30 @@ export function buildMainTransport (messageBus: MessageBus): MainTransport {
     connectionCancelSender: messages.connectionCancel,
     reconnectRequestSender: messages.reconnectRequest,
 
+    mysteriumClientReadySender: messages.mysteriumClientReady,
+    currentIdentityChangedReceiver: messages.currentIdentityChanged,
+
+    termsRequestedSender: messages.termsRequested,
+    termsAnsweredReceiver: messages.termsAnswered,
+    termsAcceptedSender: messages.termsAccepted,
+
+    rendererBootedReceiver: messages.rendererBooted,
+    rendererShowErrorSender: messages.rendererShowError,
+
+    healthcheckUpSender: messages.healthcheckUp,
+    healthcheckDownSender: messages.healthcheckDown,
+
+    proposalsUpdateReceiver: messages.proposalsUpdate,
+    countryUpdateSender: messages.countryUpdate,
+
     identityRegistrationSender: messages.identityRegistration,
 
-    termsAnsweredReceiver: messages.termsAnswered,
-    countryUpdateSender: messages.countryUpdate
+    toggleFavoriteProviderReceiver: messages.toggleFavoriteProvider,
+    showDisconnectNotificationReceiver: messages.showDisconnectNotification,
+
+    userSettingsReceiver: messages.userSettings,
+    userSettingsSender: messages.userSettings,
+    userSettingsRequestReceiver: messages.userSettingsRequest,
+    userSettingsUpdateReceiver: messages.userSettingsUpdate
   }
 }
