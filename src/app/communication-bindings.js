@@ -28,8 +28,8 @@ import StartupEventTracker from './statistics/startup-event-tracker'
 import logger from './logger'
 import Notification from './notification'
 import type { UserSettingsStore } from './user-settings/user-settings-store'
-import type { MainTransport } from './communication/transport/main-transport'
-import type { MessageReceiver } from './communication/transport/message-transport'
+import type { MainCommunication } from './communication/main-communication'
+import type { MessageReceiver } from './communication/message-transport'
 
 const LOG_PREFIX = '[CommunicationBindings] '
 
@@ -43,14 +43,14 @@ function once<T> (receiver: MessageReceiver<T>, callback: T => void) {
 }
 
 class CommunicationBindings {
-  _transport: MainTransport
+  _communication: MainCommunication
 
-  constructor (transport: MainTransport) {
-    this._transport = transport
+  constructor (communication: MainCommunication) {
+    this._communication = communication
   }
 
   showNotificationOnDisconnect (userSettingsStore: UserSettingsStore, disconnectNotification: Notification) {
-    this._transport.connectionStatusChangedReceiver.on((status) => {
+    this._communication.connectionStatusChangedReceiver.on((status) => {
       const shouldShowNotification =
         userSettingsStore.getAll().showDisconnectNotifications &&
         (status.newStatus === ConnectionStatusEnum.NOT_CONNECTED &&
@@ -63,23 +63,23 @@ class CommunicationBindings {
   }
 
   syncFavorites (userSettingsStore: UserSettingsStore) {
-    this._transport.toggleFavoriteProviderReceiver.on(fav => {
+    this._communication.toggleFavoriteProviderReceiver.on(fav => {
       userSettingsStore.setFavorite(fav.id, fav.isFavorite)
     })
   }
 
   syncShowDisconnectNotifications (userSettingsStore: UserSettingsStore) {
-    this._transport.userSettingsRequestReceiver.on(() => {
-      this._transport.userSettingsSender.send(userSettingsStore.getAll())
+    this._communication.userSettingsRequestReceiver.on(() => {
+      this._communication.userSettingsSender.send(userSettingsStore.getAll())
     })
 
-    this._transport.showDisconnectNotificationReceiver.on((show) => {
+    this._communication.showDisconnectNotificationReceiver.on((show) => {
       userSettingsStore.setShowDisconnectNotifications(show)
     })
   }
 
   setCurrentIdentityForEventTracker (startupEventTracker: StartupEventTracker) {
-    once(this._transport.currentIdentityChangedReceiver, (identityChange: CurrentIdentityChangeDTO) => {
+    once(this._communication.currentIdentityChangedReceiver, (identityChange: CurrentIdentityChangeDTO) => {
       startupEventTracker.sendRuntimeEnvironmentDetails(identityChange.id)
     })
   }
@@ -87,7 +87,7 @@ class CommunicationBindings {
   startRegistrationFetcherOnCurrentIdentity (
     featureToggle: FeatureToggle,
     registrationFetcher: TequilapiRegistrationFetcher) {
-    once(this._transport.currentIdentityChangedReceiver, (identityChange: CurrentIdentityChangeDTO) => {
+    once(this._communication.currentIdentityChangedReceiver, (identityChange: CurrentIdentityChangeDTO) => {
       const identity = new IdentityDTO({ id: identityChange.id })
       if (featureToggle.paymentsAreEnabled()) {
         registrationFetcher.start(identity.id)
@@ -97,7 +97,7 @@ class CommunicationBindings {
   }
 
   syncCurrentIdentityForBugReporter (bugReporter: BugReporter) {
-    this._transport.currentIdentityChangedReceiver.on((identityChange: CurrentIdentityChangeDTO) => {
+    this._communication.currentIdentityChangedReceiver.on((identityChange: CurrentIdentityChangeDTO) => {
       const identity = new IdentityDTO({ id: identityChange.id })
       bugReporter.setUser(identity)
     })
@@ -105,7 +105,7 @@ class CommunicationBindings {
 
   syncRegistrationStatus (registrationFetcher: TequilapiRegistrationFetcher, bugReporter: BugReporter) {
     registrationFetcher.onFetchedRegistration((registration: IdentityRegistrationDTO) => {
-      this._transport.identityRegistrationSender.send(registration)
+      this._communication.identityRegistrationSender.send(registration)
     })
     registrationFetcher.onFetchingError((error: Error) => {
       logger.error(`${LOG_PREFIX}Identity registration fetching failed`, error)

@@ -23,21 +23,21 @@ import type { UserSettings } from '../../../../src/app/user-settings/user-settin
 import FakeMessageBus from '../../../helpers/fake-message-bus'
 import messages from '../../../../src/app/communication/messages'
 import { UserSettingsProxy } from '../../../../src/app/user-settings/user-settings-proxy'
-import { buildRendererTransport } from '../../../../src/app/communication/transport/renderer-transport'
+import { buildRendererCommunication } from '../../../../src/app/communication/renderer-communication'
 
 describe('UserSettingsProxy', () => {
-  let msgBus, transport
+  let msgBus, communication
   let settingsProxy
 
   beforeEach(() => {
     msgBus = new FakeMessageBus()
-    transport = buildRendererTransport(msgBus)
-    settingsProxy = new UserSettingsProxy(transport)
+    communication = buildRendererCommunication(msgBus)
+    settingsProxy = new UserSettingsProxy(communication)
   })
 
   describe('.startListening', () => {
     it('requests initial settings', () => {
-      const proxy = new UserSettingsProxy(transport)
+      const proxy = new UserSettingsProxy(communication)
       proxy.startListening()
 
       expect(msgBus.lastChannel).to.eql(messages.USER_SETTINGS_REQUEST)

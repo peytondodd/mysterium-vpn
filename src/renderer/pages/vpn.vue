@@ -89,7 +89,7 @@ export default {
     StatsDisplay,
     AppError
   },
-  dependencies: ['bugReporter', 'rendererTransport', 'startupEventTracker', 'userSettingsStore'],
+  dependencies: ['bugReporter', 'rendererCommunication', 'startupEventTracker', 'userSettingsStore'],
   data () {
     return {
       country: null,
@@ -124,7 +124,7 @@ export default {
     setCountry (data) { this.country = data },
     fetchCountries () {
       this.countriesAreLoading = true
-      this.rendererTransport.proposalsUpdateSender.send()
+      this.rendererCommunication.proposalsUpdateSender.send()
     },
     async toggleFavorite () {
       if (!this.country) return
@@ -143,7 +143,7 @@ export default {
   },
   async mounted () {
     this.startupEventTracker.sendAppStartSuccessEvent()
-    this.rendererTransport.countryUpdateReceiver.on(this.onCountriesUpdate)
+    this.rendererCommunication.countryUpdateReceiver.on(this.onCountriesUpdate)
 
     const ipConfig = new ActionLooperConfig(type.CONNECTION_IP, config.ipUpdateThreshold)
     this.$store.dispatch(type.START_ACTION_LOOPING, ipConfig)
@@ -151,7 +151,7 @@ export default {
     this.$store.dispatch(type.START_ACTION_LOOPING, statusConfig)
   },
   beforeDestroy () {
-    this.rendererTransport.countryUpdateReceiver.removeCallback(this.onCountriesUpdate)
+    this.rendererCommunication.countryUpdateReceiver.removeCallback(this.onCountriesUpdate)
   }
 }
 </script>

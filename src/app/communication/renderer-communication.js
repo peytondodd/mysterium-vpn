@@ -16,7 +16,7 @@
  */
 
 // @flow
-import type { MessageBus } from '../message-bus'
+import type { MessageBus } from './message-bus'
 import { buildMessageTransports } from './message-transport'
 import type {
   AppErrorDTO,
@@ -24,12 +24,12 @@ import type {
   CountriesDTO, CurrentIdentityChangeDTO, FavoriteProviderDTO,
   RequestConnectionDTO, RequestTermsDTO,
   TermsAnsweredDTO
-} from '../dto'
+} from './dto'
 import IdentityRegistrationDTO from 'mysterium-tequilapi/lib/dto/identity-registration'
 import type { MessageReceiver, MessageSender } from './message-transport'
-import type { UserSettings } from '../../user-settings/user-settings'
+import type { UserSettings } from '../user-settings/user-settings'
 
-export type RendererTransport = {
+export type RendererCommunication = {
   connectionStatusChangedSender: MessageSender<ConnectionStatusChangeDTO>,
   connectionRequestReceiver: MessageReceiver<RequestConnectionDTO>,
   connectionCancelReceiver: MessageReceiver<void>,
@@ -62,38 +62,38 @@ export type RendererTransport = {
   userSettingsUpdateSender: MessageSender<UserSettings>
 }
 
-export function buildRendererTransport (messageBus: MessageBus): RendererTransport {
-  const messages = buildMessageTransports(messageBus)
+export function buildRendererCommunication (messageBus: MessageBus): RendererCommunication {
+  const transports = buildMessageTransports(messageBus)
   return {
-    connectionStatusChangedSender: messages.connectionStatusChanged,
-    connectionRequestReceiver: messages.connectionRequest,
-    connectionCancelReceiver: messages.connectionCancel,
-    reconnectRequestReceiver: messages.reconnectRequest,
+    connectionStatusChangedSender: transports.connectionStatusChanged,
+    connectionRequestReceiver: transports.connectionRequest,
+    connectionCancelReceiver: transports.connectionCancel,
+    reconnectRequestReceiver: transports.reconnectRequest,
 
-    mysteriumClientReadyReceiver: messages.mysteriumClientReady,
-    currentIdentityChangedSender: messages.currentIdentityChanged,
+    mysteriumClientReadyReceiver: transports.mysteriumClientReady,
+    currentIdentityChangedSender: transports.currentIdentityChanged,
 
-    termsRequestedReceiver: messages.termsRequested,
-    termsAnsweredSender: messages.termsAnswered,
-    termsAcceptedReceiver: messages.termsAccepted,
+    termsRequestedReceiver: transports.termsRequested,
+    termsAnsweredSender: transports.termsAnswered,
+    termsAcceptedReceiver: transports.termsAccepted,
 
-    rendererBootedSender: messages.rendererBooted,
-    rendererShowErrorReceiver: messages.rendererShowError,
+    rendererBootedSender: transports.rendererBooted,
+    rendererShowErrorReceiver: transports.rendererShowError,
 
-    healthcheckUpReceiver: messages.healthcheckUp,
-    healthcheckDownReceiver: messages.healthcheckDown,
+    healthcheckUpReceiver: transports.healthcheckUp,
+    healthcheckDownReceiver: transports.healthcheckDown,
 
-    proposalsUpdateSender: messages.proposalsUpdate,
-    countryUpdateReceiver: messages.countryUpdate,
+    proposalsUpdateSender: transports.proposalsUpdate,
+    countryUpdateReceiver: transports.countryUpdate,
 
-    identityRegistrationReceiver: messages.identityRegistration,
+    identityRegistrationReceiver: transports.identityRegistration,
 
-    toggleFavoriteProviderSender: messages.toggleFavoriteProvider,
-    showDisconnectNotificationSender: messages.showDisconnectNotification,
+    toggleFavoriteProviderSender: transports.toggleFavoriteProvider,
+    showDisconnectNotificationSender: transports.showDisconnectNotification,
 
-    userSettingsSender: messages.userSettings,
-    userSettingsReceiver: messages.userSettings,
-    userSettingsRequestSender: messages.userSettingsRequest,
-    userSettingsUpdateSender: messages.userSettingsUpdate
+    userSettingsSender: transports.userSettings,
+    userSettingsReceiver: transports.userSettings,
+    userSettingsRequestSender: transports.userSettingsRequest,
+    userSettingsUpdateSender: transports.userSettingsUpdate
   }
 }

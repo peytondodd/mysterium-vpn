@@ -22,9 +22,9 @@ import { UserSettingsProxy } from '../../../app/user-settings/user-settings-prox
 function bootstrap (container: Container) {
   container.factory(
     'userSettingsStore',
-    ['rendererTransport'],
-    (rendererTransport) => {
-      const proxy = new UserSettingsProxy(rendererTransport)
+    ['rendererCommunication'],
+    (rendererCommunication) => {
+      const proxy = new UserSettingsProxy(rendererCommunication)
       proxy.startListening()
       return proxy
     }

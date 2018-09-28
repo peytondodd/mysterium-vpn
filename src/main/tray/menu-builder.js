@@ -26,19 +26,19 @@ import TrayMenuItem from './menu-item'
 import TrayMenuSeparator from './menu-item-separator'
 import translations from './translations'
 import messages from '../../app/messages'
-import type { MainTransport } from '../../app/communication/transport/main-transport'
+import type { MainCommunication } from '../../app/communication/main-communication'
 
 function getMenuItems (
   appQuit: Function,
   showWindow: Function,
   toggleDevTools: Function,
-  transport: MainTransport,
+  communication: MainCommunication,
   countries: Array<Country>,
   connectionStatus: ConnectionStatus
 ) {
   const disconnect = new TrayMenuItem(
     translations.disconnect,
-    () => transport.connectionCancelSender.send()
+    () => communication.connectionCancelSender.send()
   )
 
   const connectSubmenu = new TrayMenu()
@@ -49,7 +49,7 @@ function getMenuItems (
       label = '* ' + label
     }
     connectSubmenu.add(label, () => {
-      transport.connectionRequestSender.send({ providerId: country.id, providerCountry: country.code })
+      communication.connectionRequestSender.send({ providerId: country.id, providerCountry: country.code })
     })
   })
 
@@ -116,15 +116,15 @@ class TrayMenuBuilder {
   _appQuit: Function
   _showWindow: Function
   _toggleDevTools: Function
-  _transport: MainTransport
+  _communication: MainCommunication
   _countries: Array<Country> = []
   _connectionStatus: ConnectionStatus
 
-  constructor (appQuit: Function, showWindow: Function, toggleDevTools: Function, transport: MainTransport) {
+  constructor (appQuit: Function, showWindow: Function, toggleDevTools: Function, communication: MainCommunication) {
     this._appQuit = appQuit
     this._showWindow = showWindow
     this._toggleDevTools = toggleDevTools
-    this._transport = transport
+    this._communication = communication
   }
 
   updateCountries (proposals: Array<Country>): this {
@@ -144,7 +144,7 @@ class TrayMenuBuilder {
       this._appQuit,
       this._showWindow,
       this._toggleDevTools,
-      this._transport,
+      this._communication,
       this._countries,
       this._connectionStatus
     )

@@ -20,11 +20,11 @@ import TrayMenuBuilder from '../../../../src/main/tray/menu-builder'
 import ConnectionStatusEnum from 'mysterium-tequilapi/lib/dto/connection-status-enum'
 import translations from '../../../../src/main/tray/translations'
 import { describe, it, expect, beforeEach } from '../../../helpers/dependencies'
-import { buildMainTransport } from '../../../../src/app/communication/transport/main-transport'
+import { buildMainCommunication } from '../../../../src/app/communication/main-communication'
 import DirectMessageBus from '../../../helpers/direct-message-bus'
-import { buildRendererTransport } from '../../../../src/app/communication/transport/renderer-transport'
+import { buildRendererCommunication } from '../../../../src/app/communication/renderer-communication'
 import { CallbackRecorder } from '../../../helpers/utils'
-import type { MessageReceiver } from '../../../../src/app/communication/transport/message-transport'
+import type { MessageReceiver } from '../../../../src/app/communication/message-transport'
 
 class FakeApplicationQuitter {
   didQuit: boolean = false
@@ -37,9 +37,9 @@ class FakeApplicationQuitter {
 class MessageRecorder<T> {
   _recorder: CallbackRecorder
 
-  constructor (transport: MessageReceiver<T>) {
+  constructor (receiver: MessageReceiver<T>) {
     this._recorder = new CallbackRecorder()
-    transport.on(this._recorder.getCallback())
+    receiver.on(this._recorder.getCallback())
   }
 
   get invoked (): boolean {
@@ -54,8 +54,8 @@ class MessageRecorder<T> {
 describe('tray', () => {
   describe('TrayMenuBuilder', () => {
     let appQuitter
-    let transport
-    let rendererTransport
+    let communication
+    let rendererCommunication
     let messageBus
     let builder
     let windowIsVisible = false
@@ -75,10 +75,10 @@ describe('tray', () => {
       windowIsVisible = false
       devToolsToggled = false
       messageBus = new DirectMessageBus()
-      transport = buildMainTransport(messageBus)
-      rendererTransport = buildRendererTransport(messageBus)
+      communication = buildMainCommunication(messageBus)
+      rendererCommunication = buildRendererCommunication(messageBus)
       appQuitter = new FakeApplicationQuitter()
-      builder = new TrayMenuBuilder(() => appQuitter.quit(), showWindow, toggleDevTools, transport)
+      builder = new TrayMenuBuilder(() => appQuitter.quit(), showWindow, toggleDevTools, communication)
     })
 
     describe('.build', () => {
@@ -143,7 +143,7 @@ describe('tray', () => {
 
         const items = builder.build()
 
-        const recorder = new MessageRecorder(rendererTransport.connectionRequestReceiver)
+        const recorder = new MessageRecorder(rendererCommunication.connectionRequestReceiver)
         expect(recorder.invoked).to.be.false
         items[2].submenu[0].click()
         expect(recorder.invoked).to.be.true
@@ -152,7 +152,7 @@ describe('tray', () => {
 
       it('disconnects', () => {
         const items = builder.updateConnectionStatus(ConnectionStatusEnum.CONNECTED).build()
-        const recorder = new MessageRecorder(rendererTransport.connectionCancelReceiver)
+        const recorder = new MessageRecorder(rendererCommunication.connectionCancelReceiver)
         expect(recorder.invoked).to.be.false
         items[2].click()
         expect(recorder.invoked).to.be.true

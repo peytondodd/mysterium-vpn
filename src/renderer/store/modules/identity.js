@@ -33,12 +33,12 @@ const state: State = {
 
 function mutationsFactory (dependencies: Container) {
   const bugReporter = dependencies.get('bugReporter')
-  const transport = dependencies.get('rendererTransport')
+  const communication = dependencies.get('rendererCommunication')
   return {
     [type.SET_CURRENT_IDENTITY] (state, identity: IdentityDTO) {
       state.current = identity
       bugReporter.setUser(identity)
-      transport.currentIdentityChangedSender.send(identity)
+      communication.currentIdentityChangedSender.send(identity)
     },
     [type.IDENTITY_UNLOCK_SUCCESS] (state) {
       state.unlocked = true

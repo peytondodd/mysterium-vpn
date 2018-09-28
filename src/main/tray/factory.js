@@ -22,10 +22,10 @@ import TrayMenuBuilder from './menu-builder'
 import Tray from './tray'
 import type { ConnectionStatusChangeDTO } from '../../app/communication/dto'
 import CountryList from '../../app/data-fetchers/country-list'
-import type { MainTransport } from '../../app/communication/transport/main-transport'
+import type { MainCommunication } from '../../app/communication/main-communication'
 
 const trayFactory = (
-  transport: MainTransport,
+  communication: MainCommunication,
   countryList: CountryList,
   window: Window,
   iconPath: string
@@ -34,7 +34,7 @@ const trayFactory = (
     () => app.quit(),
     () => window.show(),
     () => window.toggleDevTools(),
-    transport
+    communication
   )
 
   const trayFactory = (icon) => {
@@ -48,7 +48,9 @@ const trayFactory = (
   const tray = new Tray(trayFactory, templateBuilder, menuBuilder, iconPath)
   tray.build()
 
-  transport.connectionStatusChangedReceiver.on((change: ConnectionStatusChangeDTO) => tray.setStatus(change.newStatus))
+  communication.connectionStatusChangedReceiver.on((change: ConnectionStatusChangeDTO) => {
+    tray.setStatus(change.newStatus)
+  })
   countryList.onUpdate(countries => tray.setCountries(countries))
 }
 

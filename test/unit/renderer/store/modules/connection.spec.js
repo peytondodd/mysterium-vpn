@@ -23,7 +23,7 @@ import { mutations, actionsFactory } from '@/store/modules/connection'
 import { describe, it, beforeEach } from '../../../../helpers/dependencies'
 import { FunctionLooper } from '@/../libraries/function-looper'
 import ConnectionStatusEnum from 'mysterium-tequilapi/lib/dto/connection-status-enum'
-import communication from '@/../app/communication/messages'
+import communicationMessages from '@/../app/communication/messages'
 import FakeMessageBus from '../../../../helpers/fake-message-bus'
 import { ActionLooper, ActionLooperConfig } from '../../../../../src/renderer/store/modules/connection'
 import type { ConnectionStore } from '../../../../../src/renderer/store/modules/connection'
@@ -38,7 +38,7 @@ import type { ConnectionStatsFetcher } from '../../../../../src/app/connection/c
 import type { Provider } from '../../../../../src/app/connection/provider'
 import { captureAsyncError } from '../../../../helpers/utils'
 import messages from '../../../../../src/app/messages'
-import { buildRendererTransport } from '../../../../../src/app/communication/transport/renderer-transport'
+import { buildRendererCommunication } from '../../../../../src/app/communication/renderer-communication'
 
 type ConnectParams = {
   consumerId: string,
@@ -210,7 +210,7 @@ describe('connection', () => {
   describe('actions', () => {
     let fakeTequilapi
     let fakeMessageBus
-    let transport
+    let communication
 
     let bugReporterMock: BugReporterMock
     let mockConnectionEstablisher: MockConnectionEstablisher
@@ -225,7 +225,7 @@ describe('connection', () => {
         const context = { commit, dispatch, state, getters }
         const actions = actionsFactory(
           fakeTequilapi.getFakeApi(),
-          transport,
+          communication,
           bugReporterMock,
           mockConnectionEstablisher
         )
@@ -240,7 +240,7 @@ describe('connection', () => {
     beforeEach(() => {
       fakeTequilapi = factoryTequilapiManipulator()
       fakeMessageBus = new FakeMessageBus()
-      transport = buildRendererTransport(fakeMessageBus)
+      communication = buildRendererCommunication(fakeMessageBus)
 
       bugReporterMock = new BugReporterMock()
       mockConnectionEstablisher = new MockConnectionEstablisher()
@@ -398,7 +398,7 @@ describe('connection', () => {
           status: ConnectionStatusEnum.NOT_CONNECTED
         }
         await executeAction(type.SET_CONNECTION_STATUS, state, ConnectionStatusEnum.CONNECTING)
-        expect(fakeMessageBus.lastChannel).to.eql(communication.CONNECTION_STATUS_CHANGED)
+        expect(fakeMessageBus.lastChannel).to.eql(communicationMessages.CONNECTION_STATUS_CHANGED)
         expect(fakeMessageBus.lastData).to.eql({
           oldStatus: ConnectionStatusEnum.NOT_CONNECTED,
           newStatus: ConnectionStatusEnum.CONNECTING

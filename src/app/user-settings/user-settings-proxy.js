@@ -20,40 +20,40 @@
 import type { UserSettings } from './user-settings'
 import type { UserSettingsStore } from './user-settings-store'
 import ObservableUserSettings from './observable-user-settings'
-import type { RendererTransport } from '../communication/transport/renderer-transport'
+import type { RendererCommunication } from '../communication/renderer-communication'
 
 /**
  * Caches local settings synced via communication channel, and notifies when settings change.
  */
 class UserSettingsProxy extends ObservableUserSettings implements UserSettingsStore {
-  _transport: RendererTransport
+  _communication: RendererCommunication
   _settingsListener: ?((UserSettings) => void) = null
 
-  constructor (transport: RendererTransport) {
+  constructor (communication: RendererCommunication) {
     super()
-    this._transport = transport
+    this._communication = communication
   }
 
   startListening () {
     this._settingsListener = settings => this._updateAllProperties(settings)
-    this._transport.userSettingsReceiver.on(this._settingsListener)
-    this._transport.userSettingsRequestSender.send()
+    this._communication.userSettingsReceiver.on(this._settingsListener)
+    this._communication.userSettingsRequestSender.send()
   }
 
   stopListening () {
     if (this._settingsListener == null) {
       throw new Error('UserSettingsProxy.stopListening invoked without initialization')
     }
-    this._transport.userSettingsReceiver.removeCallback(this._settingsListener)
+    this._communication.userSettingsReceiver.removeCallback(this._settingsListener)
     this._settingsListener = null
   }
 
   async setFavorite (id: string, isFavorite: boolean) {
-    this._transport.toggleFavoriteProviderSender.send({ id, isFavorite })
+    this._communication.toggleFavoriteProviderSender.send({ id, isFavorite })
   }
 
   async setShowDisconnectNotifications (show: boolean) {
-    this._transport.showDisconnectNotificationSender.send(show)
+    this._communication.showDisconnectNotificationSender.send(show)
   }
 }
 

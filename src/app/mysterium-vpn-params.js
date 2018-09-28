@@ -37,7 +37,7 @@ import Notification from './notification'
 import StartupEventTracker from './statistics/startup-event-tracker'
 import type { StringLogger } from './logging/string-logger'
 import CommunicationBindings from './communication-bindings'
-import type { MainTransport } from './communication/transport/main-transport'
+import type { MainCommunication } from './communication/main-communication'
 
 export type MysteriumVpnParams = {
   browserWindowFactory: () => BrowserWindow,
@@ -61,7 +61,7 @@ export type MysteriumVpnParams = {
   featureToggle: FeatureToggle,
   startupEventTracker: StartupEventTracker,
   mainIpc: MainBufferedIpc,
-  mainTransport: MainTransport,
+  mainCommunication: MainCommunication,
   syncCallbacksInitializer: SyncCallbacksInitializer,
   communicationBindings: CommunicationBindings
 }

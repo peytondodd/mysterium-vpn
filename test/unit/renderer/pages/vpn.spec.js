@@ -28,7 +28,7 @@ import Vue from 'vue'
 import StartupEventTracker from '../../../../src/app/statistics/startup-event-tracker'
 import MockEventSender from '../../../helpers/statistics/mock-event-sender'
 import { UserSettingsProxy } from '../../../../src/app/user-settings/user-settings-proxy'
-import { buildRendererTransport } from '../../../../src/app/communication/transport/renderer-transport'
+import { buildRendererCommunication } from '../../../../src/app/communication/renderer-communication'
 Vue.use(Vuex)
 
 describe('Vpn', () => {
@@ -41,11 +41,11 @@ describe('Vpn', () => {
     fakeMessageBus = new FakeMessageBus()
     const dependencies = new DIContainer(vue)
     const startupEventTracker = new StartupEventTracker(new MockEventSender())
-    const transport = buildRendererTransport(fakeMessageBus)
-    dependencies.constant('rendererTransport', transport)
+    const communication = buildRendererCommunication(fakeMessageBus)
+    dependencies.constant('rendererCommunication', communication)
     dependencies.constant('bugReporter', bugReporterMock)
     dependencies.constant('startupEventTracker', startupEventTracker)
-    dependencies.constant('userSettingsStore', new UserSettingsProxy(transport))
+    dependencies.constant('userSettingsStore', new UserSettingsProxy(communication))
 
     return mount(Vpn, {
       localVue: vue,

@@ -18,7 +18,7 @@
 // @flow
 
 import { beforeEach, describe, expect, it } from '../../../../helpers/dependencies'
-import MessageTransport from '../../../../../src/app/communication/transport/message-transport'
+import MessageTransport from '../../../../../src/app/communication/message-transport'
 import DirectMessageBus from '../../../../helpers/direct-message-bus'
 import { CallbackRecorder, captureError } from '../../../../helpers/utils'
 import type { MessageBus } from '../../../../../src/app/communication/message-bus'

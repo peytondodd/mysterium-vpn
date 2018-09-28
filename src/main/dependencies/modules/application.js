@@ -89,7 +89,7 @@ function bootstrap (container: Container) {
       'featureToggle',
       'startupEventTracker',
       'mainIpc',
-      'mainTransport',
+      'mainCommunication',
       'syncCallbacksInitializer',
       'communicationBindings'
     ],
@@ -112,7 +112,7 @@ function bootstrap (container: Container) {
       featureToggle,
       startupEventTracker,
       mainIpc,
-      mainTransport,
+      mainCommunication,
       syncCallbacksInitializer,
       communicationBindings
     ) => {
@@ -138,7 +138,7 @@ function bootstrap (container: Container) {
         featureToggle,
         startupEventTracker,
         mainIpc,
-        mainTransport,
+        mainCommunication,
         syncCallbacksInitializer,
         communicationBindings
       })

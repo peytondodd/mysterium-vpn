@@ -32,7 +32,7 @@ import { UserSettingsStorage } from '../../../src/app/user-settings/user-setting
 import Notification from '../../../src/app/notification'
 import ConnectionStatusEnum from 'mysterium-tequilapi/lib/dto/connection-status-enum'
 import { nextTick } from '../../helpers/utils'
-import { buildMainTransport } from '../../../src/app/communication/transport/main-transport'
+import { buildMainCommunication } from '../../../src/app/communication/main-communication'
 
 class TequilapiRegistrationFetcherMock extends TequilapiRegistrationFetcher {
   startedWithId: ?string
@@ -64,8 +64,8 @@ describe('CommunicationBindings', () => {
 
   beforeEach(() => {
     msgBus = new SubscribableMessageBus()
-    const transport = buildMainTransport(msgBus)
-    comBinds = new CommunicationBindings(transport)
+    const communication = buildMainCommunication(msgBus)
+    comBinds = new CommunicationBindings(communication)
   })
 
   describe('.showNotificationOnDisconnect', () => {

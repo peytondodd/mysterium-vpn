@@ -63,7 +63,7 @@ export default {
     AppModal,
     IdentityRegistration
   },
-  dependencies: ['rendererTransport', 'syncCommunication', 'logger', 'bugReporterMetrics', 'featureToggle'],
+  dependencies: ['rendererCommunication', 'syncCommunication', 'logger', 'bugReporterMetrics', 'featureToggle'],
   computed: {
     ...mapGetters(['navVisible', 'loading', 'visual', 'overlayError']),
     paymentsAreEnabled () {
@@ -75,13 +75,13 @@ export default {
     logger.info('App view was mounted')
 
     // we need to notify the main process that we're up
-    this.rendererTransport.rendererBootedSender.send()
+    this.rendererCommunication.rendererBootedSender.send()
 
-    this.rendererTransport.reconnectRequestReceiver.on(() => {
+    this.rendererCommunication.reconnectRequestReceiver.on(() => {
       this.$store.dispatch(type.RECONNECT)
     })
 
-    this.rendererTransport.connectionRequestReceiver.on((proposal) => {
+    this.rendererCommunication.connectionRequestReceiver.on((proposal) => {
       const provider = {
         id: proposal.providerId,
         country: proposal.providerCountry
@@ -89,30 +89,30 @@ export default {
       this.$store.dispatch(type.CONNECT, provider)
     })
 
-    this.rendererTransport.connectionCancelReceiver.on(() => {
+    this.rendererCommunication.connectionCancelReceiver.on(() => {
       this.$store.dispatch(type.DISCONNECT)
     })
 
-    this.rendererTransport.termsRequestedReceiver.on((terms) => {
+    this.rendererCommunication.termsRequestedReceiver.on((terms) => {
       this.$store.dispatch(type.TERMS, terms)
       this.$router.push('/terms')
     })
 
-    this.rendererTransport.mysteriumClientReadyReceiver.on(() => {
+    this.rendererCommunication.mysteriumClientReadyReceiver.on(() => {
       this.$router.push('/load')
     })
 
-    this.rendererTransport.termsAcceptedReceiver.on(() => {
+    this.rendererCommunication.termsAcceptedReceiver.on(() => {
       this.$router.push('/')
     })
 
-    this.rendererTransport.rendererShowErrorReceiver.on((error) => {
+    this.rendererCommunication.rendererShowErrorReceiver.on((error) => {
       logger.info('App error received from communication:', error.hint, error.message, 'fatal:', error.fatal)
       this.$store.dispatch(type.OVERLAY_ERROR, error)
     })
 
     // if the client was down, but now up, we need to unlock the identity once again
-    this.rendererTransport.healthcheckUpReceiver.on(() => {
+    this.rendererCommunication.healthcheckUpReceiver.on(() => {
       this.$store.dispatch('setClientRunningState', true)
 
       // TODO Such conditional behaviour should be dropped at all
@@ -122,7 +122,7 @@ export default {
         this.$router.push('/load')
       }
     })
-    this.rendererTransport.healthcheckDownReceiver.on(() => {
+    this.rendererCommunication.healthcheckDownReceiver.on(() => {
       this.$store.dispatch('setClientRunningState', false)
 
       // TODO Such conditional behaviour should be dropped at all

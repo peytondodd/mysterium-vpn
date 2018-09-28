@@ -22,15 +22,15 @@ import DisconnectNotificationSetting from '@/components/disconnect-notification-
 import { afterEach, beforeEach } from '../../../helpers/dependencies'
 import messages from '../../../../src/app/communication/messages'
 import { UserSettingsProxy } from '../../../../src/app/user-settings/user-settings-proxy'
-import { buildRendererTransport } from '../../../../src/app/communication/transport/renderer-transport'
+import { buildRendererCommunication } from '../../../../src/app/communication/renderer-communication'
 
 // TODO: extract this out to DRY with other occurances
-function mountWith (transport) {
+function mountWith (communication) {
   const vue = createLocalVue()
 
   const dependencies = new DIContainer(vue)
-  dependencies.constant('rendererTransport', transport)
-  const userSettingsProxy = new UserSettingsProxy(transport)
+  dependencies.constant('rendererCommunication', communication)
+  const userSettingsProxy = new UserSettingsProxy(communication)
   userSettingsProxy.startListening()
   dependencies.constant('userSettingsStore', userSettingsProxy)
 
@@ -41,12 +41,12 @@ function mountWith (transport) {
 
 describe('DisconnectNotificationSetting', () => {
   let fakeMessageBus
-  let transport, wrapper
+  let communication, wrapper
 
   beforeEach(() => {
     fakeMessageBus = new FakeMessageBus()
-    transport = buildRendererTransport(fakeMessageBus)
-    wrapper = mountWith(transport)
+    communication = buildRendererCommunication(fakeMessageBus)
+    wrapper = mountWith(communication)
   })
 
   afterEach(() => wrapper.destroy())

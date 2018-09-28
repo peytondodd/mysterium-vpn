@@ -17,7 +17,7 @@
 
 // @flow
 
-import type { MessageBus } from '../message-bus'
+import type { MessageBus } from './message-bus'
 import type {
   AppErrorDTO,
   ConnectionStatusChangeDTO,
@@ -25,10 +25,10 @@ import type {
   CurrentIdentityChangeDTO, FavoriteProviderDTO,
   RequestConnectionDTO, RequestTermsDTO,
   TermsAnsweredDTO
-} from '../dto'
+} from './dto'
 import IdentityRegistrationDTO from 'mysterium-tequilapi/lib/dto/identity-registration'
-import messages from '../messages'
-import type { UserSettings } from '../../user-settings/user-settings'
+import messages from './messages'
+import type { UserSettings } from '../user-settings/user-settings'
 
 export interface MessageSender<T> {
   send (data: T): void

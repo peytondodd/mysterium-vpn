@@ -23,7 +23,7 @@ import { SyncIpcReceiver } from '../../../app/communication/sync/sync-ipc'
 import SyncReceiverMainCommunication from '../../../app/communication/sync/sync-main-communication'
 import type { Container } from '../../../app/di'
 import CommunicationBindings from '../../../app/communication-bindings'
-import { buildMainTransport } from '../../../app/communication/transport/main-transport'
+import { buildMainCommunication } from '../../../app/communication/main-communication'
 
 function bootstrap (container: Container) {
   container.factory(
@@ -35,11 +35,11 @@ function bootstrap (container: Container) {
   )
 
   container.factory(
-    'mainTransport',
+    'mainCommunication',
     ['mainIpc'],
     (ipc) => {
       const messageBus = new IpcMessageBus(ipc)
-      return buildMainTransport(messageBus)
+      return buildMainCommunication(messageBus)
     }
   )
 
@@ -55,9 +55,9 @@ function bootstrap (container: Container) {
 
   container.factory(
     'communicationBindings',
-    ['mainTransport'],
-    (mainTransport) => {
-      return new CommunicationBindings(mainTransport)
+    ['mainCommunication'],
+    (mainCommunication) => {
+      return new CommunicationBindings(mainCommunication)
     }
   )
 }

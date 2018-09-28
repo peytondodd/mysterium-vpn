@@ -104,11 +104,11 @@ function bootstrap (container: Container) {
   )
   container.service(
     'vue-store.connection.actions',
-    ['tequilapiClient', 'rendererTransport', 'bugReporter', 'connectionEstablisher'],
-    (tequilapiClient, rendererTransport, bugReporter, connectionEstablisher) => {
+    ['tequilapiClient', 'rendererCommunication', 'bugReporter', 'connectionEstablisher'],
+    (tequilapiClient, rendererCommunication, bugReporter, connectionEstablisher) => {
       return actionsFactory(
         tequilapiClient,
-        rendererTransport,
+        rendererCommunication,
         bugReporter,
         connectionEstablisher
       )

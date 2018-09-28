@@ -39,7 +39,7 @@ import type { BugReporter } from '../../../../src/app/bug-reporting/interface'
 import { nextTick } from '../../../helpers/utils'
 import FakeMessageBus from '../../../helpers/fake-message-bus'
 import TequilapiError from 'mysterium-tequilapi/lib/tequilapi-error'
-import { buildRendererTransport } from '../../../../src/app/communication/transport/renderer-transport'
+import { buildRendererCommunication } from '../../../../src/app/communication/renderer-communication'
 
 describe('VpnLoader', () => {
   const tequilapi = tequilapiMockCreate()
@@ -52,11 +52,11 @@ describe('VpnLoader', () => {
     const fakeSleeper = {
       async sleep (_time: number): Promise<void> {}
     }
-    const transport = buildRendererTransport(new FakeMessageBus())
+    const communication = buildRendererCommunication(new FakeMessageBus())
     dependencies.constant('bugReporter', bugReporter)
     dependencies.constant('vpnInitializer', vpnInitializer)
     dependencies.constant('sleeper', fakeSleeper)
-    dependencies.constant('rendererTransport', transport)
+    dependencies.constant('rendererCommunication', communication)
     dependencies.constant('tequilapiClient', tequilapi)
 
     localVue.use(Router)
