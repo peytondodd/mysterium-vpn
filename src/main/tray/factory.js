@@ -48,7 +48,7 @@ const trayFactory = (
   const tray = new Tray(trayFactory, templateBuilder, menuBuilder, iconPath)
   tray.build()
 
-  communication.connectionStatusChangedReceiver.on((change: ConnectionStatusChangeDTO) => {
+  communication.connectionStatusChanged.on((change: ConnectionStatusChangeDTO) => {
     tray.setStatus(change.newStatus)
   })
   countryList.onUpdate(countries => tray.setCountries(countries))

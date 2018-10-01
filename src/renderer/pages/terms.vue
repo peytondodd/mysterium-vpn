@@ -51,7 +51,7 @@ export default {
       this._answerTerms(false)
     },
     _answerTerms (answer) {
-      this.rendererCommunication.termsAnsweredSender.send({ isAccepted: answer })
+      this.rendererCommunication.termsAnswered.send({ isAccepted: answer })
     }
   },
   computed: {

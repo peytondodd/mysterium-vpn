@@ -41,7 +41,7 @@ class CommunicationBindings {
   }
 
   showNotificationOnDisconnect (userSettingsStore: UserSettingsStore, disconnectNotification: Notification) {
-    this._communication.connectionStatusChangedReceiver.on((status) => {
+    this._communication.connectionStatusChanged.on((status) => {
       const shouldShowNotification =
         userSettingsStore.getAll().showDisconnectNotifications &&
         (status.newStatus === ConnectionStatusEnum.NOT_CONNECTED &&
@@ -54,23 +54,23 @@ class CommunicationBindings {
   }
 
   syncFavorites (userSettingsStore: UserSettingsStore) {
-    this._communication.toggleFavoriteProviderReceiver.on(fav => {
+    this._communication.toggleFavoriteProvider.on(fav => {
       userSettingsStore.setFavorite(fav.id, fav.isFavorite)
     })
   }
 
   syncShowDisconnectNotifications (userSettingsStore: UserSettingsStore) {
-    this._communication.userSettingsRequestReceiver.on(() => {
+    this._communication.userSettingsRequest.on(() => {
       this._communication.userSettingsSender.send(userSettingsStore.getAll())
     })
 
-    this._communication.showDisconnectNotificationReceiver.on((show) => {
+    this._communication.showDisconnectNotification.on((show) => {
       userSettingsStore.setShowDisconnectNotifications(show)
     })
   }
 
   setCurrentIdentityForEventTracker (startupEventTracker: StartupEventTracker) {
-    onceOnMessage(this._communication.currentIdentityChangedReceiver, (identityChange: CurrentIdentityChangeDTO) => {
+    onceOnMessage(this._communication.currentIdentityChanged, (identityChange: CurrentIdentityChangeDTO) => {
       startupEventTracker.sendRuntimeEnvironmentDetails(identityChange.id)
     })
   }
@@ -78,7 +78,7 @@ class CommunicationBindings {
   startRegistrationFetcherOnCurrentIdentity (
     featureToggle: FeatureToggle,
     registrationFetcher: TequilapiRegistrationFetcher) {
-    onceOnMessage(this._communication.currentIdentityChangedReceiver, (identityChange: CurrentIdentityChangeDTO) => {
+    onceOnMessage(this._communication.currentIdentityChanged, (identityChange: CurrentIdentityChangeDTO) => {
       const identity = new IdentityDTO({ id: identityChange.id })
       if (featureToggle.paymentsAreEnabled()) {
         registrationFetcher.start(identity.id)
@@ -88,7 +88,7 @@ class CommunicationBindings {
   }
 
   syncCurrentIdentityForBugReporter (bugReporter: BugReporter) {
-    this._communication.currentIdentityChangedReceiver.on((identityChange: CurrentIdentityChangeDTO) => {
+    this._communication.currentIdentityChanged.on((identityChange: CurrentIdentityChangeDTO) => {
       const identity = new IdentityDTO({ id: identityChange.id })
       bugReporter.setUser(identity)
     })
@@ -96,7 +96,7 @@ class CommunicationBindings {
 
   syncRegistrationStatus (registrationFetcher: TequilapiRegistrationFetcher, bugReporter: BugReporter) {
     registrationFetcher.onFetchedRegistration((registration: IdentityRegistrationDTO) => {
-      this._communication.identityRegistrationSender.send(registration)
+      this._communication.identityRegistration.send(registration)
     })
     registrationFetcher.onFetchingError((error: Error) => {
       logger.error(`${LOG_PREFIX}Identity registration fetching failed`, error)

@@ -124,7 +124,7 @@ export default {
     setCountry (data) { this.country = data },
     fetchCountries () {
       this.countriesAreLoading = true
-      this.rendererCommunication.proposalsUpdateSender.send()
+      this.rendererCommunication.proposalsUpdate.send()
     },
     async toggleFavorite () {
       if (!this.country) return
@@ -143,7 +143,7 @@ export default {
   },
   async mounted () {
     this.startupEventTracker.sendAppStartSuccessEvent()
-    this.rendererCommunication.countryUpdateReceiver.on(this.onCountriesUpdate)
+    this.rendererCommunication.countryUpdate.on(this.onCountriesUpdate)
 
     const ipConfig = new ActionLooperConfig(type.CONNECTION_IP, config.ipUpdateThreshold)
     this.$store.dispatch(type.START_ACTION_LOOPING, ipConfig)
@@ -151,7 +151,7 @@ export default {
     this.$store.dispatch(type.START_ACTION_LOOPING, statusConfig)
   },
   beforeDestroy () {
-    this.rendererCommunication.countryUpdateReceiver.removeCallback(this.onCountriesUpdate)
+    this.rendererCommunication.countryUpdate.removeCallback(this.onCountriesUpdate)
   }
 }
 </script>

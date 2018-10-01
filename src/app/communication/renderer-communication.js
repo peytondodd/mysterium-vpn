@@ -31,70 +31,70 @@ import { MessageReceiver } from './message-receiver'
 import { MessageSender } from './message-sender'
 
 export type RendererCommunication = {
-  connectionStatusChangedSender: MessageSender<ConnectionStatusChangeDTO>,
-  connectionRequestReceiver: MessageReceiver<RequestConnectionDTO>,
-  connectionCancelReceiver: MessageReceiver<void>,
-  reconnectRequestReceiver: MessageReceiver<void>,
+  connectionStatusChanged: MessageSender<ConnectionStatusChangeDTO>,
+  connectionRequest: MessageReceiver<RequestConnectionDTO>,
+  connectionCancel: MessageReceiver<void>,
+  reconnectRequest: MessageReceiver<void>,
 
-  mysteriumClientReadyReceiver: MessageReceiver<void>,
-  currentIdentityChangedSender: MessageSender<CurrentIdentityChangeDTO>,
+  mysteriumClientReady: MessageReceiver<void>,
+  currentIdentityChanged: MessageSender<CurrentIdentityChangeDTO>,
 
-  termsRequestedReceiver: MessageReceiver<RequestTermsDTO>,
-  termsAnsweredSender: MessageSender<TermsAnsweredDTO>,
-  termsAcceptedReceiver: MessageReceiver<void>,
+  termsRequested: MessageReceiver<RequestTermsDTO>,
+  termsAnswered: MessageSender<TermsAnsweredDTO>,
+  termsAccepted: MessageReceiver<void>,
 
-  rendererBootedSender: MessageSender<void>,
-  rendererShowErrorReceiver: MessageReceiver<AppErrorDTO>,
+  rendererBooted: MessageSender<void>,
+  rendererShowError: MessageReceiver<AppErrorDTO>,
 
-  healthcheckUpReceiver: MessageReceiver<void>,
-  healthcheckDownReceiver: MessageReceiver<void>,
+  healthcheckUp: MessageReceiver<void>,
+  healthcheckDown: MessageReceiver<void>,
 
-  proposalsUpdateSender: MessageSender<void>,
-  countryUpdateReceiver: MessageReceiver<CountriesDTO>,
+  proposalsUpdate: MessageSender<void>,
+  countryUpdate: MessageReceiver<CountriesDTO>,
 
-  identityRegistrationReceiver: MessageReceiver<IdentityRegistrationDTO>,
+  identityRegistration: MessageReceiver<IdentityRegistrationDTO>,
 
-  toggleFavoriteProviderSender: MessageSender<FavoriteProviderDTO>,
-  showDisconnectNotificationSender: MessageSender<boolean>,
+  toggleFavoriteProvider: MessageSender<FavoriteProviderDTO>,
+  showDisconnectNotification: MessageSender<boolean>,
 
   userSettingsSender: MessageSender<UserSettings>,
   userSettingsReceiver: MessageReceiver<UserSettings>,
-  userSettingsRequestSender: MessageSender<void>,
-  userSettingsUpdateSender: MessageSender<UserSettings>
+  userSettingsRequest: MessageSender<void>,
+  userSettingsUpdate: MessageSender<UserSettings>
 }
 
 export function buildRendererCommunication (messageBus: MessageBus): RendererCommunication {
   const transports = buildMessageTransports(messageBus)
   return {
-    connectionStatusChangedSender: transports.connectionStatusChanged.buildSender(),
-    connectionRequestReceiver: transports.connectionRequest.buildReceiver(),
-    connectionCancelReceiver: transports.connectionCancel.buildReceiver(),
-    reconnectRequestReceiver: transports.reconnectRequest.buildReceiver(),
+    connectionStatusChanged: transports.connectionStatusChanged.buildSender(),
+    connectionRequest: transports.connectionRequest.buildReceiver(),
+    connectionCancel: transports.connectionCancel.buildReceiver(),
+    reconnectRequest: transports.reconnectRequest.buildReceiver(),
 
-    mysteriumClientReadyReceiver: transports.mysteriumClientReady.buildReceiver(),
-    currentIdentityChangedSender: transports.currentIdentityChanged.buildSender(),
+    mysteriumClientReady: transports.mysteriumClientReady.buildReceiver(),
+    currentIdentityChanged: transports.currentIdentityChanged.buildSender(),
 
-    termsRequestedReceiver: transports.termsRequested.buildReceiver(),
-    termsAnsweredSender: transports.termsAnswered.buildSender(),
-    termsAcceptedReceiver: transports.termsAccepted.buildReceiver(),
+    termsRequested: transports.termsRequested.buildReceiver(),
+    termsAnswered: transports.termsAnswered.buildSender(),
+    termsAccepted: transports.termsAccepted.buildReceiver(),
 
-    rendererBootedSender: transports.rendererBooted.buildSender(),
-    rendererShowErrorReceiver: transports.rendererShowError.buildReceiver(),
+    rendererBooted: transports.rendererBooted.buildSender(),
+    rendererShowError: transports.rendererShowError.buildReceiver(),
 
-    healthcheckUpReceiver: transports.healthcheckUp.buildReceiver(),
-    healthcheckDownReceiver: transports.healthcheckDown.buildReceiver(),
+    healthcheckUp: transports.healthcheckUp.buildReceiver(),
+    healthcheckDown: transports.healthcheckDown.buildReceiver(),
 
-    proposalsUpdateSender: transports.proposalsUpdate.buildSender(),
-    countryUpdateReceiver: transports.countryUpdate.buildReceiver(),
+    proposalsUpdate: transports.proposalsUpdate.buildSender(),
+    countryUpdate: transports.countryUpdate.buildReceiver(),
 
-    identityRegistrationReceiver: transports.identityRegistration.buildReceiver(),
+    identityRegistration: transports.identityRegistration.buildReceiver(),
 
-    toggleFavoriteProviderSender: transports.toggleFavoriteProvider.buildSender(),
-    showDisconnectNotificationSender: transports.showDisconnectNotification.buildSender(),
+    toggleFavoriteProvider: transports.toggleFavoriteProvider.buildSender(),
+    showDisconnectNotification: transports.showDisconnectNotification.buildSender(),
 
     userSettingsSender: transports.userSettings.buildSender(),
     userSettingsReceiver: transports.userSettings.buildReceiver(),
-    userSettingsRequestSender: transports.userSettingsRequest.buildSender(),
-    userSettingsUpdateSender: transports.userSettingsUpdate.buildSender()
+    userSettingsRequest: transports.userSettingsRequest.buildSender(),
+    userSettingsUpdate: transports.userSettingsUpdate.buildSender()
   }
 }

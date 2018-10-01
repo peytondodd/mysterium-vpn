@@ -133,10 +133,10 @@ export default {
     }
   },
   mounted () {
-    this.rendererCommunication.connectionRequestReceiver.on(this.onConnectionRequest)
+    this.rendererCommunication.connectionRequest.on(this.onConnectionRequest)
   },
   beforeDestroy () {
-    this.rendererCommunication.connectionRequestReceiver.removeCallback(this.onConnectionRequest)
+    this.rendererCommunication.connectionRequest.removeCallback(this.onConnectionRequest)
   }
 }
 </script>

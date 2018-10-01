@@ -186,7 +186,7 @@ function actionsFactory (
         return
       }
       commit(type.SET_CONNECTION_STATUS, newStatus)
-      communication.connectionStatusChangedSender.send({ oldStatus, newStatus })
+      communication.connectionStatusChanged.send({ oldStatus, newStatus })
 
       if (newStatus === ConnectionStatusEnum.CONNECTED) {
         commit(type.CONNECTION_IP, null)

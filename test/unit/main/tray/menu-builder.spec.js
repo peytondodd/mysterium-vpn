@@ -143,7 +143,7 @@ describe('tray', () => {
 
         const items = builder.build()
 
-        const recorder = new MessageRecorder(rendererCommunication.connectionRequestReceiver)
+        const recorder = new MessageRecorder(rendererCommunication.connectionRequest)
         expect(recorder.invoked).to.be.false
         items[2].submenu[0].click()
         expect(recorder.invoked).to.be.true
@@ -152,7 +152,7 @@ describe('tray', () => {
 
       it('disconnects', () => {
         const items = builder.updateConnectionStatus(ConnectionStatusEnum.CONNECTED).build()
-        const recorder = new MessageRecorder(rendererCommunication.connectionCancelReceiver)
+        const recorder = new MessageRecorder(rendererCommunication.connectionCancel)
         expect(recorder.invoked).to.be.false
         items[2].click()
         expect(recorder.invoked).to.be.true

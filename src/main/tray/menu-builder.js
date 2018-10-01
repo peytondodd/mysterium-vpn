@@ -38,7 +38,7 @@ function getMenuItems (
 ) {
   const disconnect = new TrayMenuItem(
     translations.disconnect,
-    () => communication.connectionCancelSender.send()
+    () => communication.connectionCancel.send()
   )
 
   const connectSubmenu = new TrayMenu()
@@ -49,7 +49,7 @@ function getMenuItems (
       label = '* ' + label
     }
     connectSubmenu.add(label, () => {
-      communication.connectionRequestSender.send({ providerId: country.id, providerCountry: country.code })
+      communication.connectionRequest.send({ providerId: country.id, providerCountry: country.code })
     })
   })
 

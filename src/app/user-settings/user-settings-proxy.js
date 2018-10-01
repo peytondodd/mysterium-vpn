@@ -37,7 +37,7 @@ class UserSettingsProxy extends ObservableUserSettings implements UserSettingsSt
   startListening () {
     this._settingsListener = settings => this._updateAllProperties(settings)
     this._communication.userSettingsReceiver.on(this._settingsListener)
-    this._communication.userSettingsRequestSender.send()
+    this._communication.userSettingsRequest.send()
   }
 
   stopListening () {
@@ -49,11 +49,11 @@ class UserSettingsProxy extends ObservableUserSettings implements UserSettingsSt
   }
 
   async setFavorite (id: string, isFavorite: boolean) {
-    this._communication.toggleFavoriteProviderSender.send({ id, isFavorite })
+    this._communication.toggleFavoriteProvider.send({ id, isFavorite })
   }
 
   async setShowDisconnectNotifications (show: boolean) {
-    this._communication.showDisconnectNotificationSender.send(show)
+    this._communication.showDisconnectNotification.send(show)
   }
 }
 

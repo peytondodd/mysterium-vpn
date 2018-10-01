@@ -38,7 +38,7 @@ function mutationsFactory (dependencies: Container) {
     [type.SET_CURRENT_IDENTITY] (state, identity: IdentityDTO) {
       state.current = identity
       bugReporter.setUser(identity)
-      communication.currentIdentityChangedSender.send(identity)
+      communication.currentIdentityChanged.send(identity)
     },
     [type.IDENTITY_UNLOCK_SUCCESS] (state) {
       state.unlocked = true
