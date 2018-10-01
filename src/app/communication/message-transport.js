@@ -22,27 +22,22 @@ import type {
   AppErrorDTO,
   ConnectionStatusChangeDTO,
   CountriesDTO,
-  CurrentIdentityChangeDTO, FavoriteProviderDTO,
-  RequestConnectionDTO, RequestTermsDTO,
+  CurrentIdentityChangeDTO,
+  FavoriteProviderDTO,
+  RequestConnectionDTO,
+  RequestTermsDTO,
   TermsAnsweredDTO
 } from './dto'
 import IdentityRegistrationDTO from 'mysterium-tequilapi/lib/dto/identity-registration'
 import messages from './messages'
 import type { UserSettings } from '../user-settings/user-settings'
-
-export interface MessageSender<T> {
-  send (data: T): void
-}
-
-export interface MessageReceiver<T> {
-  on (callback: T => void): void,
-  removeCallback (callback: T => void): void
-}
+import { MessageReceiver } from './message-receiver'
+import { MessageSender } from './message-sender'
 
 /**
- * Sends and receives message using message bus.
+ * Allows building message sender and receiver.
  */
-class MessageTransport<T> implements MessageSender<T>, MessageReceiver<T> {
+class MessageTransport<T> {
   _channel: string
   _messageBus: MessageBus
 
@@ -51,16 +46,12 @@ class MessageTransport<T> implements MessageSender<T>, MessageReceiver<T> {
     this._messageBus = messageBus
   }
 
-  send (data: T) {
-    this._messageBus.send(this._channel, data)
+  buildSender (): MessageSender<T> {
+    return new MessageSender(this._channel, this._messageBus)
   }
 
-  on (callback: T => void) {
-    this._messageBus.on(this._channel, callback)
-  }
-
-  removeCallback (callback: T => void) {
-    this._messageBus.removeCallback(this._channel, callback)
+  buildReceiver (): MessageReceiver<T> {
+    return new MessageReceiver(this._channel, this._messageBus)
   }
 }
 

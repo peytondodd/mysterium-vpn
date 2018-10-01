@@ -20,28 +20,35 @@
 import { beforeEach, describe, expect, it } from '../../../../helpers/dependencies'
 import MessageTransport from '../../../../../src/app/communication/message-transport'
 import DirectMessageBus from '../../../../helpers/direct-message-bus'
+import { captureError } from '../../../../helpers/utils'
+import type { MessageBus } from '../../../../../src/app/communication/message-bus'
 import { MessageReceiver } from '../../../../../src/app/communication/message-receiver'
-import { MessageSender } from '../../../../../src/app/communication/message-sender'
 
-describe('MessageTransport', () => {
-  let transport
+describe('MessageReceiver', () => {
+  let receiver: MessageReceiver<number>
+  let messageBus: MessageBus
+  let transport: MessageTransport<number>
 
   beforeEach(() => {
-    const messageBus = new DirectMessageBus()
+    messageBus = new DirectMessageBus()
     transport = new MessageTransport('test channel', messageBus)
+    receiver = transport.buildReceiver()
   })
 
-  describe('.buildSender', () => {
-    it('returns sender', () => {
-      const sender = transport.buildSender()
-      expect(sender).to.be.instanceof(MessageSender)
+  describe('.removeCallback', () => {
+    let callback = () => {}
+
+    it('removes added callback', () => {
+      receiver.on(callback)
+      receiver.removeCallback(callback)
     })
-  })
 
-  describe('.buildReceiver', () => {
-    it('returns receiver', () => {
-      const receiver = transport.buildReceiver()
-      expect(receiver).to.be.instanceof(MessageReceiver)
+    it('throws error if callback was not added', () => {
+      const err = captureError(() => receiver.removeCallback(callback))
+      if (!(err instanceof Error)) {
+        throw new Error('Expected error')
+      }
+      expect(err.message).to.eql('Callback being removed was not found')
     })
   })
 })

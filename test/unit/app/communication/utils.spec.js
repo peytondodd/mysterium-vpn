@@ -22,6 +22,8 @@ import { beforeEach, describe, expect, it } from '../../../helpers/dependencies'
 import MessageTransport from '../../../../src/app/communication/message-transport'
 import DirectMessageBus from '../../../helpers/direct-message-bus'
 import { RepeatableCallbackRecorder } from '../../../helpers/utils'
+import { MessageReceiver } from '../../../../src/app/communication/message-receiver'
+import { MessageSender } from '../../../../src/app/communication/message-sender'
 
 const subscription = (onResolve) => onResolve('resolution of instant data')
 
@@ -34,25 +36,28 @@ describe('utils', () => {
   })
 
   describe('.onceOnMessage', () => {
-    let transport: MessageTransport<string>
+    let sender: MessageSender<string>
+    let receiver: MessageReceiver<string>
     let recorder: RepeatableCallbackRecorder
 
     beforeEach(() => {
       const messageBus = new DirectMessageBus()
-      transport = new MessageTransport('channel', messageBus)
+      const transport = new MessageTransport('channel', messageBus)
+      sender = transport.buildSender()
+      receiver = transport.buildReceiver()
       recorder = new RepeatableCallbackRecorder()
     })
 
     it('triggers callback', () => {
-      onceOnMessage(transport, recorder.getCallback())
-      transport.send('some data')
+      onceOnMessage(receiver, recorder.getCallback())
+      sender.send('some data')
       expect(recorder.invokesCount).to.eql(1)
     })
 
     it('does not trigger callback the second time', () => {
-      onceOnMessage(transport, recorder.getCallback())
-      transport.send('some data')
-      transport.send('some data')
+      onceOnMessage(receiver, recorder.getCallback())
+      sender.send('some data')
+      sender.send('some data')
       expect(recorder.invokesCount).to.eql(1)
     })
   })

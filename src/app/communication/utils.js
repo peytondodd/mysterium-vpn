@@ -16,7 +16,7 @@
  */
 
 // @flow
-import type { MessageReceiver } from './message-transport'
+import type { MessageReceiver } from './message-receiver'
 
 type Callback = (data: any) => void
 type Subscriber = (Callback) => void

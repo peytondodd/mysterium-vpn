@@ -20,28 +20,33 @@
 import { beforeEach, describe, expect, it } from '../../../../helpers/dependencies'
 import MessageTransport from '../../../../../src/app/communication/message-transport'
 import DirectMessageBus from '../../../../helpers/direct-message-bus'
+import { CallbackRecorder } from '../../../../helpers/utils'
+import type { MessageBus } from '../../../../../src/app/communication/message-bus'
 import { MessageReceiver } from '../../../../../src/app/communication/message-receiver'
 import { MessageSender } from '../../../../../src/app/communication/message-sender'
 
-describe('MessageTransport', () => {
-  let transport
+describe('MessageSender', () => {
+  let sender: MessageSender<number>
+  let receiver: MessageReceiver<number>
+  let messageBus: MessageBus
+  let transport: MessageTransport<number>
 
   beforeEach(() => {
-    const messageBus = new DirectMessageBus()
+    messageBus = new DirectMessageBus()
     transport = new MessageTransport('test channel', messageBus)
+    sender = transport.buildSender()
+    receiver = transport.buildReceiver()
   })
 
-  describe('.buildSender', () => {
-    it('returns sender', () => {
-      const sender = transport.buildSender()
-      expect(sender).to.be.instanceof(MessageSender)
-    })
-  })
+  describe('.send', () => {
+    it('triggers receiver', () => {
+      const recorder = new CallbackRecorder()
+      receiver.on(recorder.getCallback())
 
-  describe('.buildReceiver', () => {
-    it('returns receiver', () => {
-      const receiver = transport.buildReceiver()
-      expect(receiver).to.be.instanceof(MessageReceiver)
+      sender.send(5)
+
+      expect(recorder.invoked).to.be.true
+      expect(recorder.firstArgument).to.eql(5)
     })
   })
 })

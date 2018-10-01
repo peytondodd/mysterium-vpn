@@ -24,7 +24,7 @@ import { buildMainCommunication } from '../../../../src/app/communication/main-c
 import DirectMessageBus from '../../../helpers/direct-message-bus'
 import { buildRendererCommunication } from '../../../../src/app/communication/renderer-communication'
 import { CallbackRecorder } from '../../../helpers/utils'
-import type { MessageReceiver } from '../../../../src/app/communication/message-transport'
+import type { MessageReceiver } from '../../../../src/app/communication/message-receiver'
 
 class FakeApplicationQuitter {
   didQuit: boolean = false

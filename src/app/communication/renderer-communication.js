@@ -26,8 +26,9 @@ import type {
   TermsAnsweredDTO
 } from './dto'
 import IdentityRegistrationDTO from 'mysterium-tequilapi/lib/dto/identity-registration'
-import type { MessageReceiver, MessageSender } from './message-transport'
 import type { UserSettings } from '../user-settings/user-settings'
+import { MessageReceiver } from './message-receiver'
+import { MessageSender } from './message-sender'
 
 export type RendererCommunication = {
   connectionStatusChangedSender: MessageSender<ConnectionStatusChangeDTO>,
@@ -65,35 +66,35 @@ export type RendererCommunication = {
 export function buildRendererCommunication (messageBus: MessageBus): RendererCommunication {
   const transports = buildMessageTransports(messageBus)
   return {
-    connectionStatusChangedSender: transports.connectionStatusChanged,
-    connectionRequestReceiver: transports.connectionRequest,
-    connectionCancelReceiver: transports.connectionCancel,
-    reconnectRequestReceiver: transports.reconnectRequest,
+    connectionStatusChangedSender: transports.connectionStatusChanged.buildSender(),
+    connectionRequestReceiver: transports.connectionRequest.buildReceiver(),
+    connectionCancelReceiver: transports.connectionCancel.buildReceiver(),
+    reconnectRequestReceiver: transports.reconnectRequest.buildReceiver(),
 
-    mysteriumClientReadyReceiver: transports.mysteriumClientReady,
-    currentIdentityChangedSender: transports.currentIdentityChanged,
+    mysteriumClientReadyReceiver: transports.mysteriumClientReady.buildReceiver(),
+    currentIdentityChangedSender: transports.currentIdentityChanged.buildSender(),
 
-    termsRequestedReceiver: transports.termsRequested,
-    termsAnsweredSender: transports.termsAnswered,
-    termsAcceptedReceiver: transports.termsAccepted,
+    termsRequestedReceiver: transports.termsRequested.buildReceiver(),
+    termsAnsweredSender: transports.termsAnswered.buildSender(),
+    termsAcceptedReceiver: transports.termsAccepted.buildReceiver(),
 
-    rendererBootedSender: transports.rendererBooted,
-    rendererShowErrorReceiver: transports.rendererShowError,
+    rendererBootedSender: transports.rendererBooted.buildSender(),
+    rendererShowErrorReceiver: transports.rendererShowError.buildReceiver(),
 
-    healthcheckUpReceiver: transports.healthcheckUp,
-    healthcheckDownReceiver: transports.healthcheckDown,
+    healthcheckUpReceiver: transports.healthcheckUp.buildReceiver(),
+    healthcheckDownReceiver: transports.healthcheckDown.buildReceiver(),
 
-    proposalsUpdateSender: transports.proposalsUpdate,
-    countryUpdateReceiver: transports.countryUpdate,
+    proposalsUpdateSender: transports.proposalsUpdate.buildSender(),
+    countryUpdateReceiver: transports.countryUpdate.buildReceiver(),
 
-    identityRegistrationReceiver: transports.identityRegistration,
+    identityRegistrationReceiver: transports.identityRegistration.buildReceiver(),
 
-    toggleFavoriteProviderSender: transports.toggleFavoriteProvider,
-    showDisconnectNotificationSender: transports.showDisconnectNotification,
+    toggleFavoriteProviderSender: transports.toggleFavoriteProvider.buildSender(),
+    showDisconnectNotificationSender: transports.showDisconnectNotification.buildSender(),
 
-    userSettingsSender: transports.userSettings,
-    userSettingsReceiver: transports.userSettings,
-    userSettingsRequestSender: transports.userSettingsRequest,
-    userSettingsUpdateSender: transports.userSettingsUpdate
+    userSettingsSender: transports.userSettings.buildSender(),
+    userSettingsReceiver: transports.userSettings.buildReceiver(),
+    userSettingsRequestSender: transports.userSettingsRequest.buildSender(),
+    userSettingsUpdateSender: transports.userSettingsUpdate.buildSender()
   }
 }
