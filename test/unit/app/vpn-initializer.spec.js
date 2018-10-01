@@ -74,12 +74,14 @@ describe('VpnInitializer', () => {
   describe('.initialize', () => {
     let tequilapiManipulator
     let tequilapi
+    let state: IdentityState
 
     const updateClientVersion: () => Promise<void> = async () => {}
 
     beforeEach(() => {
       tequilapiManipulator = new MockTequilapiManipulator('test version')
       tequilapi = tequilapiManipulator.getTequilapi()
+      state = { current: null, unlocked: false, registration: null }
     })
 
     describe('with some identities', () => {
@@ -91,7 +93,6 @@ describe('VpnInitializer', () => {
       })
 
       it('stores first fetched identity', async () => {
-        const state: IdentityState = { current: null, unlocked: false }
         const commit = (mutation, ...args: Array<any>) => {
           if (mutation === types.SET_CURRENT_IDENTITY && args.length === 1) {
             state.current = args[0]
@@ -122,7 +123,6 @@ describe('VpnInitializer', () => {
             unlocked = true
           }
         }
-        const state: IdentityState = { current: null, unlocked: false }
         const identityManager = new IdentityManager(tequilapi, commit, state)
         await new VpnInitializer(tequilapi).initialize(identityManager, updateClientVersion)
 
@@ -144,7 +144,6 @@ describe('VpnInitializer', () => {
           const commit = (...args: Array<any>) => {
             committed.push(args)
           }
-          const state: IdentityState = { current: null, unlocked: false }
           const vpnInitializer = new VpnInitializer(tequilapi)
           const identityManager = new IdentityManager(tequilapi, commit, state)
           const err = await capturePromiseError(vpnInitializer.initialize(identityManager, updateClientVersion))
@@ -171,7 +170,6 @@ describe('VpnInitializer', () => {
               state.current = args[1]
             }
           }
-          const state: IdentityState = { current: null, unlocked: false }
           const identityManager = new IdentityManager(tequilapi, commit, state)
           const vpnInitializer = new VpnInitializer(tequilapi)
           const err = await capturePromiseError(vpnInitializer.initialize(identityManager, updateClientVersion))
@@ -199,7 +197,6 @@ describe('VpnInitializer', () => {
               state.current = args[1]
             }
           }
-          const state: IdentityState = { current: null, unlocked: false }
           const identityManager = new IdentityManager(tequilapi, commit, state)
           const vpnInitializer = new VpnInitializer(tequilapi)
           const err = await capturePromiseError(vpnInitializer.initialize(identityManager, updateClientVersion))

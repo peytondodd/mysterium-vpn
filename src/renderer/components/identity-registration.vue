@@ -18,7 +18,7 @@
 <template>
   <div>
     <identity-button
-      v-if="registration && !isIdentityMenuOpen"
+      v-if="registrationFetched && !isIdentityMenuOpen"
       :registered="registered"
       :click="openPaymentsOrShowInstructions"/>
     <div
@@ -47,7 +47,7 @@
         </ul>
         <div
           class="btn"
-          v-if="registration"
+          v-if="registrationFetched"
           @click="openPaymentsUrl()">
           Register Your ID
         </div>
@@ -75,7 +75,6 @@ export default {
   dependencies: ['rendererCommunication', 'getPaymentLink'],
   data () {
     return {
-      registration: null,
       identityMenuOpen: false
     }
   },
@@ -99,9 +98,15 @@ export default {
     }
   },
   computed: {
+    registrationFetched () {
+      return this.registration != null
+    },
+    registration () {
+      return this.$store.state.identity.registration
+    },
     registered () {
       if (!this.registration) {
-        return null
+        return false
       }
       return this.registration.registered
     },
@@ -111,7 +116,7 @@ export default {
   },
   mounted () {
     this.rendererCommunication.identityRegistration.on(registration => {
-      this.registration = registration
+      this.$store.commit(types.SET_IDENTITY_REGISTRATION, registration)
     })
   }
 }

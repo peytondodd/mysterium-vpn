@@ -20,15 +20,18 @@ import type from '../types'
 import IdentityDTO from 'mysterium-tequilapi/lib/dto/identity'
 import type { BugReporter } from '../../../app/bug-reporting/interface'
 import type { RendererCommunication } from '../../../app/communication/renderer-communication'
+import IdentityRegistrationDTO from 'mysterium-tequilapi/lib/dto/identity-registration'
 
 type State = {
   current: ?IdentityDTO,
-  unlocked: boolean
+  unlocked: boolean,
+  registration: ?IdentityRegistrationDTO
 }
 
 const state: State = {
   current: null,
-  unlocked: false
+  unlocked: false,
+  registration: null
 }
 
 function mutationsFactory (bugReporter: BugReporter, communication: RendererCommunication) {
@@ -47,6 +50,9 @@ function mutationsFactory (bugReporter: BugReporter, communication: RendererComm
     // TODO: remove duplicated mutation
     [type.IDENTITY_UNLOCK_FAIL] (state) {
       state.unlocked = false
+    },
+    [type.SET_IDENTITY_REGISTRATION]: (state: State, registration: IdentityRegistrationDTO) => {
+      state.registration = registration
     }
   }
 }

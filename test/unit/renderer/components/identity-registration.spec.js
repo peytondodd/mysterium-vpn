@@ -29,6 +29,8 @@ import IdentityRegistrationDTO from 'mysterium-tequilapi/lib/dto/identity-regist
 import Vuex from 'vuex'
 import mainStoreFactory from '@/store/modules/main'
 import EmptyTequilapiClientMock from '../store/modules/empty-tequilapi-client-mock'
+import identityStoreFactory from '../../../../src/renderer/store/modules/identity'
+import BugReporterMock from '../../../helpers/bug-reporter-mock'
 
 describe('IdentityRegistration', () => {
   let rendererCommunication: RendererCommunication
@@ -47,9 +49,11 @@ describe('IdentityRegistration', () => {
     dependencies.constant('getPaymentLink', () => {})
 
     const tequilapi = new EmptyTequilapiClientMock()
+    const bugReporter = new BugReporterMock()
     const store = new Vuex.Store({
       modules: {
-        main: mainStoreFactory(tequilapi)
+        main: mainStoreFactory(tequilapi),
+        identity: identityStoreFactory(bugReporter, rendererCommunication)
       }
     })
 
