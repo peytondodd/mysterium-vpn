@@ -23,27 +23,29 @@ import type { State } from '../../../../../src/renderer/store/modules/identity'
 import IdentityDTO from 'mysterium-tequilapi/lib/dto/identity'
 import { captureError } from '../../../../helpers/utils'
 
-describe('getters', () => {
-  describe('currentIdentity', () => {
-    it('returns id of identity', () => {
-      const state: State = {
-        current: new IdentityDTO({ id: 'identity id' }),
-        unlocked: false
-      }
-      expect(getters.currentIdentity(state)).to.eql('identity id')
-    })
+describe('identity store', () => {
+  describe('getters', () => {
+    describe('.currentIdentity', () => {
+      it('returns id of identity', () => {
+        const state: State = {
+          current: new IdentityDTO({ id: 'identity id' }),
+          unlocked: false
+        }
+        expect(getters.currentIdentity(state)).to.eql('identity id')
+      })
 
-    it('throws error when identity is not present', () => {
-      const state: State = {
-        current: null,
-        unlocked: false
-      }
-      const error = captureError(() => getters.currentIdentity(state))
-      if (!error) {
-        throw new Error('Expected error not thrown')
-      }
-      expect(error).to.be.an('error')
-      expect(error.message).to.eql('Trying to get identity which is not present')
+      it('throws error when identity is not present', () => {
+        const state: State = {
+          current: null,
+          unlocked: false
+        }
+        const error = captureError(() => getters.currentIdentity(state))
+        if (!error) {
+          throw new Error('Expected error not thrown')
+        }
+        expect(error).to.be.an('error')
+        expect(error.message).to.eql('Trying to get identity which is not present')
+      })
     })
   })
 })
