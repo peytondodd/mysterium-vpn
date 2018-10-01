@@ -23,8 +23,10 @@ import type {
   AppErrorDTO,
   ConnectionStatusChangeDTO,
   CountriesDTO,
-  CurrentIdentityChangeDTO, FavoriteProviderDTO,
-  RequestConnectionDTO, RequestTermsDTO,
+  CurrentIdentityChangeDTO,
+  FavoriteProviderDTO,
+  RequestConnectionDTO,
+  RequestTermsDTO,
   TermsAnsweredDTO
 } from './dto'
 import IdentityRegistrationDTO from 'mysterium-tequilapi/lib/dto/identity-registration'
