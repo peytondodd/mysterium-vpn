@@ -21,7 +21,6 @@ import { beforeEach, describe, it, expect } from '../../../helpers/dependencies'
 import Vpn from '../../../../src/renderer/pages/vpn'
 import Vuex, { Store } from 'vuex'
 import DIContainer from '../../../../src/app/di/vue-container'
-import RendererCommunication from '../../../../src/app/communication/renderer-communication'
 import messages from '../../../../src/app/communication/messages'
 import FakeMessageBus from '../../../helpers/fake-message-bus'
 import BugReporterMock from '../../../helpers/bug-reporter-mock'
@@ -29,6 +28,7 @@ import Vue from 'vue'
 import StartupEventTracker from '../../../../src/app/statistics/startup-event-tracker'
 import MockEventSender from '../../../helpers/statistics/mock-event-sender'
 import { UserSettingsProxy } from '../../../../src/app/user-settings/user-settings-proxy'
+import { buildRendererCommunication } from '../../../../src/app/communication/renderer-communication'
 Vue.use(Vuex)
 
 describe('Vpn', () => {
@@ -41,7 +41,7 @@ describe('Vpn', () => {
     fakeMessageBus = new FakeMessageBus()
     const dependencies = new DIContainer(vue)
     const startupEventTracker = new StartupEventTracker(new MockEventSender())
-    const communication = new RendererCommunication(fakeMessageBus)
+    const communication = buildRendererCommunication(fakeMessageBus)
     dependencies.constant('rendererCommunication', communication)
     dependencies.constant('bugReporter', bugReporterMock)
     dependencies.constant('startupEventTracker', startupEventTracker)
@@ -85,7 +85,6 @@ describe('Vpn', () => {
       })
 
       vpnWrapper = mountWith(store)
-      fakeMessageBus.clean()
     })
 
     it('it shows error when empty proposal list is received', async () => {

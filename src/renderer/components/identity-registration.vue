@@ -109,7 +109,7 @@ export default {
     }
   },
   mounted () {
-    this.rendererCommunication.onRegistrationUpdate(registration => {
+    this.rendererCommunication.identityRegistration.on(registration => {
       this.registration = registration
     })
   }

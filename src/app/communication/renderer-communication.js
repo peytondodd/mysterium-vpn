@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 The "mysteriumnetwork/mysterium-vpn" Authors.
+ * Copyright (C) 2018 The "mysteriumnetwork/mysterium-vpn" Authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,141 +16,85 @@
  */
 
 // @flow
-
-import messages from './messages'
 import type { MessageBus } from './message-bus'
+import { buildMessageTransports } from './message-transport'
 import type {
-  ConnectionStatusChangeDTO,
-  CurrentIdentityChangeDTO,
-  RequestConnectionDTO,
-  CountriesDTO,
-  RequestTermsDTO,
-  TermsAnsweredDTO,
   AppErrorDTO,
-  FavoriteProviderDTO
+  ConnectionStatusChangeDTO,
+  CountriesDTO, CurrentIdentityChangeDTO, FavoriteProviderDTO,
+  RequestConnectionDTO, RequestTermsDTO,
+  TermsAnsweredDTO
 } from './dto'
-
-import type { UserSettings } from '../user-settings/user-settings'
 import IdentityRegistrationDTO from 'mysterium-tequilapi/lib/dto/identity-registration'
+import type { UserSettings } from '../user-settings/user-settings'
+import { MessageReceiver } from './message-receiver'
+import { MessageSender } from './message-sender'
 
-/**
- * This allows renderer process communicating with main process.
- */
-class RendererCommunication {
-  _messageBus: MessageBus
+export type RendererCommunication = {
+  connectionStatusChanged: MessageSender<ConnectionStatusChangeDTO>,
+  connectionRequest: MessageReceiver<RequestConnectionDTO>,
+  connectionCancel: MessageReceiver<void>,
+  reconnectRequest: MessageReceiver<void>,
 
-  constructor (messageBus: MessageBus) {
-    this._messageBus = messageBus
-  }
+  mysteriumClientReady: MessageReceiver<void>,
+  currentIdentityChanged: MessageSender<CurrentIdentityChangeDTO>,
 
-  sendRendererBooted (): void {
-    return this._send(messages.RENDERER_BOOTED)
-  }
+  termsRequested: MessageReceiver<RequestTermsDTO>,
+  termsAnswered: MessageSender<TermsAnsweredDTO>,
+  termsAccepted: MessageReceiver<void>,
 
-  onShowRendererError (callback: AppErrorDTO => void): void {
-    this._on(messages.RENDERER_SHOW_ERROR, callback)
-  }
+  rendererBooted: MessageSender<void>,
+  rendererShowError: MessageReceiver<AppErrorDTO>,
 
-  sendConnectionStatusChange (dto: ConnectionStatusChangeDTO): void {
-    return this._send(messages.CONNECTION_STATUS_CHANGED, dto)
-  }
+  healthcheckUp: MessageReceiver<void>,
+  healthcheckDown: MessageReceiver<void>,
 
-  sendCurrentIdentityChange (dto: CurrentIdentityChangeDTO): void {
-    return this._send(messages.CURRENT_IDENTITY_CHANGED, dto)
-  }
+  proposalsUpdate: MessageSender<void>,
+  countryUpdate: MessageReceiver<CountriesDTO>,
 
-  sendProposalUpdateRequest () {
-    return this._send(messages.PROPOSALS_UPDATE)
-  }
+  identityRegistration: MessageReceiver<IdentityRegistrationDTO>,
 
-  sendTermsAnswered (dto: TermsAnsweredDTO): void {
-    return this._send(messages.TERMS_ANSWERED, dto)
-  }
+  toggleFavoriteProvider: MessageSender<FavoriteProviderDTO>,
+  showDisconnectNotification: MessageSender<boolean>,
 
-  sendUserSettingsRequest (): void {
-    return this._send(messages.USER_SETTINGS_REQUEST)
-  }
-
-  sendUserSettingsUpdate (dto: UserSettings): void {
-    return this._send(messages.USER_SETTINGS_UPDATE, dto)
-  }
-
-  sendUserSettingsShowDisconnectNotifications (data: boolean): void {
-    return this._send(messages.SHOW_DISCONNECT_NOTIFICATION, data)
-  }
-
-  sendToggleFavoriteProvider (data: FavoriteProviderDTO): void {
-    return this._send(messages.TOGGLE_FAVORITE_PROVIDER, data)
-  }
-
-  onUserSettings (callback: UserSettings => void): void {
-    this._on(messages.USER_SETTINGS, callback)
-  }
-
-  removeOnUserSettingsCallback (callback: UserSettings => void): void {
-    this._removeCallback(messages.USER_SETTINGS, callback)
-  }
-
-  onReconnectRequest (callback: () => void): void {
-    this._on(messages.RECONNECT_REQUEST, callback)
-  }
-
-  onConnectionRequest (callback: RequestConnectionDTO => void) {
-    this._on(messages.CONNECTION_REQUEST, callback)
-  }
-
-  removeConnectionRequestCallback (callback: UserSettings => void): void {
-    this._removeCallback(messages.CONNECTION_REQUEST, callback)
-  }
-
-  // TODO: unify naming 'disconnection' and 'connection cancel'
-  onDisconnectionRequest (callback: () => void) {
-    this._on(messages.CONNECTION_CANCEL, callback)
-  }
-
-  onCountriesUpdate (callback: CountriesDTO => void) {
-    this._on(messages.COUNTRY_UPDATE, callback)
-  }
-
-  removeCountriesUpdateCallback (callback: UserSettings => void): void {
-    this._removeCallback(messages.COUNTRY_UPDATE, callback)
-  }
-
-  onRegistrationUpdate (callback: IdentityRegistrationDTO => void) {
-    this._on(messages.IDENTITY_REGISTRATION, callback)
-  }
-
-  onMysteriumClientIsReady (callback: () => void) {
-    this._on(messages.MYSTERIUM_CLIENT_READY, callback)
-  }
-
-  onMysteriumClientUp (callback: () => void): void {
-    this._on(messages.HEALTHCHECK_UP, callback)
-  }
-
-  onMysteriumClientDown (callback: () => void): void {
-    this._on(messages.HEALTHCHECK_DOWN, callback)
-  }
-
-  onTermsRequest (callback: RequestTermsDTO => void): void {
-    this._on(messages.TERMS_REQUESTED, callback)
-  }
-
-  onTermsAccepted (callback: () => void): void {
-    this._on(messages.TERMS_ACCEPTED, callback)
-  }
-
-  _send (channel: string, dto: mixed): void {
-    this._messageBus.send(channel, dto)
-  }
-
-  _on (channel: string, callback: (dto: any) => void): void {
-    this._messageBus.on(channel, callback)
-  }
-
-  _removeCallback (channel: string, callback: (dto: any) => void): void {
-    this._messageBus.removeCallback(channel, callback)
-  }
+  userSettingsSender: MessageSender<UserSettings>,
+  userSettingsReceiver: MessageReceiver<UserSettings>,
+  userSettingsRequest: MessageSender<void>,
+  userSettingsUpdate: MessageSender<UserSettings>
 }
 
-export default RendererCommunication
+export function buildRendererCommunication (messageBus: MessageBus): RendererCommunication {
+  const transports = buildMessageTransports(messageBus)
+  return {
+    connectionStatusChanged: transports.connectionStatusChanged.buildSender(),
+    connectionRequest: transports.connectionRequest.buildReceiver(),
+    connectionCancel: transports.connectionCancel.buildReceiver(),
+    reconnectRequest: transports.reconnectRequest.buildReceiver(),
+
+    mysteriumClientReady: transports.mysteriumClientReady.buildReceiver(),
+    currentIdentityChanged: transports.currentIdentityChanged.buildSender(),
+
+    termsRequested: transports.termsRequested.buildReceiver(),
+    termsAnswered: transports.termsAnswered.buildSender(),
+    termsAccepted: transports.termsAccepted.buildReceiver(),
+
+    rendererBooted: transports.rendererBooted.buildSender(),
+    rendererShowError: transports.rendererShowError.buildReceiver(),
+
+    healthcheckUp: transports.healthcheckUp.buildReceiver(),
+    healthcheckDown: transports.healthcheckDown.buildReceiver(),
+
+    proposalsUpdate: transports.proposalsUpdate.buildSender(),
+    countryUpdate: transports.countryUpdate.buildReceiver(),
+
+    identityRegistration: transports.identityRegistration.buildReceiver(),
+
+    toggleFavoriteProvider: transports.toggleFavoriteProvider.buildSender(),
+    showDisconnectNotification: transports.showDisconnectNotification.buildSender(),
+
+    userSettingsSender: transports.userSettings.buildSender(),
+    userSettingsReceiver: transports.userSettings.buildReceiver(),
+    userSettingsRequest: transports.userSettingsRequest.buildSender(),
+    userSettingsUpdate: transports.userSettingsUpdate.buildSender()
+  }
+}

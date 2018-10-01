@@ -16,6 +16,8 @@
  */
 
 // @flow
+import type { MessageReceiver } from './message-receiver'
+
 type Callback = (data: any) => void
 type Subscriber = (Callback) => void
 
@@ -56,4 +58,12 @@ function onFirstEventOrTimeout (subscriber: Subscriber, timeout: number): Promis
   })
 }
 
-export { onFirstEvent, onFirstEventOrTimeout }
+function onceOnMessage<T> (receiver: MessageReceiver<T>, callback: T => void) {
+  const wrapperCallback = (data: T) => {
+    callback(data)
+    receiver.removeCallback(wrapperCallback)
+  }
+  receiver.on(wrapperCallback)
+}
+
+export { onFirstEvent, onFirstEventOrTimeout, onceOnMessage }

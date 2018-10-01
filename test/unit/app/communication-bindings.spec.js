@@ -21,7 +21,6 @@ import { beforeEach, describe, expect, it } from '../../helpers/dependencies'
 import CommunicationBindings from '../../../src/app/communication-bindings'
 import StartupEventTracker from '../../../src/app/statistics/startup-event-tracker'
 import MockEventSender from '../../helpers/statistics/mock-event-sender'
-import MainMessageBusCommunication from '../../../src/app/communication/main-message-bus-communication'
 import SubscribableMessageBus from '../../helpers/subscribable-message-bus'
 import messages from '../../../src/app/communication/messages'
 import TequilapiRegistrationFetcher from '../../../src/app/data-fetchers/tequilapi-registration-fetcher'
@@ -33,6 +32,7 @@ import { UserSettingsStorage } from '../../../src/app/user-settings/user-setting
 import Notification from '../../../src/app/notification'
 import ConnectionStatusEnum from 'mysterium-tequilapi/lib/dto/connection-status-enum'
 import { nextTick } from '../../helpers/utils'
+import { buildMainCommunication } from '../../../src/app/communication/main-communication'
 
 class TequilapiRegistrationFetcherMock extends TequilapiRegistrationFetcher {
   startedWithId: ?string
@@ -64,8 +64,8 @@ describe('CommunicationBindings', () => {
 
   beforeEach(() => {
     msgBus = new SubscribableMessageBus()
-    const com = new MainMessageBusCommunication(msgBus)
-    comBinds = new CommunicationBindings(com)
+    const communication = buildMainCommunication(msgBus)
+    comBinds = new CommunicationBindings(communication)
   })
 
   describe('.showNotificationOnDisconnect', () => {

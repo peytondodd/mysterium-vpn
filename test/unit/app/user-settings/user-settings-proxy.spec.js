@@ -20,24 +20,24 @@ import { userSettingName } from '../../../../src/app/user-settings/user-settings
 import { beforeEach, describe, expect, it } from '../../../helpers/dependencies'
 import { captureError, RepeatableCallbackRecorder } from '../../../helpers/utils'
 import type { UserSettings } from '../../../../src/app/user-settings/user-settings'
-import RendererCommunication from '../../../../src/app/communication/renderer-communication'
 import FakeMessageBus from '../../../helpers/fake-message-bus'
 import messages from '../../../../src/app/communication/messages'
 import { UserSettingsProxy } from '../../../../src/app/user-settings/user-settings-proxy'
+import { buildRendererCommunication } from '../../../../src/app/communication/renderer-communication'
 
 describe('UserSettingsProxy', () => {
-  let msgBus, com
+  let msgBus, communication
   let settingsProxy
 
   beforeEach(() => {
     msgBus = new FakeMessageBus()
-    com = new RendererCommunication(msgBus)
-    settingsProxy = new UserSettingsProxy(com)
+    communication = buildRendererCommunication(msgBus)
+    settingsProxy = new UserSettingsProxy(communication)
   })
 
   describe('.startListening', () => {
     it('requests initial settings', () => {
-      const proxy = new UserSettingsProxy(com)
+      const proxy = new UserSettingsProxy(communication)
       proxy.startListening()
 
       expect(msgBus.lastChannel).to.eql(messages.USER_SETTINGS_REQUEST)

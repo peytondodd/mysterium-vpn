@@ -20,7 +20,6 @@ import type from '../types'
 
 import { FunctionLooper } from '../../../libraries/function-looper'
 import config from '@/config'
-import RendererCommunication from '../../../app/communication/renderer-communication'
 import type { TequilapiClient } from 'mysterium-tequilapi/lib/client'
 import type { ConnectionStatus } from 'mysterium-tequilapi/lib/dto/connection-status-enum'
 import ConnectionStatusEnum from 'mysterium-tequilapi/lib/dto/connection-status-enum'
@@ -35,6 +34,7 @@ import { ConnectionStatsFetcher } from '../../../app/connection/connection-stats
 import type { ConnectionState } from '../../../app/connection/connection-state'
 import type { Provider } from '../../../app/connection/provider'
 import messages from '../../../app/messages'
+import type { RendererCommunication } from '../../../app/communication/renderer-communication'
 
 type ConnectionStore = {
   ip?: ?string,
@@ -121,7 +121,7 @@ const mutations = {
 
 function actionsFactory (
   tequilapi: TequilapiClient,
-  rendererCommunication: RendererCommunication,
+  communication: RendererCommunication,
   bugReporter: BugReporter,
   connectionEstablisher: ConnectionEstablisher
 ) {
@@ -186,7 +186,7 @@ function actionsFactory (
         return
       }
       commit(type.SET_CONNECTION_STATUS, newStatus)
-      rendererCommunication.sendConnectionStatusChange({ oldStatus, newStatus })
+      communication.connectionStatusChanged.send({ oldStatus, newStatus })
 
       if (newStatus === ConnectionStatusEnum.CONNECTED) {
         commit(type.CONNECTION_IP, null)

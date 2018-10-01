@@ -17,12 +17,12 @@
 
 // @flow
 import { app, Tray as ElectronTray, Menu } from 'electron'
-import type { MainCommunication } from '../../app/communication/main-communication'
 import Window from '../../app/window'
 import TrayMenuBuilder from './menu-builder'
 import Tray from './tray'
 import type { ConnectionStatusChangeDTO } from '../../app/communication/dto'
 import CountryList from '../../app/data-fetchers/country-list'
+import type { MainCommunication } from '../../app/communication/main-communication'
 
 const trayFactory = (
   communication: MainCommunication,
@@ -48,7 +48,9 @@ const trayFactory = (
   const tray = new Tray(trayFactory, templateBuilder, menuBuilder, iconPath)
   tray.build()
 
-  communication.onConnectionStatusChange((change: ConnectionStatusChangeDTO) => tray.setStatus(change.newStatus))
+  communication.connectionStatusChanged.on((change: ConnectionStatusChangeDTO) => {
+    tray.setStatus(change.newStatus)
+  })
   countryList.onUpdate(countries => tray.setCountries(countries))
 }
 
