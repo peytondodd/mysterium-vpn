@@ -31,6 +31,7 @@ const state: State = {
   unlocked: false
 }
 
+// TODO: do not pass the whole Container, pass only what is actually needed
 function mutationsFactory (dependencies: Container) {
   const bugReporter = dependencies.get('bugReporter')
   const communication = dependencies.get('rendererCommunication')

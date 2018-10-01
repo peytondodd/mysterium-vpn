@@ -26,6 +26,9 @@ import { buildMainCommunication } from '../../../../src/app/communication/main-c
 import type { RendererCommunication } from '../../../../src/app/communication/renderer-communication'
 import type { MainCommunication } from '../../../../src/app/communication/main-communication'
 import IdentityRegistrationDTO from 'mysterium-tequilapi/lib/dto/identity-registration'
+import Vuex from 'vuex'
+import mainStoreFactory from '@/store/modules/main'
+import EmptyTequilapiClientMock from '../store/modules/empty-tequilapi-client-mock'
 
 describe('IdentityRegistration', () => {
   let rendererCommunication: RendererCommunication
@@ -42,8 +45,17 @@ describe('IdentityRegistration', () => {
 
     dependencies.constant('rendererCommunication', rendererCommunication)
     dependencies.constant('getPaymentLink', () => {})
+
+    const tequilapi = new EmptyTequilapiClientMock()
+    const store = new Vuex.Store({
+      modules: {
+        main: mainStoreFactory(tequilapi)
+      }
+    })
+
     vue = mount(IdentityRegistration, {
-      localVue: vm
+      localVue: vm,
+      store
     })
   })
 

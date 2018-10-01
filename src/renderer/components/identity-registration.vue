@@ -18,16 +18,16 @@
 <template>
   <div>
     <identity-button
-      v-if="registration && !showInstructions"
+      v-if="registration && !isIdentityMenuOpen"
       :registered="registered"
       :click="openPaymentsOrShowInstructions"/>
     <div
       class="app__nav nav"
       id="registration-instructions"
-      :class="{'is-open': showInstructions}">
+      :class="{'is-open': isIdentityMenuOpen}">
       <div
         class="nav__content"
-        :class="{'is-open': showInstructions}">
+        :class="{'is-open': isIdentityMenuOpen}">
         <close-button :click="hideInstructions"/>
 
         <h2>Activate your ID</h2>
@@ -54,9 +54,9 @@
       </div>
       <transition name="fade">
         <div
-          v-if="showInstructions"
+          v-if="isIdentityMenuOpen"
           class="nav__backdrop"
-          @click="showInstructions = false"/>
+          @click="hideInstructions"/>
       </transition>
     </div>
   </div>
@@ -67,6 +67,7 @@
 import { shell } from 'electron'
 import CloseButton from './close-button'
 import IdentityButton from './identity-button'
+import types from '../store/types'
 
 export default {
   name: 'IdentityRegistration',
@@ -75,7 +76,7 @@ export default {
   data () {
     return {
       registration: null,
-      showInstructions: false
+      identityMenuOpen: false
     }
   },
   methods: {
@@ -83,15 +84,18 @@ export default {
       if (this.registered) {
         this.openPaymentsUrl()
       } else {
-        this.showInstructions = true
+        this.showInstructions()
       }
     },
     openPaymentsUrl () {
       const url = this.getPaymentLink(this.registration)
       shell.openExternal(url)
     },
+    showInstructions () {
+      this.$store.commit(types.SHOW_IDENTITY_MENU)
+    },
     hideInstructions () {
-      this.showInstructions = false
+      this.$store.commit(types.HIDE_IDENTITY_MENU)
     }
   },
   computed: {
@@ -100,6 +104,9 @@ export default {
         return null
       }
       return this.registration.registered
+    },
+    isIdentityMenuOpen () {
+      return this.$store.state.main.identityMenuOpen
     }
   },
   mounted () {

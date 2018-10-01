@@ -24,6 +24,7 @@ type State = {
   init: string,
   visual: string,
   navOpen: boolean,
+  identityMenuOpen: boolean,
   clientVersion: ?string,
   navVisible: boolean,
   // TODO: merge `errorMessage` and `error` into one
@@ -36,6 +37,7 @@ const state: State = {
   init: '',
   visual: 'head',
   navOpen: false,
+  identityMenuOpen: false,
   clientVersion: null,
   navVisible: true,
   errorMessage: null,
@@ -59,6 +61,12 @@ const mutations = {
   },
   [type.SET_NAV_OPEN] (state: State, open) {
     state.navOpen = open
+  },
+  [type.SHOW_IDENTITY_MENU] (state: State) {
+    state.identityMenuOpen = true
+  },
+  [type.HIDE_IDENTITY_MENU] (state: State) {
+    state.identityMenuOpen = false
   },
   [type.SET_NAV_VISIBLE] (state: State, visible: boolean) {
     state.navVisible = visible
@@ -119,4 +127,5 @@ export {
   getters,
   actionsFactory
 }
+export type { State }
 export default factory
