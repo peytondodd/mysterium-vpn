@@ -17,9 +17,9 @@
 
 // @flow
 import type from '../types'
-import type { TequilapiClient } from 'mysterium-tequilapi/lib/client'
 import IdentityDTO from 'mysterium-tequilapi/lib/dto/identity'
-import type { Container } from '../../../app/di'
+import type { BugReporter } from '../../../app/bug-reporting/interface'
+import type { RendererCommunication } from '../../../app/communication/renderer-communication'
 
 type State = {
   current: ?IdentityDTO,
@@ -31,10 +31,7 @@ const state: State = {
   unlocked: false
 }
 
-// TODO: do not pass the whole Container, pass only what is actually needed
-function mutationsFactory (dependencies: Container) {
-  const bugReporter = dependencies.get('bugReporter')
-  const communication = dependencies.get('rendererCommunication')
+function mutationsFactory (bugReporter: BugReporter, communication: RendererCommunication) {
   return {
     [type.SET_CURRENT_IDENTITY] (state, identity: IdentityDTO) {
       state.current = identity
@@ -64,11 +61,11 @@ const getters = {
   }
 }
 
-function factory (tequilapi: TequilapiClient, dependenciesContainer: Container) {
+function factory (bugReporter: BugReporter, communication: RendererCommunication) {
   return {
     state,
     getters,
-    mutations: mutationsFactory(dependenciesContainer)
+    mutations: mutationsFactory(bugReporter, communication)
   }
 }
 

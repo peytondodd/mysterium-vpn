@@ -65,7 +65,7 @@ describe('VpnLoader', () => {
     localVue.use(Vuex)
     const store = new Vuex.Store({
       modules: {
-        identity: idStoreFactory(tequilapi, dependencies),
+        identity: idStoreFactory(bugReporter, communication),
         main: mainStoreFactory(tequilapi),
         errors: errorStore,
         connection: {
