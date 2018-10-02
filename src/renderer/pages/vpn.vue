@@ -97,7 +97,7 @@ export default {
     AppError,
     IdentityButton
   },
-  dependencies: ['bugReporter', 'rendererCommunication', 'startupEventTracker', 'userSettingsStore'],
+  dependencies: ['bugReporter', 'rendererCommunication', 'startupEventTracker', 'userSettingsStore', 'getPaymentLink'],
   data () {
     return {
       country: null,
