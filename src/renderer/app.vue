@@ -113,8 +113,6 @@ export default {
 
     // if the client was down, but now up, we need to unlock the identity once again
     this.rendererCommunication.healthcheckUp.on(() => {
-      this.$store.dispatch('setClientRunningState', true)
-
       // TODO Such conditional behaviour should be dropped at all
       // do nothing while on terms page
       if (this.$route.name !== 'terms') {
@@ -123,8 +121,6 @@ export default {
       }
     })
     this.rendererCommunication.healthcheckDown.on(() => {
-      this.$store.dispatch('setClientRunningState', false)
-
       // TODO Such conditional behaviour should be dropped at all
       // do nothing while on terms page
       if (this.$route.name !== 'terms') {
