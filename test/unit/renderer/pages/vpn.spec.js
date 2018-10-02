@@ -50,6 +50,7 @@ describe('Vpn', () => {
     dependencies.constant('bugReporter', bugReporterMock)
     dependencies.constant('startupEventTracker', startupEventTracker)
     dependencies.constant('userSettingsStore', new UserSettingsProxy(communication))
+    dependencies.constant('getPaymentLink', () => 'mock url')
 
     const store = new Store({
       getters: {
