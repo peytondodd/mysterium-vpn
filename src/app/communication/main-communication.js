@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 The "mysteriumnetwork/mysterium-vpn" Authors.
+ * Copyright (C) 2018 The "mysteriumnetwork/mysterium-vpn" Authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,62 +17,88 @@
 
 // @flow
 
+import type { MessageBus } from './message-bus'
+import { buildMessageTransports } from './message-transport'
 import type {
-  RequestConnectionDTO,
+  AppErrorDTO,
   ConnectionStatusChangeDTO,
-  CurrentIdentityChangeDTO,
   CountriesDTO,
+  CurrentIdentityChangeDTO,
+  FavoriteProviderDTO,
+  RequestConnectionDTO,
   RequestTermsDTO,
-  TermsAnsweredDTO,
-  AppErrorDTO, FavoriteProviderDTO
+  TermsAnsweredDTO
 } from './dto'
-import type { UserSettings } from '../user-settings/user-settings'
 import IdentityRegistrationDTO from 'mysterium-tequilapi/lib/dto/identity-registration'
+import type { UserSettings } from '../user-settings/user-settings'
+import { MessageReceiver } from './message-receiver'
+import { MessageSender } from './message-sender'
 
-interface MainCommunication {
-  onRendererBooted (callback: () => void): void,
+export type MainCommunication = {
+  connectionStatusChanged: MessageReceiver<ConnectionStatusChangeDTO>,
+  connectionRequest: MessageSender<RequestConnectionDTO>,
+  connectionCancel: MessageSender<void>,
+  reconnectRequest: MessageSender<void>,
 
-  sendRendererShowErrorMessage (error: string): void,
+  mysteriumClientReady: MessageSender<void>,
+  currentIdentityChanged: MessageReceiver<CurrentIdentityChangeDTO>,
 
-  sendRendererShowError (data: AppErrorDTO): void,
+  termsRequested: MessageSender<RequestTermsDTO>,
+  termsAnswered: MessageReceiver<TermsAnsweredDTO>,
+  termsAccepted: MessageSender<void>,
 
-  sendMysteriumClientIsReady (): void,
+  rendererBooted: MessageReceiver<void>,
+  rendererShowError: MessageSender<AppErrorDTO>,
 
-  sendMysteriumClientUp (): void,
+  healthcheckUp: MessageSender<void>,
+  healthcheckDown: MessageSender<void>,
 
-  sendMysteriumClientDown (): void,
+  proposalsUpdate: MessageReceiver<void>,
+  countryUpdate: MessageSender<CountriesDTO>,
 
-  sendCountries (countries: CountriesDTO): void,
+  identityRegistration: MessageSender<IdentityRegistrationDTO>,
 
-  sendRegistration (registered: IdentityRegistrationDTO): void,
+  toggleFavoriteProvider: MessageReceiver<FavoriteProviderDTO>,
+  showDisconnectNotification: MessageReceiver<boolean>,
 
-  sendConnectionCancelRequest (): void,
-
-  sendConnectionRequest (data: RequestConnectionDTO): void,
-
-  sendTermsRequest (data: RequestTermsDTO): void,
-
-  sendTermsAccepted (): void,
-
-  sendUserSettings (data: UserSettings): void,
-
-  onToggleFavoriteProvider (callback: (FavoriteProviderDTO) => void): void,
-
-  onUserSettingsShowDisconnectNotifications (callback: (boolean) => void): void,
-
-  onConnectionStatusChange (callback: (ConnectionStatusChangeDTO) => void): void,
-
-  onCurrentIdentityChange (callback: (CurrentIdentityChangeDTO) => void): void,
-
-  onCurrentIdentityChangeOnce (callback: (CurrentIdentityChangeDTO) => void): void,
-
-  onProposalUpdateRequest (callback: () => void): void,
-
-  onTermsAnswered (callback: (TermsAnsweredDTO) => void): void,
-
-  onUserSettingsUpdate (callback: (UserSettings) => void): void,
-
-  onUserSettingsRequest (callback: () => void): void
+  userSettingsReceiver: MessageReceiver<UserSettings>,
+  userSettingsSender: MessageSender<UserSettings>,
+  userSettingsRequest: MessageReceiver<void>,
+  userSettingsUpdate: MessageReceiver<UserSettings>
 }
 
-export type { MainCommunication }
+export function buildMainCommunication (messageBus: MessageBus): MainCommunication {
+  const transports = buildMessageTransports(messageBus)
+  return {
+    connectionStatusChanged: transports.connectionStatusChanged.buildReceiver(),
+    connectionRequest: transports.connectionRequest.buildSender(),
+    connectionCancel: transports.connectionCancel.buildSender(),
+    reconnectRequest: transports.reconnectRequest.buildSender(),
+
+    mysteriumClientReady: transports.mysteriumClientReady.buildSender(),
+    currentIdentityChanged: transports.currentIdentityChanged.buildReceiver(),
+
+    termsRequested: transports.termsRequested.buildSender(),
+    termsAnswered: transports.termsAnswered.buildReceiver(),
+    termsAccepted: transports.termsAccepted.buildSender(),
+
+    rendererBooted: transports.rendererBooted.buildReceiver(),
+    rendererShowError: transports.rendererShowError.buildSender(),
+
+    healthcheckUp: transports.healthcheckUp.buildSender(),
+    healthcheckDown: transports.healthcheckDown.buildSender(),
+
+    proposalsUpdate: transports.proposalsUpdate.buildReceiver(),
+    countryUpdate: transports.countryUpdate.buildSender(),
+
+    identityRegistration: transports.identityRegistration.buildSender(),
+
+    toggleFavoriteProvider: transports.toggleFavoriteProvider.buildReceiver(),
+    showDisconnectNotification: transports.showDisconnectNotification.buildReceiver(),
+
+    userSettingsReceiver: transports.userSettings.buildReceiver(),
+    userSettingsSender: transports.userSettings.buildSender(),
+    userSettingsRequest: transports.userSettingsRequest.buildReceiver(),
+    userSettingsUpdate: transports.userSettingsUpdate.buildReceiver()
+  }
+}

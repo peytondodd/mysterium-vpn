@@ -75,13 +75,13 @@ export default {
     logger.info('App view was mounted')
 
     // we need to notify the main process that we're up
-    this.rendererCommunication.sendRendererBooted()
+    this.rendererCommunication.rendererBooted.send()
 
-    this.rendererCommunication.onReconnectRequest(() => {
+    this.rendererCommunication.reconnectRequest.on(() => {
       this.$store.dispatch(type.RECONNECT)
     })
 
-    this.rendererCommunication.onConnectionRequest((proposal) => {
+    this.rendererCommunication.connectionRequest.on((proposal) => {
       const provider = {
         id: proposal.providerId,
         country: proposal.providerCountry
@@ -89,30 +89,30 @@ export default {
       this.$store.dispatch(type.CONNECT, provider)
     })
 
-    this.rendererCommunication.onDisconnectionRequest(() => {
+    this.rendererCommunication.connectionCancel.on(() => {
       this.$store.dispatch(type.DISCONNECT)
     })
 
-    this.rendererCommunication.onTermsRequest((terms) => {
+    this.rendererCommunication.termsRequested.on((terms) => {
       this.$store.dispatch(type.TERMS, terms)
       this.$router.push('/terms')
     })
 
-    this.rendererCommunication.onMysteriumClientIsReady(() => {
+    this.rendererCommunication.mysteriumClientReady.on(() => {
       this.$router.push('/load')
     })
 
-    this.rendererCommunication.onTermsAccepted(() => {
+    this.rendererCommunication.termsAccepted.on(() => {
       this.$router.push('/')
     })
 
-    this.rendererCommunication.onShowRendererError((error) => {
+    this.rendererCommunication.rendererShowError.on((error) => {
       logger.info('App error received from communication:', error.hint, error.message, 'fatal:', error.fatal)
       this.$store.dispatch(type.OVERLAY_ERROR, error)
     })
 
     // if the client was down, but now up, we need to unlock the identity once again
-    this.rendererCommunication.onMysteriumClientUp(() => {
+    this.rendererCommunication.healthcheckUp.on(() => {
       this.$store.dispatch('setClientRunningState', true)
 
       // TODO Such conditional behaviour should be dropped at all
@@ -122,7 +122,7 @@ export default {
         this.$router.push('/load')
       }
     })
-    this.rendererCommunication.onMysteriumClientDown(() => {
+    this.rendererCommunication.healthcheckDown.on(() => {
       this.$store.dispatch('setClientRunningState', false)
 
       // TODO Such conditional behaviour should be dropped at all
@@ -130,6 +130,10 @@ export default {
       if (this.$route.name !== 'terms') {
         this.$store.dispatch(type.OVERLAY_ERROR, messages.mysteriumCLientDown)
       }
+    })
+
+    this.rendererCommunication.identityRegistration.on(registration => {
+      this.$store.commit(type.SET_IDENTITY_REGISTRATION, registration)
     })
   }
 }

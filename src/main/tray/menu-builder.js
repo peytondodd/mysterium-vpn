@@ -18,7 +18,6 @@
 // @flow
 
 import type { Country } from '../../app/countries/index'
-import type { MainCommunication } from '../../app/communication/main-communication'
 import { getCountryLabel } from '../../app/countries/index'
 import ConnectionStatusEnum from 'mysterium-tequilapi/lib/dto/connection-status-enum'
 import type { ConnectionStatus } from 'mysterium-tequilapi/lib/dto/connection-status-enum'
@@ -27,6 +26,7 @@ import TrayMenuItem from './menu-item'
 import TrayMenuSeparator from './menu-item-separator'
 import translations from './translations'
 import messages from '../../app/messages'
+import type { MainCommunication } from '../../app/communication/main-communication'
 
 function getMenuItems (
   appQuit: Function,
@@ -38,7 +38,7 @@ function getMenuItems (
 ) {
   const disconnect = new TrayMenuItem(
     translations.disconnect,
-    () => communication.sendConnectionCancelRequest()
+    () => communication.connectionCancel.send()
   )
 
   const connectSubmenu = new TrayMenu()
@@ -49,7 +49,7 @@ function getMenuItems (
       label = '* ' + label
     }
     connectSubmenu.add(label, () => {
-      communication.sendConnectionRequest({ providerId: country.id, providerCountry: country.code })
+      communication.connectionRequest.send({ providerId: country.id, providerCountry: country.code })
     })
   })
 

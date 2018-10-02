@@ -25,7 +25,6 @@ import trayFactory from '../main/tray/factory'
 import { SUDO_PROMT_PERMISSION_DENIED } from '../libraries/mysterium-client/launch-daemon/launch-daemon-installer'
 import FeatureToggle from './features/feature-toggle'
 import translations from './messages'
-import MainMessageBusCommunication from './communication/main-message-bus-communication'
 import { onFirstEvent, onFirstEventOrTimeout } from './communication/utils'
 import path from 'path'
 import type { Size } from './window'
@@ -49,6 +48,7 @@ import MainBufferedIpc from './communication/ipc/main-buffered-ipc'
 import CommunicationBindings from './communication-bindings'
 import { METRICS, TAGS } from './bug-reporting/metrics/metrics'
 import type { BugReporterMetrics } from './bug-reporting/metrics/bug-reporter-metrics'
+import type { MainCommunication } from './communication/main-communication'
 
 const LOG_PREFIX = '[MysteriumVpn] '
 const MYSTERIUM_CLIENT_STARTUP_THRESHOLD = 10000
@@ -76,7 +76,7 @@ class MysteriumVpn {
   _featureToggle: FeatureToggle
 
   _window: Window
-  _communication: MainMessageBusCommunication
+  _communication: MainCommunication
   _ipc: MainBufferedIpc
   _syncCallbacksInitializer: SyncCallbacksInitializer
   _communicationBindings: CommunicationBindings
@@ -188,7 +188,7 @@ class MysteriumVpn {
     this._startProcessMonitoring()
     this._onProcessReady(() => {
       logInfo(`Notify that 'mysterium_client' process is ready`)
-      this._communication.sendMysteriumClientIsReady()
+      this._communication.mysteriumClientReady.send()
     })
 
     this._subscribeProposals()
@@ -202,7 +202,7 @@ class MysteriumVpn {
     this._communicationBindings.showNotificationOnDisconnect(this._userSettingsStore, this._disconnectNotification)
     // TODO: load in DI?
     await this._loadUserSettings()
-    this._disconnectNotification.onReconnect(() => this._communication.sendReconnectRequest())
+    this._disconnectNotification.onReconnect(() => this._communication.reconnectRequest.send())
   }
 
   _getWindowSize (showTerms: boolean) {
@@ -253,7 +253,7 @@ class MysteriumVpn {
   async _onRendererLoaded () {
     logInfo('Waiting for window to be rendered')
     try {
-      await onFirstEvent(this._communication.onRendererBooted.bind(this._communication))
+      await onFirstEvent(this._communication.rendererBooted.on.bind(this._communication.rendererBooted))
     } catch (e) {
       // TODO: add an error wrapper method
       throw new Error('Failed to load app. ' + e)
@@ -272,7 +272,7 @@ class MysteriumVpn {
         if (e.message === SUDO_PROMT_PERMISSION_DENIED) {
           messageForUser = translations.processInstallationPermissionsError
         }
-        this._communication.sendRendererShowErrorMessage(messageForUser)
+        this._communication.rendererShowError.send(messageForUser)
         throw new Error("Failed to install 'mysterium_client' process. " + e)
       }
     }
@@ -340,26 +340,26 @@ class MysteriumVpn {
         return false
       }
     } catch (e) {
-      this._communication.sendRendererShowErrorMessage(e.message)
+      this._communication.rendererShowError.send(e.message)
       throw new Error('Failed to accept terms. ' + e)
     }
     return true
   }
 
   async _acceptTerms () {
-    this._communication.sendTermsRequest({
+    this._communication.termsRequested.send({
       htmlContent: this._terms.getContent()
     })
 
     const termsAnsweredDTO = await onFirstEvent((callback) => {
-      this._communication.onTermsAnswered(callback)
+      this._communication.termsAnswered.on(callback)
     })
     const termsAnswer = termsAnsweredDTO.isAccepted
     if (!termsAnswer) {
       return false
     }
 
-    this._communication.sendTermsAccepted()
+    this._communication.termsAccepted.send()
 
     try {
       this._terms.accept()
@@ -398,12 +398,12 @@ class MysteriumVpn {
   _startProcessMonitoring () {
     this._monitoring.onStatusUp(() => {
       logInfo("'mysterium_client' is up")
-      this._communication.sendMysteriumClientUp()
+      this._communication.healthcheckUp.send()
       this._bugReporterMetrics.set(METRICS.CLIENT_RUNNING, true)
     })
     this._monitoring.onStatusDown(() => {
       logInfo("'mysterium_client' is down")
-      this._communication.sendMysteriumClientDown()
+      this._communication.healthcheckDown.send()
       this._bugReporterMetrics.set(METRICS.CLIENT_RUNNING, false)
     })
     this._monitoring.onStatus(status => {
@@ -423,7 +423,7 @@ class MysteriumVpn {
     } catch (e) {
       this._monitoring.stop()
       this._bugReporter.captureErrorException(e)
-      this._communication.sendRendererShowError({
+      this._communication.rendererShowError.send({
         message: e.toString(),
         hint: 'Try to restart application',
         fatal: true
@@ -436,19 +436,19 @@ class MysteriumVpn {
       .then(callback)
       .catch(err => {
         if (this._monitoring.isStarted) {
-          this._communication.sendRendererShowErrorMessage(translations.processStartError)
+          this._communication.rendererShowError.send(translations.processStartError)
         }
         logException("Failed to start 'mysterium_client' process", err)
       })
   }
 
   _subscribeProposals () {
-    this._countryList.onUpdate((countries) => this._communication.sendCountries(countries))
+    this._countryList.onUpdate((countries) => this._communication.countryUpdate.send(countries))
 
     const handleProposalFetchError = (error: Error) => {
       logException('Proposal fetching failed', error)
     }
-    this._communication.onProposalUpdateRequest(() => {
+    this._communication.proposalsUpdate.on(() => {
       this._proposalFetcher.fetch().catch((err: Error) => {
         handleProposalFetchError(err)
       })

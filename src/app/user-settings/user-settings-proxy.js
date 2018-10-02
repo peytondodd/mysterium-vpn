@@ -17,10 +17,10 @@
 
 // @flow
 
-import RendererCommunication from '../communication/renderer-communication'
 import type { UserSettings } from './user-settings'
 import type { UserSettingsStore } from './user-settings-store'
 import ObservableUserSettings from './observable-user-settings'
+import type { RendererCommunication } from '../communication/renderer-communication'
 
 /**
  * Caches local settings synced via communication channel, and notifies when settings change.
@@ -36,24 +36,24 @@ class UserSettingsProxy extends ObservableUserSettings implements UserSettingsSt
 
   startListening () {
     this._settingsListener = settings => this._updateAllProperties(settings)
-    this._communication.onUserSettings(this._settingsListener)
-    this._communication.sendUserSettingsRequest()
+    this._communication.userSettingsReceiver.on(this._settingsListener)
+    this._communication.userSettingsRequest.send()
   }
 
   stopListening () {
     if (this._settingsListener == null) {
       throw new Error('UserSettingsProxy.stopListening invoked without initialization')
     }
-    this._communication.removeOnUserSettingsCallback(this._settingsListener)
+    this._communication.userSettingsReceiver.removeCallback(this._settingsListener)
     this._settingsListener = null
   }
 
   async setFavorite (id: string, isFavorite: boolean) {
-    this._communication.sendToggleFavoriteProvider({ id, isFavorite })
+    this._communication.toggleFavoriteProvider.send({ id, isFavorite })
   }
 
   async setShowDisconnectNotifications (show: boolean) {
-    this._communication.sendUserSettingsShowDisconnectNotifications(show)
+    this._communication.showDisconnectNotification.send(show)
   }
 }
 

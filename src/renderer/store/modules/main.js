@@ -24,6 +24,7 @@ type State = {
   init: string,
   visual: string,
   navOpen: boolean,
+  identityMenuOpen: boolean,
   clientVersion: ?string,
   navVisible: boolean,
   // TODO: merge `errorMessage` and `error` into one
@@ -36,11 +37,26 @@ const state: State = {
   init: '',
   visual: 'head',
   navOpen: false,
+  identityMenuOpen: false,
   clientVersion: null,
   navVisible: true,
   errorMessage: null,
   error: null,
   showError: false
+}
+
+function stateFactory (): State {
+  return {
+    init: '',
+    visual: 'head',
+    navOpen: false,
+    identityMenuOpen: false,
+    clientVersion: null,
+    navVisible: true,
+    errorMessage: null,
+    error: null,
+    showError: false
+  }
 }
 
 const getters = {
@@ -59,6 +75,12 @@ const mutations = {
   },
   [type.SET_NAV_OPEN] (state: State, open) {
     state.navOpen = open
+  },
+  [type.SHOW_IDENTITY_MENU] (state: State) {
+    state.identityMenuOpen = true
+  },
+  [type.HIDE_IDENTITY_MENU] (state: State) {
+    state.identityMenuOpen = false
   },
   [type.SET_NAV_VISIBLE] (state: State, visible: boolean) {
     state.navVisible = visible
@@ -106,7 +128,7 @@ function actionsFactory (tequilapi: TequilapiClient) {
 
 function factory (tequilapi: TequilapiClient) {
   return {
-    state,
+    state: stateFactory(),
     mutations,
     getters,
     actions: actionsFactory(tequilapi)
@@ -119,4 +141,5 @@ export {
   getters,
   actionsFactory
 }
+export type { State }
 export default factory

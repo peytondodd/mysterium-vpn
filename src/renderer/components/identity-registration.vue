@@ -18,32 +18,13 @@
 <template>
   <div>
     <div
-      class="identity-registration"
-      :class="{'identity-registered': registered, 'identity-unregistered': !registered}"
-      @click="showInfoWindow()"
-      v-if="registration && !showInfo">
-      <div class="identity-text">ID</div>
-      <div
-        class="identity-tooltip">{{ registered ? 'View Your Identity' : 'Please activate your ID' }}</div>
-    </div>
-
-    <div
       class="app__nav nav"
       id="registration-instructions"
-      :class="{'is-open': showInfo}">
+      :class="{'is-open': isIdentityMenuOpen}">
       <div
         class="nav__content"
-        :class="{'is-open': showInfo}">
-
-        <div class="registration-instructions-top-row">
-          <div
-            class="nav__burger burger"
-            @click="showInfo = false">
-            <i class="burger__bar burger__bar--1"/>
-            <i class="burger__bar burger__bar--2"/>
-            <i class="burger__bar burger__bar--3"/>
-          </div>
-        </div>
+        :class="{'is-open': isIdentityMenuOpen}">
+        <close-button :click="hideInstructions"/>
 
         <hr>
 
@@ -70,7 +51,8 @@
 
         <div
           class="consumer-identity-registration"
-          v-if="!registered">
+          v-if="!registrationFetched">
+          <h2>Activate your ID</h2>
           <p>
             In order to use Mysterium VPN you need to have registered ID in Mysterium Blockchain
             by staking your MYST tokens on it (i.e. paying for it).
@@ -87,7 +69,7 @@
           </ul>
           <div
             class="btn"
-            v-if="registration"
+            v-if="registrationFetched"
             @click="openPaymentsUrl()">
             Register Your ID
           </div>
@@ -95,17 +77,18 @@
       </div>
       <transition name="fade">
         <div
-          v-if="showInfo"
+          v-if="isIdentityMenuOpen"
           class="nav__backdrop"
-          @click="showInfo = false"/>
+          @click="hideInstructions"/>
       </transition>
     </div>
-
   </div>
 </template>
 
 <script>
 
+import CloseButton from './close-button'
+import types from '../store/types'
 import { shell, clipboard } from 'electron'
 import { mapGetters } from 'vuex'
 import IconCopy from '@/assets/img/icon--copy.svg'
@@ -113,6 +96,7 @@ import LogoIcon from './logo-icon'
 
 export default {
   name: 'IdentityRegistration',
+  components: { CloseButton },
   dependencies: ['rendererCommunication', 'getPaymentLink'],
   components: {
     IconCopy,
@@ -120,13 +104,12 @@ export default {
   },
   data () {
     return {
-      registration: null,
-      showInfo: false
+      identityMenuOpen: false
     }
   },
   methods: {
-    showInfoWindow () {
-      this.showInfo = true
+    hideInstructions () {
+      this.$store.commit(types.HIDE_IDENTITY_MENU)
     },
     openPaymentsUrl () {
       const url = this.getPaymentLink(this.registration)
@@ -137,20 +120,15 @@ export default {
     }
   },
   computed: {
-    registered () {
-      if (!this.registration) {
-        return null
-      }
-      return this.registration.registered
+    registrationFetched () {
+      return this.$store.getters.registration != null
     },
-    ...mapGetters({
-      consumerId: 'currentIdentity'
-    })
+    isIdentityMenuOpen () {
+      return this.$store.state.main.identityMenuOpen
+    }
   },
-  mounted () {
-    this.rendererCommunication.onRegistrationUpdate(registration => {
-      this.registration = registration
-    })
-  }
+  ...mapGetters({
+    consumerId: 'currentIdentity'
+  })
 }
 </script>

@@ -16,21 +16,21 @@
  */
 
 import { createLocalVue, mount } from '@vue/test-utils'
-import RendererCommunication from '../../../../src/app/communication/renderer-communication'
 import DIContainer from '../../../../src/app/di/vue-container'
 import FakeMessageBus from '../../../helpers/fake-message-bus'
 import DisconnectNotificationSetting from '@/components/disconnect-notification-setting'
 import { afterEach, beforeEach } from '../../../helpers/dependencies'
 import messages from '../../../../src/app/communication/messages'
 import { UserSettingsProxy } from '../../../../src/app/user-settings/user-settings-proxy'
+import { buildRendererCommunication } from '../../../../src/app/communication/renderer-communication'
 
 // TODO: extract this out to DRY with other occurances
-function mountWith (rendererCommunication) {
+function mountWith (communication) {
   const vue = createLocalVue()
 
   const dependencies = new DIContainer(vue)
-  dependencies.constant('rendererCommunication', rendererCommunication)
-  const userSettingsProxy = new UserSettingsProxy(rendererCommunication)
+  dependencies.constant('rendererCommunication', communication)
+  const userSettingsProxy = new UserSettingsProxy(communication)
   userSettingsProxy.startListening()
   dependencies.constant('userSettingsStore', userSettingsProxy)
 
@@ -45,7 +45,7 @@ describe('DisconnectNotificationSetting', () => {
 
   beforeEach(() => {
     fakeMessageBus = new FakeMessageBus()
-    communication = new RendererCommunication(fakeMessageBus)
+    communication = buildRendererCommunication(fakeMessageBus)
     wrapper = mountWith(communication)
   })
 

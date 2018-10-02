@@ -21,39 +21,37 @@ import { beforeEach, describe, it, expect } from '../../../helpers/dependencies'
 import Vpn from '../../../../src/renderer/pages/vpn'
 import Vuex, { Store } from 'vuex'
 import DIContainer from '../../../../src/app/di/vue-container'
-import RendererCommunication from '../../../../src/app/communication/renderer-communication'
 import messages from '../../../../src/app/communication/messages'
 import FakeMessageBus from '../../../helpers/fake-message-bus'
 import BugReporterMock from '../../../helpers/bug-reporter-mock'
-import Vue from 'vue'
 import StartupEventTracker from '../../../../src/app/statistics/startup-event-tracker'
 import MockEventSender from '../../../helpers/statistics/mock-event-sender'
 import { UserSettingsProxy } from '../../../../src/app/user-settings/user-settings-proxy'
-Vue.use(Vuex)
+import { buildRendererCommunication } from '../../../../src/app/communication/renderer-communication'
+import identityStoreFactory from '../../../../src/renderer/store/modules/identity'
+import types from '../../../../src/renderer/store/types'
+import IdentityRegistrationDTO from 'mysterium-tequilapi/lib/dto/identity-registration'
+import mainStoreFactory from '../../../../src/renderer/store/modules/main'
+import EmptyTequilapiClientMock from '../store/modules/empty-tequilapi-client-mock'
 
 describe('Vpn', () => {
   let vpnWrapper
   let fakeMessageBus
-  const bugReporterMock = new BugReporterMock()
+  let bugReporterMock
 
-  function mountWith (store) {
+  function mountVpn () {
     const vue = createLocalVue()
+    vue.use(Vuex)
     fakeMessageBus = new FakeMessageBus()
     const dependencies = new DIContainer(vue)
     const startupEventTracker = new StartupEventTracker(new MockEventSender())
-    const communication = new RendererCommunication(fakeMessageBus)
+    const communication = buildRendererCommunication(fakeMessageBus)
     dependencies.constant('rendererCommunication', communication)
     dependencies.constant('bugReporter', bugReporterMock)
     dependencies.constant('startupEventTracker', startupEventTracker)
     dependencies.constant('userSettingsStore', new UserSettingsProxy(communication))
+    dependencies.constant('getPaymentLink', () => 'mock url')
 
-    return mount(Vpn, {
-      localVue: vue,
-      store: store
-    })
-  }
-
-  beforeEach(() => {
     const store = new Store({
       getters: {
         connection () {},
@@ -61,38 +59,57 @@ describe('Vpn', () => {
         ip () {},
         errorMessage () {},
         showError () {}
+      },
+      modules: {
+        main: mainStoreFactory(new EmptyTequilapiClientMock()),
+        identity: identityStoreFactory(bugReporterMock, communication)
       }
     })
-    vpnWrapper = mountWith(store)
+
+    return mount(Vpn, {
+      localVue: vue,
+      store
+    })
+  }
+
+  beforeEach(() => {
+    bugReporterMock = new BugReporterMock()
+    vpnWrapper = mountVpn()
   })
+
   it('mounts', () => {
     expect(vpnWrapper).to.be.ok
   })
 
   describe('.fetchCountries', () => {
-    let store
-    beforeEach(() => {
-      store = new Store({
-        getters: {
-          connection () {},
-          status () { return 'NotConnected' },
-          ip () {},
-          errorMessage () {},
-          showError () {}
-        },
-        mutations: {
-        }
-      })
-
-      vpnWrapper = mountWith(store)
-      fakeMessageBus.clean()
-    })
-
     it('it shows error when empty proposal list is received', async () => {
       fakeMessageBus.triggerOn(messages.COUNTRY_UPDATE, [])
       vpnWrapper.vm.fetchCountries()
 
       expect(bugReporterMock.infoMessages[0].message).to.eql('Renderer received empty countries list')
     })
+  })
+
+  it('renders no ID icon until registration state is set', async () => {
+    expect(vpnWrapper.findAll('.identity-button')).to.have.lengthOf(0)
+    const registration = new IdentityRegistrationDTO({ registered: true })
+    vpnWrapper.vm.$store.commit(types.SET_IDENTITY_REGISTRATION, registration)
+    expect(vpnWrapper.findAll('.identity-button')).to.have.lengthOf(1)
+  })
+
+  it('renders ID icon when identity becomes unregistered', () => {
+    const registration = new IdentityRegistrationDTO({ registered: false })
+    vpnWrapper.vm.$store.commit(types.SET_IDENTITY_REGISTRATION, registration)
+    expect(vpnWrapper.findAll('.identity-button')).to.have.lengthOf(1)
+    expect(vpnWrapper.findAll('.identity-button--registered')).to.have.lengthOf(0)
+    expect(vpnWrapper.findAll('.identity-button--unregistered')).to.have.lengthOf(1)
+  })
+
+  it('renders ID icon when identity becomes registered', () => {
+    const registration = new IdentityRegistrationDTO({ registered: true })
+    vpnWrapper.vm.$store.commit(types.SET_IDENTITY_REGISTRATION, registration)
+    expect(vpnWrapper.findAll('.identity-button')).to.have.lengthOf(1)
+    expect(vpnWrapper.findAll('.identity-button--registered')).to.have.lengthOf(1)
+    expect(vpnWrapper.findAll('.identity-button--unregistered')).to.have.lengthOf(0)
   })
 })

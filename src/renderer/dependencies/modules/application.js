@@ -17,26 +17,31 @@
 
 // @flow
 import { Container } from '../../../app/di'
-import RendererCommunication from '../../../app/communication/renderer-communication'
 import RendererIpc from '../../../app/communication/ipc/renderer-ipc'
 import { remote } from 'electron'
 import VpnInitializer from '../../../app/vpn-initializer'
 import type { TequilapiClient } from 'mysterium-tequilapi/lib/client'
 import realSleep from '../../../libraries/sleep'
 import IpcMessageBus from '../../../app/communication/ipc-message-bus'
+import { buildRendererCommunication } from '../../../app/communication/renderer-communication'
 
 function bootstrap (container: Container) {
   const mysteriumVpnReleaseID = remote.getGlobal('__mysteriumVpnReleaseID')
   container.constant('mysteriumVpnReleaseID', mysteriumVpnReleaseID)
 
   container.service(
-    'rendererCommunication',
+    'messageBus',
     [],
     () => {
       const ipc = new RendererIpc()
-      const messageBus = new IpcMessageBus(ipc)
-      return new RendererCommunication(messageBus)
+      return new IpcMessageBus(ipc)
     }
+  )
+
+  container.service(
+    'rendererCommunication',
+    ['messageBus'],
+    (messageBus) => buildRendererCommunication(messageBus)
   )
 
   container.service(

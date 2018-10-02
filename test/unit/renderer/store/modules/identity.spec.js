@@ -17,33 +17,79 @@
 
 // @flow
 
-import { describe, expect, it } from '../../../../helpers/dependencies'
-import { getters } from '../../../../../src/renderer/store/modules/identity'
+import { beforeEach, describe, expect, it } from '../../../../helpers/dependencies'
+import factory from '../../../../../src/renderer/store/modules/identity'
 import type { State } from '../../../../../src/renderer/store/modules/identity'
 import IdentityDTO from 'mysterium-tequilapi/lib/dto/identity'
 import { captureError } from '../../../../helpers/utils'
+import types from '../../../../../src/renderer/store/types'
+import IdentityRegistrationDTO from 'mysterium-tequilapi/lib/dto/identity-registration'
+import BugReporterMock from '../../../../helpers/bug-reporter-mock'
+import { buildRendererCommunication } from '../../../../../src/app/communication/renderer-communication'
+import DirectMessageBus from '../../../../helpers/direct-message-bus'
 
-describe('getters', () => {
-  describe('currentIdentity', () => {
-    it('returns id of identity', () => {
-      const state: State = {
-        current: new IdentityDTO({ id: 'identity id' }),
-        unlocked: false
-      }
-      expect(getters.currentIdentity(state)).to.eql('identity id')
+describe('identity store', () => {
+  let store
+  let bugReporter
+  let communication
+
+  beforeEach(() => {
+    bugReporter = new BugReporterMock()
+    communication = buildRendererCommunication(new DirectMessageBus())
+    store = factory(bugReporter, communication)
+  })
+
+  describe('getters', () => {
+    let getters
+
+    beforeEach(() => {
+      getters = store.getters
     })
 
-    it('throws error when identity is not present', () => {
-      const state: State = {
-        current: null,
-        unlocked: false
-      }
-      const error = captureError(() => getters.currentIdentity(state))
-      if (!error) {
-        throw new Error('Expected error not thrown')
-      }
-      expect(error).to.be.an('error')
-      expect(error.message).to.eql('Trying to get identity which is not present')
+    describe('.currentIdentity', () => {
+      it('returns id of identity', () => {
+        const state: State = {
+          current: new IdentityDTO({ id: 'identity id' }),
+          unlocked: false,
+          registration: null
+        }
+        expect(getters.currentIdentity(state)).to.eql('identity id')
+      })
+
+      it('throws error when identity is not present', () => {
+        const state: State = {
+          current: null,
+          unlocked: false,
+          registration: null
+        }
+        const error = captureError(() => getters.currentIdentity(state))
+        if (!error) {
+          throw new Error('Expected error not thrown')
+        }
+        expect(error).to.be.an('error')
+        expect(error.message).to.eql('Trying to get identity which is not present')
+      })
+    })
+  })
+
+  describe('mutations', () => {
+    let mutations
+
+    beforeEach(() => {
+      mutations = store.mutations
+    })
+
+    describe('SET_IDENTITY_REGISTRATION', () => {
+      it('fetches and commits identity registration', async () => {
+        const state: State = {
+          current: null,
+          unlocked: false,
+          registration: null
+        }
+        const registration = new IdentityRegistrationDTO({})
+        mutations[types.SET_IDENTITY_REGISTRATION](state, registration)
+        expect(state.registration).to.eql(registration)
+      })
     })
   })
 })

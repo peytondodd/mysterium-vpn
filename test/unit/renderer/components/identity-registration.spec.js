@@ -16,29 +16,28 @@
  */
 
 // @flow
-import Vuex from 'vuex'
 import { beforeEach, describe, expect, it } from '../../../helpers/dependencies'
 import DIContainer from '../../../../src/app/di/vue-container'
 import IdentityRegistration from '@/components/identity-registration'
 import { createLocalVue, mount } from '@vue/test-utils'
-import RendererCommunication from '../../../../src/app/communication/renderer-communication'
 import DirectMessageBus from '../../../helpers/direct-message-bus'
-
-class FakeRendererCommunication extends RendererCommunication {
-  callback: IdentityRegistration => void
-
-  constructor () {
-    super(new DirectMessageBus())
-  }
-
-  onRegistrationUpdate (callback: IdentityRegistration => void) {
-    this.callback = callback
-  }
-}
+import { buildRendererCommunication } from '../../../../src/app/communication/renderer-communication'
+import { buildMainCommunication } from '../../../../src/app/communication/main-communication'
+import type { RendererCommunication } from '../../../../src/app/communication/renderer-communication'
+import type { MainCommunication } from '../../../../src/app/communication/main-communication'
+import IdentityRegistrationDTO from 'mysterium-tequilapi/lib/dto/identity-registration'
+import Vuex from 'vuex'
+import mainStoreFactory from '@/store/modules/main'
+import EmptyTequilapiClientMock from '../store/modules/empty-tequilapi-client-mock'
+import identityStoreFactory from '../../../../src/renderer/store/modules/identity'
+import BugReporterMock from '../../../helpers/bug-reporter-mock'
+import types from '../../../../src/renderer/store/types'
 
 describe('IdentityRegistration', () => {
-  let rendererCommunication: FakeRendererCommunication
+  let rendererCommunication: RendererCommunication
+  let mainCommunication: MainCommunication
   let vue: IdentityRegistration
+  let store: Vuex.Store
 
   beforeEach(() => {
     const vm = createLocalVue()
@@ -61,9 +60,23 @@ describe('IdentityRegistration', () => {
     })
 
     const dependencies = new DIContainer(vm)
-    rendererCommunication = new FakeRendererCommunication()
+
+    const messageBus = new DirectMessageBus()
+    rendererCommunication = buildRendererCommunication(messageBus)
+    mainCommunication = buildMainCommunication(messageBus)
+
     dependencies.constant('rendererCommunication', rendererCommunication)
     dependencies.constant('getPaymentLink', () => {})
+
+    const tequilapi = new EmptyTequilapiClientMock()
+    const bugReporter = new BugReporterMock()
+    store = new Vuex.Store({
+      modules: {
+        main: mainStoreFactory(tequilapi),
+        identity: identityStoreFactory(bugReporter, rendererCommunication)
+      }
+    })
+
     vue = mount(IdentityRegistration, {
       localVue: vm,
       store
@@ -71,30 +84,10 @@ describe('IdentityRegistration', () => {
   })
 
   describe('HTML rendering', () => {
-    it('renders no ID icon until registration state comes from communication', () => {
-      expect(vue.findAll('.identity-registration')).to.have.lengthOf(0)
-      rendererCommunication.callback({ registered: true })
-      expect(vue.findAll('.identity-registration')).to.have.lengthOf(1)
-    })
-
-    it('renders ID icon when identity becomes registered', () => {
-      rendererCommunication.callback({ registered: true })
-      expect(vue.findAll('.identity-registration')).to.have.lengthOf(1)
-      expect(vue.findAll('.identity-registered')).to.have.lengthOf(1)
-      expect(vue.findAll('.identity-unregistered')).to.have.lengthOf(0)
-    })
-
-    it('renders ID icon when identity becomes unregistered', () => {
-      rendererCommunication.callback({ registered: false })
-      expect(vue.findAll('.identity-registration')).to.have.lengthOf(1)
-      expect(vue.findAll('.identity-registered')).to.have.lengthOf(0)
-      expect(vue.findAll('.identity-unregistered')).to.have.lengthOf(1)
-    })
-
-    it('renders instructions on unregistered ID click', () => {
-      rendererCommunication.callback({ registered: false })
+    it('renders instructions when menu is opened', () => {
+      mainCommunication.identityRegistration.send(new IdentityRegistrationDTO({ registered: false }))
       expect(vue.findAll('#registration-instructions.is-open')).to.have.lengthOf(0)
-      vue.findAll('.identity-registration').trigger('click')
+      store.commit(types.SHOW_IDENTITY_MENU)
       expect(vue.findAll('#registration-instructions.is-open')).to.have.lengthOf(1)
     })
   })

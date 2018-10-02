@@ -37,7 +37,7 @@ import { userSettingName } from '../../app/user-settings/user-settings-store'
 
 export default {
   name: 'DisconnectNotificationSetting',
-  dependencies: ['rendererCommunication', 'userSettingsStore'],
+  dependencies: ['userSettingsStore'],
   data () {
     return {
       isDisconnectNotificationEnabled: true

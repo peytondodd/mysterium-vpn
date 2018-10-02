@@ -22,7 +22,6 @@ import TequilapiRegistrationFetcher from './data-fetchers/tequilapi-registration
 import type { EnvironmentCollector } from './bug-reporting/environment/environment-collector'
 import ProcessMonitoring from '../libraries/mysterium-client/monitoring'
 import { UserSettingsStorage } from './user-settings/user-settings-storage'
-import MainMessageBusCommunication from './communication/main-message-bus-communication'
 import MainBufferedIpc from './communication/ipc/main-buffered-ipc'
 import Terms from './terms'
 import LogCache from './logging/log-cache'
@@ -38,6 +37,7 @@ import Notification from './notification'
 import StartupEventTracker from './statistics/startup-event-tracker'
 import type { StringLogger } from './logging/string-logger'
 import CommunicationBindings from './communication-bindings'
+import type { MainCommunication } from './communication/main-communication'
 
 export type MysteriumVpnParams = {
   browserWindowFactory: () => BrowserWindow,
@@ -61,7 +61,7 @@ export type MysteriumVpnParams = {
   featureToggle: FeatureToggle,
   startupEventTracker: StartupEventTracker,
   mainIpc: MainBufferedIpc,
-  mainCommunication: MainMessageBusCommunication,
+  mainCommunication: MainCommunication,
   syncCallbacksInitializer: SyncCallbacksInitializer,
   communicationBindings: CommunicationBindings
 }

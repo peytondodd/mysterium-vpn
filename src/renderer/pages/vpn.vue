@@ -17,6 +17,10 @@
 
 <template>
   <div class="page">
+    <identity-button
+      v-if="registrationFetched && !isIdentityMenuOpen"
+      :registered="registered"
+      :click="openPaymentsOrShowInstructions"/>
     <div class="page__control control">
       <div class="control__top">
         <h1
@@ -80,6 +84,9 @@ import AppError from '../partials/app-error'
 import config from '../config'
 import { ActionLooperConfig } from '../store/modules/connection'
 import FavoriteButton from '../components/favorite-button'
+import IdentityButton from '../components/identity-button'
+import { shell } from 'electron'
+
 export default {
   name: 'Main',
   components: {
@@ -87,9 +94,10 @@ export default {
     CountrySelect,
     ConnectionButton,
     StatsDisplay,
-    AppError
+    AppError,
+    IdentityButton
   },
-  dependencies: ['bugReporter', 'rendererCommunication', 'startupEventTracker', 'userSettingsStore'],
+  dependencies: ['bugReporter', 'rendererCommunication', 'startupEventTracker', 'userSettingsStore', 'getPaymentLink'],
   data () {
     return {
       country: null,
@@ -117,6 +125,21 @@ export default {
     },
     providerCountry () {
       return this.country ? this.country.code : null
+    },
+    registrationFetched () {
+      return this.registration != null
+    },
+    registration () {
+      return this.$store.getters.registration
+    },
+    registered () {
+      if (!this.registration) {
+        return false
+      }
+      return this.registration.registered
+    },
+    isIdentityMenuOpen () {
+      return this.$store.state.main.identityMenuOpen
     }
   },
   methods: {
@@ -124,7 +147,7 @@ export default {
     setCountry (data) { this.country = data },
     fetchCountries () {
       this.countriesAreLoading = true
-      this.rendererCommunication.sendProposalUpdateRequest()
+      this.rendererCommunication.proposalsUpdate.send()
     },
     async toggleFavorite () {
       if (!this.country) return
@@ -139,11 +162,25 @@ export default {
       if (countries.length < 1) this.bugReporter.captureInfoMessage('Renderer received empty countries list')
 
       this.countryList = countries
+    },
+    openPaymentsOrShowInstructions () {
+      if (this.registered) {
+        this.openPaymentsUrl()
+      } else {
+        this.showInstructions()
+      }
+    },
+    openPaymentsUrl () {
+      const url = this.getPaymentLink(this.registration)
+      shell.openExternal(url)
+    },
+    showInstructions () {
+      this.$store.commit(type.SHOW_IDENTITY_MENU)
     }
   },
   async mounted () {
     this.startupEventTracker.sendAppStartSuccessEvent()
-    this.rendererCommunication.onCountriesUpdate(this.onCountriesUpdate)
+    this.rendererCommunication.countryUpdate.on(this.onCountriesUpdate)
 
     const ipConfig = new ActionLooperConfig(type.CONNECTION_IP, config.ipUpdateThreshold)
     this.$store.dispatch(type.START_ACTION_LOOPING, ipConfig)
@@ -151,7 +188,7 @@ export default {
     this.$store.dispatch(type.START_ACTION_LOOPING, statusConfig)
   },
   beforeDestroy () {
-    this.rendererCommunication.removeCountriesUpdateCallback(this.onCountriesUpdate)
+    this.rendererCommunication.countryUpdate.removeCallback(this.onCountriesUpdate)
   }
 }
 </script>

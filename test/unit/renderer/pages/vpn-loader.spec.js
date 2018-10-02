@@ -37,9 +37,9 @@ import DIContainer from '../../../../src/app/di/vue-container'
 import BugReporterMock from '../../../helpers/bug-reporter-mock'
 import type { BugReporter } from '../../../../src/app/bug-reporting/interface'
 import { nextTick } from '../../../helpers/utils'
-import RendererCommunication from '../../../../src/app/communication/renderer-communication'
 import FakeMessageBus from '../../../helpers/fake-message-bus'
 import TequilapiError from 'mysterium-tequilapi/lib/tequilapi-error'
+import { buildRendererCommunication } from '../../../../src/app/communication/renderer-communication'
 
 describe('VpnLoader', () => {
   const tequilapi = tequilapiMockCreate()
@@ -52,11 +52,11 @@ describe('VpnLoader', () => {
     const fakeSleeper = {
       async sleep (_time: number): Promise<void> {}
     }
-    const rendererCommunication = new RendererCommunication(new FakeMessageBus())
+    const communication = buildRendererCommunication(new FakeMessageBus())
     dependencies.constant('bugReporter', bugReporter)
     dependencies.constant('vpnInitializer', vpnInitializer)
     dependencies.constant('sleeper', fakeSleeper)
-    dependencies.constant('rendererCommunication', rendererCommunication)
+    dependencies.constant('rendererCommunication', communication)
     dependencies.constant('tequilapiClient', tequilapi)
 
     localVue.use(Router)
@@ -65,7 +65,7 @@ describe('VpnLoader', () => {
     localVue.use(Vuex)
     const store = new Vuex.Store({
       modules: {
-        identity: idStoreFactory(tequilapi, dependencies),
+        identity: idStoreFactory(bugReporter, communication),
         main: mainStoreFactory(tequilapi),
         errors: errorStore,
         connection: {
