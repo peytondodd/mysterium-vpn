@@ -33,18 +33,6 @@ type State = {
   showError: boolean
 }
 
-const state: State = {
-  init: '',
-  visual: 'head',
-  navOpen: false,
-  identityMenuOpen: false,
-  clientVersion: null,
-  navVisible: true,
-  errorMessage: null,
-  error: null,
-  showError: false
-}
-
 function stateFactory (): State {
   return {
     init: '',
@@ -135,11 +123,5 @@ function factory (tequilapi: TequilapiClient) {
   }
 }
 
-export {
-  state,
-  mutations,
-  getters,
-  actionsFactory
-}
 export type { State }
 export default factory

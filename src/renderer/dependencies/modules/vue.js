@@ -72,17 +72,15 @@ function bootstrap (container: Container) {
       'vue-store.identity',
       'vue-store.connection',
       'vue-store.errors',
-      'vue-store.terms',
-      'vue-store.clientProcess'
+      'vue-store.terms'
     ],
-    (main, identity, connection, errors, terms, clientProcess) => {
+    (main, identity, connection, errors, terms) => {
       return storeFactory({
         main,
         identity,
         connection,
         errors,
-        terms,
-        clientProcess
+        terms
       })
     }
   )
