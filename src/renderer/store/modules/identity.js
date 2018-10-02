@@ -28,10 +28,12 @@ type State = {
   registration: ?IdentityRegistrationDTO
 }
 
-const state: State = {
-  current: null,
-  unlocked: false,
-  registration: null
+function stateFactory (): State {
+  return {
+    current: null,
+    unlocked: false,
+    registration: null
+  }
 }
 
 function mutationsFactory (bugReporter: BugReporter, communication: RendererCommunication) {
@@ -69,15 +71,13 @@ const getters = {
 
 function factory (bugReporter: BugReporter, communication: RendererCommunication) {
   return {
-    state,
+    state: stateFactory(),
     getters,
     mutations: mutationsFactory(bugReporter, communication)
   }
 }
 
 export {
-  state,
-  getters,
   mutationsFactory
 }
 export type { State }

@@ -17,10 +17,6 @@
 
 <template>
   <div>
-    <identity-button
-      v-if="registrationFetched && !isIdentityMenuOpen"
-      :registered="registered"
-      :click="openPaymentsOrShowInstructions"/>
     <div
       class="app__nav nav"
       id="registration-instructions"
@@ -64,14 +60,13 @@
 
 <script>
 
-import { shell } from 'electron'
 import CloseButton from './close-button'
-import IdentityButton from './identity-button'
 import types from '../store/types'
+import { shell } from 'electron'
 
 export default {
   name: 'IdentityRegistration',
-  components: { IdentityButton, CloseButton },
+  components: { CloseButton },
   dependencies: ['rendererCommunication', 'getPaymentLink'],
   data () {
     return {
@@ -79,45 +74,21 @@ export default {
     }
   },
   methods: {
-    openPaymentsOrShowInstructions () {
-      if (this.registered) {
-        this.openPaymentsUrl()
-      } else {
-        this.showInstructions()
-      }
+    hideInstructions () {
+      this.$store.commit(types.HIDE_IDENTITY_MENU)
     },
     openPaymentsUrl () {
       const url = this.getPaymentLink(this.registration)
       shell.openExternal(url)
-    },
-    showInstructions () {
-      this.$store.commit(types.SHOW_IDENTITY_MENU)
-    },
-    hideInstructions () {
-      this.$store.commit(types.HIDE_IDENTITY_MENU)
     }
   },
   computed: {
     registrationFetched () {
-      return this.registration != null
-    },
-    registration () {
-      return this.$store.state.identity.registration
-    },
-    registered () {
-      if (!this.registration) {
-        return false
-      }
-      return this.registration.registered
+      return this.$store.state.identity.registration != null
     },
     isIdentityMenuOpen () {
       return this.$store.state.main.identityMenuOpen
     }
-  },
-  mounted () {
-    this.rendererCommunication.identityRegistration.on(registration => {
-      this.$store.commit(types.SET_IDENTITY_REGISTRATION, registration)
-    })
   }
 }
 </script>

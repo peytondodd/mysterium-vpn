@@ -45,6 +45,20 @@ const state: State = {
   showError: false
 }
 
+function stateFactory (): State {
+  return {
+    init: '',
+    visual: 'head',
+    navOpen: false,
+    identityMenuOpen: false,
+    clientVersion: null,
+    navVisible: true,
+    errorMessage: null,
+    error: null,
+    showError: false
+  }
+}
+
 const getters = {
   loading: (state: State) => (state.init === type.INIT_PENDING),
   visual: (state: State) => state.visual,
@@ -114,7 +128,7 @@ function actionsFactory (tequilapi: TequilapiClient) {
 
 function factory (tequilapi: TequilapiClient) {
   return {
-    state,
+    state: stateFactory(),
     mutations,
     getters,
     actions: actionsFactory(tequilapi)

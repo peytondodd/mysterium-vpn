@@ -131,6 +131,10 @@ export default {
         this.$store.dispatch(type.OVERLAY_ERROR, messages.mysteriumCLientDown)
       }
     })
+
+    this.rendererCommunication.identityRegistration.on(registration => {
+      this.$store.commit(type.SET_IDENTITY_REGISTRATION, registration)
+    })
   }
 }
 </script>
