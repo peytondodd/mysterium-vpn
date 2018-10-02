@@ -22,7 +22,7 @@
     @click="click">
     <div class="identity-button__text">ID</div>
     <div
-      class="identity-button__tooltip">{{ registered ? 'Check your balance' : 'Please activate your ID' }}</div>
+      class="identity-button__tooltip">{{ registered ? 'View your identity' : 'Please activate your ID' }}</div>
   </div>
 </template>
 

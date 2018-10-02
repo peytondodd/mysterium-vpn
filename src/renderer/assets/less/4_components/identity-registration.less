@@ -63,51 +63,45 @@
   }
 }
 
-.icon-logo {
-  display: inline-block;
-  width: 5rem;
-  height: 5rem;
-}
-
 .registration-instructions-top-row {
   display: flex;
   justify-content: flex-end;
 }
 
-.consumer-identity-id-container {
+.consumer-id-view {
   margin-top: 2em;
   display: flex;
   justify-content: center;
   align-items: center;
-  .consumer-identity-id {
+  &__id-text {
     color: red;
     font-size: 1.2em;
     user-select: text;
+
+    &--registered {
+      color: black;
+    }
   }
-  .consumer-identity-id-item {
+  &__item {
     padding-right: 0.5em;
   }
-  .consumer-identity-id-copy {
-    cursor: pointer;
+}
 
-    .identity-tooltip {
-      .identity-tooltip-generic(10.5em, 1.2em);
-    }
-    &:hover {
-      .identity-tooltip {
-        display: block;
-      }
+.copy-btn {
+  cursor: pointer;
+
+  &__tooltip {
+    .identity-tooltip-generic(10.5em, 1.2em);
+  }
+
+  &:hover {
+    .copy-btn__tooltip {
+      display: block;
     }
   }
 }
 
-.consumer-identity-id-container.registered {
-  .consumer-identity-id {
-    color: black;
-  }
-}
-
-.consumer-identity-registration {
+.consumer-registration-view {
   margin-top: 2em;
 }
 

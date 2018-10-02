@@ -24,33 +24,39 @@
       <div
         class="nav__content"
         :class="{'is-open': isIdentityMenuOpen}">
-        <close-button :click="hideInstructions"/>
+
+        <div class="registration-instructions-top-row">
+          <close-button :click="hideInstructions"/>
+        </div>
 
         <hr>
 
         <h1>Mysterium ID</h1>
 
         <div
-          class="consumer-identity-id-container"
-          :class="{registered: registered}">
-          <div class="consumer-identity-id-item">
-            <logo-icon :active="registered" />
+          class="consumer-id-view">
+          <div class="consumer-id-view__item">
+            <logo-icon :active="registrationFetched" />
           </div>
-          <div class="consumer-identity-id-item">
-            <span class="consumer-identity-id">{{ consumerId }}</span>
+          <div class="consumer-id-view__item">
+            <span
+              class="consumer-id-view__id-text"
+              :class="{'consumer-id-view__id-text--registered': registrationFetched}">
+              {{ consumerId }}
+            </span>
           </div>
           <div>
             <span
-              class="consumer-identity-id-item consumer-identity-id-copy"
+              class="consumer-id-view__item copy-btn"
               @click="copyId()">
               <icon-copy class="nav__icon nav__icon--eye"/>
-              <span class="identity-tooltip">Copy to Clipboard</span>
+              <span class="copy-btn__tooltip">Copy to Clipboard</span>
             </span>
           </div>
         </div>
 
         <div
-          class="consumer-identity-registration"
+          class="consumer-registration-view"
           v-if="!registrationFetched">
           <h2>Activate your ID</h2>
           <p>
@@ -69,7 +75,6 @@
           </ul>
           <div
             class="btn"
-            v-if="registrationFetched"
             @click="openPaymentsUrl()">
             Register Your ID
           </div>
@@ -96,9 +101,9 @@ import LogoIcon from './logo-icon'
 
 export default {
   name: 'IdentityRegistration',
-  components: { CloseButton },
   dependencies: ['rendererCommunication', 'getPaymentLink'],
   components: {
+    CloseButton,
     IconCopy,
     LogoIcon
   },
@@ -125,10 +130,10 @@ export default {
     },
     isIdentityMenuOpen () {
       return this.$store.state.main.identityMenuOpen
-    }
-  },
-  ...mapGetters({
-    consumerId: 'currentIdentity'
-  })
+    },
+    ...mapGetters({
+      consumerId: 'currentIdentity'
+    })
+  }
 }
 </script>

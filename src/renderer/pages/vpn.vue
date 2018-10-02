@@ -18,9 +18,9 @@
 <template>
   <div class="page">
     <identity-button
-      v-if="registrationFetched && !isIdentityMenuOpen"
+      v-if="!isIdentityMenuOpen"
       :registered="registered"
-      :click="openPaymentsOrShowInstructions"/>
+      :click="showInstructions"/>
     <div class="page__control control">
       <div class="control__top">
         <h1
@@ -162,13 +162,6 @@ export default {
       if (countries.length < 1) this.bugReporter.captureInfoMessage('Renderer received empty countries list')
 
       this.countryList = countries
-    },
-    openPaymentsOrShowInstructions () {
-      if (this.registered) {
-        this.openPaymentsUrl()
-      } else {
-        this.showInstructions()
-      }
     },
     openPaymentsUrl () {
       const url = this.getPaymentLink(this.registration)
