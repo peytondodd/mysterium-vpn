@@ -234,7 +234,13 @@ function actionsFactory (
   }
 }
 
-function factory (actions: Object) {
+function factory (
+  tequilapi: TequilapiClient,
+  communication: RendererCommunication,
+  bugReporter: BugReporter,
+  connectionEstablisher: ConnectionEstablisher
+) {
+  const actions = actionsFactory(tequilapi, communication, bugReporter, connectionEstablisher)
   return {
     state,
     getters,
@@ -290,13 +296,6 @@ class VueConnectionState extends VueAction implements ConnectionState {
   }
 }
 
-export {
-  ActionLooper,
-  ActionLooperConfig,
-  state,
-  mutations,
-  getters,
-  actionsFactory
-}
+export { ActionLooper, ActionLooperConfig }
 export type { ConnectionStore }
 export default factory
