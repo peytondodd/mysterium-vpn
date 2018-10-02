@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-.identity-registration {
+.identity-button {
   position: absolute;
   top: 1.1rem;
   right: 1.3rem;
@@ -23,7 +23,7 @@
   z-index: 3;
   user-select: none;
 
-  .identity-text {
+  &__text {
     cursor: pointer;
     font-weight: bold;
     font-size: 24px;
@@ -31,7 +31,7 @@
     color: @white;
   }
 
-  .identity-tooltip {
+  &__tooltip {
     display: none;
     position: fixed;
     top: 3.5em;
@@ -42,16 +42,16 @@
   }
 
   &:hover {
-    .identity-tooltip {
+    .identity-button__tooltip {
       display: block;
     }
   }
 
-  &.identity-registered {
+  &--registered {
     background: @main;
   }
 
-  &.identity-unregistered {
+  &--unregistered {
     background: @g8;
   }
 }

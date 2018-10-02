@@ -22,16 +22,18 @@ import { expect } from 'chai'
 import { mutations, actionsFactory } from '@/store/modules/main'
 import type from '@/store/types'
 import EmptyTequilapiClientMock from './empty-tequilapi-client-mock'
-import { describe, it } from '../../../../helpers/dependencies'
+import { beforeEach, describe, it } from '../../../../helpers/dependencies'
 import { CallbackRecorder } from '../../../../helpers/utils'
 import type { NodeHealthcheckDTO } from 'mysterium-tequilapi/lib/dto/node-healthcheck'
 import NodeBuildInfoDTO from 'mysterium-tequilapi/lib/dto/node-build-info'
+import type { State } from '../../../../../src/renderer/store/modules/main'
 
-function initialState () {
+function initialState (): State {
   return {
     init: '',
     visual: 'head',
     navOpen: false,
+    identityMenuOpen: false,
     clientVersion: null,
     navVisible: true,
     errorMessage: null,
@@ -41,23 +43,44 @@ function initialState () {
 }
 
 describe('mutations', () => {
+  let state: State
+
+  beforeEach(() => {
+    state = initialState()
+  })
+
   describe('SHOW_ERROR_MESSAGE', () => {
     it('saves message and shows it', () => {
-      const state = initialState()
       mutations[type.SHOW_ERROR_MESSAGE](state, 'error message')
 
-      expect(state.showError).to.eql(true)
+      expect(state.showError).to.be.true
       expect(state.errorMessage).to.eql('error message')
     })
   })
 
   describe('HIDE_ERROR', () => {
     it('hides error', () => {
-      const state = initialState()
       state.showError = true
       mutations[type.HIDE_ERROR](state)
 
-      expect(state.showError).to.eql(false)
+      expect(state.showError).to.be.false
+    })
+  })
+
+  describe('SHOW_IDENTITY_MENU', () => {
+    it('updates state to show menu', () => {
+      mutations[type.SHOW_IDENTITY_MENU](state)
+
+      expect(state.identityMenuOpen).to.be.true
+    })
+  })
+
+  describe('HIDE_IDENTITY_MENU', () => {
+    it('updates state to hide menu', () => {
+      state.identityMenuOpen = true
+      mutations[type.HIDE_IDENTITY_MENU](state)
+
+      expect(state.identityMenuOpen).to.be.false
     })
   })
 })

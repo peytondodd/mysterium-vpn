@@ -18,29 +18,13 @@
 <template>
   <div>
     <div
-      class="identity-registration"
-      :class="{'identity-registered': registered, 'identity-unregistered': !registered}"
-      @click="openPaymentsOrShowInstructions()"
-      v-if="registration && !showInstructions">
-      <div class="identity-text">ID</div>
-      <div
-        class="identity-tooltip">{{ registered ? 'Check your balance' : 'Please activate your ID' }}</div>
-    </div>
-
-    <div
       class="app__nav nav"
       id="registration-instructions"
-      :class="{'is-open': showInstructions}">
+      :class="{'is-open': isIdentityMenuOpen}">
       <div
         class="nav__content"
-        :class="{'is-open': showInstructions}">
-        <div
-          class="nav__burger burger"
-          @click="showInstructions = false">
-          <i class="burger__bar burger__bar--1"/>
-          <i class="burger__bar burger__bar--2"/>
-          <i class="burger__bar burger__bar--3"/>
-        </div>
+        :class="{'is-open': isIdentityMenuOpen}">
+        <close-button :click="hideInstructions"/>
 
         <h2>Activate your ID</h2>
         <p>
@@ -59,16 +43,16 @@
         </ul>
         <div
           class="btn"
-          v-if="registration"
+          v-if="registrationFetched"
           @click="openPaymentsUrl()">
           Register Your ID
         </div>
       </div>
       <transition name="fade">
         <div
-          v-if="showInstructions"
+          v-if="isIdentityMenuOpen"
           class="nav__backdrop"
-          @click="showInstructions = false"/>
+          @click="hideInstructions"/>
       </transition>
     </div>
   </div>
@@ -76,24 +60,22 @@
 
 <script>
 
+import CloseButton from './close-button'
+import types from '../store/types'
 import { shell } from 'electron'
 
 export default {
   name: 'IdentityRegistration',
+  components: { CloseButton },
   dependencies: ['rendererCommunication', 'getPaymentLink'],
   data () {
     return {
-      registration: null,
-      showInstructions: false
+      identityMenuOpen: false
     }
   },
   methods: {
-    openPaymentsOrShowInstructions () {
-      if (this.registered) {
-        this.openPaymentsUrl()
-      } else {
-        this.showInstructions = true
-      }
+    hideInstructions () {
+      this.$store.commit(types.HIDE_IDENTITY_MENU)
     },
     openPaymentsUrl () {
       const url = this.getPaymentLink(this.registration)
@@ -101,17 +83,12 @@ export default {
     }
   },
   computed: {
-    registered () {
-      if (!this.registration) {
-        return null
-      }
-      return this.registration.registered
+    registrationFetched () {
+      return this.$store.getters.registration != null
+    },
+    isIdentityMenuOpen () {
+      return this.$store.state.main.identityMenuOpen
     }
-  },
-  mounted () {
-    this.rendererCommunication.identityRegistration.on(registration => {
-      this.registration = registration
-    })
   }
 }
 </script>

@@ -17,23 +17,26 @@
 
 // @flow
 import type from '../types'
-import type { TequilapiClient } from 'mysterium-tequilapi/lib/client'
 import IdentityDTO from 'mysterium-tequilapi/lib/dto/identity'
-import type { Container } from '../../../app/di'
+import type { BugReporter } from '../../../app/bug-reporting/interface'
+import type { RendererCommunication } from '../../../app/communication/renderer-communication'
+import IdentityRegistrationDTO from 'mysterium-tequilapi/lib/dto/identity-registration'
 
 type State = {
   current: ?IdentityDTO,
-  unlocked: boolean
+  unlocked: boolean,
+  registration: ?IdentityRegistrationDTO
 }
 
-const state: State = {
-  current: null,
-  unlocked: false
+function stateFactory (): State {
+  return {
+    current: null,
+    unlocked: false,
+    registration: null
+  }
 }
 
-function mutationsFactory (dependencies: Container) {
-  const bugReporter = dependencies.get('bugReporter')
-  const communication = dependencies.get('rendererCommunication')
+function mutationsFactory (bugReporter: BugReporter, communication: RendererCommunication) {
   return {
     [type.SET_CURRENT_IDENTITY] (state, identity: IdentityDTO) {
       state.current = identity
@@ -49,6 +52,9 @@ function mutationsFactory (dependencies: Container) {
     // TODO: remove duplicated mutation
     [type.IDENTITY_UNLOCK_FAIL] (state) {
       state.unlocked = false
+    },
+    [type.SET_IDENTITY_REGISTRATION]: (state: State, registration: IdentityRegistrationDTO) => {
+      state.registration = registration
     }
   }
 }
@@ -60,20 +66,21 @@ const getters = {
       throw new Error('Trying to get identity which is not present')
     }
     return identity.id
+  },
+  registration (state: State): ?IdentityRegistrationDTO {
+    return state.registration
   }
 }
 
-function factory (tequilapi: TequilapiClient, dependenciesContainer: Container) {
+function factory (bugReporter: BugReporter, communication: RendererCommunication) {
   return {
-    state,
+    state: stateFactory(),
     getters,
-    mutations: mutationsFactory(dependenciesContainer)
+    mutations: mutationsFactory(bugReporter, communication)
   }
 }
 
 export {
-  state,
-  getters,
   mutationsFactory
 }
 export type { State }
