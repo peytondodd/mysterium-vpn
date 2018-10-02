@@ -24,7 +24,7 @@
       v-if="registration && !showInfo">
       <div class="identity-text">ID</div>
       <div
-        class="identity-tooltip">{{ registered ? 'Check your balance' : 'Please activate your ID' }}</div>
+        class="identity-tooltip">{{ registered ? 'View Your Identity' : 'Please activate your ID' }}</div>
     </div>
 
     <div
@@ -53,7 +53,7 @@
           class="consumer-identity-id-container"
           :class="{registered: registered}">
           <div class="consumer-identity-id-item">
-            <logo-icon :registered="registered" />
+            <logo-icon :active="registered" />
           </div>
           <div class="consumer-identity-id-item">
             <span class="consumer-identity-id">{{ consumerId }}</span>
@@ -109,7 +109,6 @@
 import { shell, clipboard } from 'electron'
 import { mapGetters } from 'vuex'
 import IconCopy from '@/assets/img/icon--copy.svg'
-import headVisual from '@/assets/img/visual--head.svg'
 import LogoIcon from './logo-icon'
 
 export default {
@@ -117,7 +116,6 @@ export default {
   dependencies: ['rendererCommunication', 'getPaymentLink'],
   components: {
     IconCopy,
-    headVisual,
     LogoIcon
   },
   data () {

@@ -17,7 +17,7 @@
 
  .identity-tooltip-generic(@positionTop, @positionRight) {
   display: none;
-  background-color: lightgrey;
+  background-color: @greyLighter;
   color: black;
   border-radius: 30px;
   padding: 0.5em;
@@ -26,7 +26,6 @@
   right: @positionRight;
   color: @grey;
   font-size: 16px;
-  text-align: right;
  }
 
 .identity-registration {
@@ -115,7 +114,6 @@
 #registration-instructions {
   left: auto;
   right: 0;
-  min-width: 60vw;
 
   .nav__content {
     min-width: 80vw;

@@ -18,7 +18,7 @@
 <template>
   <span>
     <icon-logo-active
-      v-if="registered"
+      v-if="active"
       class="icon-logo"/>
     <icon-logo-inactive
       v-else
@@ -33,7 +33,7 @@ import IconLogoInactive from '@/assets/img/icon--logo-inactive.svg'
 export default {
   name: 'LogoIcon',
   props: {
-    registered: {
+    active: {
       type: Boolean,
       default: false
     }
@@ -44,11 +44,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-  .icon-logo {
-    display: inline-block;
-    width: 5rem;
-    height: 5rem;
-  }
-</style>
