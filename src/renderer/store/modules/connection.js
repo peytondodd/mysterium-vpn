@@ -243,15 +243,6 @@ function factory (actions: Object) {
   }
 }
 
-export {
-  ActionLooper,
-  ActionLooperConfig,
-  state,
-  mutations,
-  getters,
-  actionsFactory
-}
-
 type CommitFunction = (string, any) => void
 type DispatchFunction = (string, ...Array<any>) => Promise<void>
 
@@ -299,5 +290,13 @@ class VueConnectionState extends VueAction implements ConnectionState {
   }
 }
 
+export {
+  ActionLooper,
+  ActionLooperConfig,
+  state,
+  mutations,
+  getters,
+  actionsFactory
+}
 export type { ConnectionStore }
 export default factory

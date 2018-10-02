@@ -47,9 +47,13 @@ const actions = {
   }
 }
 
-export default {
-  state,
-  mutations,
-  getters,
-  actions
+function factory () {
+  return {
+    state,
+    mutations,
+    getters,
+    actions
+  }
 }
+
+export default factory
