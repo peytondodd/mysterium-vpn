@@ -15,9 +15,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+// @flow
+
 import type from '../types'
 
-const state = {
+type State = {
+  terms: {
+    htmlContent: ?string
+  }
+}
+
+const state: State = {
   terms: {
     htmlContent: null
   }
@@ -30,18 +38,19 @@ const mutations = {
 }
 
 const getters = {
-  termsAndConditions: (store) => store.terms
+  termsAndConditions: (state: State) => state.terms
 }
 
 const actions = {
-  [type.TERMS] ({ commit }, terms) {
-    commit(type.TERMS, terms)
+}
+
+function factory () {
+  return {
+    state,
+    getters,
+    mutations,
+    actions
   }
 }
 
-export default {
-  state,
-  mutations,
-  getters,
-  actions
-}
+export default factory

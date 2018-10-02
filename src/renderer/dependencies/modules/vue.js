@@ -26,7 +26,7 @@ import mainFactory from '../../store/modules/main'
 import identityFactory from '../../store/modules/identity'
 import connectionFactory, { actionsFactory } from '../../store/modules/connection'
 import errors from '../../store/modules/errors'
-import terms from '../../store/modules/terms'
+import termsFactory from '../../store/modules/terms'
 import TequilapiConnectionEstablisher from '../../../app/connection/tequilapi-connection-establisher'
 
 function bootstrap (container: Container) {
@@ -112,7 +112,7 @@ function bootstrap (container: Container) {
     }
   )
   container.constant('vue-store.errors', errors)
-  container.constant('vue-store.terms', terms)
+  container.constant('vue-store.terms', termsFactory())
 }
 
 export default bootstrap

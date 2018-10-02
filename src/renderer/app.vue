@@ -94,7 +94,7 @@ export default {
     })
 
     this.rendererCommunication.termsRequested.on((terms) => {
-      this.$store.dispatch(type.TERMS, terms)
+      this.$store.commit(type.TERMS, terms)
       this.$router.push('/terms')
     })
 
