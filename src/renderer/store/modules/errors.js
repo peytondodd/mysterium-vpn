@@ -27,8 +27,10 @@ type State = {
   overlay: ?OverlayError
 }
 
-const state: State = {
-  overlay: null
+function stateFactory (): State {
+  return {
+    overlay: null
+  }
 }
 
 const mutations = {
@@ -49,7 +51,7 @@ const actions = {
 
 function factory () {
   return {
-    state,
+    state: stateFactory(),
     mutations,
     getters,
     actions

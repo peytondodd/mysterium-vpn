@@ -25,9 +25,11 @@ type State = {
   }
 }
 
-const state: State = {
-  terms: {
-    htmlContent: null
+function stateFactory (): State {
+  return {
+    terms: {
+      htmlContent: null
+    }
   }
 }
 
@@ -46,7 +48,7 @@ const actions = {
 
 function factory () {
   return {
-    state,
+    state: stateFactory(),
     getters,
     mutations,
     actions

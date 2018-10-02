@@ -68,13 +68,15 @@ class ActionLooperConfig {
 const defaultStatistics = {
 }
 
-const state: ConnectionStore = {
-  ip: null,
-  location: null,
-  lastConnectionProvider: null,
-  status: ConnectionStatusEnum.NOT_CONNECTED,
-  statistics: defaultStatistics,
-  actionLoopers: {}
+function stateFactory (): ConnectionStore {
+  return {
+    ip: null,
+    location: null,
+    lastConnectionProvider: null,
+    status: ConnectionStatusEnum.NOT_CONNECTED,
+    statistics: defaultStatistics,
+    actionLoopers: {}
+  }
 }
 
 const getters = {
@@ -242,7 +244,7 @@ function factory (
 ) {
   const actions = actionsFactory(tequilapi, communication, bugReporter, connectionEstablisher)
   return {
-    state,
+    state: stateFactory(),
     getters,
     mutations,
     actions
