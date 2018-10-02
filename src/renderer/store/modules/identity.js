@@ -66,6 +66,9 @@ const getters = {
       throw new Error('Trying to get identity which is not present')
     }
     return identity.id
+  },
+  registration (state: State): ?IdentityRegistrationDTO {
+    return state.registration
   }
 }
 

@@ -130,7 +130,7 @@ export default {
       return this.registration != null
     },
     registration () {
-      return this.$store.state.identity.registration
+      return this.$store.getters.registration
     },
     registered () {
       if (!this.registration) {

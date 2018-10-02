@@ -84,7 +84,7 @@ export default {
   },
   computed: {
     registrationFetched () {
-      return this.$store.state.identity.registration != null
+      return this.$store.getters.registration != null
     },
     isIdentityMenuOpen () {
       return this.$store.state.main.identityMenuOpen
