@@ -19,13 +19,12 @@
 import { expect } from 'chai'
 
 import type from '@/store/types'
-import { mutations, actionsFactory } from '@/store/modules/connection'
+import mainFactory, { ActionLooper, ActionLooperConfig } from '@/store/modules/connection'
 import { describe, it, beforeEach } from '../../../../helpers/dependencies'
 import { FunctionLooper } from '@/../libraries/function-looper'
 import ConnectionStatusEnum from 'mysterium-tequilapi/lib/dto/connection-status-enum'
 import communicationMessages from '@/../app/communication/messages'
 import FakeMessageBus from '../../../../helpers/fake-message-bus'
-import { ActionLooper, ActionLooperConfig } from '../../../../../src/renderer/store/modules/connection'
 import type { ConnectionStore } from '../../../../../src/renderer/store/modules/connection'
 import ConnectionStatisticsDTO from 'mysterium-tequilapi/lib/dto/connection-statistics'
 import BugReporterMock from '../../../../helpers/bug-reporter-mock'
@@ -80,11 +79,42 @@ class MockConnectionEstablisher implements ConnectionEstablisher {
 }
 
 describe('connection', () => {
-  describe('mutations', () => {
-    describe('SET_LAST_CONNECTION_PROVIDER', () => {
-      const setLastConnectionProvider = mutations[type.SET_LAST_CONNECTION_PROVIDER]
+  let store
 
+  let fakeTequilapi
+  let fakeMessageBus
+  let communication
+
+  let bugReporterMock: BugReporterMock
+  let mockConnectionEstablisher: MockConnectionEstablisher
+
+  beforeEach(() => {
+    fakeTequilapi = factoryTequilapiManipulator()
+    fakeMessageBus = new FakeMessageBus()
+    communication = buildRendererCommunication(fakeMessageBus)
+
+    bugReporterMock = new BugReporterMock()
+    mockConnectionEstablisher = new MockConnectionEstablisher()
+
+    store = mainFactory(
+      fakeTequilapi.getFakeApi(),
+      communication,
+      bugReporterMock,
+      mockConnectionEstablisher
+    )
+  })
+
+  describe('mutations', () => {
+    let mutations
+
+    beforeEach(() => {
+      mutations = store.mutations
+    })
+
+    describe('SET_LAST_CONNECTION_PROVIDER', () => {
       it('updates provider', () => {
+        const setLastConnectionProvider = mutations[type.SET_LAST_CONNECTION_PROVIDER]
+
         const state: ConnectionStore = {
           status: ConnectionStatusEnum.CONNECTED,
           statistics: {},
@@ -100,9 +130,9 @@ describe('connection', () => {
     })
 
     describe('SET_CONNECTION_STATUS', () => {
-      const connectionStatus = mutations[type.SET_CONNECTION_STATUS]
-
       it('updates remote status', () => {
+        const connectionStatus = mutations[type.SET_CONNECTION_STATUS]
+
         const state: ConnectionStore = {
           status: ConnectionStatusEnum.CONNECTED,
           statistics: {},
@@ -114,9 +144,9 @@ describe('connection', () => {
     })
 
     describe('CONNECTION_STATISTICS', () => {
-      const connectionStatistics = mutations[type.CONNECTION_STATISTICS]
-
       it('updates statistics', () => {
+        const connectionStatistics = mutations[type.CONNECTION_STATISTICS]
+
         const state: ConnectionStore = {
           status: ConnectionStatusEnum.CONNECTED,
           statistics: {},
@@ -134,9 +164,9 @@ describe('connection', () => {
     })
 
     describe('CONNECTION_IP', () => {
-      const connectionIp = mutations[type.CONNECTION_IP]
-
       it('updates ip', () => {
+        const connectionIp = mutations[type.CONNECTION_IP]
+
         const state: ConnectionStore = {
           ip: 'old',
           status: ConnectionStatusEnum.CONNECTED,
@@ -208,13 +238,6 @@ describe('connection', () => {
   })
 
   describe('actions', () => {
-    let fakeTequilapi
-    let fakeMessageBus
-    let communication
-
-    let bugReporterMock: BugReporterMock
-    let mockConnectionEstablisher: MockConnectionEstablisher
-
     async function executeAction (action, state = {}, payload = {}, getters = {}) {
       const mutations = []
       const commit = (key, value) => {
@@ -223,28 +246,12 @@ describe('connection', () => {
 
       const dispatch = (action, payload = {}) => {
         const context = { commit, dispatch, state, getters }
-        const actions = actionsFactory(
-          fakeTequilapi.getFakeApi(),
-          communication,
-          bugReporterMock,
-          mockConnectionEstablisher
-        )
-
-        return actions[action](context, payload)
+        return store.actions[action](context, payload)
       }
 
       await dispatch(action, payload)
       return mutations
     }
-
-    beforeEach(() => {
-      fakeTequilapi = factoryTequilapiManipulator()
-      fakeMessageBus = new FakeMessageBus()
-      communication = buildRendererCommunication(fakeMessageBus)
-
-      bugReporterMock = new BugReporterMock()
-      mockConnectionEstablisher = new MockConnectionEstablisher()
-    })
 
     describe('START_ACTION_LOOPING', () => {
       it('sets update looper and performs first looper cycle', async () => {

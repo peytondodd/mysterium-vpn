@@ -24,10 +24,9 @@ import routerFactory from '../../router/factory'
 import storeFactory from '../../store/factory'
 import mainFactory from '../../store/modules/main'
 import identityFactory from '../../store/modules/identity'
-import connectionFactory, { actionsFactory } from '../../store/modules/connection'
-import errors from '../../store/modules/errors'
-import terms from '../../store/modules/terms'
-import clientProcess from '../../store/modules/client-process'
+import connectionFactory from '../../store/modules/connection'
+import errorsFactory from '../../store/modules/errors'
+import termsFactory from '../../store/modules/terms'
 import TequilapiConnectionEstablisher from '../../../app/connection/tequilapi-connection-establisher'
 
 function bootstrap (container: Container) {
@@ -73,17 +72,15 @@ function bootstrap (container: Container) {
       'vue-store.identity',
       'vue-store.connection',
       'vue-store.errors',
-      'vue-store.terms',
-      'vue-store.clientProcess'
+      'vue-store.terms'
     ],
-    (main, identity, connection, errors, terms, clientProcess) => {
+    (main, identity, connection, errors, terms) => {
       return storeFactory({
         main,
         identity,
         connection,
         errors,
-        terms,
-        clientProcess
+        terms
       })
     }
   )
@@ -99,24 +96,13 @@ function bootstrap (container: Container) {
   )
   container.service(
     'vue-store.connection',
-    ['vue-store.connection.actions'],
-    (actions) => connectionFactory(actions)
-  )
-  container.service(
-    'vue-store.connection.actions',
     ['tequilapiClient', 'rendererCommunication', 'bugReporter', 'connectionEstablisher'],
     (tequilapiClient, rendererCommunication, bugReporter, connectionEstablisher) => {
-      return actionsFactory(
-        tequilapiClient,
-        rendererCommunication,
-        bugReporter,
-        connectionEstablisher
-      )
+      return connectionFactory(tequilapiClient, rendererCommunication, bugReporter, connectionEstablisher)
     }
   )
-  container.constant('vue-store.errors', errors)
-  container.constant('vue-store.terms', terms)
-  container.constant('vue-store.clientProcess', clientProcess)
+  container.constant('vue-store.errors', errorsFactory())
+  container.constant('vue-store.terms', termsFactory())
 }
 
 export default bootstrap
