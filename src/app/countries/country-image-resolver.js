@@ -23,11 +23,11 @@ import { isCountryKnown } from './index'
 
 class CountryImageResolver {
   _bugReporter: BugReporter
-  _unresolvedCountryList: string[]
+  _unknownCountryCodes: string[]
 
   constructor (bugReporter: BugReporter) {
     this._bugReporter = bugReporter
-    this._unresolvedCountryList = []
+    this._unknownCountryCodes = []
   }
 
   getImagePath (code: ?string): string {
@@ -35,7 +35,7 @@ class CountryImageResolver {
       return this._getDefaultIconPath()
     }
     if (!isCountryKnown(code)) {
-      this._reportCountryIfUnique(code)
+      this._reportUnknownCountryCode(code)
       return this._getDefaultIconPath()
     }
     return this._getIconPath(code)
@@ -49,9 +49,9 @@ class CountryImageResolver {
     return path.join('static', 'flags', code.toLowerCase() + '.svg')
   }
 
-  _reportCountryIfUnique (code: string) {
-    if (!this._unresolvedCountryList.includes(code)) {
-      this._unresolvedCountryList.push(code)
+  _reportUnknownCountryCode (code: string) {
+    if (!this._unknownCountryCodes.includes(code)) {
+      this._unknownCountryCodes.push(code)
       this._bugReporter.captureInfoMessage('Country not found, code: ' + code)
     }
   }
