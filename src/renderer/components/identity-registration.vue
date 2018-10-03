@@ -46,12 +46,7 @@
             </span>
           </div>
           <div>
-            <span
-              class="consumer-id-view__item copy-btn"
-              @click="copyId()">
-              <icon-copy class="nav__icon nav__icon--eye"/>
-              <span class="copy-btn__tooltip">Copy to Clipboard</span>
-            </span>
+            <copy-button :text="consumerId" />
           </div>
         </div>
 
@@ -93,10 +88,10 @@
 <script>
 
 import CloseButton from './close-button'
+import CopyButton from './copy-button'
 import types from '../store/types'
 import { shell, clipboard } from 'electron'
 import { mapGetters } from 'vuex'
-import IconCopy from '@/assets/img/icon--copy.svg'
 import LogoIcon from './logo-icon'
 
 export default {
@@ -104,7 +99,7 @@ export default {
   dependencies: ['rendererCommunication', 'getPaymentLink'],
   components: {
     CloseButton,
-    IconCopy,
+    CopyButton,
     LogoIcon
   },
   data () {

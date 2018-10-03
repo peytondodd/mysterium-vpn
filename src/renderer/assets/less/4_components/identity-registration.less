@@ -15,19 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
- .identity-tooltip-generic(@positionTop, @positionRight) {
-  display: none;
-  background-color: @greyLighter;
-  color: black;
-  border-radius: 30px;
-  padding: 0.5em;
-  position: fixed;
-  top: @positionTop;
-  right: @positionRight;
-  color: @grey;
-  font-size: 16px;
- }
-
 .identity-button {
   position: absolute;
   top: 1.1rem;
@@ -45,7 +32,7 @@
   }
 
   &__tooltip {
-    .identity-tooltip-generic(3.5em, 0.7em);
+    .tooltip-generic(3.5em, 0.7em);
   }
 
   &:hover {
@@ -84,20 +71,6 @@
   }
   &__item {
     padding-right: 0.5em;
-  }
-}
-
-.copy-btn {
-  cursor: pointer;
-
-  &__tooltip {
-    .identity-tooltip-generic(10.5em, 1.2em);
-  }
-
-  &:hover {
-    .copy-btn__tooltip {
-      display: block;
-    }
   }
 }
 

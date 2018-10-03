@@ -1,0 +1,18 @@
+.copy-btn {
+  cursor: pointer;
+
+  &__tooltip {
+    .tooltip-generic(10.5em, 1.2em);
+  }
+
+  &__tooltip-success {
+    .tooltip-generic(10.5em, 1.2em);
+    display: block;
+  }
+
+  &:hover {
+    .copy-btn__tooltip {
+      display: block;
+    }
+  }
+}
