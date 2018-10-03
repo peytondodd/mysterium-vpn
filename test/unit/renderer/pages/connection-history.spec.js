@@ -21,6 +21,7 @@ import { beforeEach, describe, it, expect } from '../../../helpers/dependencies'
 import ConnectionHistory from '../../../../src/renderer/pages/connection-history'
 import DIContainer from '../../../../src/app/di/vue-container'
 import type { SessionDto } from '../../../../src/app/bug-reporting/tequilapi-client-with-metrics'
+import VueRouter from 'vue-router'
 
 describe('ConnectionHistory', () => {
   let wrapper
@@ -60,15 +61,15 @@ describe('ConnectionHistory', () => {
 
   function mountConnectionHistory () {
     const localVue = createLocalVue()
+    localVue.use(VueRouter)
     const dependencies = new DIContainer(localVue)
     dependencies.constant('tequilapiClient', {
       async sessionsList () {
         return mockedSessions
       }
     })
-    return mount(ConnectionHistory, {
-      localVue
-    })
+    const router = new VueRouter()
+    return mount(ConnectionHistory, { localVue, router })
   }
 
   beforeEach(() => {
@@ -82,5 +83,10 @@ describe('ConnectionHistory', () => {
   it('renders table with headers and list of sessions', async () => {
     await wrapper.vm.$nextTick()
     expect(wrapper.findAll('tr')).to.have.length(1 + mockedSessions.length)
+  })
+
+  it('renders close button which opens vpn window', () => {
+    wrapper.find('.close-button').trigger('click')
+    expect(wrapper.vm.$router.currentRoute.path).to.eql('/vpn')
   })
 })

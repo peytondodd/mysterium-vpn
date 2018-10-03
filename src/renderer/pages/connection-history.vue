@@ -17,6 +17,9 @@
 
 <template>
   <div class="page">
+    <close-button
+      :click="close"
+      class="close-button--marginned"/>
     <div class="page__post post">
       <h1>Connection History</h1>
       <div class="post__content connection-history">
@@ -39,10 +42,11 @@
 </template>
 <script>
 import SessionItem from '../components/session-item'
+import CloseButton from '../components/close-button'
 
 export default {
   name: 'ConnectionHistory',
-  components: { SessionItem },
+  components: { CloseButton, SessionItem },
   dependencies: ['tequilapiClient'],
   data: function () {
     return {
@@ -53,6 +57,11 @@ export default {
     this.tequilapiClient.sessionsList().then(sessions => {
       this.sessions = sessions
     })
+  },
+  methods: {
+    close: function () {
+      this.$router.push('/vpn')
+    }
   }
 }
 </script>
