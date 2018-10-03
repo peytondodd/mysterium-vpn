@@ -25,7 +25,7 @@ import { createLocalVue, mount } from '@vue/test-utils'
 
 import idStoreFactory from '@/store/modules/identity'
 import mainStoreFactory from '@/store/modules/main'
-import errorStore from '@/store/modules/errors'
+import errorStoreFactory from '@/store/modules/errors'
 import VpnLoader from '@/pages/vpn-loader'
 
 import { describe, it, beforeEach, before } from '../../../helpers/dependencies'
@@ -67,7 +67,7 @@ describe('VpnLoader', () => {
       modules: {
         identity: idStoreFactory(bugReporter, communication),
         main: mainStoreFactory(tequilapi),
-        errors: errorStore,
+        errors: errorStoreFactory(),
         connection: {
           actions: {
             [types.LOCATION]: function () {}

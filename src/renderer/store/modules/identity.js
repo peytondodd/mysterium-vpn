@@ -80,8 +80,5 @@ function factory (bugReporter: BugReporter, communication: RendererCommunication
   }
 }
 
-export {
-  mutationsFactory
-}
 export type { State }
 export default factory

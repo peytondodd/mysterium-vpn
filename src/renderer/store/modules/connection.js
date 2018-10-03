@@ -68,13 +68,15 @@ class ActionLooperConfig {
 const defaultStatistics = {
 }
 
-const state: ConnectionStore = {
-  ip: null,
-  location: null,
-  lastConnectionProvider: null,
-  status: ConnectionStatusEnum.NOT_CONNECTED,
-  statistics: defaultStatistics,
-  actionLoopers: {}
+function stateFactory (): ConnectionStore {
+  return {
+    ip: null,
+    location: null,
+    lastConnectionProvider: null,
+    status: ConnectionStatusEnum.NOT_CONNECTED,
+    statistics: defaultStatistics,
+    actionLoopers: {}
+  }
 }
 
 const getters = {
@@ -234,22 +236,19 @@ function actionsFactory (
   }
 }
 
-function factory (actions: Object) {
+function factory (
+  tequilapi: TequilapiClient,
+  communication: RendererCommunication,
+  bugReporter: BugReporter,
+  connectionEstablisher: ConnectionEstablisher
+) {
+  const actions = actionsFactory(tequilapi, communication, bugReporter, connectionEstablisher)
   return {
-    state,
+    state: stateFactory(),
     getters,
     mutations,
     actions
   }
-}
-
-export {
-  ActionLooper,
-  ActionLooperConfig,
-  state,
-  mutations,
-  getters,
-  actionsFactory
 }
 
 type CommitFunction = (string, any) => void
@@ -299,5 +298,6 @@ class VueConnectionState extends VueAction implements ConnectionState {
   }
 }
 
+export { ActionLooper, ActionLooperConfig }
 export type { ConnectionStore }
 export default factory

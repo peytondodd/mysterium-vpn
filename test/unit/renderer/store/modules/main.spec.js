@@ -18,8 +18,6 @@
 // @flow
 
 import { expect } from 'chai'
-
-import { mutations, actionsFactory } from '@/store/modules/main'
 import type from '@/store/types'
 import EmptyTequilapiClientMock from './empty-tequilapi-client-mock'
 import { beforeEach, describe, it } from '../../../../helpers/dependencies'
@@ -27,6 +25,7 @@ import { CallbackRecorder } from '../../../../helpers/utils'
 import type { NodeHealthcheckDTO } from 'mysterium-tequilapi/lib/dto/node-healthcheck'
 import NodeBuildInfoDTO from 'mysterium-tequilapi/lib/dto/node-build-info'
 import type { State } from '../../../../../src/renderer/store/modules/main'
+import factory from '../../../../../src/renderer/store/modules/main'
 
 function initialState (): State {
   return {
@@ -41,49 +40,6 @@ function initialState (): State {
     showError: false
   }
 }
-
-describe('mutations', () => {
-  let state: State
-
-  beforeEach(() => {
-    state = initialState()
-  })
-
-  describe('SHOW_ERROR_MESSAGE', () => {
-    it('saves message and shows it', () => {
-      mutations[type.SHOW_ERROR_MESSAGE](state, 'error message')
-
-      expect(state.showError).to.be.true
-      expect(state.errorMessage).to.eql('error message')
-    })
-  })
-
-  describe('HIDE_ERROR', () => {
-    it('hides error', () => {
-      state.showError = true
-      mutations[type.HIDE_ERROR](state)
-
-      expect(state.showError).to.be.false
-    })
-  })
-
-  describe('SHOW_IDENTITY_MENU', () => {
-    it('updates state to show menu', () => {
-      mutations[type.SHOW_IDENTITY_MENU](state)
-
-      expect(state.identityMenuOpen).to.be.true
-    })
-  })
-
-  describe('HIDE_IDENTITY_MENU', () => {
-    it('updates state to hide menu', () => {
-      state.identityMenuOpen = true
-      mutations[type.HIDE_IDENTITY_MENU](state)
-
-      expect(state.identityMenuOpen).to.be.false
-    })
-  })
-})
 
 class MainTequilapiClientMock extends EmptyTequilapiClientMock {
   async healthCheck (_timeout: ?number): Promise<NodeHealthcheckDTO> {
@@ -100,17 +56,76 @@ class MainTequilapiClientMock extends EmptyTequilapiClientMock {
   }
 }
 
-describe('actions', () => {
-  describe('CLIENT_VERSION', () => {
-    it('commits version from tequilapi', async () => {
-      const client = new MainTequilapiClientMock()
-      const actions = actionsFactory(client)
-      const recorder = new CallbackRecorder()
-      const commit = recorder.getCallback()
+describe('main store', () => {
+  let store
+  let client: MainTequilapiClientMock
 
-      await actions[type.CLIENT_VERSION]({ commit })
+  beforeEach(() => {
+    client = new MainTequilapiClientMock()
+    store = factory(client)
+  })
 
-      expect(recorder.arguments).to.eql([type.CLIENT_VERSION, 'mock version'])
+  describe('mutations', () => {
+    let mutations
+    let state: State
+
+    beforeEach(() => {
+      mutations = store.mutations
+      state = initialState()
+    })
+
+    describe('SHOW_ERROR_MESSAGE', () => {
+      it('saves message and shows it', () => {
+        mutations[type.SHOW_ERROR_MESSAGE](state, 'error message')
+
+        expect(state.showError).to.be.true
+        expect(state.errorMessage).to.eql('error message')
+      })
+    })
+
+    describe('HIDE_ERROR', () => {
+      it('hides error', () => {
+        state.showError = true
+        mutations[type.HIDE_ERROR](state)
+
+        expect(state.showError).to.be.false
+      })
+    })
+
+    describe('SHOW_IDENTITY_MENU', () => {
+      it('updates state to show menu', () => {
+        mutations[type.SHOW_IDENTITY_MENU](state)
+
+        expect(state.identityMenuOpen).to.be.true
+      })
+    })
+
+    describe('HIDE_IDENTITY_MENU', () => {
+      it('updates state to hide menu', () => {
+        state.identityMenuOpen = true
+        mutations[type.HIDE_IDENTITY_MENU](state)
+
+        expect(state.identityMenuOpen).to.be.false
+      })
+    })
+  })
+
+  describe('actions', () => {
+    let actions
+
+    beforeEach(() => {
+      actions = store.actions
+    })
+
+    describe('CLIENT_VERSION', () => {
+      it('commits version from tequilapi', async () => {
+        const recorder = new CallbackRecorder()
+        const commit = recorder.getCallback()
+
+        await actions[type.CLIENT_VERSION]({ commit })
+
+        expect(recorder.arguments).to.eql([type.CLIENT_VERSION, 'mock version'])
+      })
     })
   })
 })
