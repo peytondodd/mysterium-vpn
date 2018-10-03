@@ -17,7 +17,6 @@
 
 <template>
   <tr>
-    <td/>
     <td>[{{ session.location.country }}]{{ shortIdentity }}</td>
     <td>{{ startDate }}<br>{{ startTime }}</td>
     <td>{{ durationString }}</td>

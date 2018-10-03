@@ -59,28 +59,28 @@ describe('SessionItem', () => {
   })
 
   it('renders shortened identity', () => {
-    const nodeText = wrapper.findAll('td').at(1).element.innerText
+    const nodeText = wrapper.findAll('td').at(0).element.innerText
     expect(nodeText).to.eql('[lt]0x3b03a513f...')
   })
 
   it('renders countries', () => {
     // TODO: render icons instead
-    const nodeText = wrapper.findAll('td').at(1).element.innerText
+    const nodeText = wrapper.findAll('td').at(0).element.innerText
     expect(nodeText).to.have.string('[lt]')
   })
 
   it('renders start date and time', () => {
-    const startText = wrapper.findAll('td').at(2).element.innerText
+    const startText = wrapper.findAll('td').at(1).element.innerText
     expect(startText).to.eql('24/09/2018\n14:03:55')
   })
 
   it('renders duration time', () => {
-    const duration = wrapper.findAll('td').at(3).element.innerText
+    const duration = wrapper.findAll('td').at(2).element.innerText
     expect(duration).to.eql('00:35:00')
   })
 
   it('renders sent and received amounts', () => {
-    const traffic = wrapper.findAll('td').at(4).element.innerText
+    const traffic = wrapper.findAll('td').at(3).element.innerText
     expect(traffic).to.eql('1.00KB/5.86KB')
   })
 })

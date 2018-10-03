@@ -25,7 +25,6 @@
       <div class="post__content connection-history">
         <table>
           <tr>
-            <th/>
             <th>Node</th>
             <th>Date/Time</th>
             <th>Duration</th>
