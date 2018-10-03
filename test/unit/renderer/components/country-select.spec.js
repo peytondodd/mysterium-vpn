@@ -24,6 +24,8 @@ import FakeMessageBus from '../../../helpers/fake-message-bus'
 import { beforeEach, describe, expect, it } from '../../../helpers/dependencies'
 import BugReporterMock from '../../../helpers/bug-reporter-mock'
 import { buildRendererCommunication } from '../../../../src/app/communication/renderer-communication'
+import CountryImageResolver from '../../../../src/app/countries/country-image-resolver'
+import type { BugReporter } from '../../../../src/app/bug-reporting/interface'
 
 const countryList = [
   {
@@ -52,12 +54,13 @@ const countryList = [
   }
 ]
 
-function mountWith (countryList, rendererCommunication, bugReporterMock) {
+function mountWith (countryList, rendererCommunication, bugReporterMock: BugReporter) {
   const vue = createLocalVue()
 
   const dependencies = new DIContainer(vue)
   dependencies.constant('rendererCommunication', rendererCommunication)
   dependencies.constant('bugReporter', bugReporterMock)
+  dependencies.constant('countryImageResolver', new CountryImageResolver(bugReporterMock))
 
   return mount(CountrySelect, {
     localVue: vue,
@@ -72,41 +75,15 @@ function mountWith (countryList, rendererCommunication, bugReporterMock) {
 describe('CountrySelect', () => {
   let wrapper
   let fakeMessageBus
+  let bugReporterMock
 
   beforeEach(() => {
     fakeMessageBus = new FakeMessageBus()
-  })
-
-  describe('.imagePath', () => {
-    let bugReporterMock
-
-    beforeEach(async () => {
-      bugReporterMock = new BugReporterMock()
-    })
-
-    it('reports bug for unresolved country code', async () => {
-      wrapper = mountWith([countryList[4]], buildRendererCommunication(fakeMessageBus), bugReporterMock)
-      expect(bugReporterMock.infoMessages).to.have.lengthOf(1)
-      expect(bugReporterMock.infoMessages[0].message).to.eql('Country not found, code: undefined')
-    })
-
-    it('does not send message to bug reporter on second try', async () => {
-      wrapper = mountWith([countryList[2], countryList[3]], buildRendererCommunication(fakeMessageBus), bugReporterMock)
-      expect(bugReporterMock.infoMessages).to.have.lengthOf(1)
-      expect(bugReporterMock.infoMessages[0].message).to.eql('Country not found, code: unknown')
-    })
-
-    it('does not send message to bug reporter known country code', async () => {
-      wrapper = mountWith([countryList[0], countryList[1]], buildRendererCommunication(fakeMessageBus), bugReporterMock)
-      expect(bugReporterMock.infoMessages).to.have.lengthOf(0)
-    })
+    bugReporterMock = new BugReporterMock()
   })
 
   describe('when getting list of proposals', () => {
-    let bugReporterMock
-
     beforeEach(async () => {
-      bugReporterMock = new BugReporterMock()
       wrapper = mountWith(countryList, buildRendererCommunication(fakeMessageBus), bugReporterMock)
       fakeMessageBus.clean()
     })
@@ -117,7 +94,7 @@ describe('CountrySelect', () => {
       const multiselectOptions = wrapper.findAll('.multiselect__option-title')
       expect(multiselectOptions).to.have.lengthOf(5)
 
-      const flags = wrapper.findAll('.multiselect__flag-svg')
+      const flags = wrapper.find('.countries__multiselect').findAll('.country-flag__svg')
       expect(flags.wrappers).to.have.lengthOf(5)
 
       // country code is known
@@ -155,7 +132,7 @@ describe('CountrySelect', () => {
 
   describe('selectedCountryLabel()', () => {
     beforeEach(() => {
-      wrapper = mountWith([], buildRendererCommunication(fakeMessageBus))
+      wrapper = mountWith([], buildRendererCommunication(fakeMessageBus), bugReporterMock)
       fakeMessageBus.clean()
     })
 

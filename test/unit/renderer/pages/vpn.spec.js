@@ -33,6 +33,7 @@ import types from '../../../../src/renderer/store/types'
 import IdentityRegistrationDTO from 'mysterium-tequilapi/lib/dto/identity-registration'
 import mainStoreFactory from '../../../../src/renderer/store/modules/main'
 import EmptyTequilapiClientMock from '../store/modules/empty-tequilapi-client-mock'
+import CountryImageResolver from '../../../../src/app/countries/country-image-resolver'
 
 describe('Vpn', () => {
   let vpnWrapper
@@ -51,6 +52,7 @@ describe('Vpn', () => {
     dependencies.constant('startupEventTracker', startupEventTracker)
     dependencies.constant('userSettingsStore', new UserSettingsProxy(communication))
     dependencies.constant('getPaymentLink', () => 'mock url')
+    dependencies.constant('countryImageResolver', new CountryImageResolver(bugReporterMock))
 
     const store = new Store({
       getters: {
