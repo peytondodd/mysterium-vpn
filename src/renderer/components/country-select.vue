@@ -39,38 +39,28 @@
           v-if='props.option.isFavorite'>
           ★
         </span>
-        <div class="multiselect__flag">
-          <img
-            :src="imagePath(props.option.code)"
-            class="multiselect__flag-svg">
-        </div>
+        <country-flag :code="props.option.code"/>
         <div
           class="multiselect__option-title"
           v-text="countryLabel(props.option)"/>
       </template>
     </multiselect>
 
-    <i class="countries__flag dropdown-image">
-      <img
-        :src="imagePath(country.code)"
-        v-if="country"
-        class="countries__flag-svg">
-      <icon-world
-        class="countries__flag-svg"
-        v-if="!country"/>
-    </i>
+    <country-flag
+      :code="countryCode"
+      class="country-flag--dropdown"/>
   </div>
 </template>
 
 <script>
-import path from 'path'
-import { getCountryLabel, isCountryUnresolved } from '../../app/countries'
+import { getCountryLabel } from '../../app/countries'
 import Multiselect from 'vue-multiselect'
 import IconWorld from '@/assets/img/icon--world.svg'
+import CountryFlag from './country-flag'
 
 export default {
   name: 'CountrySelect',
-  dependencies: ['rendererCommunication', 'bugReporter'],
+  dependencies: ['rendererCommunication'],
   props: {
     countryList: {
       type: Array,
@@ -87,6 +77,7 @@ export default {
     }
   },
   components: {
+    CountryFlag,
     Multiselect,
     IconWorld
   },
@@ -114,22 +105,19 @@ export default {
 
       return getCountryLabel(country)
     },
-    imagePath (code) {
-      if (!isCountryUnresolved(code)) {
-        if (this.unresolvedCountryList.indexOf(code) < 0) {
-          this.unresolvedCountryList.push(code)
-          this.bugReporter.captureInfoMessage('Country not found, code: ' + code)
-        }
-        code = 'world'
-      }
-
-      return path.join('static', 'flags', code.toLowerCase() + '.svg')
-    },
     onConnectionRequest (proposal) {
       const selectedCountry = this.countryList.find((country) => country.id === proposal.providerId)
 
       this.country = selectedCountry
       this.$emit('selected', selectedCountry)
+    }
+  },
+  computed: {
+    countryCode () {
+      if (this.country == null) {
+        return null
+      }
+      return this.country.code
     }
   },
   mounted () {

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 The "mysteriumnetwork/mysterium-vpn" Authors.
+ * Copyright (C) 2018 The "mysteriumnetwork/mysterium-vpn" Authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,35 +15,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-.countries {
-  width: 28rem;
+.country-flag {
   position: relative;
-  background-color: @white;
+  width: 17px;
+  height: 17px;
+  border-radius: 100%;
+  background-repeat: no-repeat;
+  background-size: cover;
+  display: inline-block;
+  overflow: hidden;
 
-  .country-flag {
-    top: 0.3rem;
-  }
-
-  .country-flag--dropdown {
-    position: absolute;
-    top: 0.7rem;
-    left: 0.6rem;
-    z-index: 2;
+  &__svg {
     display: block;
-    transition: opacity 200ms @easeOutQuad;
-  }
-  &.is-disabled {
-    .countries {
-      &__multiselect,
-      .country-flag {
-        opacity: 0.2;
-        pointer-events: none;
-      }
-    }
-    .multiselect {
-      &__tags {
-        border-color: @g8;
-      }
-    }
+    max-width: 30px;
+    position: absolute;
+    top: 0;
+    left: 0;
   }
 }

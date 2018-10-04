@@ -83,14 +83,14 @@ function compareCountries (a: Country, b: Country) {
   return 0
 }
 
-function isCountryUnresolved (countryCode: string): boolean {
+function isCountryKnown (countryCode: ?string): boolean {
   return countryCode != null &&
     typeof countries[countryCode.toLocaleLowerCase()] !== 'undefined'
 }
 
 function getCountryName (countryCode: string): string {
   countryCode = countryCode.toLowerCase()
-  if (!isCountryUnresolved(countryCode)) {
+  if (!isCountryKnown(countryCode)) {
     return COUNTRY_NAME_UNRESOLVED
   }
 
@@ -124,5 +124,5 @@ export type { Country }
 export {
   getCountryLabel,
   getSortedCountryListFromProposals,
-  isCountryUnresolved
+  isCountryKnown
 }

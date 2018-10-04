@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 The "mysteriumnetwork/mysterium-vpn" Authors.
+ * Copyright (C) 2018 The "mysteriumnetwork/mysterium-vpn" Authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,35 +15,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-.countries {
-  width: 28rem;
-  position: relative;
-  background-color: @white;
+// @flow
 
-  .country-flag {
-    top: 0.3rem;
-  }
+import { isCountryKnown } from './index'
+import path from 'path'
 
-  .country-flag--dropdown {
-    position: absolute;
-    top: 0.7rem;
-    left: 0.6rem;
-    z-index: 2;
-    display: block;
-    transition: opacity 200ms @easeOutQuad;
+function getCountryImagePath (code: ?string): string {
+  if (code == null || !isCountryKnown(code)) {
+    return getIconPath('world')
   }
-  &.is-disabled {
-    .countries {
-      &__multiselect,
-      .country-flag {
-        opacity: 0.2;
-        pointer-events: none;
-      }
-    }
-    .multiselect {
-      &__tags {
-        border-color: @g8;
-      }
-    }
-  }
+  return getIconPath(code)
 }
+
+function getIconPath (code: string): string {
+  return path.join('static', 'flags', code.toLowerCase() + '.svg')
+}
+
+export { getCountryImagePath }
