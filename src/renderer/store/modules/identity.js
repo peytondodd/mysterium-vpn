@@ -75,7 +75,7 @@ const getters = {
 function factory (bugReporter: BugReporter, communication: RendererCommunication) {
   return {
     state: stateFactory(),
-    getters,
+    getters: { ...getters },
     mutations: mutationsFactory(bugReporter, communication)
   }
 }
