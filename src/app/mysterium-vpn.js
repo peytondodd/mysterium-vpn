@@ -49,6 +49,7 @@ import CommunicationBindings from './communication-bindings'
 import { METRICS, TAGS } from './bug-reporting/metrics/metrics'
 import type { BugReporterMetrics } from './bug-reporting/metrics/bug-reporter-metrics'
 import type { MainCommunication } from './communication/main-communication'
+import { reportUnknownProposalCountries } from './countries/reporting'
 
 const LOG_PREFIX = '[MysteriumVpn] '
 const MYSTERIUM_CLIENT_STARTUP_THRESHOLD = 10000
@@ -454,6 +455,8 @@ class MysteriumVpn {
       })
     })
     this._proposalFetcher.onFetchingError(handleProposalFetchError)
+
+    reportUnknownProposalCountries(this._proposalFetcher, this._bugReporter)
 
     this._monitoring.onStatusUp(() => {
       logInfo('Starting proposal fetcher')
