@@ -45,7 +45,7 @@
               {{ consumerId }}
             </span>
           </div>
-          <div>
+          <div class="consumer-id-view__item">
             <copy-button :text="consumerId" />
           </div>
         </div>

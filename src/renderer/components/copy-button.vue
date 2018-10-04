@@ -17,7 +17,7 @@
 
 <template>
   <span
-    class="consumer-id-view__item copy-btn"
+    class="copy-btn"
     @click="copyId()">
     <icon-copy class="nav__icon nav__icon--eye"/>
 

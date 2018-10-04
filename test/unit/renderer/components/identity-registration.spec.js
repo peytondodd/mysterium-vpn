@@ -62,10 +62,6 @@ describe('IdentityRegistration', () => {
         }
       }
     }
-    identity.getters.currentIdentity = (state) => {
-      return state.current.id
-    }
-
     store = new Vuex.Store({
       modules: {
         main: mainStoreFactory(tequilapi),
@@ -85,6 +81,11 @@ describe('IdentityRegistration', () => {
       expect(vue.findAll('#registration-instructions.is-open')).to.have.lengthOf(0)
       store.commit(types.SHOW_IDENTITY_MENU)
       expect(vue.findAll('#registration-instructions.is-open')).to.have.lengthOf(1)
+    })
+
+    it('renders client ID', () => {
+      expect(vue.findAll('.consumer-id-view__item')).to.have.lengthOf(3, 'has 3 elements')
+      expect(vue.findAll('.consumer-id-view__id-text')).to.have.lengthOf(1, 'has ID text')
     })
   })
 })

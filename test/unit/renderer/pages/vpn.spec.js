@@ -90,10 +90,7 @@ describe('Vpn', () => {
     })
   })
 
-  it('renders no ID icon until registration state is set', async () => {
-    expect(vpnWrapper.findAll('.identity-button')).to.have.lengthOf(0)
-    const registration = new IdentityRegistrationDTO({ registered: true })
-    vpnWrapper.vm.$store.commit(types.SET_IDENTITY_REGISTRATION, registration)
+  it('renders ID icon when no registration state is set', async () => {
     expect(vpnWrapper.findAll('.identity-button')).to.have.lengthOf(1)
   })
 
