@@ -21,13 +21,26 @@ import Vuex from 'vuex'
 import ConnectionButton from '../../../../src/renderer/components/connection-button'
 import type from '../../../../src/renderer/store/types'
 import ConnectionStatusEnum from 'mysterium-tequilapi/lib/dto/connection-status-enum'
-import { state, mutations, getters } from '@/store/modules/connection'
+import connectionFactory from '@/store/modules/connection'
 import { createLocalVue, mount } from '@vue/test-utils'
 import { describe, expect, it } from '../../../helpers/dependencies'
+import EmptyTequilapiClientMock from '../store/modules/empty-tequilapi-client-mock'
+import { buildRendererCommunication } from '../../../../src/app/communication/renderer-communication'
+import DirectMessageBus from '../../../helpers/direct-message-bus'
+import BugReporterMock from '../../../helpers/bug-reporter-mock'
+import TequilapiConnectionEstablisher from '../../../../src/app/connection/tequilapi-connection-establisher'
+import MockEventSender from '../../../helpers/statistics/mock-event-sender'
 
 const mountWithStore = function () {
   const localVue = createLocalVue()
   localVue.use(Vuex)
+
+  const tequilapi = new EmptyTequilapiClientMock()
+  const communication = buildRendererCommunication(new DirectMessageBus())
+  const bugReporter = new BugReporterMock()
+  const eventSender = new MockEventSender()
+  const connectionEstablisher = new TequilapiConnectionEstablisher(tequilapi, eventSender, bugReporter)
+  const connection = connectionFactory(tequilapi, communication, bugReporter, connectionEstablisher)
 
   const store = new Vuex.Store({
     modules: {
@@ -43,19 +56,7 @@ const mountWithStore = function () {
           }
         }
       },
-      connection: {
-        state,
-        mutations,
-        getters,
-        actions: {
-          [type.CONNECT] ({ dispatch, commit }) {
-            commit(type.SET_CONNECTION_STATUS, ConnectionStatusEnum.CONNECTED)
-          },
-          [type.DISCONNECT] ({ dispatch, commit }) {
-            commit(type.SET_CONNECTION_STATUS, ConnectionStatusEnum.NOT_CONNECTED)
-          }
-        }
-      }
+      connection
     }
   })
 
@@ -95,12 +96,12 @@ describe('ConnectionButton', () => {
     const button = vm.$el.querySelector('.control__action')
     button.dispatchEvent(clickEvent)
     vm._watcher.run()
-    expect(vm.$store.state.connection.status).to.equal('Connected')
-    expect(vm.$el.textContent).to.eql('Disconnect')
+    expect(vm.$store.state.connection.status).to.equal('Connecting')
+    expect(vm.$el.textContent).to.eql('Cancel')
 
     // handle disconnect
     button.dispatchEvent(clickEvent)
     vm._watcher.run()
-    expect(vm.$el.textContent).to.eql('Connect')
+    expect(vm.$el.textContent).to.eql('Disconnecting')
   })
 })
