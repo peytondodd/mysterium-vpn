@@ -47,7 +47,7 @@
     </multiselect>
 
     <country-flag
-      :code="country ? country.code : null"
+      :code="countryCode"
       class="country-flag--dropdown"/>
   </div>
 </template>
@@ -110,6 +110,14 @@ export default {
 
       this.country = selectedCountry
       this.$emit('selected', selectedCountry)
+    }
+  },
+  computed: {
+    countryCode () {
+      if (this.country == null) {
+        return null
+      }
+      return this.country.code
     }
   },
   mounted () {
