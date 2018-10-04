@@ -18,10 +18,12 @@
 // @flow
 
 import type { BugReporter } from '../bug-reporting/interface'
-import path from 'path'
 import { isCountryKnown } from './index'
 
-class CountryImageResolver {
+/**
+ * Allows finding unknown country codes and reporting unique codes.
+ */
+class UnknownCountryReporter {
   _bugReporter: BugReporter
   _unknownCountryCodes: string[]
 
@@ -30,23 +32,10 @@ class CountryImageResolver {
     this._unknownCountryCodes = []
   }
 
-  getImagePath (code: ?string): string {
-    if (code == null) {
-      return this._getDefaultIconPath()
-    }
-    if (!isCountryKnown(code)) {
+  reportCodeIfUnknown (code: ?string) {
+    if (code != null && !isCountryKnown(code)) {
       this._reportUnknownCountryCode(code)
-      return this._getDefaultIconPath()
     }
-    return this._getIconPath(code)
-  }
-
-  _getDefaultIconPath (): string {
-    return this._getIconPath('world')
-  }
-
-  _getIconPath (code: string): string {
-    return path.join('static', 'flags', code.toLowerCase() + '.svg')
   }
 
   _reportUnknownCountryCode (code: string) {
@@ -57,4 +46,4 @@ class CountryImageResolver {
   }
 }
 
-export default CountryImageResolver
+export default UnknownCountryReporter

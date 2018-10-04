@@ -25,6 +25,8 @@
 
 <script>
 
+import { getCountryImagePath } from '../../app/countries/images'
+
 export default {
   name: 'CountryFlag',
   props: {
@@ -33,10 +35,9 @@ export default {
       default: null
     }
   },
-  dependencies: ['countryImageResolver'],
   computed: {
     imagePath: function () {
-      return this.countryImageResolver.getImagePath(this.code)
+      return getCountryImagePath(this.code)
     }
   }
 }

@@ -33,7 +33,7 @@ import types from '../../../../src/renderer/store/types'
 import IdentityRegistrationDTO from 'mysterium-tequilapi/lib/dto/identity-registration'
 import mainStoreFactory from '../../../../src/renderer/store/modules/main'
 import EmptyTequilapiClientMock from '../store/modules/empty-tequilapi-client-mock'
-import CountryImageResolver from '../../../../src/app/countries/country-image-resolver'
+import CountryImageResolver from '../../../../src/app/countries/unknown-country-reporter'
 
 describe('Vpn', () => {
   let vpnWrapper

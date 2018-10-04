@@ -19,39 +19,54 @@
 
 import { beforeEach, describe, expect, it } from '../../../helpers/dependencies'
 import BugReporterMock from '../../../helpers/bug-reporter-mock'
-import CountryImageResolver from '../../../../src/app/countries/country-image-resolver'
+import UnknownProposalCountryReporter from '../../../../src/app/countries/unknown-country-reporter'
+import { getCountryImagePath } from '../../../../src/app/countries/images'
 
-describe('CountryImageResolver', () => {
+describe('UnknownProposalCountryReporter', () => {
   let bugReporterMock
-  let resolver
+  let reporter
 
   beforeEach(() => {
     bugReporterMock = new BugReporterMock()
-    resolver = new CountryImageResolver(bugReporterMock)
+
+    reporter = new UnknownProposalCountryReporter(bugReporterMock)
   })
 
-  describe('.getImagePath', () => {
-    it('returns country icon and does not send message to bug reporter for known country code', async () => {
-      expect(resolver.getImagePath('lt')).to.eql('static/flags/lt.svg')
+  describe('.reportCodeIfUnknown', () => {
+    it('does not report known country code', async () => {
+      reporter.reportCodeIfUnknown('lt')
       expect(bugReporterMock.infoMessages).to.have.lengthOf(0)
     })
 
-    it('returns world icon and reports bug for unknown country code', async () => {
-      expect(resolver.getImagePath('unknown')).to.eql('static/flags/world.svg')
-
+    it('reports unknown country code', () => {
+      reporter.reportCodeIfUnknown('unknown')
       expect(bugReporterMock.infoMessages).to.have.lengthOf(1)
       expect(bugReporterMock.infoMessages[0].message).to.eql('Country not found, code: unknown')
     })
 
-    it('does not report bug for the same country code twice', () => {
-      expect(resolver.getImagePath('unknown')).to.eql('static/flags/world.svg')
-      resolver.getImagePath('unknown')
+    it('does not report the same country code twice', () => {
+      reporter.reportCodeIfUnknown('unknown')
+      reporter.reportCodeIfUnknown('unknown')
       expect(bugReporterMock.infoMessages).to.have.lengthOf(1)
     })
 
-    it('returns world icon and does not report empty country', async () => {
-      expect(resolver.getImagePath(null)).to.eql('static/flags/world.svg')
+    it('does not report empty country code', async () => {
+      reporter.reportCodeIfUnknown(null)
       expect(bugReporterMock.infoMessages).to.have.lengthOf(0)
     })
+  })
+})
+
+describe('.getCountryImagePath', () => {
+  it('returns country icon for known country code', () => {
+    expect(getCountryImagePath('lt')).to.eql('static/flags/lt.svg')
+  })
+
+  it('returns world icon for unknown country code', () => {
+    expect(getCountryImagePath('unknown')).to.eql('static/flags/world.svg')
+  })
+
+  it('returns world icon for empty country code', async () => {
+    expect(getCountryImagePath(null)).to.eql('static/flags/world.svg')
   })
 })

@@ -24,7 +24,6 @@ import FakeMessageBus from '../../../helpers/fake-message-bus'
 import { beforeEach, describe, expect, it } from '../../../helpers/dependencies'
 import BugReporterMock from '../../../helpers/bug-reporter-mock'
 import { buildRendererCommunication } from '../../../../src/app/communication/renderer-communication'
-import CountryImageResolver from '../../../../src/app/countries/country-image-resolver'
 import type { BugReporter } from '../../../../src/app/bug-reporting/interface'
 
 const countryList = [
@@ -60,7 +59,6 @@ function mountWith (countryList, rendererCommunication, bugReporterMock: BugRepo
   const dependencies = new DIContainer(vue)
   dependencies.constant('rendererCommunication', rendererCommunication)
   dependencies.constant('bugReporter', bugReporterMock)
-  dependencies.constant('countryImageResolver', new CountryImageResolver(bugReporterMock))
 
   return mount(CountrySelect, {
     localVue: vue,
