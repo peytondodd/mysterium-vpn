@@ -17,7 +17,10 @@
 
 <template>
   <tr>
-    <td>[{{ session.location.country }}]{{ shortIdentity }}</td>
+    <td>
+      <CountryFlag :code="countryCode"/>
+      {{ shortIdentity }}
+    </td>
     <td>{{ startDate }}<br>{{ startTime }}</td>
     <td>{{ durationString }}</td>
     <td>{{ sent }}/{{ received }}</td>
@@ -27,9 +30,11 @@
 <script>
 import { bytesReadableOrDefault, timeDisplayOrDefault } from '../../libraries/unit-converter'
 import { getReadableDate, getReadableTime } from '../../libraries/strings'
+import CountryFlag from './country-flag'
 
 export default {
   name: 'SessionItem',
+  components: { CountryFlag },
   props: {
     session: {
       type: Object,
@@ -59,6 +64,9 @@ export default {
     },
     dateObject: function () {
       return new Date(this.session.statistics.dateStart)
+    },
+    countryCode: function () {
+      return this.session.location.country
     }
   }
 }

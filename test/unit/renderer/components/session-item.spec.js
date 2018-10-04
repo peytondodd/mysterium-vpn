@@ -60,13 +60,11 @@ describe('SessionItem', () => {
 
   it('renders shortened identity', () => {
     const nodeText = wrapper.findAll('td').at(0).element.innerText
-    expect(nodeText).to.eql('[lt]0x3b03a513f...')
+    expect(nodeText).to.have.string('0x3b03a513f...')
   })
 
-  it('renders countries', () => {
-    // TODO: render icons instead
-    const nodeText = wrapper.findAll('td').at(0).element.innerText
-    expect(nodeText).to.have.string('[lt]')
+  it('renders country icon', () => {
+    expect(wrapper.findAll('td').at(0).findAll('.country-flag').length).to.eql(1)
   })
 
   it('renders start date and time', () => {
