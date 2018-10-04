@@ -42,22 +42,6 @@ describe('IdentityRegistration', () => {
   beforeEach(() => {
     const vm = createLocalVue()
     vm.use(Vuex)
-    const store = new Vuex.Store({
-      modules: {
-        identity: {
-          state: {
-            current: {
-              id: '0x1'
-            }
-          },
-          getters: {
-            currentIdentity (state) {
-              return state.current.id
-            }
-          }
-        }
-      }
-    })
 
     const dependencies = new DIContainer(vm)
 
@@ -70,10 +54,22 @@ describe('IdentityRegistration', () => {
 
     const tequilapi = new EmptyTequilapiClientMock()
     const bugReporter = new BugReporterMock()
+    const identity = {
+      ...identityStoreFactory(bugReporter, rendererCommunication),
+      state: {
+        current: {
+          id: '0x1'
+        }
+      }
+    }
+    identity.getters.currentIdentity = (state) => {
+      return state.current.id
+    }
+
     store = new Vuex.Store({
       modules: {
         main: mainStoreFactory(tequilapi),
-        identity: identityStoreFactory(bugReporter, rendererCommunication)
+        identity: identity
       }
     })
 
