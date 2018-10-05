@@ -28,7 +28,7 @@
             <th>Node</th>
             <th>Date/Time</th>
             <th>Duration</th>
-            <th>Sent/Received</th>
+            <th>Received/Sent</th>
           </tr>
           <session-item
             v-for="session in sessions"

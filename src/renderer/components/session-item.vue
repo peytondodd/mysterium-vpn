@@ -23,7 +23,7 @@
     </td>
     <td>{{ startDate }}<br>{{ startTime }}</td>
     <td>{{ durationString }}</td>
-    <td>{{ sent }}/{{ received }}</td>
+    <td>⇩{{ received }}<br>⇧{{ sent }}</td>
   </tr>
 </template>
 

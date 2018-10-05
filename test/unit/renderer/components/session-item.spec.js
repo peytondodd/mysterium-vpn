@@ -77,8 +77,8 @@ describe('SessionItem', () => {
     expect(duration).to.eql('00:35:00')
   })
 
-  it('renders sent and received amounts', () => {
+  it('renders received and sent amounts', () => {
     const traffic = wrapper.findAll('td').at(3).element.innerText
-    expect(traffic).to.eql('1.00KB/5.86KB')
+    expect(traffic).to.eql('⇩5.86KB\n⇧1.00KB')
   })
 })
