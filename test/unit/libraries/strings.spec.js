@@ -57,14 +57,14 @@ describe('strings', () => {
 
   describe('.getReadableTime', () => {
     it('returns readable time', () => {
-      const date = new Date(1537787035230)
-      expect(getReadableTime(date, 'UTC')).to.eql('11:03:55')
+      const date = new Date(2018, 8, 24, 14, 3, 55)
+      expect(getReadableTime(date)).to.eql('14:03:55')
     })
   })
 
   describe('.getReadableDate', () => {
     it('returns readable date', () => {
-      const date = new Date(1537787035230)
+      const date = new Date(2018, 8, 24, 14, 3, 55)
       expect(getReadableDate(date)).to.eql('24/09/2018')
     })
   })

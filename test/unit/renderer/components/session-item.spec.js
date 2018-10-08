@@ -34,7 +34,7 @@ function mountSessionItem () {
       country: 'lt'
     },
     statistics: {
-      dateStart: 1537787035230,
+      dateStart: new Date(2018, 8, 24, 14, 3, 55),
       duration: 35 * 60,
       bytesSent: 1024,
       bytesReceived: 6000
