@@ -24,12 +24,12 @@
     </div>
     <div class="stats__block">
       <div class="stats__label">RECEIVED</div>
-      <div class="stats__value">{{ received.value }}</div>
+      <div class="stats__value">{{ received.amount }}</div>
       <div class="stats__unit">{{ received.units }}</div>
     </div>
     <div class="stats__block">
       <div class="stats__label">SENT</div>
-      <div class="stats__value">{{ sent.value }}</div>
+      <div class="stats__value">{{ sent.amount }}</div>
       <div class="stats__unit">{{ sent.units }}</div>
     </div>
   </div>

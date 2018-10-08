@@ -20,14 +20,14 @@
 import size from 'file-size'
 
 type BytesReadable = {
-  value: string,
+  amount: string,
   units: string
 }
 
 /**
  * @function
  * @param {number} bytes
- * @returns {{value:number,units:string}} result - holds value and units
+ * @returns {{amount:number,units:string}} result - holds amount and units
  * @throws if argument is null
  */
 
@@ -37,12 +37,12 @@ function formatBytesReadable (bytes: number): BytesReadable {
   }
   const calculated = size(bytes).calculate('jedec')
   return {
-    value: calculated.fixed,
+    amount: calculated.fixed,
     units: calculated.suffix.replace('i', '')
   }
 }
 
-const bytesReadableDefault: BytesReadable = { value: '-', units: 'KB' }
+const bytesReadableDefault: BytesReadable = { amount: '-', units: 'KB' }
 
 function formatBytesReadableOrDefault (bytes: number): BytesReadable {
   try {

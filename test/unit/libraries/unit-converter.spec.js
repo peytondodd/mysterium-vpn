@@ -28,46 +28,46 @@ describe('unit-converter', () => {
       const val = 123
       const result = formatBytesReadable(val)
       expect(result.units).to.eql('Bytes')
-      expect(result.value).to.eql('123.00')
+      expect(result.amount).to.eql('123.00')
     })
 
     it('calculates one Byte correctly', () => {
       const val = 1
       const result = formatBytesReadable(val)
       expect(result.units).to.eql('Byte')
-      expect(result.value).to.eql('1.00')
+      expect(result.amount).to.eql('1.00')
     })
 
     it('calculates one KB correctly', () => {
       const val = 1024
       const result = formatBytesReadable(val)
       expect(result.units).to.eql('KB')
-      expect(result.value).to.eql('1.00')
+      expect(result.amount).to.eql('1.00')
     })
 
     it('calculates one MB correctly', () => {
       const val = 1024 * 1024
       const result = formatBytesReadable(val)
       expect(result.units).to.eql('MB')
-      expect(result.value).to.eql('1.00')
+      expect(result.amount).to.eql('1.00')
     })
 
     it('calculates one GB correctly', () => {
       const val = 1024 * 1024 * 1024
       const result = formatBytesReadable(val)
       expect(result.units).to.eql('GB')
-      expect(result.value).to.eql('1.00')
+      expect(result.amount).to.eql('1.00')
     })
 
     it('calculates one TB correctly', () => {
       const val = 1024 * 1024 * 1024 * 1024
       const result = formatBytesReadable(val)
       expect(result.units).to.eql('TB')
-      expect(result.value).to.eql('1.00')
+      expect(result.amount).to.eql('1.00')
     })
 
     it('returns 0', () => {
-      expect(formatBytesReadable(0).value).to.eql('0.00')
+      expect(formatBytesReadable(0).amount).to.eql('0.00')
     })
     it('throws', () => {
       expect(() => formatBytesReadable()).to.throw('provide valid input for conversion')
@@ -78,14 +78,14 @@ describe('unit-converter', () => {
   describe('.formatBytesReadableOrDefault', () => {
     it('returns readable value', () => {
       expect(formatBytesReadableOrDefault(10000)).to.eql({
-        value: '9.77',
+        amount: '9.77',
         units: 'KB'
       })
     })
 
     it('returns default value when parsing fails', () => {
       expect(formatBytesReadableOrDefault('a')).to.eql({
-        value: '-',
+        amount: '-',
         units: 'KB'
       })
     })

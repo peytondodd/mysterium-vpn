@@ -47,11 +47,11 @@ export default {
     },
     sent () {
       const sent = formatBytesReadableOrDefault(this.session.statistics.bytesSent)
-      return sent.value + sent.units
+      return sent.amount + sent.units
     },
     received () {
       const received = formatBytesReadableOrDefault(this.session.statistics.bytesReceived)
-      return received.value + received.units
+      return received.amount + received.units
     },
     shortIdentity () {
       return this.session.proposal.providerId.slice(0, 11) + '...'
