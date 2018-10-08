@@ -31,6 +31,7 @@
 import { formatBytesReadableOrDefault, formatTimeDisplayOrDefault } from '../../libraries/unit-converter'
 import { getReadableDate, getReadableTime } from '../../libraries/strings'
 import CountryFlag from './country-flag'
+import { limitedLengthString } from '../../app/strings'
 
 export default {
   name: 'SessionItem',
@@ -54,7 +55,7 @@ export default {
       return received.amount + received.units
     },
     shortIdentity () {
-      return this.session.proposal.providerId.slice(0, 11) + '...'
+      return limitedLengthString(this.session.proposal.providerId, 11)
     },
     startDate () {
       return getReadableDate(this.dateObject)

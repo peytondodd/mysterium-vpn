@@ -19,6 +19,7 @@
 import countries from './list'
 import ProposalDTO from 'mysterium-tequilapi/lib/dto/proposal'
 import type { FavoriteProviders } from '../user-settings/user-settings'
+import { limitedLengthString } from '../strings'
 
 const COUNTRY_NAME_UNRESOLVED = 'N/A'
 const COUNTRY_CODE_LENGTH = 2
@@ -50,13 +51,6 @@ function getSortedCountryListFromProposals (
   favorites: FavoriteProviders): Array<Country> {
   const countries = proposals.map(getCountryFromProposal).map(countryFavoriteMapper(favorites))
   return countries.sort(compareCountries)
-}
-
-function limitedLengthString (value: string, maxLength: ?number = null): string {
-  if (maxLength && value.length > maxLength) {
-    return value.substring(0, maxLength) + '..'
-  }
-  return value
 }
 
 function countryFavoriteMapper (favorites: FavoriteProviders): (Country) => Country {
