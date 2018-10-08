@@ -133,6 +133,7 @@ class TequilapiClientWithMetrics implements TequilapiClient {
     return this._client.location(timeout)
   }
 
+  // TODO: use real endpoint
   async sessionsList (): Promise<SessionDto[]> {
     return [
       {
