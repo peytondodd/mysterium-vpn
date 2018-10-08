@@ -42,30 +42,30 @@ export default {
     }
   },
   computed: {
-    durationString: function () {
+    durationString () {
       return timeDisplayOrDefault(this.session.statistics.duration)
     },
-    sent: function () {
+    sent () {
       const sent = bytesReadableOrDefault(this.session.statistics.bytesSent)
       return sent.value + sent.units
     },
-    received: function () {
+    received () {
       const received = bytesReadableOrDefault(this.session.statistics.bytesReceived)
       return received.value + received.units
     },
-    shortIdentity: function () {
+    shortIdentity () {
       return this.session.proposal.providerId.slice(0, 11) + '...'
     },
-    startDate: function () {
+    startDate () {
       return getReadableDate(this.dateObject)
     },
-    startTime: function () {
+    startTime () {
       return getReadableTime(this.dateObject)
     },
-    dateObject: function () {
+    dateObject () {
       return new Date(this.session.statistics.dateStart)
     },
-    countryCode: function () {
+    countryCode () {
       return this.session.location.country
     }
   }
