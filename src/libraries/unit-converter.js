@@ -19,7 +19,7 @@
 
 import size from 'file-size'
 
-type Bytes = {
+type BytesReadable = {
   value: string,
   units: string
 }
@@ -31,7 +31,7 @@ type Bytes = {
  * @throws if argument is null
  */
 
-function bytesReadable (bytes: number): Bytes {
+function bytesReadable (bytes: number): BytesReadable {
   if (typeof bytes !== 'number') {
     throw new Error('provide valid input for conversion')
   }
@@ -42,9 +42,9 @@ function bytesReadable (bytes: number): Bytes {
   }
 }
 
-const bytesReadableDefault: Bytes = { value: '-', units: 'KB' }
+const bytesReadableDefault: BytesReadable = { value: '-', units: 'KB' }
 
-function bytesReadableOrDefault (bytes: number): Bytes {
+function bytesReadableOrDefault (bytes: number): BytesReadable {
   try {
     return bytesReadable(bytes)
   } catch (err) {
