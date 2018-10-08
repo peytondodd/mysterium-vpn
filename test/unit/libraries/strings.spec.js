@@ -58,7 +58,7 @@ describe('strings', () => {
   describe('.getReadableTime', () => {
     it('returns readable time', () => {
       const date = new Date(1537787035230)
-      expect(getReadableTime(date)).to.eql('14:03:55')
+      expect(getReadableTime(date, 'UTC')).to.eql('11:03:55')
     })
   })
 

@@ -37,8 +37,9 @@ function getReadableDate (date: Date): string {
   return date.toLocaleDateString(FORMAT_LOCALE)
 }
 
-function getReadableTime (date: Date): string {
-  return date.toLocaleTimeString(FORMAT_LOCALE)
+function getReadableTime (date: Date, timeZone?: string): string {
+  const options = timeZone != null ? { timeZone } : {}
+  return date.toLocaleTimeString(FORMAT_LOCALE, options)
 }
 
 const FORMAT_LOCALE = 'en-GB'
