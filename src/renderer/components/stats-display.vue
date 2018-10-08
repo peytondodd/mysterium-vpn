@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import { bytesReadableOrDefault, timeDisplayOrDefault } from '../../libraries/unit-converter'
+import { formatBytesReadableOrDefault, formatTimeDisplayOrDefault } from '../../libraries/unit-converter'
 
 export default {
   name: 'StatsDisplay',
@@ -48,10 +48,10 @@ export default {
   },
   computed: {
     duration () {
-      return timeDisplayOrDefault(this.connection.statistics.duration)
+      return formatTimeDisplayOrDefault(this.connection.statistics.duration)
     },
-    received: vm => bytesReadableOrDefault(vm.connection.statistics.bytesReceived),
-    sent: vm => bytesReadableOrDefault(vm.connection.statistics.bytesSent)
+    received: vm => formatBytesReadableOrDefault(vm.connection.statistics.bytesReceived),
+    sent: vm => formatBytesReadableOrDefault(vm.connection.statistics.bytesSent)
   }
 }
 </script>

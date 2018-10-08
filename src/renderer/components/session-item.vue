@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import { bytesReadableOrDefault, timeDisplayOrDefault } from '../../libraries/unit-converter'
+import { formatBytesReadableOrDefault, formatTimeDisplayOrDefault } from '../../libraries/unit-converter'
 import { getReadableDate, getReadableTime } from '../../libraries/strings'
 import CountryFlag from './country-flag'
 
@@ -43,14 +43,14 @@ export default {
   },
   computed: {
     durationString () {
-      return timeDisplayOrDefault(this.session.statistics.duration)
+      return formatTimeDisplayOrDefault(this.session.statistics.duration)
     },
     sent () {
-      const sent = bytesReadableOrDefault(this.session.statistics.bytesSent)
+      const sent = formatBytesReadableOrDefault(this.session.statistics.bytesSent)
       return sent.value + sent.units
     },
     received () {
-      const received = bytesReadableOrDefault(this.session.statistics.bytesReceived)
+      const received = formatBytesReadableOrDefault(this.session.statistics.bytesReceived)
       return received.value + received.units
     },
     shortIdentity () {

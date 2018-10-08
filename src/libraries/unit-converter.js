@@ -31,7 +31,7 @@ type BytesReadable = {
  * @throws if argument is null
  */
 
-function bytesReadable (bytes: number): BytesReadable {
+function formatBytesReadable (bytes: number): BytesReadable {
   if (typeof bytes !== 'number') {
     throw new Error('provide valid input for conversion')
   }
@@ -44,9 +44,9 @@ function bytesReadable (bytes: number): BytesReadable {
 
 const bytesReadableDefault: BytesReadable = { value: '-', units: 'KB' }
 
-function bytesReadableOrDefault (bytes: number): BytesReadable {
+function formatBytesReadableOrDefault (bytes: number): BytesReadable {
   try {
-    return bytesReadable(bytes)
+    return formatBytesReadable(bytes)
   } catch (err) {
     return bytesReadableDefault
   }
@@ -58,7 +58,7 @@ function bytesReadableOrDefault (bytes: number): BytesReadable {
  * @returns {string} readable in --:--:-- format
  * @throws {Error} if argument is null
  */
-function timeDisplay (seconds: number): string {
+function formatTimeDisplay (seconds: number): string {
   if (typeof seconds !== 'number' || seconds < 0) {
     throw new Error('invalid input')
   }
@@ -73,17 +73,17 @@ function timeDisplay (seconds: number): string {
 
 const timeDisplayDefault = '--:--:--'
 
-function timeDisplayOrDefault (seconds: number): string {
+function formatTimeDisplayOrDefault (seconds: number): string {
   try {
-    return timeDisplay(seconds)
+    return formatTimeDisplay(seconds)
   } catch (err) {
     return timeDisplayDefault
   }
 }
 
 export {
-  bytesReadableOrDefault,
-  bytesReadable,
-  timeDisplayOrDefault,
-  timeDisplay
+  formatBytesReadableOrDefault,
+  formatBytesReadable,
+  formatTimeDisplayOrDefault,
+  formatTimeDisplay
 }
