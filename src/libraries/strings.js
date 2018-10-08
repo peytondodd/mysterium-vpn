@@ -34,12 +34,14 @@ function toISOString (date: Date): string {
 }
 
 function getReadableDate (date: Date): string {
-  return date.toLocaleDateString()
+  return date.toLocaleDateString(FORMAT_LOCALE)
 }
 
 function getReadableTime (date: Date): string {
-  return date.toLocaleTimeString()
+  return date.toLocaleTimeString(FORMAT_LOCALE)
 }
+
+const FORMAT_LOCALE = 'en-GB'
 
 export {
   prependWithFn,
