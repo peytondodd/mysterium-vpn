@@ -86,6 +86,7 @@ describe('IdentityRegistration', () => {
     it('renders client ID', () => {
       expect(vue.findAll('.consumer-id-view__item')).to.have.lengthOf(3, 'has 3 elements')
       expect(vue.findAll('.consumer-id-view__id-text')).to.have.lengthOf(1, 'has ID text')
+      expect(vue.findAll('.copy-button')).to.have.lengthOf(1, 'has Copy Button')
     })
   })
 })

@@ -23,12 +23,12 @@
 
     <span
       v-if="isCopied"
-      class="copy-button__tooltip-success">
+      class="copy-button__tooltip copy-button__tooltip--success">
       Copied!
     </span>
     <span
       v-else
-      class="copy-button__tooltip-info">
+      class="copy-button__tooltip copy-button__tooltip--info">
       Copy to Clipboard
     </span>
   </span>
