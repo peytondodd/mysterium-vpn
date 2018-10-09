@@ -27,8 +27,8 @@
 </template>
 
 <script>
-import IconLogoActive from '@/assets/img/icon--logo-active.svg'
-import IconLogoInactive from '@/assets/img/icon--logo-inactive.svg'
+import IconLogoActive from '@/assets/img/icon-logo--active.svg'
+import IconLogoInactive from '@/assets/img/icon-logo--inactive.svg'
 
 export default {
   name: 'LogoIcon',

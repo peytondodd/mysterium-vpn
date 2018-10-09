@@ -17,18 +17,18 @@
 
 <template>
   <span
-    class="copy-btn"
+    class="copy-button"
     @click="copyId()">
     <icon-copy class="nav__icon nav__icon--eye"/>
 
     <span
       v-if="isCopied"
-      class="copy-btn__tooltip-success">
+      class="copy-button__tooltip-success">
       Copied!
     </span>
     <span
       v-else
-      class="copy-btn__tooltip">
+      class="copy-button__tooltip-info">
       Copy to Clipboard
     </span>
   </span>
