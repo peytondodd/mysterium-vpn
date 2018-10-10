@@ -18,7 +18,8 @@
 // @flow
 
 type Features = {
-  payments: ?boolean
+  payments?: boolean,
+  clientVersionCheck?: boolean
 }
 
 class FeatureToggle {
@@ -32,6 +33,10 @@ class FeatureToggle {
     return this._getFeatureState('payments', false)
   }
 
+  clientVersionCheckEnabled (): boolean {
+    return this._getFeatureState('clientVersionCheck', true)
+  }
+
   _getFeatureState (key: string, defaultValue: boolean): boolean {
     const features = this._features
 
@@ -39,7 +44,7 @@ class FeatureToggle {
       return defaultValue
     }
 
-    if (!features[key]) {
+    if (features[key] === undefined) {
       return defaultValue
     }
 

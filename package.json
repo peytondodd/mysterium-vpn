@@ -109,7 +109,7 @@
     "less-loader": "^4.1.0",
     "lolex": "^2.7.4",
     "md5": "^2.2.1",
-    "mysterium-client-bin": "^0.2.3",
+    "mysterium-client-bin": "0.2.3",
     "mysterium-tequilapi": "^0.1.0",
     "os-name": "^2.0.1",
     "raven": "^2.4.1",

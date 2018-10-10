@@ -60,6 +60,10 @@ class StandaloneClientProcess implements Process {
     this._child.kill('SIGTERM')
   }
 
+  async kill (): Promise<void> {
+
+  }
+
   /**
    * Registers a callback for a specific log level
    *

@@ -39,4 +39,23 @@ describe('FeatureToggle', () => {
       expect(featureToggle.paymentsAreEnabled()).to.be.false
     })
   })
+
+  describe('.clientVersionCheckEnabled', () => {
+    it('returns true when version check is set to true', () => {
+      const features = { clientVersionCheck: true }
+      const featureToggle = new FeatureToggle(features)
+      expect(featureToggle.clientVersionCheckEnabled()).to.be.true
+    })
+
+    it('returns false when version check is set to false', () => {
+      const features = { clientVersionCheck: false }
+      const featureToggle = new FeatureToggle(features)
+      expect(featureToggle.clientVersionCheckEnabled()).to.be.false
+    })
+
+    it('defaults to true', () => {
+      const featureToggle = new FeatureToggle()
+      expect(featureToggle.clientVersionCheckEnabled()).to.be.true
+    })
+  })
 })

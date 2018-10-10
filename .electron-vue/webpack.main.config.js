@@ -11,8 +11,17 @@ const { dependencies, version } = require('../package.json')
 const { buildNumber } = require('../build-number.json')
 const webpack = require('webpack')
 const features = require('./features')
+const utilHelpers = require('../src/libraries/util-helpers')
 
 const BabiliWebpackPlugin = require('babili-webpack-plugin')
+
+const mysteriumClientVersion = dependencies['mysterium-client-bin']
+
+try {
+  utilHelpers.parseVersion(mysteriumClientVersion)
+} catch (err) {
+  throw new Error('mysterium-client-bin package must use an exact version.')
+}
 
 let mainConfig = {
   entry: {
@@ -48,6 +57,7 @@ let mainConfig = {
     new webpack.DefinePlugin({
       'process.env.BUILD_NUMBER': JSON.stringify(buildNumber),
       'process.env.MYSTERIUM_VPN_VERSION': JSON.stringify(version),
+      'MYSTERIUM_CLIENT_VERSION': JSON.stringify(mysteriumClientVersion),
       'FEATURES': features
     }),
     new webpack.NoEmitOnErrorsPlugin()
