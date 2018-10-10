@@ -19,10 +19,10 @@
   <span>
     <icon-logo-active
       v-if="active"
-      class="icon-logo"/>
+      class="icon-logo icon-logo--active"/>
     <icon-logo-inactive
       v-else
-      class="icon-logo"/>
+      class="icon-logo icon-logo--inactive"/>
   </span>
 </template>
 
