@@ -40,7 +40,6 @@ export type MainCommunication = {
   connectionCancel: MessageSender<void>,
   reconnectRequest: MessageSender<void>,
 
-  mysteriumClientReady: MessageSender<void>,
   currentIdentityChanged: MessageReceiver<CurrentIdentityChangeDTO>,
 
   termsRequested: MessageSender<RequestTermsDTO>,
@@ -75,7 +74,6 @@ export function buildMainCommunication (messageBus: MessageBus): MainCommunicati
     connectionCancel: transports.connectionCancel.buildSender(),
     reconnectRequest: transports.reconnectRequest.buildSender(),
 
-    mysteriumClientReady: transports.mysteriumClientReady.buildSender(),
     currentIdentityChanged: transports.currentIdentityChanged.buildReceiver(),
 
     termsRequested: transports.termsRequested.buildSender(),

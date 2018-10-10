@@ -21,7 +21,6 @@ import IdentityRegistrationDTO from 'mysterium-tequilapi/lib/dto/identity-regist
 import type { CurrentIdentityChangeDTO } from './communication/dto'
 import TequilapiRegistrationFetcher from './data-fetchers/tequilapi-registration-fetcher'
 import IdentityDTO from 'mysterium-tequilapi/lib/dto/identity'
-import FeatureToggle from './features/feature-toggle'
 import ConnectionStatusEnum from 'mysterium-tequilapi/lib/dto/connection-status-enum'
 import type { BugReporter } from './bug-reporting/interface'
 import StartupEventTracker from './statistics/startup-event-tracker'
@@ -75,15 +74,11 @@ class CommunicationBindings {
     })
   }
 
-  startRegistrationFetcherOnCurrentIdentity (
-    featureToggle: FeatureToggle,
-    registrationFetcher: TequilapiRegistrationFetcher) {
+  startRegistrationFetcherOnCurrentIdentity (registrationFetcher: TequilapiRegistrationFetcher) {
     onceOnMessage(this._communication.currentIdentityChanged, (identityChange: CurrentIdentityChangeDTO) => {
       const identity = new IdentityDTO({ id: identityChange.id })
-      if (featureToggle.paymentsAreEnabled()) {
-        registrationFetcher.start(identity.id)
-        logger.info(`${LOG_PREFIX}Registration fetcher started with ID ${identity.id}`)
-      }
+      registrationFetcher.start(identity.id)
+      logger.info(`${LOG_PREFIX}Registration fetcher started with ID ${identity.id}`)
     })
   }
 

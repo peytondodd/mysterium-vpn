@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 The "mysteriumnetwork/mysterium-vpn" Authors.
+ * Copyright (C) 2018 The "mysteriumnetwork/mysterium-vpn" Authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,36 +17,16 @@
 
 // @flow
 
-import type { Callback } from '../subscriber'
-import logLevels from './log-levels'
+import dependencies from './../dependencies'
+import type { BugReporter } from '../../app/bug-reporting/interface'
+import type { BugReporterMetrics } from '../../app/bug-reporting/metrics/bug-reporter-metrics'
 
-type LogCallback = Callback<any>
-
-interface Installer {
-  needsInstallation (): Promise<boolean>,
-
-  install (): Promise<void>
+const bugReporter = (): BugReporter => {
+  return dependencies.get('bugReporter')
 }
 
-interface Process {
-  start (): Promise<void>,
-
-  repair (): Promise<void>,
-
-  /**
-   * Stop process gracefully.
-   */
-  stop (): Promise<void>,
-
-  /**
-   * Force-kill process.
-   */
-  kill (): Promise<void>,
-
-  onLog (level: string, callback: Function): void,
-
-  setupLogging (): Promise<void>
+const bugReporterMetrics = (): BugReporterMetrics => {
+  return dependencies.get('bugReporterMetrics')
 }
 
-export { logLevels }
-export type { Installer, Process, LogCallback }
+export { bugReporter, bugReporterMetrics }

@@ -23,7 +23,6 @@ export default {
   CONNECTION_CANCEL: 'connection.cancel',
   RECONNECT_REQUEST: 'reconnect.request',
 
-  MYSTERIUM_CLIENT_READY: 'mysterium-client.ready',
   CURRENT_IDENTITY_CHANGED: 'current.identity.changed',
 
   TERMS_REQUESTED: 'terms.requested',

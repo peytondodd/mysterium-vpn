@@ -36,7 +36,6 @@ export type RendererCommunication = {
   connectionCancel: MessageReceiver<void>,
   reconnectRequest: MessageReceiver<void>,
 
-  mysteriumClientReady: MessageReceiver<void>,
   currentIdentityChanged: MessageSender<CurrentIdentityChangeDTO>,
 
   termsRequested: MessageReceiver<RequestTermsDTO>,
@@ -71,7 +70,6 @@ export function buildRendererCommunication (messageBus: MessageBus): RendererCom
     connectionCancel: transports.connectionCancel.buildReceiver(),
     reconnectRequest: transports.reconnectRequest.buildReceiver(),
 
-    mysteriumClientReady: transports.mysteriumClientReady.buildReceiver(),
     currentIdentityChanged: transports.currentIdentityChanged.buildSender(),
 
     termsRequested: transports.termsRequested.buildReceiver(),

@@ -24,6 +24,7 @@ import path from 'path'
 import Window from '../../../app/window'
 import Terms from '../../../app/terms'
 import { getReleaseId } from '../../../libraries/version'
+import ProcessManager from '../../../app/mysterium-client/process-manager'
 
 function bootstrap (container: Container) {
   const version = process.env.MYSTERIUM_VPN_VERSION
@@ -72,13 +73,10 @@ function bootstrap (container: Container) {
     'mysteriumVpnApplication',
     [
       'mysteriumVpnApplication.config',
-      'mysteriumClientInstaller',
-      'mysteriumClientProcess',
-      'mysteriumClientVersionCheck',
-      'mysteriumClientMonitoring',
       'proposalFetcher',
       'registrationFetcher',
       'countryList',
+      'mysteriumClientProcessManager',
       'bugReporter',
       'environmentCollector',
       'logger',
@@ -96,13 +94,10 @@ function bootstrap (container: Container) {
     ],
     (
       mysteriumVpnConfig: MysteriumVpnConfig,
-      mysteriumClientInstaller,
-      mysteriumClientProcess,
-      mysteriumClientVersionCheck,
-      mysteriumClientMonitoring,
       proposalFetcher,
       registrationFetcher,
       countryList,
+      processManager: ProcessManager,
       bugReporter,
       environmentCollector,
       logger,
@@ -123,10 +118,7 @@ function bootstrap (container: Container) {
         browserWindowFactory: () => container.get('mysteriumVpnBrowserWindow'),
         windowFactory: () => container.get('mysteriumVpnWindow'),
         terms: new Terms(path.join(mysteriumVpnConfig.staticDirectory, 'terms'), mysteriumVpnConfig.userDataDirectory),
-        installer: mysteriumClientInstaller,
-        process: mysteriumClientProcess,
-        versionCheck: mysteriumClientVersionCheck,
-        monitoring: mysteriumClientMonitoring,
+        processManager: processManager,
         proposalFetcher: proposalFetcher,
         registrationFetcher: registrationFetcher,
         countryList: countryList,

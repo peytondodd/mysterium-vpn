@@ -25,7 +25,6 @@ import SubscribableMessageBus from '../../helpers/subscribable-message-bus'
 import messages from '../../../src/app/communication/messages'
 import TequilapiRegistrationFetcher from '../../../src/app/data-fetchers/tequilapi-registration-fetcher'
 import EmptyTequilapiClientMock from '../renderer/store/modules/empty-tequilapi-client-mock'
-import FeatureToggle from '../../../src/app/features/feature-toggle'
 import BugReporterMock from '../../helpers/bug-reporter-mock'
 import factoryTequilapiManipulator from '../../helpers/mysterium-tequilapi/factory-tequilapi-manipulator'
 import { UserSettingsStorage } from '../../../src/app/user-settings/user-settings-storage'
@@ -151,10 +150,8 @@ describe('CommunicationBindings', () => {
 
   describe('.startRegistrationFetcherOnCurrentIdentity', () => {
     const regFetcher = new TequilapiRegistrationFetcherMock(new EmptyTequilapiClientMock())
-    const featureToggle = new FeatureToggle({ payments: true })
-
     it('starts registration fetcher once', () => {
-      comBinds.startRegistrationFetcherOnCurrentIdentity(featureToggle, regFetcher)
+      comBinds.startRegistrationFetcherOnCurrentIdentity(regFetcher)
       msgBus.triggerOn(messages.CURRENT_IDENTITY_CHANGED, { id: 'some data' })
 
       expect(regFetcher.startedWithId).to.eql('some data')

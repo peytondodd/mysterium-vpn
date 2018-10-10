@@ -20,7 +20,7 @@
 import { describe, expect, it } from '../../helpers/dependencies'
 import { getReleaseId, getVersionLabel } from '../../../src/libraries/version'
 
-describe('versioning', () => {
+describe('version', () => {
   describe('.getVersionLabel', () => {
     it('returns label', () => {
       expect(getVersionLabel('0.0.1(123)', '1.0.0')).to.eql('v0.0.1(123)-1.0.0')
@@ -31,7 +31,7 @@ describe('versioning', () => {
     })
   })
 
-  describe('getReleaseId', () => {
+  describe('.getReleaseId', () => {
     it('returns joined release label', () => {
       expect(getReleaseId('0.0.1', '123')).to.eql('0.0.1(123)')
     })

@@ -24,24 +24,37 @@ const HEALTH_CHECK_INTERVAL = 1500
 const healthCheckTimeout = 500
 
 type StatusCallback = (boolean) => void
-type UpCallback = () => void
-type DownCallback = () => void
+type EmptyCallback = () => void
 
-class Monitoring {
+interface Monitoring {
+  start (): void,
+
+  stop (): void,
+
+  onStatus (callback: StatusCallback): void,
+
+  onStatusUp (callback: EmptyCallback): void,
+
+  onStatusDown (callback: EmptyCallback): void,
+
+  isStarted (): boolean
+}
+
+class TequilaMonitoring implements Monitoring {
   api: TequilapiClient
   _timer: TimeoutID
 
   _lastIsRunning: boolean = false
   _subscribersStatus: Array<StatusCallback> = []
-  _subscribersUp: Array<UpCallback> = []
-  _subscribersDown: Array<DownCallback> = []
+  _subscribersUp: Array<EmptyCallback> = []
+  _subscribersDown: Array<EmptyCallback> = []
   _isStarted: boolean = false
 
   constructor (tequilapi: TequilapiClient) {
     this.api = tequilapi
   }
 
-  get isStarted (): boolean {
+  isStarted (): boolean {
     return this._isStarted
   }
 
@@ -74,11 +87,11 @@ class Monitoring {
     }
   }
 
-  onStatusUp (callback: UpCallback) {
+  onStatusUp (callback: EmptyCallback) {
     this._subscribersUp.push(callback)
   }
 
-  onStatusDown (callback: DownCallback) {
+  onStatusDown (callback: EmptyCallback) {
     this._subscribersDown.push(callback)
   }
 
@@ -128,20 +141,20 @@ class Monitoring {
   }
 
   _notifySubscribersUp () {
-    this._subscribersUp.forEach((callback: UpCallback) => {
+    this._subscribersUp.forEach((callback: EmptyCallback) => {
       callback()
     })
   }
 
   _notifySubscribersDown () {
-    this._subscribersDown.forEach((callback: DownCallback) => {
+    this._subscribersDown.forEach((callback: EmptyCallback) => {
       callback()
     })
   }
 }
 
 function waitForStatusUp (tequilapi: TequilapiClient, timeout: number): Promise<void> {
-  const monitoring = new Monitoring(tequilapi)
+  const monitoring = new TequilaMonitoring(tequilapi)
   const statusUpAsync = promisify(monitoring.onStatusUp.bind(monitoring))
   monitoring.start()
 
@@ -159,5 +172,5 @@ async function throwErrorAfterTimeout (timeout: number) {
 }
 
 export { waitForStatusUp, HEALTH_CHECK_INTERVAL }
-export default Monitoring
-export type { StatusCallback, UpCallback, DownCallback }
+export default TequilaMonitoring
+export type { StatusCallback, EmptyCallback, Monitoring }

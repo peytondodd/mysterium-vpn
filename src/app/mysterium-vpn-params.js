@@ -17,10 +17,8 @@
 
 // @flow
 import { BrowserWindow } from 'electron'
-import type { Installer, Process } from '../libraries/mysterium-client'
 import TequilapiRegistrationFetcher from './data-fetchers/tequilapi-registration-fetcher'
 import type { EnvironmentCollector } from './bug-reporting/environment/environment-collector'
-import ProcessMonitoring from '../libraries/mysterium-client/monitoring'
 import { UserSettingsStorage } from './user-settings/user-settings-storage'
 import MainBufferedIpc from './communication/ipc/main-buffered-ipc'
 import Terms from './terms'
@@ -31,24 +29,21 @@ import type { MysteriumVpnConfig } from './mysterium-vpn-config'
 import Window from './window'
 import SyncCallbacksInitializer from './sync-callbacks-initializer'
 import { BugReporterMetrics } from './bug-reporting/metrics/bug-reporter-metrics'
-import FeatureToggle from './features/feature-toggle'
 import type { BugReporter } from './bug-reporting/interface'
 import Notification from './notification'
 import StartupEventTracker from './statistics/startup-event-tracker'
 import type { StringLogger } from './logging/string-logger'
 import CommunicationBindings from './communication-bindings'
+import ProcessManager from './mysterium-client/process-manager'
 import type { MainCommunication } from './communication/main-communication'
-import VersionCheck from '../libraries/mysterium-client/version-check'
+import FeatureToggle from './features/feature-toggle'
 
 export type MysteriumVpnParams = {
   browserWindowFactory: () => BrowserWindow,
   windowFactory: () => Window,
   config: MysteriumVpnConfig,
   terms: Terms,
-  installer: Installer,
-  monitoring: ProcessMonitoring,
-  process: Process,
-  versionCheck: VersionCheck,
+  processManager: ProcessManager,
   proposalFetcher: TequilapiProposalFetcher,
   registrationFetcher: TequilapiRegistrationFetcher,
   countryList: CountryList,
