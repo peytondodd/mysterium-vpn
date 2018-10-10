@@ -18,7 +18,7 @@
 <template>
   <div class="page">
     <identity-button
-      v-if="!isIdentityMenuOpen"
+      v-if="paymentsAreEnabled && !isIdentityMenuOpen"
       :registered="registered"
       :click="showInstructions"/>
     <div class="page__control control">
@@ -97,7 +97,14 @@ export default {
     AppError,
     IdentityButton
   },
-  dependencies: ['bugReporter', 'rendererCommunication', 'startupEventTracker', 'userSettingsStore', 'getPaymentLink'],
+  dependencies: [
+    'bugReporter',
+    'rendererCommunication',
+    'startupEventTracker',
+    'userSettingsStore',
+    'getPaymentLink',
+    'featureToggle'
+  ],
   data () {
     return {
       country: null,
@@ -140,6 +147,9 @@ export default {
     },
     isIdentityMenuOpen () {
       return this.$store.state.main.identityMenuOpen
+    },
+    paymentsAreEnabled () {
+      return this.featureToggle.paymentsAreEnabled()
     }
   },
   methods: {

@@ -34,25 +34,27 @@ import IdentityRegistrationDTO from 'mysterium-tequilapi/lib/dto/identity-regist
 import mainStoreFactory from '../../../../src/renderer/store/modules/main'
 import EmptyTequilapiClientMock from '../store/modules/empty-tequilapi-client-mock'
 import CountryImageResolver from '../../../../src/app/countries/unknown-country-reporter'
+import FeatureToggle from '../../../../src/app/features/feature-toggle'
 
 describe('Vpn', () => {
   let vpnWrapper
   let fakeMessageBus
   let bugReporterMock
 
-  function mountVpn () {
+  function mountVpn (paymentsEnabled = true) {
     const vue = createLocalVue()
     vue.use(Vuex)
     fakeMessageBus = new FakeMessageBus()
-    const dependencies = new DIContainer(vue)
     const startupEventTracker = new StartupEventTracker(new MockEventSender())
     const communication = buildRendererCommunication(fakeMessageBus)
+    const dependencies = new DIContainer(vue)
     dependencies.constant('rendererCommunication', communication)
     dependencies.constant('bugReporter', bugReporterMock)
     dependencies.constant('startupEventTracker', startupEventTracker)
     dependencies.constant('userSettingsStore', new UserSettingsProxy(communication))
     dependencies.constant('getPaymentLink', () => 'mock url')
     dependencies.constant('countryImageResolver', new CountryImageResolver(bugReporterMock))
+    dependencies.constant('featureToggle', new FeatureToggle({ payments: paymentsEnabled }))
 
     const store = new Store({
       getters: {
@@ -74,41 +76,54 @@ describe('Vpn', () => {
     })
   }
 
-  beforeEach(() => {
-    bugReporterMock = new BugReporterMock()
-    vpnWrapper = mountVpn()
-  })
+  describe('when payments are enabled', () => {
+    beforeEach(() => {
+      bugReporterMock = new BugReporterMock()
+      vpnWrapper = mountVpn()
+    })
 
-  it('mounts', () => {
-    expect(vpnWrapper).to.be.ok
-  })
+    it('mounts', () => {
+      expect(vpnWrapper).to.be.ok
+    })
 
-  describe('.fetchCountries', () => {
-    it('it shows error when empty proposal list is received', async () => {
-      fakeMessageBus.triggerOn(messages.COUNTRY_UPDATE, [])
-      vpnWrapper.vm.fetchCountries()
+    describe('.fetchCountries', () => {
+      it('it shows error when empty proposal list is received', async () => {
+        fakeMessageBus.triggerOn(messages.COUNTRY_UPDATE, [])
+        vpnWrapper.vm.fetchCountries()
 
-      expect(bugReporterMock.infoMessages[0].message).to.eql('Renderer received empty countries list')
+        expect(bugReporterMock.infoMessages[0].message).to.eql('Renderer received empty countries list')
+      })
+    })
+
+    it('renders ID icon when no registration state is set', async () => {
+      expect(vpnWrapper.findAll('.identity-button')).to.have.lengthOf(1)
+    })
+
+    it('renders ID icon when identity becomes unregistered', () => {
+      const registration = new IdentityRegistrationDTO({ registered: false })
+      vpnWrapper.vm.$store.commit(types.SET_IDENTITY_REGISTRATION, registration)
+      expect(vpnWrapper.findAll('.identity-button')).to.have.lengthOf(1)
+      expect(vpnWrapper.findAll('.identity-button--registered')).to.have.lengthOf(0)
+      expect(vpnWrapper.findAll('.identity-button--unregistered')).to.have.lengthOf(1)
+    })
+
+    it('renders ID icon when identity becomes registered', () => {
+      const registration = new IdentityRegistrationDTO({ registered: true })
+      vpnWrapper.vm.$store.commit(types.SET_IDENTITY_REGISTRATION, registration)
+      expect(vpnWrapper.findAll('.identity-button')).to.have.lengthOf(1)
+      expect(vpnWrapper.findAll('.identity-button--registered')).to.have.lengthOf(1)
+      expect(vpnWrapper.findAll('.identity-button--unregistered')).to.have.lengthOf(0)
     })
   })
 
-  it('renders ID icon when no registration state is set', async () => {
-    expect(vpnWrapper.findAll('.identity-button')).to.have.lengthOf(1)
-  })
+  describe('when payments are disabled', () => {
+    beforeEach(() => {
+      bugReporterMock = new BugReporterMock()
+      vpnWrapper = mountVpn(false)
+    })
 
-  it('renders ID icon when identity becomes unregistered', () => {
-    const registration = new IdentityRegistrationDTO({ registered: false })
-    vpnWrapper.vm.$store.commit(types.SET_IDENTITY_REGISTRATION, registration)
-    expect(vpnWrapper.findAll('.identity-button')).to.have.lengthOf(1)
-    expect(vpnWrapper.findAll('.identity-button--registered')).to.have.lengthOf(0)
-    expect(vpnWrapper.findAll('.identity-button--unregistered')).to.have.lengthOf(1)
-  })
-
-  it('renders ID icon when identity becomes registered', () => {
-    const registration = new IdentityRegistrationDTO({ registered: true })
-    vpnWrapper.vm.$store.commit(types.SET_IDENTITY_REGISTRATION, registration)
-    expect(vpnWrapper.findAll('.identity-button')).to.have.lengthOf(1)
-    expect(vpnWrapper.findAll('.identity-button--registered')).to.have.lengthOf(1)
-    expect(vpnWrapper.findAll('.identity-button--unregistered')).to.have.lengthOf(0)
+    it('does not render ID icon when payments feature disabled', async () => {
+      expect(vpnWrapper.findAll('.identity-button')).to.have.lengthOf(0)
+    })
   })
 })
