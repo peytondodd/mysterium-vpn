@@ -50,6 +50,7 @@ import { METRICS, TAGS } from './bug-reporting/metrics/metrics'
 import type { BugReporterMetrics } from './bug-reporting/metrics/bug-reporter-metrics'
 import type { MainCommunication } from './communication/main-communication'
 import { reportUnknownProposalCountries } from './countries/reporting'
+import VersionCheck from '../libraries/mysterium-client/version-check'
 
 const LOG_PREFIX = '[MysteriumVpn] '
 const MYSTERIUM_CLIENT_STARTUP_THRESHOLD = 10000
@@ -62,6 +63,7 @@ class MysteriumVpn {
   _installer: Installer
   _monitoring: ProcessMonitoring
   _process: Process
+  _versionCheck: VersionCheck
   _proposalFetcher: TequilapiProposalFetcher
   _registrationFetcher: TequilapiRegistrationFetcher
   _countryList: CountryList
@@ -90,6 +92,7 @@ class MysteriumVpn {
     this._installer = params.installer
     this._monitoring = params.monitoring
     this._process = params.process
+    this._versionCheck = params.versionCheck
     this._proposalFetcher = params.proposalFetcher
     this._registrationFetcher = params.registrationFetcher
     this._countryList = params.countryList
@@ -188,6 +191,8 @@ class MysteriumVpn {
     await this._startProcess()
     this._startProcessMonitoring()
     this._onProcessReady(() => {
+      this._killClientIfVersionsMismatch()
+
       logInfo(`Notify that 'mysterium_client' process is ready`)
       this._communication.mysteriumClientReady.send()
     })
@@ -204,6 +209,18 @@ class MysteriumVpn {
     // TODO: load in DI?
     await this._loadUserSettings()
     this._disconnectNotification.onReconnect(() => this._communication.reconnectRequest.send())
+  }
+
+  async _killClientIfVersionsMismatch () {
+    if (!this._featureToggle.clientVersionCheckEnabled()) {
+      logInfo('Client version check disabled')
+      return
+    }
+    const versionMatch: boolean = await this._versionCheck.runningVersionMatchesPackageVersion()
+    if (!versionMatch) {
+      logInfo(`'mysterium_client' outdated. Killing it.`)
+      this._process.kill()
+    }
   }
 
   _getWindowSize (showTerms: boolean) {

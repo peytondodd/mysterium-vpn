@@ -1,16 +1,19 @@
-const parseVersion = (version) => {
-  const [_, major, minor, patch] = version.match(/(\d+)\.(\d+).(\d+)/)
+const utilHelpers = require('../src/libraries/util-helpers')
 
-  return {
-    major: parseInt(major, 10),
-    minor: parseInt(minor, 10),
-    patch: parseInt(patch, 10)
+/**
+ * Removes version suffix, i.e. for '1.0.0-beta.24' only '1.0.0' is returned.
+ */
+const removeVersionSuffix = (version) => {
+  const indexOf = version.indexOf('-')
+  if (indexOf == -1) {
+    return version
   }
+  return version.substring(0, indexOf)
 }
 
 const needsToBeUpdated = (current, latest) => {
-  const currentVersion = parseVersion(current)
-  const latestVersion = parseVersion(latest)
+  const currentVersion = utilHelpers.parseVersion(removeVersionSuffix(current))
+  const latestVersion = utilHelpers.parseVersion(removeVersionSuffix(latest))
 
   if (latestVersion.major > currentVersion.major) {
     return true

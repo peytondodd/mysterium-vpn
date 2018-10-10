@@ -44,6 +44,9 @@ import ServiceManagerProcess from '../../../libraries/mysterium-client/service-m
 import { LAUNCH_DAEMON_PORT } from '../../../libraries/mysterium-client/launch-daemon/config'
 import OSSystem from '../../../libraries/mysterium-client/system'
 import ServiceManager from '../../../libraries/mysterium-client/service-manager/service-manager'
+import VersionCheck from '../../../libraries/mysterium-client/version-check'
+
+declare var MYSTERIUM_CLIENT_VERSION: string
 
 const WINDOWS = 'win32'
 const OSX = 'darwin'
@@ -163,6 +166,12 @@ function bootstrap (container: Container) {
     'mysteriumClientMonitoring',
     ['tequilapiClient'],
     (tequilapiClient) => new Monitoring(tequilapiClient)
+  )
+
+  container.service(
+    'mysteriumClientVersionCheck',
+    ['tequilapiClient'],
+    (tequilapiClient) => new VersionCheck(tequilapiClient, MYSTERIUM_CLIENT_VERSION)
   )
 }
 

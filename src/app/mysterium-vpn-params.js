@@ -38,6 +38,7 @@ import StartupEventTracker from './statistics/startup-event-tracker'
 import type { StringLogger } from './logging/string-logger'
 import CommunicationBindings from './communication-bindings'
 import type { MainCommunication } from './communication/main-communication'
+import VersionCheck from '../libraries/mysterium-client/version-check'
 
 export type MysteriumVpnParams = {
   browserWindowFactory: () => BrowserWindow,
@@ -47,6 +48,7 @@ export type MysteriumVpnParams = {
   installer: Installer,
   monitoring: ProcessMonitoring,
   process: Process,
+  versionCheck: VersionCheck,
   proposalFetcher: TequilapiProposalFetcher,
   registrationFetcher: TequilapiRegistrationFetcher,
   countryList: CountryList,
