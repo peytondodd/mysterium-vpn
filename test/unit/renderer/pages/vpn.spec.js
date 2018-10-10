@@ -52,7 +52,6 @@ describe('Vpn', () => {
     dependencies.constant('bugReporter', bugReporterMock)
     dependencies.constant('startupEventTracker', startupEventTracker)
     dependencies.constant('userSettingsStore', new UserSettingsProxy(communication))
-    dependencies.constant('getPaymentLink', () => 'mock url')
     dependencies.constant('countryImageResolver', new CountryImageResolver(bugReporterMock))
     dependencies.constant('featureToggle', new FeatureToggle({ payments: paymentsEnabled }))
 

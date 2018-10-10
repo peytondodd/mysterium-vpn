@@ -85,7 +85,6 @@ import config from '../config'
 import { ActionLooperConfig } from '../store/modules/connection'
 import FavoriteButton from '../components/favorite-button'
 import IdentityButton from '../components/identity-button'
-import { shell } from 'electron'
 
 export default {
   name: 'Main',
@@ -102,7 +101,6 @@ export default {
     'rendererCommunication',
     'startupEventTracker',
     'userSettingsStore',
-    'getPaymentLink',
     'featureToggle'
   ],
   data () {
@@ -172,10 +170,6 @@ export default {
       if (countries.length < 1) this.bugReporter.captureInfoMessage('Renderer received empty countries list')
 
       this.countryList = countries
-    },
-    openPaymentsUrl () {
-      const url = this.getPaymentLink(this.registration)
-      shell.openExternal(url)
     },
     showInstructions () {
       this.$store.commit(type.SHOW_IDENTITY_MENU)
