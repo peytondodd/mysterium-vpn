@@ -100,11 +100,11 @@ class ProcessManager {
   }
 
   onStatusUp (callback: EmptyCallback) {
-    this._monitoring.onStatusUp(callback)
+    this._monitoring.onStatusChangeUp(callback)
   }
 
   onStatusDown (callback: EmptyCallback) {
-    this._monitoring.onStatusDown(callback)
+    this._monitoring.onStatusChangeDown(callback)
   }
 
   async _startLogging () {
@@ -114,7 +114,7 @@ class ProcessManager {
   }
 
   _startMonitoring () {
-    this._monitoring.onStatusUp(() => {
+    this._monitoring.onStatusChangeUp(() => {
       this._logInfo(`'mysterium_client' is up`)
 
       this._communication.healthcheckUp.send()
@@ -122,7 +122,7 @@ class ProcessManager {
       this._bugReporterMetrics.set(METRICS.CLIENT_RUNNING, true)
     })
 
-    this._monitoring.onStatusDown(() => {
+    this._monitoring.onStatusChangeDown(() => {
       this._logInfo(`'mysterium_client' is down`)
 
       this._communication.healthcheckDown.send()
@@ -173,7 +173,7 @@ class ProcessManager {
   }
 
   _onProcessReady () {
-    onFirstEventOrTimeout(this._monitoring.onStatusUp.bind(this._monitoring), MYSTERIUM_CLIENT_STARTUP_THRESHOLD)
+    onFirstEventOrTimeout(this._monitoring.onStatusChangeUp.bind(this._monitoring), MYSTERIUM_CLIENT_STARTUP_THRESHOLD)
       .then(async () => {
         if (await this._clientVersionMismatches()) {
           this._logInfo(`'mysterium_client' installed version does not match running version, killing it.`)

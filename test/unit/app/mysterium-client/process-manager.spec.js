@@ -91,8 +91,8 @@ class MonitoringMock implements Monitoring {
   _started: boolean = false
 
   _statusSubscriber: Subscriber<boolean> = new Subscriber()
-  _upSubscriber: Subscriber<void> = new Subscriber()
-  _downSubscriber: Subscriber<void> = new Subscriber()
+  _changeUpSubscriber: Subscriber<void> = new Subscriber()
+  _changeDownSubscriber: Subscriber<void> = new Subscriber()
 
   start (): void {
     this._started = true
@@ -105,12 +105,12 @@ class MonitoringMock implements Monitoring {
     this._statusSubscriber.subscribe(callback)
   }
 
-  onStatusUp (callback: EmptyCallback): void {
-    this._upSubscriber.subscribe(callback)
+  onStatusChangeUp (callback: EmptyCallback): void {
+    this._changeUpSubscriber.subscribe(callback)
   }
 
-  onStatusDown (callback: EmptyCallback): void {
-    this._downSubscriber.subscribe(callback)
+  onStatusChangeDown (callback: EmptyCallback): void {
+    this._changeDownSubscriber.subscribe(callback)
   }
 
   isStarted (): boolean {
@@ -121,12 +121,12 @@ class MonitoringMock implements Monitoring {
     this._statusSubscriber.notify(status)
   }
 
-  triggerStatusUp () {
-    this._upSubscriber.notify()
+  triggerStatusChangeUp () {
+    this._changeUpSubscriber.notify()
   }
 
-  triggerStatusDown () {
-    this._downSubscriber.notify()
+  triggerStatusChangeDown () {
+    this._changeDownSubscriber.notify()
   }
 }
 
@@ -245,7 +245,7 @@ describe('ProcessManager', () => {
       const recorder = new CallbackRecorder()
       remoteCommunication.healthcheckUp.on(recorder.getCallback())
 
-      monitoring.triggerStatusUp()
+      monitoring.triggerStatusChangeUp()
 
       expect(recorder.invoked).to.be.true
     })
@@ -256,7 +256,7 @@ describe('ProcessManager', () => {
       const recorder = new CallbackRecorder()
       remoteCommunication.healthcheckDown.on(recorder.getCallback())
 
-      monitoring.triggerStatusDown()
+      monitoring.triggerStatusChangeDown()
 
       expect(recorder.invoked).to.be.true
     })
@@ -278,7 +278,7 @@ describe('ProcessManager', () => {
     it('kills process if client version does not match', async () => {
       tequilapi.versionMock = '0.0.1'
       await processManager.start()
-      monitoring.triggerStatusUp()
+      monitoring.triggerStatusChangeUp()
       await nextTick()
 
       expect(process.killed).to.be.true

@@ -22,8 +22,8 @@ import lolex from 'lolex'
 import EmptyTequilapiClientMock from '../../renderer/store/modules/empty-tequilapi-client-mock'
 import NodeBuildInfoDTO from 'mysterium-tequilapi/lib/dto/node-build-info'
 import type { NodeHealthcheckDTO } from 'mysterium-tequilapi/lib/dto/node-healthcheck'
-import Monitoring, { waitForStatusUp } from '../../../../src/libraries/mysterium-client/monitoring'
-import { captureAsyncError, nextTick } from '../../../helpers/utils'
+import TequilaMonitoring, { waitForStatusUp } from '../../../../src/libraries/mysterium-client/monitoring'
+import { captureAsyncError, nextTick, RepeatableCallbackRecorder } from '../../../helpers/utils'
 
 class TequilapiMock extends EmptyTequilapiClientMock {
   cancelIsCalled: boolean = false
@@ -53,7 +53,7 @@ class TequilapiMock extends EmptyTequilapiClientMock {
 
 describe('Monitoring module', () => {
   let tequilapiClient: TequilapiMock
-  let monitoring: Monitoring
+  let monitoring: TequilaMonitoring
   let clock: lolex
 
   async function tickWithDelay (duration) {
@@ -73,10 +73,10 @@ describe('Monitoring module', () => {
   beforeEach(() => {
     tequilapiClient = new TequilapiMock()
     // $FlowFixMe
-    monitoring = new Monitoring(tequilapiClient)
+    monitoring = new TequilaMonitoring(tequilapiClient)
   })
 
-  describe('Monitoring', () => {
+  describe('TequilaMonitoring', () => {
     describe('.start', () => {
       it('makes healthCheck call', () => {
         expect(tequilapiClient.healthCheckIsCalled).to.be.false
@@ -157,6 +157,68 @@ describe('Monitoring module', () => {
         await tickWithDelay(4000)
         expect(called).to.be.false
       })
+    })
+  })
+
+  describe('.onStatusChangeUp', () => {
+    let recorder: RepeatableCallbackRecorder
+
+    beforeEach(() => {
+      recorder = new RepeatableCallbackRecorder()
+    })
+
+    it('invokes callback after status becomes up', async () => {
+      monitoring.onStatusChangeUp(recorder.getCallback())
+
+      monitoring.start()
+      await nextTick()
+
+      expect(recorder.invokesCount).to.eql(1)
+    })
+
+    it('does not invoke callback again when status keeps being up', async () => {
+      monitoring.onStatusChangeUp(recorder.getCallback())
+
+      monitoring.start()
+      await nextTick()
+
+      await tickWithDelay(4000)
+
+      expect(recorder.invokesCount).to.eql(1)
+    })
+  })
+
+  describe('.onStatusChangeDown', () => {
+    let recorder: RepeatableCallbackRecorder
+
+    beforeEach(() => {
+      recorder = new RepeatableCallbackRecorder()
+    })
+
+    it('invokes callback after status becomes down', async () => {
+      monitoring.onStatusChangeDown(recorder.getCallback())
+
+      monitoring.start()
+      await nextTick()
+
+      tequilapiClient.healthCheckThrowsError = true
+      await tickWithDelay(4000)
+
+      expect(recorder.invokesCount).to.eql(1)
+    })
+
+    it('does not invoke callback again when status keeps being down', async () => {
+      monitoring.onStatusChangeUp(recorder.getCallback())
+
+      monitoring.start()
+      await nextTick()
+
+      tequilapiClient.healthCheckThrowsError = true
+      await tickWithDelay(4000)
+
+      await tickWithDelay(4000)
+
+      expect(recorder.invokesCount).to.eql(1)
     })
   })
 
