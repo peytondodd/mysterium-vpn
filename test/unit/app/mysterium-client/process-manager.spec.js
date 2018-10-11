@@ -20,11 +20,7 @@
 import { beforeEach, describe, expect, it } from '../../../helpers/dependencies'
 import ProcessManager from '../../../../src/app/mysterium-client/process-manager'
 import type { Installer, Process } from '../../../../src/libraries/mysterium-client'
-import type {
-  Monitoring,
-  StatusCallback,
-  EmptyCallback
-} from '../../../../src/libraries/mysterium-client/monitoring'
+import type { Monitoring } from '../../../../src/libraries/mysterium-client/monitoring'
 import VersionCheck from '../../../../src/libraries/mysterium-client/version-check'
 import { buildMainCommunication } from '../../../../src/app/communication/main-communication'
 import LogCache from '../../../../src/app/logging/log-cache'
@@ -34,10 +30,10 @@ import { CallbackRecorder, captureAsyncError, nextTick } from '../../../helpers/
 import DirectMessageBus from '../../../helpers/direct-message-bus'
 import { SUDO_PROMT_PERMISSION_DENIED }
   from '../../../../src/libraries/mysterium-client/launch-daemon/launch-daemon-installer'
-import Subscriber from '../../../../src/libraries/subscriber'
 import BugReporterMock from '../../../helpers/bug-reporter-mock'
 import BugReporterMetricsStore from '../../../../src/app/bug-reporting/metrics/bug-reporter-metrics-store'
 import TequilapiVersionMock from '../../../helpers/mysterium-tequilapi/tequilapi-version-check.spec'
+import { StatusMonitoring } from '../../../../src/libraries/mysterium-client/monitoring'
 
 class InstallerMock implements Installer {
   needsInstallationMock: boolean = false
@@ -87,14 +83,8 @@ class ProcessMock implements Process {
   }
 }
 
-class MonitoringMock implements Monitoring {
+class MonitoringMock extends StatusMonitoring implements Monitoring {
   _started: boolean = false
-
-  _statusSubscriber: Subscriber<boolean> = new Subscriber()
-  _upSubscriber: Subscriber<void> = new Subscriber()
-  _downSubscriber: Subscriber<void> = new Subscriber()
-  _changeUpSubscriber: Subscriber<void> = new Subscriber()
-  _changeDownSubscriber: Subscriber<void> = new Subscriber()
 
   start (): void {
     this._started = true
@@ -103,48 +93,8 @@ class MonitoringMock implements Monitoring {
   stop (): void {
   }
 
-  onStatus (callback: StatusCallback): void {
-    this._statusSubscriber.subscribe(callback)
-  }
-
-  onStatusUp (callback: EmptyCallback): void {
-    this._upSubscriber.subscribe(callback)
-  }
-
-  onStatusDown (callback: EmptyCallback): void {
-    this._downSubscriber.subscribe(callback)
-  }
-
-  onStatusChangeUp (callback: EmptyCallback): void {
-    this._changeUpSubscriber.subscribe(callback)
-  }
-
-  onStatusChangeDown (callback: EmptyCallback): void {
-    this._changeDownSubscriber.subscribe(callback)
-  }
-
   isStarted (): boolean {
     return this._started
-  }
-
-  triggerStatus (status: boolean) {
-    this._statusSubscriber.notify(status)
-  }
-
-  triggerStatusChangeUp () {
-    this._changeUpSubscriber.notify()
-  }
-
-  triggerStatusChangeDown () {
-    this._changeDownSubscriber.notify()
-  }
-
-  triggerStatusUp () {
-    this._upSubscriber.notify()
-  }
-
-  triggerStatusDown () {
-    this._downSubscriber.notify()
   }
 }
 
@@ -263,7 +213,7 @@ describe('ProcessManager', () => {
       const recorder = new CallbackRecorder()
       remoteCommunication.healthcheckUp.on(recorder.getCallback())
 
-      monitoring.triggerStatusChangeUp()
+      monitoring.updateStatus(true)
 
       expect(recorder.invoked).to.be.true
     })
@@ -274,7 +224,7 @@ describe('ProcessManager', () => {
       const recorder = new CallbackRecorder()
       remoteCommunication.healthcheckDown.on(recorder.getCallback())
 
-      monitoring.triggerStatusChangeDown()
+      monitoring.updateStatus(false)
 
       expect(recorder.invoked).to.be.true
     })
@@ -282,7 +232,7 @@ describe('ProcessManager', () => {
     it('repairs process each time the process is down', async () => {
       await processManager.start()
 
-      monitoring.triggerStatusDown()
+      monitoring.updateStatus(false)
 
       expect(process.repaired).to.be.true
     })
@@ -296,7 +246,7 @@ describe('ProcessManager', () => {
     it('kills process if client version does not match', async () => {
       tequilapi.versionMock = '0.0.1'
       await processManager.start()
-      monitoring.triggerStatusChangeUp()
+      monitoring.updateStatus(true)
       await nextTick()
 
       expect(process.killed).to.be.true

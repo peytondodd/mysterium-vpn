@@ -138,28 +138,6 @@ describe('Monitoring module', () => {
         expect(lastStatus).to.be.true
       })
     })
-
-    describe('.removeOnStatus', () => {
-      it('do not calls callback after remove', async () => {
-        let called = null
-        const callback = () => {
-          called = true
-        }
-
-        monitoring.onStatus(callback)
-        expect(called).to.be.null
-
-        called = false
-        monitoring.start()
-        await nextTick()
-        expect(called).to.be.true
-
-        called = false
-        monitoring.removeOnStatus(callback)
-        await tickWithDelay(4000)
-        expect(called).to.be.false
-      })
-    })
   })
 
   describe('.onStatusUp', () => {
