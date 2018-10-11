@@ -33,6 +33,10 @@ interface Monitoring {
 
   onStatus (callback: StatusCallback): void,
 
+  onStatusUp (callback: EmptyCallback): void,
+
+  onStatusDown (callback: EmptyCallback): void,
+
   onStatusChangeUp (callback: EmptyCallback): void,
 
   onStatusChangeDown (callback: EmptyCallback): void,
@@ -44,8 +48,10 @@ class TequilaMonitoring implements Monitoring {
   api: TequilapiClient
   _timer: TimeoutID
 
-  _lastIsRunning: boolean = false
+  _lastIsRunning: ?boolean = null
   _subscribersStatus: Array<StatusCallback> = []
+  _subscribersUp: Array<EmptyCallback> = []
+  _subscribersDown: Array<EmptyCallback> = []
   _subscribersChangeUp: Array<EmptyCallback> = []
   _subscribersChangeDown: Array<EmptyCallback> = []
   _isStarted: boolean = false
@@ -75,8 +81,9 @@ class TequilaMonitoring implements Monitoring {
 
   onStatus (callback: StatusCallback) {
     this._subscribersStatus.push(callback)
-    if (this._isStarted) {
-      callback(this._lastIsRunning)
+    const status = this._lastIsRunning
+    if (status != null) {
+      callback(status)
     }
   }
 
@@ -84,6 +91,20 @@ class TequilaMonitoring implements Monitoring {
     const i = this._subscribersStatus.indexOf(callback)
     if (i >= 0) {
       this._subscribersStatus.splice(i, 1)
+    }
+  }
+
+  onStatusUp (callback: EmptyCallback) {
+    this._subscribersUp.push(callback)
+    if (this._lastIsRunning) {
+      callback()
+    }
+  }
+
+  onStatusDown (callback: EmptyCallback) {
+    this._subscribersDown.push(callback)
+    if (this._lastIsRunning === false) {
+      callback()
     }
   }
 
@@ -122,6 +143,11 @@ class TequilaMonitoring implements Monitoring {
 
   _notifySubscribers (isRunning: boolean) {
     this._notifySubscribersStatus(isRunning)
+    if (isRunning) {
+      this._notifySubscribersUp()
+    } else {
+      this._notifySubscribersDown()
+    }
 
     if (this._lastIsRunning === isRunning) {
       return
@@ -137,6 +163,18 @@ class TequilaMonitoring implements Monitoring {
   _notifySubscribersStatus (isRunning: boolean) {
     this._subscribersStatus.forEach((callback: StatusCallback) => {
       callback(isRunning)
+    })
+  }
+
+  _notifySubscribersUp () {
+    this._subscribersUp.forEach((callback: EmptyCallback) => {
+      callback()
+    })
+  }
+
+  _notifySubscribersDown () {
+    this._subscribersDown.forEach((callback: EmptyCallback) => {
+      callback()
     })
   }
 

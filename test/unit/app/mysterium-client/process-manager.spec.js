@@ -91,6 +91,8 @@ class MonitoringMock implements Monitoring {
   _started: boolean = false
 
   _statusSubscriber: Subscriber<boolean> = new Subscriber()
+  _upSubscriber: Subscriber<void> = new Subscriber()
+  _downSubscriber: Subscriber<void> = new Subscriber()
   _changeUpSubscriber: Subscriber<void> = new Subscriber()
   _changeDownSubscriber: Subscriber<void> = new Subscriber()
 
@@ -103,6 +105,14 @@ class MonitoringMock implements Monitoring {
 
   onStatus (callback: StatusCallback): void {
     this._statusSubscriber.subscribe(callback)
+  }
+
+  onStatusUp (callback: EmptyCallback): void {
+    this._upSubscriber.subscribe(callback)
+  }
+
+  onStatusDown (callback: EmptyCallback): void {
+    this._downSubscriber.subscribe(callback)
   }
 
   onStatusChangeUp (callback: EmptyCallback): void {
@@ -127,6 +137,14 @@ class MonitoringMock implements Monitoring {
 
   triggerStatusChangeDown () {
     this._changeDownSubscriber.notify()
+  }
+
+  triggerStatusUp () {
+    this._upSubscriber.notify()
+  }
+
+  triggerStatusDown () {
+    this._downSubscriber.notify()
   }
 }
 
@@ -264,7 +282,7 @@ describe('ProcessManager', () => {
     it('repairs process each time the process is down', async () => {
       await processManager.start()
 
-      monitoring.triggerStatus(false)
+      monitoring.triggerStatusDown()
 
       expect(process.repaired).to.be.true
     })

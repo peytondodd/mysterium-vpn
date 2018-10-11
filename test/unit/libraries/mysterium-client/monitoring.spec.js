@@ -108,13 +108,15 @@ describe('Monitoring module', () => {
     })
 
     describe('.onStatus', () => {
-      it('notifies about default status if monitoring is started', () => {
+      it('notifies about status instantly if it was fetched before', async () => {
         let lastStatus: ?boolean = null
         monitoring.start()
+        await nextTick()
+
         monitoring.onStatus(isRunning => {
           lastStatus = isRunning
         })
-        expect(lastStatus).to.be.false
+        expect(lastStatus).to.be.true
       })
 
       it('notifies when status changes', async () => {
@@ -157,6 +159,84 @@ describe('Monitoring module', () => {
         await tickWithDelay(4000)
         expect(called).to.be.false
       })
+    })
+  })
+
+  describe('.onStatusUp', () => {
+    let recorder: RepeatableCallbackRecorder
+
+    beforeEach(() => {
+      recorder = new RepeatableCallbackRecorder()
+    })
+
+    it('invokes callback each time status is up', async () => {
+      monitoring.onStatusUp(recorder.getCallback())
+
+      monitoring.start()
+      await nextTick()
+
+      expect(recorder.invokesCount).to.eql(1)
+
+      await tickWithDelay(4000)
+
+      expect(recorder.invokesCount).to.eql(2)
+    })
+
+    it('invokes callback instantly if status is already up', async () => {
+      monitoring.start()
+      await nextTick()
+
+      monitoring.onStatusUp(recorder.getCallback())
+
+      expect(recorder.invokesCount).to.eql(1)
+    })
+
+    it('does not invoke callback instantly if status is down', async () => {
+      tequilapiClient.healthCheckThrowsError = true
+      monitoring.start()
+      await nextTick()
+
+      monitoring.onStatusUp(recorder.getCallback())
+
+      expect(recorder.invokesCount).to.eql(0)
+    })
+  })
+
+  describe('.onStatusDown', () => {
+    let recorder: RepeatableCallbackRecorder
+
+    beforeEach(() => {
+      recorder = new RepeatableCallbackRecorder()
+    })
+
+    it('invokes callback each time status is up', async () => {
+      monitoring.onStatusDown(recorder.getCallback())
+      tequilapiClient.healthCheckThrowsError = true
+
+      monitoring.start()
+      await nextTick()
+
+      expect(recorder.invokesCount).to.eql(1)
+
+      await tickWithDelay(4000)
+
+      expect(recorder.invokesCount).to.eql(2)
+    })
+
+    it('invokes callback instantly if status is already down', async () => {
+      tequilapiClient.healthCheckThrowsError = true
+      monitoring.start()
+      await nextTick()
+
+      monitoring.onStatusDown(recorder.getCallback())
+
+      expect(recorder.invokesCount).to.eql(1)
+    })
+
+    it('does not invoke callback instantly if status is unknown', async () => {
+      monitoring.onStatusDown(recorder.getCallback())
+
+      expect(recorder.invokesCount).to.eql(0)
     })
   })
 

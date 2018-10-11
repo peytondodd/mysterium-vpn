@@ -130,11 +130,7 @@ class ProcessManager {
       this._bugReporterMetrics.set(METRICS.CLIENT_RUNNING, false)
     })
 
-    this._monitoring.onStatus((status) => {
-      if (status === true) {
-        return
-      }
-
+    this._monitoring.onStatusDown(() => {
       this._repairProcess()
     })
 
