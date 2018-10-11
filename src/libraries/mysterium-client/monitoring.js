@@ -19,6 +19,7 @@
 import { promisify } from 'util'
 import type { TequilapiClient } from 'mysterium-tequilapi/lib/client'
 import sleep from '../sleep'
+import Subscriber from '../subscriber'
 
 const HEALTH_CHECK_INTERVAL = 1500
 const healthCheckTimeout = 500
@@ -49,12 +50,13 @@ class TequilaMonitoring implements Monitoring {
   _timer: TimeoutID
 
   _lastIsRunning: ?boolean = null
-  _subscribersStatus: Array<StatusCallback> = []
-  _subscribersUp: Array<EmptyCallback> = []
-  _subscribersDown: Array<EmptyCallback> = []
-  _subscribersChangeUp: Array<EmptyCallback> = []
-  _subscribersChangeDown: Array<EmptyCallback> = []
   _isStarted: boolean = false
+
+  _subscriberStatus: Subscriber<boolean> = new Subscriber()
+  _subscriberUp: Subscriber<void> = new Subscriber()
+  _subscriberDown: Subscriber<void> = new Subscriber()
+  _subscriberChangeUp: Subscriber<void> = new Subscriber()
+  _subscriberChangeDown: Subscriber<void> = new Subscriber()
 
   constructor (tequilapi: TequilapiClient) {
     this.api = tequilapi
@@ -80,7 +82,7 @@ class TequilaMonitoring implements Monitoring {
   }
 
   onStatus (callback: StatusCallback) {
-    this._subscribersStatus.push(callback)
+    this._subscriberStatus.subscribe(callback)
     const status = this._lastIsRunning
     if (status != null) {
       callback(status)
@@ -88,32 +90,29 @@ class TequilaMonitoring implements Monitoring {
   }
 
   removeOnStatus (callback: StatusCallback) {
-    const i = this._subscribersStatus.indexOf(callback)
-    if (i >= 0) {
-      this._subscribersStatus.splice(i, 1)
-    }
+    this._subscriberStatus.unsubscribe(callback)
   }
 
   onStatusUp (callback: EmptyCallback) {
-    this._subscribersUp.push(callback)
+    this._subscriberUp.subscribe(callback)
     if (this._lastIsRunning) {
       callback()
     }
   }
 
   onStatusDown (callback: EmptyCallback) {
-    this._subscribersDown.push(callback)
+    this._subscriberDown.subscribe(callback)
     if (this._lastIsRunning === false) {
       callback()
     }
   }
 
   onStatusChangeUp (callback: EmptyCallback) {
-    this._subscribersChangeUp.push(callback)
+    this._subscriberChangeUp.subscribe(callback)
   }
 
   onStatusChangeDown (callback: EmptyCallback) {
-    this._subscribersChangeDown.push(callback)
+    this._subscriberChangeDown.subscribe(callback)
   }
 
   async _healthCheckLoop (): Promise<void> {
@@ -161,33 +160,23 @@ class TequilaMonitoring implements Monitoring {
   }
 
   _notifySubscribersStatus (isRunning: boolean) {
-    this._subscribersStatus.forEach((callback: StatusCallback) => {
-      callback(isRunning)
-    })
+    this._subscriberStatus.notify(isRunning)
   }
 
   _notifySubscribersUp () {
-    this._subscribersUp.forEach((callback: EmptyCallback) => {
-      callback()
-    })
+    this._subscriberUp.notify()
   }
 
   _notifySubscribersDown () {
-    this._subscribersDown.forEach((callback: EmptyCallback) => {
-      callback()
-    })
+    this._subscriberDown.notify()
   }
 
   _notifySubscribersChangeUp () {
-    this._subscribersChangeUp.forEach((callback: EmptyCallback) => {
-      callback()
-    })
+    this._subscriberChangeUp.notify()
   }
 
   _notifySubscribersChangeDown () {
-    this._subscribersChangeDown.forEach((callback: EmptyCallback) => {
-      callback()
-    })
+    this._subscriberChangeDown.notify()
   }
 }
 
