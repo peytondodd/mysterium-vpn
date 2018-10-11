@@ -27,9 +27,10 @@ import { SUDO_PROMT_PERMISSION_DENIED } from '../../libraries/mysterium-client/l
 import logger from '../logger'
 import { logLevels as processLogLevels } from '../../libraries/mysterium-client'
 import { onFirstEventOrTimeout } from '../communication/utils'
-import { bugReporter, bugReporterMetrics } from '../../main/helpers/bug-reporter'
 import { METRICS } from '../bug-reporting/metrics/metrics'
 import FeatureToggle from '../features/feature-toggle'
+import type { BugReporter } from '../bug-reporting/interface'
+import type { BugReporterMetrics } from '../bug-reporting/metrics/bug-reporter-metrics'
 
 const LOG_PREFIX = '[ProcessManager]'
 const MYSTERIUM_CLIENT_STARTUP_THRESHOLD = 10000
@@ -42,6 +43,8 @@ class ProcessManager {
   _logCache: LogCache
   _versionCheck: VersionCheck
   _featureToggle: FeatureToggle
+  _bugReporter: BugReporter
+  _bugReporterMetrics: BugReporterMetrics
 
   constructor (
     installer: Installer,
@@ -50,7 +53,9 @@ class ProcessManager {
     communication: MainCommunication,
     logCache: LogCache,
     versionCheck: VersionCheck,
-    featureToggle: FeatureToggle
+    featureToggle: FeatureToggle,
+    bugReporter: BugReporter,
+    bugReporterMetrics: BugReporterMetrics
   ) {
     this._installer = installer
     this._process = process
@@ -59,6 +64,8 @@ class ProcessManager {
     this._logCache = logCache
     this._versionCheck = versionCheck
     this._featureToggle = featureToggle
+    this._bugReporter = bugReporter
+    this._bugReporterMetrics = bugReporterMetrics
   }
 
   async ensureInstallation () {
@@ -72,7 +79,7 @@ class ProcessManager {
   async start () {
     this._startLogging().catch(error => {
       this._logError(`Starting process logging failed.`, error.message)
-      bugReporter().captureErrorException(error)
+      this._bugReporter.captureErrorException(error)
     })
     this._startMonitoring()
     this._onProcessReady()
@@ -88,7 +95,7 @@ class ProcessManager {
     } catch (error) {
       this._logError(`Failed to stop 'mysterium_client' process`, error)
 
-      bugReporter().captureErrorException(error)
+      this._bugReporter.captureErrorException(error)
     }
   }
 
@@ -112,7 +119,7 @@ class ProcessManager {
 
       this._communication.healthcheckUp.send()
 
-      bugReporterMetrics().set(METRICS.CLIENT_RUNNING, true)
+      this._bugReporterMetrics.set(METRICS.CLIENT_RUNNING, true)
     })
 
     this._monitoring.onStatusDown(() => {
@@ -120,7 +127,7 @@ class ProcessManager {
 
       this._communication.healthcheckDown.send()
 
-      bugReporterMetrics().set(METRICS.CLIENT_RUNNING, false)
+      this._bugReporterMetrics.set(METRICS.CLIENT_RUNNING, false)
     })
 
     this._monitoring.onStatus((status) => {
@@ -198,7 +205,7 @@ class ProcessManager {
     } catch (error) {
       this._monitoring.stop()
 
-      bugReporter().captureErrorException(error)
+      this._bugReporter.captureErrorException(error)
 
       this._communication.rendererShowError.send({ message: translations.processStartError })
     }

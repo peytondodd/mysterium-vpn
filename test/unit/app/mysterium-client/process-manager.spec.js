@@ -36,6 +36,8 @@ import { SUDO_PROMT_PERMISSION_DENIED }
   from '../../../../src/libraries/mysterium-client/launch-daemon/launch-daemon-installer'
 import Subscriber from '../../../../src/libraries/subscriber'
 import EmptyTequilapiClientMock from '../../renderer/store/modules/empty-tequilapi-client-mock'
+import BugReporterMock from '../../../helpers/bug-reporter-mock'
+import BugReporterMetricsStore from '../../../../src/app/bug-reporting/metrics/bug-reporter-metrics-store'
 
 class InstallerMock implements Installer {
   needsInstallationMock: boolean = false
@@ -130,10 +132,6 @@ describe('ProcessManager', () => {
   let monitoring
   let installer
   let process
-  let logCache
-  let versionCheck
-  let communication
-  let featureToggle
 
   let processManager
 
@@ -143,15 +141,17 @@ describe('ProcessManager', () => {
     monitoring = new MonitoringMock()
     installer = new InstallerMock()
     process = new ProcessMock()
-    logCache = new LogCache()
+    const logCache = new LogCache()
     const tequilapi = new EmptyTequilapiClientMock()
-    versionCheck = new VersionCheck(tequilapi, '1.0.0')
+    const versionCheck = new VersionCheck(tequilapi, '1.0.0')
 
     const messageBus = new DirectMessageBus()
-    communication = buildMainCommunication(messageBus)
+    const communication = buildMainCommunication(messageBus)
     remoteCommunication = buildRendererCommunication(messageBus)
 
-    featureToggle = new FeatureToggle({})
+    const featureToggle = new FeatureToggle({})
+    const bugReporter = new BugReporterMock()
+    const bugReporterMetrics = new BugReporterMetricsStore()
 
     processManager = new ProcessManager(
       installer,
@@ -160,7 +160,9 @@ describe('ProcessManager', () => {
       communication,
       logCache,
       versionCheck,
-      featureToggle
+      featureToggle,
+      bugReporter,
+      bugReporterMetrics
     )
   })
 
