@@ -30,14 +30,14 @@ import { buildMainCommunication } from '../../../../src/app/communication/main-c
 import LogCache from '../../../../src/app/logging/log-cache'
 import FeatureToggle from '../../../../src/app/features/feature-toggle'
 import { buildRendererCommunication } from '../../../../src/app/communication/renderer-communication'
-import { CallbackRecorder, captureAsyncError } from '../../../helpers/utils'
+import { CallbackRecorder, captureAsyncError, nextTick } from '../../../helpers/utils'
 import DirectMessageBus from '../../../helpers/direct-message-bus'
 import { SUDO_PROMT_PERMISSION_DENIED }
   from '../../../../src/libraries/mysterium-client/launch-daemon/launch-daemon-installer'
 import Subscriber from '../../../../src/libraries/subscriber'
-import EmptyTequilapiClientMock from '../../renderer/store/modules/empty-tequilapi-client-mock'
 import BugReporterMock from '../../../helpers/bug-reporter-mock'
 import BugReporterMetricsStore from '../../../../src/app/bug-reporting/metrics/bug-reporter-metrics-store'
+import TequilapiVersionMock from '../../../helpers/mysterium-tequilapi/tequilapi-version-check.spec'
 
 class InstallerMock implements Installer {
   needsInstallationMock: boolean = false
@@ -60,6 +60,7 @@ class ProcessMock implements Process {
   setupLoggingErrorMock: ?Error = null
   started: boolean = false
   repaired: boolean = false
+  killed: boolean = false
 
   async start (): Promise<void> {
     this.started = true
@@ -73,6 +74,7 @@ class ProcessMock implements Process {
   }
 
   async kill (): Promise<void> {
+    this.killed = true
   }
 
   onLog (level: string, callback: Function): void {
@@ -134,6 +136,7 @@ describe('ProcessManager', () => {
   let process
 
   let processManager
+  let tequilapi
 
   let remoteCommunication
 
@@ -142,7 +145,7 @@ describe('ProcessManager', () => {
     installer = new InstallerMock()
     process = new ProcessMock()
     const logCache = new LogCache()
-    const tequilapi = new EmptyTequilapiClientMock()
+    tequilapi = new TequilapiVersionMock('1.0.0')
     const versionCheck = new VersionCheck(tequilapi, '1.0.0')
 
     const messageBus = new DirectMessageBus()
@@ -264,6 +267,21 @@ describe('ProcessManager', () => {
       monitoring.triggerStatus(false)
 
       expect(process.repaired).to.be.true
+    })
+
+    it('does not kill process if client version matches', async () => {
+      await processManager.start()
+
+      expect(process.killed).to.be.false
+    })
+
+    it('kills process if client version does not match', async () => {
+      tequilapi.versionMock = '0.0.1'
+      await processManager.start()
+      monitoring.triggerStatusUp()
+      await nextTick()
+
+      expect(process.killed).to.be.true
     })
   })
 

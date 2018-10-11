@@ -17,24 +17,26 @@
 
 // @flow
 
-import { TequilapiClient } from 'mysterium-tequilapi/lib/client'
-import logger from '../../app/logger'
+import EmptyTequilapiClientMock from '../../unit/renderer/store/modules/empty-tequilapi-client-mock'
+import type { NodeHealthcheckDTO } from 'mysterium-tequilapi/lib/dto/node-healthcheck'
+import NodeBuildInfoDTO from 'mysterium-tequilapi/lib/dto/node-build-info'
 
-class VersionCheck {
-  _tequilapi: TequilapiClient
-  _packageVersion: string
+class TequilapiVersionMock extends EmptyTequilapiClientMock {
+  versionMock: string
 
-  constructor (tequilapi: TequilapiClient, packageVersion: string) {
-    this._tequilapi = tequilapi
-    this._packageVersion = packageVersion
+  constructor (versionMock: string) {
+    super()
+    this.versionMock = versionMock
   }
 
-  async runningVersionMatchesPackageVersion (): Promise<boolean> {
-    const healthCheckResponse = await this._tequilapi.healthCheck()
-    const runningVersion = healthCheckResponse.version
-    logger.info(`[VersionCheck] Installed: ${this._packageVersion}, running: ${runningVersion}`)
-    return runningVersion === this._packageVersion
+  async healthCheck (_timeout: ?number): Promise<NodeHealthcheckDTO> {
+    return {
+      uptime: '',
+      process: 0,
+      version: this.versionMock,
+      buildInfo: new NodeBuildInfoDTO({})
+    }
   }
 }
 
-export default VersionCheck
+export default TequilapiVersionMock

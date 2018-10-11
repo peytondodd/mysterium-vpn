@@ -175,17 +175,11 @@ class ProcessManager {
   _onProcessReady () {
     onFirstEventOrTimeout(this._monitoring.onStatusUp.bind(this._monitoring), MYSTERIUM_CLIENT_STARTUP_THRESHOLD)
       .then(async () => {
-        if (!this._featureToggle.clientVersionCheckEnabled()) {
-          this._logInfo(`Client version check disabled`)
-
-          return
-        }
-
-        const versionMatch: boolean = await this._versionCheck.runningVersionMatchesPackageVersion()
-        if (!versionMatch) {
-          this._logInfo(`'mysterium_client' outdated. Killing it.`)
-
-          this._process.kill()
+        if (await this._clientVersionMismatches()) {
+          this._logInfo(`'mysterium_client' installed version does not match running version, killing it.`)
+          await this._process.kill()
+        } else {
+          this._logInfo(`'mysterium_client' installed version matches running version`)
         }
       })
       .catch(error => {
@@ -195,6 +189,16 @@ class ProcessManager {
 
         this._logError(`Failed to start 'mysterium_client' process`, error)
       })
+  }
+
+  async _clientVersionMismatches (): Promise<boolean> {
+    if (!this._featureToggle.clientVersionCheckEnabled()) {
+      this._logInfo(`Client version check disabled`)
+      return false
+    }
+
+    const matches = await this._versionCheck.runningVersionMatchesPackageVersion()
+    return !matches
   }
 
   async _repairProcess () {
