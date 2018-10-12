@@ -27,6 +27,7 @@ const healthCheckTimeout = 500
 type StatusCallback = (boolean) => void
 type EmptyCallback = () => void
 
+// TODO: allow unsubscribing from events
 interface Monitoring {
   start (): void,
 

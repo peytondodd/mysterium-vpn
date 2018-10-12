@@ -348,12 +348,12 @@ class MysteriumVpn {
 
     reportUnknownProposalCountries(this._proposalFetcher, this._bugReporter)
 
-    this._processManager.onStatusUp(() => {
+    this._processManager.onStatusChangeUp(() => {
       logInfo('Starting proposal fetcher')
       this._proposalFetcher.start()
     })
 
-    this._processManager.onStatusDown(() => {
+    this._processManager.onStatusChangeDown(() => {
       this._proposalFetcher.stop()
     })
   }

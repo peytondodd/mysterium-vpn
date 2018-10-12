@@ -33,7 +33,7 @@ import type { BugReporter } from '../bug-reporting/interface'
 import type { BugReporterMetrics } from '../bug-reporting/metrics/bug-reporter-metrics'
 
 const LOG_PREFIX = '[ProcessManager]'
-const MYSTERIUM_CLIENT_STARTUP_THRESHOLD = 10000
+const MYSTERIUM_CLIENT_WAITING_THRESHOLD = 10000
 
 class ProcessManager {
   _installer: Installer
@@ -81,10 +81,15 @@ class ProcessManager {
       this._logError(`Starting process logging failed.`, error.message)
       this._bugReporter.captureErrorException(error)
     })
-    this._startMonitoring()
-    this._onProcessReady()
-
     await this._startProcess()
+
+    this._startLocalMonitoring()
+    // TODO: await?
+    this._checkVersionAndStartPublicMonitoring().then(() => {
+      this._sendRendererHealthcheckUp()
+      this._startRendererMonitoring()
+      this._restartProcessOnMonitoringDown()
+    })
   }
 
   async stop () {
@@ -99,11 +104,13 @@ class ProcessManager {
     }
   }
 
-  onStatusUp (callback: EmptyCallback) {
+  onStatusChangeUp (callback: EmptyCallback) {
+    // TODO: invoke only when version is checked
+    // TODO: generalise - sending to renderer can be just another user
     this._monitoring.onStatusChangeUp(callback)
   }
 
-  onStatusDown (callback: EmptyCallback) {
+  onStatusChangeDown (callback: EmptyCallback) {
     this._monitoring.onStatusChangeDown(callback)
   }
 
@@ -113,30 +120,90 @@ class ProcessManager {
     this._process.onLog(processLogLevels.ERROR, (data) => this._logCache.pushToLevel(processLogLevels.ERROR, data))
   }
 
-  _startMonitoring () {
-    this._monitoring.onStatusChangeUp(() => {
-      this._logInfo(`'mysterium_client' is up`)
-
-      this._communication.healthcheckUp.send()
-
-      this._bugReporterMetrics.set(METRICS.CLIENT_RUNNING, true)
-    })
-
-    this._monitoring.onStatusChangeDown(() => {
-      this._logInfo(`'mysterium_client' is down`)
-
-      this._communication.healthcheckDown.send()
-
-      this._bugReporterMetrics.set(METRICS.CLIENT_RUNNING, false)
-    })
-
+  _restartProcessOnMonitoringDown () {
     this._monitoring.onStatusDown(() => {
       this._repairProcess()
     })
+  }
 
+  _startLocalMonitoring () {
     this._logInfo(`Starting 'mysterium_client' monitoring`)
-
     this._monitoring.start()
+  }
+
+  async _checkVersionAndStartPublicMonitoring () {
+    try {
+      await this._ensureClientVersion()
+    } catch (error) {
+      if (this._monitoring.isStarted()) {
+        this._communication.rendererShowError.send({ message: translations.processStartError })
+      }
+
+      this._logError(`Failed to start 'mysterium_client' process`, error)
+    }
+  }
+
+  async _ensureClientVersion () {
+    this._logInfo('Waiting for process to check version')
+    await this._onProcessUp()
+    if (await this._clientVersionMismatches()) {
+      this._logInfo(`'mysterium_client' installed version does not match running version, killing it.`)
+      await this._restartClient()
+    } else {
+      this._logInfo(`'mysterium_client' installed version matches running version`)
+    }
+  }
+
+  async _restartClient () {
+    try {
+      this._logInfo('Restarting: killing process')
+      await this._process.kill()
+
+      this._logInfo('Restarting: waiting for process to be down')
+      await this._onProcessDown()
+      this._logInfo('Restarting: process is down, starting it up')
+      await this._process.start()
+      this._logInfo('Restarting: waiting for process to be up')
+      await this._onProcessUp()
+      this._logInfo('Restering: process is up')
+    } catch (error) {
+      // TODO: bug reporter
+      this._logError(`Failed to restart 'mysterium_client' process`, error)
+      throw error
+    }
+  }
+
+  _onProcessDown (): Promise<void> {
+    return onFirstEventOrTimeout(
+      this._monitoring.onStatusDown.bind(this._monitoring),
+      MYSTERIUM_CLIENT_WAITING_THRESHOLD)
+  }
+
+  _onProcessUp (): Promise<void> {
+    return onFirstEventOrTimeout(
+      this._monitoring.onStatusUp.bind(this._monitoring),
+      MYSTERIUM_CLIENT_WAITING_THRESHOLD)
+  }
+
+  _startRendererMonitoring () {
+    this._monitoring.onStatusChangeUp(() => this._sendRendererHealthcheckUp())
+    this._monitoring.onStatusChangeDown(() => this._sendRendererHealthcheckDown())
+  }
+
+  _sendRendererHealthcheckDown () {
+    this._logInfo(`'mysterium_client' is down`)
+
+    this._communication.healthcheckDown.send()
+
+    this._bugReporterMetrics.set(METRICS.CLIENT_RUNNING, false)
+  }
+
+  _sendRendererHealthcheckUp () {
+    this._logInfo(`'mysterium_client' is up`)
+
+    this._communication.healthcheckUp.send()
+
+    this._bugReporterMetrics.set(METRICS.CLIENT_RUNNING, true)
   }
 
   async _startProcess () {
@@ -144,9 +211,9 @@ class ProcessManager {
 
     try {
       await this._process.start()
-      this._logInfo(`mysterium_client started successful`)
+      this._logInfo(`'mysterium_client' started successful`)
     } catch (error) {
-      this._logError(`mysterium_client start failed`, error)
+      this._logError(`'mysterium_client' start failed`, error)
     }
   }
 
@@ -166,25 +233,6 @@ class ProcessManager {
 
       throw new Error(`Failed to install 'mysterium_client' process. ` + error.message)
     }
-  }
-
-  _onProcessReady () {
-    onFirstEventOrTimeout(this._monitoring.onStatusChangeUp.bind(this._monitoring), MYSTERIUM_CLIENT_STARTUP_THRESHOLD)
-      .then(async () => {
-        if (await this._clientVersionMismatches()) {
-          this._logInfo(`'mysterium_client' installed version does not match running version, killing it.`)
-          await this._process.kill()
-        } else {
-          this._logInfo(`'mysterium_client' installed version matches running version`)
-        }
-      })
-      .catch(error => {
-        if (this._monitoring.isStarted()) {
-          this._communication.rendererShowError.send({ message: translations.processStartError })
-        }
-
-        this._logError(`Failed to start 'mysterium_client' process`, error)
-      })
   }
 
   async _clientVersionMismatches (): Promise<boolean> {

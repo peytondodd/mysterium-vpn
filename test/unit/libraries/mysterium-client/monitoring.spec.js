@@ -140,7 +140,7 @@ describe('Monitoring module', () => {
     })
   })
 
-  describe('.onStatusUp', () => {
+  describe('.onStatusChangeUp', () => {
     let recorder: RepeatableCallbackRecorder
 
     beforeEach(() => {
@@ -180,7 +180,7 @@ describe('Monitoring module', () => {
     })
   })
 
-  describe('.onStatusDown', () => {
+  describe('.onStatusChangeDown', () => {
     let recorder: RepeatableCallbackRecorder
 
     beforeEach(() => {
