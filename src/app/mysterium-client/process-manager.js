@@ -83,13 +83,12 @@ class ProcessManager {
     })
 
     await this._startProcess()
-    this._startLocalMonitoring()
+    this._startStatusMonitoring()
 
     try {
       await this._ensureClientVersion()
     } finally {
-      this._sendRendererHealthcheckUp()
-      this._startRendererMonitoring()
+      this._startStatusReporting()
       this._repairProcessOnProcessDown()
     }
   }
@@ -120,14 +119,14 @@ class ProcessManager {
     this._process.onLog(processLogLevels.ERROR, (data) => this._logCache.pushToLevel(processLogLevels.ERROR, data))
   }
 
-  _startLocalMonitoring () {
+  _startStatusMonitoring () {
     this._logInfo(`Starting 'mysterium_client' monitoring`)
     this._monitoring.start()
   }
 
   async _ensureClientVersion () {
     this._logInfo('Waiting for process to check version')
-    await this._onProcessUp()
+    await this._waitForProcessUp()
     if (await this._clientVersionMismatches()) {
       this._logInfo(`'mysterium_client' installed version does not match running version, killing it.`)
       await this._restartClient()
@@ -142,11 +141,11 @@ class ProcessManager {
       await this._process.kill()
 
       this._logInfo('Restarting: waiting for process to be down')
-      await this._onProcessDown()
+      await this._waitForProcessDown()
       this._logInfo('Restarting: process is down, starting it up')
       await this._process.start()
       this._logInfo('Restarting: waiting for process to be up')
-      await this._onProcessUp()
+      await this._waitForProcessUp()
       this._logInfo('Restering: process is up')
     } catch (error) {
       this._logError(`Failed to restart 'mysterium_client' process`, error)
@@ -154,19 +153,20 @@ class ProcessManager {
     }
   }
 
-  _onProcessDown (): Promise<void> {
+  _waitForProcessDown (): Promise<void> {
     return onFirstEventOrTimeout(
       this._monitoring.onStatusDown.bind(this._monitoring),
       MYSTERIUM_CLIENT_WAITING_THRESHOLD)
   }
 
-  _onProcessUp (): Promise<void> {
+  _waitForProcessUp (): Promise<void> {
     return onFirstEventOrTimeout(
       this._monitoring.onStatusUp.bind(this._monitoring),
       MYSTERIUM_CLIENT_WAITING_THRESHOLD)
   }
 
-  _startRendererMonitoring () {
+  _startStatusReporting () {
+    this._sendRendererHealthcheckUp()
     this._monitoring.onStatusChangeUp(() => this._sendRendererHealthcheckUp())
     this._monitoring.onStatusChangeDown(() => this._sendRendererHealthcheckDown())
   }
