@@ -19,29 +19,121 @@
 import { promisify } from 'util'
 import type { TequilapiClient } from 'mysterium-tequilapi/lib/client'
 import sleep from '../sleep'
+import Subscriber from '../subscriber'
 
 const HEALTH_CHECK_INTERVAL = 1500
 const healthCheckTimeout = 500
 
 type StatusCallback = (boolean) => void
-type UpCallback = () => void
-type DownCallback = () => void
+type EmptyCallback = () => void
 
-class Monitoring {
-  api: TequilapiClient
+// TODO: allow unsubscribing from events
+interface Monitoring {
+  start (): void,
+
+  stop (): void,
+
+  onStatus (callback: StatusCallback): void,
+
+  onStatusUp (callback: EmptyCallback): void,
+
+  onStatusDown (callback: EmptyCallback): void,
+
+  onStatusChangeUp (callback: EmptyCallback): void,
+
+  onStatusChangeDown (callback: EmptyCallback): void,
+
+  isStarted (): boolean
+}
+
+class StatusMonitoring {
+  _statusSubscriber: Subscriber<boolean> = new Subscriber()
+  _upSubscriber: Subscriber<void> = new Subscriber()
+  _downSubscriber: Subscriber<void> = new Subscriber()
+  _changeUpSubscriber: Subscriber<void> = new Subscriber()
+  _changeDownSubscriber: Subscriber<void> = new Subscriber()
+
+  _lastStatus: ?boolean = null
+
+  onStatus (callback: StatusCallback): void {
+    this._statusSubscriber.subscribe(callback)
+    const status = this._lastStatus
+    if (status != null) {
+      callback(status)
+    }
+  }
+
+  onStatusUp (callback: EmptyCallback): void {
+    this._upSubscriber.subscribe(callback)
+    if (this._lastStatus) {
+      callback()
+    }
+  }
+
+  onStatusDown (callback: EmptyCallback): void {
+    this._downSubscriber.subscribe(callback)
+    if (this._lastStatus === false) {
+      callback()
+    }
+  }
+
+  onStatusChangeUp (callback: EmptyCallback): void {
+    this._changeUpSubscriber.subscribe(callback)
+  }
+
+  onStatusChangeDown (callback: EmptyCallback): void {
+    this._changeDownSubscriber.subscribe(callback)
+  }
+
+  updateStatus (status: boolean) {
+    this._triggerStatus(status)
+    this._lastStatus = status
+  }
+
+  _triggerStatus (status: boolean) {
+    this._statusSubscriber.notify(status)
+
+    if (status) {
+      this._upSubscriber.notify()
+    } else {
+      this._downSubscriber.notify()
+    }
+
+    if (status !== this._lastStatus) {
+      this._triggerStatusChange(status)
+    }
+  }
+
+  _triggerStatusChange (newStatus: boolean) {
+    if (newStatus) {
+      this._triggerStatusChangeUp()
+    } else {
+      this._triggerStatusChangeDown()
+    }
+  }
+
+  _triggerStatusChangeUp () {
+    this._changeUpSubscriber.notify()
+  }
+
+  _triggerStatusChangeDown () {
+    this._changeDownSubscriber.notify()
+  }
+}
+
+class TequilaMonitoring extends StatusMonitoring implements Monitoring {
+  _api: TequilapiClient
+
   _timer: TimeoutID
 
-  _lastIsRunning: boolean = false
-  _subscribersStatus: Array<StatusCallback> = []
-  _subscribersUp: Array<UpCallback> = []
-  _subscribersDown: Array<DownCallback> = []
   _isStarted: boolean = false
 
   constructor (tequilapi: TequilapiClient) {
-    this.api = tequilapi
+    super()
+    this._api = tequilapi
   }
 
-  get isStarted (): boolean {
+  isStarted (): boolean {
     return this._isStarted
   }
 
@@ -60,28 +152,6 @@ class Monitoring {
     }
   }
 
-  onStatus (callback: StatusCallback) {
-    this._subscribersStatus.push(callback)
-    if (this._isStarted) {
-      callback(this._lastIsRunning)
-    }
-  }
-
-  removeOnStatus (callback: StatusCallback) {
-    const i = this._subscribersStatus.indexOf(callback)
-    if (i >= 0) {
-      this._subscribersStatus.splice(i, 1)
-    }
-  }
-
-  onStatusUp (callback: UpCallback) {
-    this._subscribersUp.push(callback)
-  }
-
-  onStatusDown (callback: DownCallback) {
-    this._subscribersDown.push(callback)
-  }
-
   async _healthCheckLoop (): Promise<void> {
     if (!this.isStarted) {
       return
@@ -89,14 +159,14 @@ class Monitoring {
 
     let isRunning
     try {
-      await this.api.healthCheck(healthCheckTimeout)
+      await this._api.healthCheck(healthCheckTimeout)
       isRunning = true
     } catch (e) {
       isRunning = false
     }
 
     try {
-      this._notifySubscribers(isRunning)
+      this.updateStatus(isRunning)
     } catch (e) {
       e.message = 'Bad subscriber added to Monitoring: ' + e.message
       throw e
@@ -106,43 +176,11 @@ class Monitoring {
       }
     }
   }
-
-  _notifySubscribers (isRunning: boolean) {
-    this._notifySubscribersStatus(isRunning)
-
-    if (this._lastIsRunning === isRunning) {
-      return
-    }
-    if (isRunning) {
-      this._notifySubscribersUp()
-    } else {
-      this._notifySubscribersDown()
-    }
-    this._lastIsRunning = isRunning
-  }
-
-  _notifySubscribersStatus (isRunning: boolean) {
-    this._subscribersStatus.forEach((callback: StatusCallback) => {
-      callback(isRunning)
-    })
-  }
-
-  _notifySubscribersUp () {
-    this._subscribersUp.forEach((callback: UpCallback) => {
-      callback()
-    })
-  }
-
-  _notifySubscribersDown () {
-    this._subscribersDown.forEach((callback: DownCallback) => {
-      callback()
-    })
-  }
 }
 
 function waitForStatusUp (tequilapi: TequilapiClient, timeout: number): Promise<void> {
-  const monitoring = new Monitoring(tequilapi)
-  const statusUpAsync = promisify(monitoring.onStatusUp.bind(monitoring))
+  const monitoring = new TequilaMonitoring(tequilapi)
+  const statusUpAsync = promisify(monitoring.onStatusChangeUp.bind(monitoring))
   monitoring.start()
 
   return Promise.race([
@@ -159,5 +197,6 @@ async function throwErrorAfterTimeout (timeout: number) {
 }
 
 export { waitForStatusUp, HEALTH_CHECK_INTERVAL }
-export default Monitoring
-export type { StatusCallback, UpCallback, DownCallback }
+export { StatusMonitoring }
+export default TequilaMonitoring
+export type { StatusCallback, EmptyCallback, Monitoring }

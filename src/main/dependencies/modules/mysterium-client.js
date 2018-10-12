@@ -23,12 +23,11 @@ import type { BugReporter } from '../../../app/bug-reporting/interface'
 
 import type { Container } from '../../../app/di'
 import type { MysteriumVpnConfig } from '../../../app/mysterium-vpn-config'
-import type { LogCallback } from '../../../libraries/mysterium-client'
+import type { Installer, LogCallback, Process } from '../../../libraries/mysterium-client'
 import type { TailFunction } from '../../../libraries/mysterium-client/client-log-subscriber'
 import type { ClientConfig } from '../../../libraries/mysterium-client/config'
 import type { TequilapiClient } from 'mysterium-tequilapi/lib/client'
 
-import { Monitoring } from '../../../libraries/mysterium-client'
 import ClientLogSubscriber from '../../../libraries/mysterium-client/client-log-subscriber'
 
 import LaunchDaemonInstaller from '../../../libraries/mysterium-client/launch-daemon/launch-daemon-installer'
@@ -44,6 +43,16 @@ import ServiceManagerProcess from '../../../libraries/mysterium-client/service-m
 import { LAUNCH_DAEMON_PORT } from '../../../libraries/mysterium-client/launch-daemon/config'
 import OSSystem from '../../../libraries/mysterium-client/system'
 import ServiceManager from '../../../libraries/mysterium-client/service-manager/service-manager'
+import ProcessManager from '../../../app/mysterium-client/process-manager'
+import TequilaMonitoring from '../../../libraries/mysterium-client/monitoring'
+import type { MainCommunication } from '../../../app/communication/main-communication'
+import LogCache from '../../../app/logging/log-cache'
+import VersionCheck from '../../../libraries/mysterium-client/version-check'
+import FeatureToggle from '../../../app/features/feature-toggle'
+import type { BugReporterMetrics } from '../../../app/bug-reporting/metrics/bug-reporter-metrics'
+import type { Monitoring } from '../../../libraries/mysterium-client/monitoring'
+
+declare var MYSTERIUM_CLIENT_VERSION: string
 
 const WINDOWS = 'win32'
 const OSX = 'darwin'
@@ -139,10 +148,21 @@ function bootstrap (container: Container) {
 
   container.service(
     'mysteriumClientProcess',
-    ['tequilapiClient', 'mysteriumClient.config', 'mysteriumClient.logSubscriber', 'mysteriumClient.platform',
-      'mysteriumClientMonitoring', 'serviceManager'],
-    (tequilapiClient: TequilapiClient, config: ClientConfig, logSubscriber: ClientLogSubscriber, platform: string,
-      monitoring: Monitoring, serviceManager: ServiceManager) => {
+    ['tequilapiClient',
+      'mysteriumClient.config',
+      'mysteriumClient.logSubscriber',
+      'mysteriumClient.platform',
+      'mysteriumClientMonitoring',
+      'serviceManager'
+    ],
+    (
+      tequilapiClient: TequilapiClient,
+      config: ClientConfig,
+      logSubscriber: ClientLogSubscriber,
+      platform: string,
+      monitoring: Monitoring,
+      serviceManager: ServiceManager
+    ) => {
       switch (platform) {
         case OSX:
           return new LaunchDaemonProcess(tequilapiClient, logSubscriber, LAUNCH_DAEMON_PORT)
@@ -151,8 +171,8 @@ function bootstrap (container: Container) {
             tequilapiClient,
             logSubscriber,
             serviceManager,
-            new OSSystem(),
-            monitoring)
+            new OSSystem()
+          )
         default:
           return new StandaloneClientProcess(config)
       }
@@ -162,7 +182,51 @@ function bootstrap (container: Container) {
   container.service(
     'mysteriumClientMonitoring',
     ['tequilapiClient'],
-    (tequilapiClient) => new Monitoring(tequilapiClient)
+    (tequilapiClient) => new TequilaMonitoring(tequilapiClient)
+  )
+
+  container.service(
+    'mysteriumClientVersionCheck',
+    ['tequilapiClient'],
+    (tequilapiClient) => new VersionCheck(tequilapiClient, MYSTERIUM_CLIENT_VERSION)
+  )
+
+  container.service(
+    'mysteriumClientProcessManager',
+    [
+      'mysteriumClientInstaller',
+      'mysteriumClientProcess',
+      'mysteriumClientMonitoring',
+      'mainCommunication',
+      'mysteriumProcessLogCache',
+      'mysteriumClientVersionCheck',
+      'featureToggle',
+      'bugReporter',
+      'bugReporterMetrics'
+    ],
+    (
+      installer: Installer,
+      process: Process,
+      monitoring: Monitoring,
+      communication: MainCommunication,
+      logCache: LogCache,
+      versionCheck: VersionCheck,
+      featureToggle: FeatureToggle,
+      bugReporter: BugReporter,
+      bugReporterMetrics: BugReporterMetrics
+    ) => {
+      return new ProcessManager(
+        installer,
+        process,
+        monitoring,
+        communication,
+        logCache,
+        versionCheck,
+        featureToggle,
+        bugReporter,
+        bugReporterMetrics
+      )
+    }
   )
 }
 

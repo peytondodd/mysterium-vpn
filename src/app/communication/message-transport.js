@@ -66,7 +66,6 @@ export function buildMessageTransports (messageBus: MessageBus) {
   const connectionCancel: MessageTransport<void> = build(messages.CONNECTION_CANCEL)
   const reconnectRequest: MessageTransport<void> = build(messages.RECONNECT_REQUEST)
 
-  const mysteriumClientReady: MessageTransport<void> = build(messages.MYSTERIUM_CLIENT_READY)
   const currentIdentityChanged: MessageTransport<CurrentIdentityChangeDTO> = build(messages.CURRENT_IDENTITY_CHANGED)
 
   const termsRequested: MessageTransport<RequestTermsDTO> = build(messages.TERMS_REQUESTED)
@@ -98,7 +97,6 @@ export function buildMessageTransports (messageBus: MessageBus) {
     connectionCancel,
     reconnectRequest,
 
-    mysteriumClientReady,
     currentIdentityChanged,
 
     termsRequested,

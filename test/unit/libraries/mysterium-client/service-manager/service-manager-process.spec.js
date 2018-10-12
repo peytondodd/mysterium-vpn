@@ -29,7 +29,6 @@ import ClientLogSubscriber from '../../../../../src/libraries/mysterium-client/c
 import type { LogCallback } from '../../../../../src/libraries/mysterium-client'
 import type { SystemMockManager } from '../../../../helpers/system-mock'
 import type { System } from '../../../../../src/libraries/mysterium-client/system'
-import Monitoring from '../../../../../src/libraries/mysterium-client/monitoring'
 import { captureAsyncError, nextTick } from '../../../../helpers/utils'
 import BugReporterMock from '../../../../helpers/bug-reporter-mock'
 import type { ServiceState }
@@ -102,7 +101,6 @@ describe('ServiceManagerProcess', () => {
   let tequilapiClient: TequilapiMock
   let process: ServiceManagerProcess
   let clientLogSubscriber: ClientLogSubscriberMock
-  let monitoring: Monitoring
   let serviceManager: ServiceManager
   let clock: lolex
 
@@ -146,11 +144,8 @@ describe('ServiceManagerProcess', () => {
 
     tequilapiClient = new TequilapiMock()
     clientLogSubscriber = new ClientLogSubscriberMock()
-    // $FlowFixMe
-    monitoring = new Monitoring(tequilapiClient)
     serviceManager = new ServiceManager(SERVICE_MANAGER_PATH, system)
-    process = new ServiceManagerProcess(tequilapiClient, clientLogSubscriber, serviceManager, system, monitoring)
-    monitoring.start()
+    process = new ServiceManagerProcess(tequilapiClient, clientLogSubscriber, serviceManager, system)
   })
 
   describe('.start', () => {

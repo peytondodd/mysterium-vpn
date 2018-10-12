@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 The "mysteriumnetwork/mysterium-vpn" Authors.
+ * Copyright (C) 2018 The "mysteriumnetwork/mysterium-vpn" Authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,38 +15,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// @flow
-
-import type { Callback } from '../subscriber'
-import logLevels from './log-levels'
-
-type LogCallback = Callback<any>
-
-interface Installer {
-  needsInstallation (): Promise<boolean>,
-
-  install (): Promise<void>
+function isSemanticVersionValid (version) {
+  try {
+    parseSemanticVersion(version)
+    return true
+  } catch (_) {
+    return false
+  }
 }
 
-interface Process {
-  start (): Promise<void>,
+function parseSemanticVersion (version) {
+  const match = version.match(/^(\d+)\.(\d+).(\d+)$/)
+  if (match == null) {
+    throw new Error(`Invalid version string: "${version}"`)
+  }
+  const [, major, minor, patch] = match
 
-  repair (): Promise<void>,
-
-  /**
-   * Stop process gracefully.
-   */
-  stop (): Promise<void>,
-
-  /**
-   * Force-kill process.
-   */
-  kill (): Promise<void>,
-
-  onLog (level: string, callback: Function): void,
-
-  setupLogging (): Promise<void>
+  return {
+    major: parseInt(major, 10),
+    minor: parseInt(minor, 10),
+    patch: parseInt(patch, 10)
+  }
 }
 
-export { logLevels }
-export type { Installer, Process, LogCallback }
+exports.parseSemanticVersion = parseSemanticVersion
+exports.isSemanticVersionValid = isSemanticVersionValid

@@ -54,6 +54,10 @@ class LaunchDaemonProcess implements Process {
     await this._tequilapi.stop()
   }
 
+  async kill (): Promise<void> {
+    await this._tequilapi.stop()
+  }
+
   async setupLogging (): Promise<void> {
     await this._logs.setup()
   }

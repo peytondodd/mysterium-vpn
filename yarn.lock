@@ -6774,7 +6774,7 @@ mute-stream@0.0.7, mute-stream@~0.0.4:
   version "0.0.7"
   resolved "https://registry.yarnpkg.com/mute-stream/-/mute-stream-0.0.7.tgz#3075ce93bc21b8fab43e1bc4da7e8115ed1e7bab"
 
-mysterium-client-bin@^0.2.3:
+mysterium-client-bin@0.2.3:
   version "0.2.3"
   resolved "https://registry.yarnpkg.com/mysterium-client-bin/-/mysterium-client-bin-0.2.3.tgz#3b8fd8e1fee7f37200cd4552299db95396818301"
   dependencies:

@@ -19,19 +19,14 @@
 
 import { app, BrowserWindow } from 'electron'
 import type { MysteriumVpnParams } from './mysterium-vpn-params'
-import type { Installer, Process } from '../libraries/mysterium-client'
-import { logLevels as processLogLevels } from '../libraries/mysterium-client'
 import trayFactory from '../main/tray/factory'
-import { SUDO_PROMT_PERMISSION_DENIED } from '../libraries/mysterium-client/launch-daemon/launch-daemon-installer'
-import FeatureToggle from './features/feature-toggle'
 import translations from './messages'
-import { onFirstEvent, onFirstEventOrTimeout } from './communication/utils'
+import { onFirstEvent } from './communication/utils'
 import path from 'path'
 import type { Size } from './window'
 import type { MysteriumVpnConfig } from './mysterium-vpn-config'
 import Window from './window'
 import Terms from './terms'
-import ProcessMonitoring from '../libraries/mysterium-client/monitoring'
 import TequilapiProposalFetcher from './data-fetchers/tequilapi-proposal-fetcher'
 import CountryList from './data-fetchers/country-list'
 import type { BugReporter } from './bug-reporting/interface'
@@ -48,20 +43,19 @@ import MainBufferedIpc from './communication/ipc/main-buffered-ipc'
 import CommunicationBindings from './communication-bindings'
 import { METRICS, TAGS } from './bug-reporting/metrics/metrics'
 import type { BugReporterMetrics } from './bug-reporting/metrics/bug-reporter-metrics'
+import ProcessManager from './mysterium-client/process-manager'
 import type { MainCommunication } from './communication/main-communication'
 import { reportUnknownProposalCountries } from './countries/reporting'
+import FeatureToggle from './features/feature-toggle'
 
 const LOG_PREFIX = '[MysteriumVpn] '
-const MYSTERIUM_CLIENT_STARTUP_THRESHOLD = 10000
 
 class MysteriumVpn {
   _browserWindowFactory: () => BrowserWindow
   _windowFactory: Function
   _config: MysteriumVpnConfig
   _terms: Terms
-  _installer: Installer
-  _monitoring: ProcessMonitoring
-  _process: Process
+  _processManager: ProcessManager
   _proposalFetcher: TequilapiProposalFetcher
   _registrationFetcher: TequilapiRegistrationFetcher
   _countryList: CountryList
@@ -73,23 +67,21 @@ class MysteriumVpn {
   _mysteriumProcessLogCache: LogCache
   _userSettingsStore: UserSettingsStorage
   _disconnectNotification: Notification
-  _startupEventTracker: StartupEventTracker
   _featureToggle: FeatureToggle
-
-  _window: Window
-  _communication: MainCommunication
+  _startupEventTracker: StartupEventTracker
   _ipc: MainBufferedIpc
+  _communication: MainCommunication
   _syncCallbacksInitializer: SyncCallbacksInitializer
   _communicationBindings: CommunicationBindings
+
+  _window: Window // TODO: convert to maybe type
 
   constructor (params: MysteriumVpnParams) {
     this._browserWindowFactory = params.browserWindowFactory
     this._windowFactory = params.windowFactory
     this._config = params.config
     this._terms = params.terms
-    this._installer = params.installer
-    this._monitoring = params.monitoring
-    this._process = params.process
+    this._processManager = params.processManager
     this._proposalFetcher = params.proposalFetcher
     this._registrationFetcher = params.registrationFetcher
     this._countryList = params.countryList
@@ -101,8 +93,8 @@ class MysteriumVpn {
     this._mysteriumProcessLogCache = params.mysteriumProcessLogCache
     this._userSettingsStore = params.userSettingsStore
     this._disconnectNotification = params.disconnectNotification
-    this._startupEventTracker = params.startupEventTracker
     this._featureToggle = params.featureToggle
+    this._startupEventTracker = params.startupEventTracker
 
     this._ipc = params.mainIpc
     this._communication = params.mainCommunication
@@ -165,10 +157,10 @@ class MysteriumVpn {
     this._communicationBindings.setCurrentIdentityForEventTracker(this._startupEventTracker)
     this._communicationBindings.syncCurrentIdentityForBugReporter(this._bugReporter)
 
-    this._communicationBindings.startRegistrationFetcherOnCurrentIdentity(
-      this._featureToggle,
-      this._registrationFetcher
-    )
+    if (this._featureToggle.paymentsAreEnabled()) {
+      this._communicationBindings.startRegistrationFetcherOnCurrentIdentity(this._registrationFetcher)
+      this._communicationBindings.syncRegistrationStatus(this._registrationFetcher, this._bugReporter)
+    }
 
     this._bugReporterMetrics.setWithCurrentDateTime(METRICS.START_TIME)
 
@@ -184,19 +176,16 @@ class MysteriumVpn {
 
     this._buildTray()
 
-    await this._ensureDaemonInstallation()
-    await this._startProcess()
-    this._startProcessMonitoring()
-    this._onProcessReady(() => {
-      logInfo(`Notify that 'mysterium_client' process is ready`)
-      this._communication.mysteriumClientReady.send()
-    })
-
-    this._subscribeProposals()
-
-    if (this._featureToggle.paymentsAreEnabled()) {
-      this._communicationBindings.syncRegistrationStatus(this._registrationFetcher, this._bugReporter)
+    await this._processManager.ensureInstallation()
+    try {
+      await this._processManager.start()
+    } catch (error) {
+      this._communication.rendererShowError.send({ message: translations.processStartError })
+      logException(`Failed to start 'mysterium_client' process`, error)
+      this._bugReporter.captureErrorException(error)
     }
+
+    this._startAndSubscribeProposals()
 
     this._communicationBindings.syncFavorites(this._userSettingsStore)
     this._communicationBindings.syncShowDisconnectNotifications(this._userSettingsStore)
@@ -261,24 +250,6 @@ class MysteriumVpn {
     }
   }
 
-  // checks if daemon is installed or daemon file is expired
-  // if the installation fails, it sends a message to the renderer window
-  async _ensureDaemonInstallation () {
-    if (await this._installer.needsInstallation()) {
-      logInfo("Installing 'mysterium_client' process")
-      try {
-        await this._installer.install()
-      } catch (e) {
-        let messageForUser = translations.processInstallationError
-        if (e.message === SUDO_PROMT_PERMISSION_DENIED) {
-          messageForUser = translations.processInstallationPermissionsError
-        }
-        this._communication.rendererShowError.send(messageForUser)
-        throw new Error("Failed to install 'mysterium_client' process. " + e)
-      }
-    }
-  }
-
   async _loadUserSettings () {
     try {
       await this._userSettingsStore.load()
@@ -312,7 +283,6 @@ class MysteriumVpn {
   }
 
   async onWillQuit () {
-    this._monitoring.stop()
     // TODO: fix - proposalFetcher can still be undefined at this point
     try {
       await this._proposalFetcher.stop()
@@ -321,12 +291,7 @@ class MysteriumVpn {
       this._bugReporter.captureErrorException(e)
     }
 
-    try {
-      await this._process.stop()
-    } catch (e) {
-      logException("Failed to stop 'mysterium_client' process", e)
-      this._bugReporter.captureErrorException(e)
-    }
+    await this._processManager.stop()
   }
 
   // make sure terms are up to date and accepted
@@ -373,77 +338,7 @@ class MysteriumVpn {
     return true
   }
 
-  async _startProcess () {
-    const cacheLogs = (level, data) => {
-      this._mysteriumProcessLogCache.pushToLevel(level, data)
-    }
-
-    logInfo("Starting 'mysterium_client' process")
-    try {
-      await this._process.start()
-      logInfo('mysterium_client start successful')
-    } catch (e) {
-      logException('mysterium_client start failed', e)
-    }
-
-    try {
-      this._process.setupLogging()
-      this._process.onLog(processLogLevels.INFO, (data) => cacheLogs(processLogLevels.INFO, data))
-      this._process.onLog(processLogLevels.ERROR, (data) => cacheLogs(processLogLevels.ERROR, data))
-    } catch (e) {
-      logException('Failing to process logs. ', e)
-      this._bugReporter.captureErrorException(e)
-    }
-  }
-
-  _startProcessMonitoring () {
-    this._monitoring.onStatusUp(() => {
-      logInfo("'mysterium_client' is up")
-      this._communication.healthcheckUp.send()
-      this._bugReporterMetrics.set(METRICS.CLIENT_RUNNING, true)
-    })
-    this._monitoring.onStatusDown(() => {
-      logInfo("'mysterium_client' is down")
-      this._communication.healthcheckDown.send()
-      this._bugReporterMetrics.set(METRICS.CLIENT_RUNNING, false)
-    })
-    this._monitoring.onStatus(status => {
-      if (status === false) {
-        logInfo("Starting 'mysterium_client' process, because it's currently down")
-        this._repairProcess()
-      }
-    })
-
-    logInfo("Starting 'mysterium_client' monitoring")
-    this._monitoring.start()
-  }
-
-  async _repairProcess () {
-    try {
-      await this._process.repair()
-    } catch (e) {
-      this._monitoring.stop()
-      this._bugReporter.captureErrorException(e)
-      this._communication.rendererShowError.send({
-        message: e.toString(),
-        hint: 'Try to restart application',
-        fatal: true
-      })
-    }
-  }
-
-  _onProcessReady (callback: () => void) {
-    onFirstEventOrTimeout(this._monitoring.onStatusUp.bind(this._monitoring), MYSTERIUM_CLIENT_STARTUP_THRESHOLD)
-      .then(callback)
-      .catch(err => {
-        if (this._monitoring.isStarted) {
-          this._communication.rendererShowError.send(translations.processStartError)
-        }
-        logException("Failed to start 'mysterium_client' process", err)
-      })
-  }
-
-  _subscribeProposals () {
+  _startAndSubscribeProposals () {
     this._countryList.onUpdate((countries) => this._communication.countryUpdate.send(countries))
 
     const handleProposalFetchError = (error: Error) => {
@@ -454,17 +349,24 @@ class MysteriumVpn {
         handleProposalFetchError(err)
       })
     })
+
     this._proposalFetcher.onFetchingError(handleProposalFetchError)
 
     reportUnknownProposalCountries(this._proposalFetcher, this._bugReporter)
 
-    this._monitoring.onStatusUp(() => {
-      logInfo('Starting proposal fetcher')
-      this._proposalFetcher.start()
-    })
-    this._monitoring.onStatusDown(() => {
-      this._proposalFetcher.stop()
-    })
+    this._startFetchingProposals()
+    this._processManager.onStatusChangeUp(() => this._startFetchingProposals())
+    this._processManager.onStatusChangeDown(() => this._stopFetchingProposals())
+  }
+
+  _startFetchingProposals () {
+    logInfo('Starting proposal fetcher')
+    this._proposalFetcher.start()
+  }
+
+  _stopFetchingProposals () {
+    logInfo('Stopping proposal fetcher')
+    this._proposalFetcher.stop()
   }
 
   _buildTray () {

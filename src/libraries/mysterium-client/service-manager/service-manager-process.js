@@ -22,7 +22,7 @@ import type { LogCallback, Process } from '../index'
 import type { TequilapiClient } from 'mysterium-tequilapi/lib/client'
 import type { System } from '../system'
 import ClientLogSubscriber from '../client-log-subscriber'
-import Monitoring, { HEALTH_CHECK_INTERVAL, waitForStatusUp } from '../monitoring'
+import { HEALTH_CHECK_INTERVAL, waitForStatusUp } from '../monitoring'
 import ServiceManager, { SERVICE_STATE } from './service-manager'
 import type { ServiceState } from './service-manager'
 
@@ -41,23 +41,19 @@ const SERVICE_CHECK_TIME = HEALTH_CHECK_INTERVAL
 class ServiceManagerProcess implements Process {
   _tequilapi: TequilapiClient
   _logs: ClientLogSubscriber
-  _serviceManagerDir: string
   _serviceManager: ServiceManager
   _system: System
-  _monitoring: Monitoring
   _repairIsRunning: boolean = false
 
   constructor (
     tequilapi: TequilapiClient,
     logs: ClientLogSubscriber,
     serviceManager: ServiceManager,
-    system: System,
-    monitoring: Monitoring) {
+    system: System) {
     this._tequilapi = tequilapi
     this._logs = logs
     this._serviceManager = serviceManager
     this._system = system
-    this._monitoring = monitoring
   }
 
   async start (): Promise<void> {
@@ -81,6 +77,10 @@ class ServiceManagerProcess implements Process {
     await this._tequilapi.connectionCancel()
   }
 
+  async kill (): Promise<void> {
+    await this._tequilapi.stop()
+  }
+
   async setupLogging (): Promise<void> {
     await this._logs.setup()
   }
@@ -96,7 +96,9 @@ class ServiceManagerProcess implements Process {
     this._repairIsRunning = true
     try {
       state = state || await this._serviceManager.getServiceState()
+
       logger.info(`Service state: [${state}]`)
+
       switch (state) {
         case SERVICE_STATE.START_PENDING:
           return
@@ -108,6 +110,7 @@ class ServiceManagerProcess implements Process {
         default:
           await this._serviceManager.start()
       }
+
       await waitForStatusUp(this._tequilapi, SERVICE_INIT_TIME)
     } finally {
       this._repairIsRunning = false
