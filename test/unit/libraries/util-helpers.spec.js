@@ -22,14 +22,14 @@ import utilHelpers from '../../../src/libraries/util-helpers'
 import { captureError } from '../../helpers/utils'
 
 describe('utilHelpers', () => {
-  describe('.parseVersion', () => {
+  describe('.parseSemanticVersion', () => {
     it('returns parsed numbers', () => {
-      const version = utilHelpers.parseVersion('12.34.56')
+      const version = utilHelpers.parseSemanticVersion('12.34.56')
       expect(version.major).to.eql(12)
     })
 
     it('throws error when version is invalid', () => {
-      const err = captureError(() => utilHelpers.parseVersion('not a version'))
+      const err = captureError(() => utilHelpers.parseSemanticVersion('not a version'))
       if (!(err instanceof Error)) {
         throw new Error('Expected an error')
       }
@@ -37,13 +37,24 @@ describe('utilHelpers', () => {
     })
 
     it('throws error when version includes some prefix', () => {
-      const err = captureError(() => utilHelpers.parseVersion('^1.0.0'))
+      const err = captureError(() => utilHelpers.parseSemanticVersion('^1.0.0'))
       expect(err).to.be.an.instanceof(Error)
     })
 
     it('throws error when version includes some postfix', () => {
-      const err = captureError(() => utilHelpers.parseVersion('1.0.0.'))
+      const err = captureError(() => utilHelpers.parseSemanticVersion('1.0.0.'))
       expect(err).to.be.an.instanceof(Error)
+    })
+  })
+
+  describe('.isSemanticVersionValid', () => {
+    it('returns true when semantic version is valid', () => {
+      expect(utilHelpers.isSemanticVersionValid('1.2.3')).to.be.true
+    })
+
+    it('returns false when semantic version is not valid', () => {
+      expect(utilHelpers.isSemanticVersionValid('asd')).to.be.false
+      expect(utilHelpers.isSemanticVersionValid('X.X.X')).to.be.false
     })
   })
 })

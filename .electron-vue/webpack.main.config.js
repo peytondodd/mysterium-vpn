@@ -17,9 +17,8 @@ const BabiliWebpackPlugin = require('babili-webpack-plugin')
 
 const mysteriumClientVersion = dependencies['mysterium-client-bin']
 
-try {
-  utilHelpers.parseVersion(mysteriumClientVersion)
-} catch (err) {
+
+if (!utilHelpers.isSemanticVersionValid(mysteriumClientVersion)) {
   throw new Error('mysterium-client-bin package must use an exact version.')
 }
 

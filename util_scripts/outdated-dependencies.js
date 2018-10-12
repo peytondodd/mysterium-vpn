@@ -12,8 +12,8 @@ const removeVersionSuffix = (version) => {
 }
 
 const needsToBeUpdated = (current, latest) => {
-  const currentVersion = utilHelpers.parseVersion(removeVersionSuffix(current))
-  const latestVersion = utilHelpers.parseVersion(removeVersionSuffix(latest))
+  const currentVersion = utilHelpers.parseSemanticVersion(removeVersionSuffix(current))
+  const latestVersion = utilHelpers.parseSemanticVersion(removeVersionSuffix(latest))
 
   if (latestVersion.major > currentVersion.major) {
     return true

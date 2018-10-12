@@ -15,7 +15,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-function parseVersion (version) {
+function isSemanticVersionValid (version) {
+  try {
+    parseSemanticVersion(version)
+    return true
+  } catch (_) {
+    return false
+  }
+}
+
+function parseSemanticVersion (version) {
   const match = version.match(/^(\d+)\.(\d+).(\d+)$/)
   if (match == null) {
     throw new Error(`Invalid version string: "${version}"`)
@@ -29,4 +38,5 @@ function parseVersion (version) {
   }
 }
 
-exports.parseVersion = parseVersion
+exports.parseSemanticVersion = parseSemanticVersion
+exports.isSemanticVersionValid = isSemanticVersionValid
