@@ -25,55 +25,57 @@
         class="nav__content"
         :class="{'is-open': isIdentityMenuOpen}">
 
-        <div class="registration-instructions-top-row">
+        <div class="nav__navicon">
           <close-button :click="hideInstructions"/>
         </div>
 
-        <hr>
-
-        <h1>Mysterium ID</h1>
-
-        <div
-          class="consumer-id-view">
-          <div class="consumer-id-view__item">
-            <logo-icon :active="registrationFetched" />
-          </div>
-          <div class="consumer-id-view__item">
-            <span
-              class="consumer-id-view__id-text"
-              :class="{'consumer-id-view__id-text--registered': registrationFetched}">
-              {{ consumerId }}
-            </span>
-          </div>
-          <div class="consumer-id-view__item">
-            <copy-button :text="consumerId" />
-          </div>
-        </div>
-
-        <div
-          class="consumer-registration-view"
-          v-if="!registrationFetched">
-          <h2>Activate your ID</h2>
-          <p>
-            In order to use Mysterium VPN you need to have registered ID in Mysterium Blockchain
-            by staking your MYST tokens on it (i.e. paying for it).
-          </p>
-          <p>
-            To pay for the ID we suggest to use MetaMask wallet. Please follow below instructions to proceed further:
-          </p>
-          <ul>
-            <li>1. Click on the “Register Your ID” button</li>
-            <li>2. Claim MYST and ETH test tokens</li>
-            <li>3. Allow Mysterium SmartContract to reserve MYST tokens</li>
-            <li>4. Register your ID by clicking on “Pay & Register For ID”</li>
-            <li>5. Wait for few minutes until the payment is processed</li>
-          </ul>
-          <div
-            class="btn"
-            @click="openPaymentsUrl()">
-            Register Your ID
-          </div>
-        </div>
+        <ul class="nav__list identity-registration-content">
+          <li>
+            <h1>Mysterium ID</h1>
+          </li>
+          <li>
+            <div
+              class="consumer-id-view">
+              <div class="consumer-id-view__item">
+                <logo-icon :active="registrationFetched" />
+              </div>
+              <div class="consumer-id-view__item">
+                <span
+                  class="consumer-id-view__id-text"
+                  :class="{'consumer-id-view__id-text--registered': registrationFetched}">
+                  {{ consumerId }}
+                </span>
+              </div>
+              <div class="consumer-id-view__item">
+                <copy-button :text="consumerId" />
+              </div>
+            </div>
+          </li>
+          <li>
+            <div v-if="!registrationFetched">
+              <p>
+                In order to use Mysterium VPN you need to have registered ID in Mysterium Blockchain
+                by staking your MYST tokens on it (i.e. paying for it).
+              </p>
+              <p>
+                To pay for the ID we suggest to use MetaMask wallet.
+                Please follow below instructions to proceed further:
+              </p>
+              <ul>
+                <li>1. Click on the “Register Your ID” button</li>
+                <li>2. Claim MYST and ETH test tokens</li>
+                <li>3. Allow Mysterium SmartContract to reserve MYST tokens</li>
+                <li>4. Register your ID by clicking on “Pay & Register For ID”</li>
+                <li>5. Wait for few minutes until the payment is processed</li>
+              </ul>
+              <div
+                class="btn"
+                @click="openPaymentsUrl()">
+                Register Your ID
+              </div>
+            </div>
+          </li>
+        </ul>
       </div>
       <transition name="fade">
         <div
