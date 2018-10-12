@@ -16,32 +16,56 @@
   -->
 
 <template>
-  <div
-    class="identity-button"
-    :class="{'identity-button--registered': registered, 'identity-button--unregistered': !registered}"
-    @click="click">
-    <div class="identity-button__text">ID</div>
-    <div
-      class="identity-button__tooltip">{{ registered ? 'View your identity' : 'Please activate your ID' }}</div>
-  </div>
+  <span
+    class="copy-button"
+    @click="copyId()">
+    <icon-copy class="nav__icon nav__icon--eye"/>
+
+    <span
+      v-if="isCopied"
+      class="copy-button__tooltip copy-button__tooltip--success">
+      Copied!
+    </span>
+    <span
+      v-else
+      class="copy-button__tooltip copy-button__tooltip--info">
+      Copy to Clipboard
+    </span>
+  </span>
 </template>
 
 <script>
+import { clipboard } from 'electron'
+import IconCopy from '@/assets/img/icon--copy.svg'
 
-import CloseButton from './close-button'
+const COPIED_POPUP_TIMEOUT = 1500
 
 export default {
-  name: 'IdentityButton',
+  name: 'CopyButton',
   props: {
-    registered: {
-      type: Boolean,
-      default: false
-    },
-    click: {
-      type: Function,
+    text: {
+      type: String,
       required: true
     }
   },
-  components: { CloseButton }
+  components: {
+    IconCopy
+  },
+  data () {
+    return {
+      isCopied: false
+    }
+  },
+  methods: {
+    copyId () {
+      clipboard.writeText(this.text)
+      this.isCopied = true
+
+      const self = this
+      setTimeout(() => {
+        self.isCopied = false
+      }, COPIED_POPUP_TIMEOUT)
+    }
+  }
 }
 </script>

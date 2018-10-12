@@ -42,6 +42,7 @@ describe('IdentityRegistration', () => {
   beforeEach(() => {
     const vm = createLocalVue()
     vm.use(Vuex)
+
     const dependencies = new DIContainer(vm)
 
     const messageBus = new DirectMessageBus()
@@ -53,10 +54,18 @@ describe('IdentityRegistration', () => {
 
     const tequilapi = new EmptyTequilapiClientMock()
     const bugReporter = new BugReporterMock()
+    const identity = {
+      ...identityStoreFactory(bugReporter, rendererCommunication),
+      state: {
+        current: {
+          id: '0x1'
+        }
+      }
+    }
     store = new Vuex.Store({
       modules: {
         main: mainStoreFactory(tequilapi),
-        identity: identityStoreFactory(bugReporter, rendererCommunication)
+        identity: identity
       }
     })
 
@@ -72,6 +81,12 @@ describe('IdentityRegistration', () => {
       expect(vue.findAll('#registration-instructions.is-open')).to.have.lengthOf(0)
       store.commit(types.SHOW_IDENTITY_MENU)
       expect(vue.findAll('#registration-instructions.is-open')).to.have.lengthOf(1)
+    })
+
+    it('renders client ID', () => {
+      expect(vue.findAll('.consumer-id-view__item')).to.have.lengthOf(3, 'has 3 elements')
+      expect(vue.findAll('.consumer-id-view__id-text')).to.have.lengthOf(1, 'has ID text')
+      expect(vue.findAll('.copy-button')).to.have.lengthOf(1, 'has Copy Button')
     })
   })
 })

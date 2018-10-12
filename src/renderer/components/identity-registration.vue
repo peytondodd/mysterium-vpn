@@ -24,29 +24,58 @@
       <div
         class="nav__content"
         :class="{'is-open': isIdentityMenuOpen}">
-        <close-button :click="hideInstructions"/>
 
-        <h2>Activate your ID</h2>
-        <p>
-          In order to use Mysterium VPN you need to have registered ID in Mysterium Blockchain
-          by staking your MYST tokens on it (i.e. paying for it).
-        </p>
-        <p>
-          To pay for the ID we suggest to use MetaMask wallet. Please follow below instructions to proceed further:
-        </p>
-        <ul>
-          <li>1. Click on the “Register Your ID” button</li>
-          <li>2. Claim MYST and ETH test tokens</li>
-          <li>3. Allow Mysterium SmartContract to reserve MYST tokens</li>
-          <li>4. Register your ID by clicking on “Pay & Register For ID”</li>
-          <li>5. Wait for few minutes until the payment is processed</li>
-        </ul>
-        <div
-          class="btn"
-          v-if="registrationFetched"
-          @click="openPaymentsUrl()">
-          Register Your ID
+        <div class="nav__navicon">
+          <close-button :click="hideInstructions"/>
         </div>
+
+        <ul class="nav__list identity-registration-content">
+          <li>
+            <h1>Mysterium ID</h1>
+          </li>
+          <li>
+            <div
+              class="consumer-id-view">
+              <div class="consumer-id-view__item">
+                <logo-icon :active="registrationFetched" />
+              </div>
+              <div class="consumer-id-view__item">
+                <span
+                  class="consumer-id-view__id-text"
+                  :class="{'consumer-id-view__id-text--registered': registrationFetched}">
+                  {{ consumerId }}
+                </span>
+              </div>
+              <div class="consumer-id-view__item">
+                <copy-button :text="consumerId" />
+              </div>
+            </div>
+          </li>
+          <li>
+            <div v-if="!registrationFetched">
+              <p>
+                In order to use Mysterium VPN you need to have registered ID in Mysterium Blockchain
+                by staking your MYST tokens on it (i.e. paying for it).
+              </p>
+              <p>
+                To pay for the ID we suggest to use MetaMask wallet.
+                Please follow below instructions to proceed further:
+              </p>
+              <ul>
+                <li>1. Click on the “Register Your ID” button</li>
+                <li>2. Claim MYST and ETH test tokens</li>
+                <li>3. Allow Mysterium SmartContract to reserve MYST tokens</li>
+                <li>4. Register your ID by clicking on “Pay & Register For ID”</li>
+                <li>5. Wait for few minutes until the payment is processed</li>
+              </ul>
+              <div
+                class="btn"
+                @click="openPaymentsUrl()">
+                Register Your ID
+              </div>
+            </div>
+          </li>
+        </ul>
       </div>
       <transition name="fade">
         <div
@@ -61,13 +90,20 @@
 <script>
 
 import CloseButton from './close-button'
+import CopyButton from './copy-button'
 import types from '../store/types'
-import { shell } from 'electron'
+import { shell, clipboard } from 'electron'
+import { mapGetters } from 'vuex'
+import LogoIcon from './logo-icon'
 
 export default {
   name: 'IdentityRegistration',
-  components: { CloseButton },
   dependencies: ['rendererCommunication', 'getPaymentLink'],
+  components: {
+    CloseButton,
+    CopyButton,
+    LogoIcon
+  },
   data () {
     return {
       identityMenuOpen: false
@@ -80,6 +116,9 @@ export default {
     openPaymentsUrl () {
       const url = this.getPaymentLink(this.registration)
       shell.openExternal(url)
+    },
+    copyId () {
+      clipboard.writeText(this.consumerId)
     }
   },
   computed: {
@@ -88,7 +127,10 @@ export default {
     },
     isIdentityMenuOpen () {
       return this.$store.state.main.identityMenuOpen
-    }
+    },
+    ...mapGetters({
+      consumerId: 'currentIdentity'
+    })
   }
 }
 </script>

@@ -18,9 +18,9 @@
 <template>
   <div class="page">
     <identity-button
-      v-if="registrationFetched && !isIdentityMenuOpen"
+      v-if="paymentsAreEnabled && !isIdentityMenuOpen"
       :registered="registered"
-      :click="openPaymentsOrShowInstructions"/>
+      :click="showInstructions"/>
     <div class="page__control control">
       <div class="control__top">
         <h1
@@ -85,7 +85,6 @@ import config from '../config'
 import { ActionLooperConfig } from '../store/modules/connection'
 import FavoriteButton from '../components/favorite-button'
 import IdentityButton from '../components/identity-button'
-import { shell } from 'electron'
 
 export default {
   name: 'Main',
@@ -97,7 +96,13 @@ export default {
     AppError,
     IdentityButton
   },
-  dependencies: ['bugReporter', 'rendererCommunication', 'startupEventTracker', 'userSettingsStore', 'getPaymentLink'],
+  dependencies: [
+    'bugReporter',
+    'rendererCommunication',
+    'startupEventTracker',
+    'userSettingsStore',
+    'featureToggle'
+  ],
   data () {
     return {
       country: null,
@@ -140,6 +145,9 @@ export default {
     },
     isIdentityMenuOpen () {
       return this.$store.state.main.identityMenuOpen
+    },
+    paymentsAreEnabled () {
+      return this.featureToggle.paymentsAreEnabled()
     }
   },
   methods: {
@@ -162,17 +170,6 @@ export default {
       if (countries.length < 1) this.bugReporter.captureInfoMessage('Renderer received empty countries list')
 
       this.countryList = countries
-    },
-    openPaymentsOrShowInstructions () {
-      if (this.registered) {
-        this.openPaymentsUrl()
-      } else {
-        this.showInstructions()
-      }
-    },
-    openPaymentsUrl () {
-      const url = this.getPaymentLink(this.registration)
-      shell.openExternal(url)
     },
     showInstructions () {
       this.$store.commit(type.SHOW_IDENTITY_MENU)

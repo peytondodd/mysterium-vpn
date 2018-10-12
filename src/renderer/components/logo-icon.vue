@@ -16,32 +16,31 @@
   -->
 
 <template>
-  <div
-    class="identity-button"
-    :class="{'identity-button--registered': registered, 'identity-button--unregistered': !registered}"
-    @click="click">
-    <div class="identity-button__text">ID</div>
-    <div
-      class="identity-button__tooltip">{{ registered ? 'View your identity' : 'Please activate your ID' }}</div>
-  </div>
+  <span>
+    <icon-logo-active
+      v-if="active"
+      class="icon-logo icon-logo--active"/>
+    <icon-logo-inactive
+      v-else
+      class="icon-logo icon-logo--inactive"/>
+  </span>
 </template>
 
 <script>
-
-import CloseButton from './close-button'
+import IconLogoActive from '@/assets/img/icon-logo--active.svg'
+import IconLogoInactive from '@/assets/img/icon-logo--inactive.svg'
 
 export default {
-  name: 'IdentityButton',
+  name: 'LogoIcon',
   props: {
-    registered: {
+    active: {
       type: Boolean,
       default: false
-    },
-    click: {
-      type: Function,
-      required: true
     }
   },
-  components: { CloseButton }
+  components: {
+    IconLogoActive,
+    IconLogoInactive
+  }
 }
 </script>
