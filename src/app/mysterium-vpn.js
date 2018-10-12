@@ -179,7 +179,7 @@ class MysteriumVpn {
     await this._processManager.ensureInstallation()
     await this._processManager.start()
 
-    this._subscribeProposals()
+    this._startAndSubscribeProposals()
 
     this._communicationBindings.syncFavorites(this._userSettingsStore)
     this._communicationBindings.syncShowDisconnectNotifications(this._userSettingsStore)
@@ -332,7 +332,7 @@ class MysteriumVpn {
     return true
   }
 
-  _subscribeProposals () {
+  _startAndSubscribeProposals () {
     this._countryList.onUpdate((countries) => this._communication.countryUpdate.send(countries))
 
     const handleProposalFetchError = (error: Error) => {
@@ -348,14 +348,19 @@ class MysteriumVpn {
 
     reportUnknownProposalCountries(this._proposalFetcher, this._bugReporter)
 
-    this._processManager.onStatusChangeUp(() => {
-      logInfo('Starting proposal fetcher')
-      this._proposalFetcher.start()
-    })
+    this._startFetchingProposals()
+    this._processManager.onStatusChangeUp(() => this._startFetchingProposals())
+    this._processManager.onStatusChangeDown(() => this._stopFetchingProposals())
+  }
 
-    this._processManager.onStatusChangeDown(() => {
-      this._proposalFetcher.stop()
-    })
+  _startFetchingProposals () {
+    logInfo('Starting proposal fetcher')
+    this._proposalFetcher.start()
+  }
+
+  _stopFetchingProposals () {
+    logInfo('Stopping proposal fetcher')
+    this._proposalFetcher.stop()
   }
 
   _buildTray () {

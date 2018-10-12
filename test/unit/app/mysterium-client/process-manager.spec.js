@@ -195,49 +195,52 @@ describe('ProcessManager', () => {
 
   describe('.start', () => {
     it('starts process', async () => {
-      await processManager.start()
+      processManager.start()
       expect(process.started).to.be.true
     })
 
     it('starts process even when logging setup fails', async () => {
       process.setupLoggingErrorMock = new Error('mock error')
-      await processManager.start()
+      processManager.start()
       expect(process.started).to.be.true
     })
 
     it('starts monitoring', async () => {
       expect(monitoring.isStarted()).to.be.false
-      await processManager.start()
+
+      processManager.start()
+      await nextTick()
+
       expect(monitoring.isStarted()).to.be.true
     })
 
     describe('when client version matches', () => {
       it('does not kill process', async () => {
-        await processManager.start()
+        const startPromise = processManager.start()
 
         monitoring.updateStatus(true)
-        await nextTick()
+        await startPromise
 
         expect(process.killed).to.be.false
       })
 
       it('sends message when process goes up', async () => {
-        await processManager.start()
+        const startPromise = processManager.start()
 
         const recorder = new CallbackRecorder()
         remoteCommunication.healthcheckUp.on(recorder.getCallback())
 
         monitoring.updateStatus(true)
-        await nextTick()
+        await startPromise
 
         expect(recorder.invoked).to.be.true
       })
 
-      it('repairs process each time the process is down', async () => {
-        await processManager.start()
+      it('repairs process when process goes down', async () => {
+        const startPromise = processManager.start()
 
         monitoring.updateStatus(true)
-        await nextTick()
+        await startPromise
 
         monitoring.updateStatus(false)
 
@@ -246,10 +249,10 @@ describe('ProcessManager', () => {
     })
 
     it('sends message when process goes down', async () => {
-      await processManager.start()
+      const startPromise = processManager.start()
 
       monitoring.updateStatus(true)
-      await nextTick()
+      await startPromise
 
       const recorder = new CallbackRecorder()
       remoteCommunication.healthcheckDown.on(recorder.getCallback())
@@ -264,35 +267,26 @@ describe('ProcessManager', () => {
         tequilapi.versionMock = '0.0.1'
       })
 
-      it('kills process and starts it', async () => {
-        await processManager.start()
+      it('kills process, waits for healthcheck down and starts it', async () => {
+        processManager.start()
 
         monitoring.updateStatus(true)
         await nextTick()
 
         expect(process.killed).to.be.true
         expect(process.startedCount).to.eql(1)
+
         monitoring.updateStatus(false)
         await nextTick()
 
         expect(process.startedCount).to.eql(2)
       })
 
-      it('does not start killed process before it is down', async () => {
-        await processManager.start()
-        expect(process.startedCount).to.eql(1)
-
-        monitoring.updateStatus(true)
-        await nextTick()
-
-        expect(process.startedCount).to.eql(1)
-      })
-
       it('sends healthcheck up messages only after process is restarted', async () => {
         const recorder = new RepeatableCallbackRecorder()
         expect(remoteCommunication.healthcheckUp.on(recorder.getCallback()))
 
-        await processManager.start()
+        const startPromise = processManager.start()
         monitoring.updateStatus(true)
         await nextTick()
 
@@ -300,12 +294,11 @@ describe('ProcessManager', () => {
         expect(recorder.invokesCount).to.eql(0)
 
         monitoring.updateStatus(true)
-        await nextTick()
+        await startPromise
         expect(recorder.invokesCount).to.eql(1)
 
         monitoring.updateStatus(false)
         monitoring.updateStatus(true)
-        await nextTick()
         expect(recorder.invokesCount).to.eql(2)
       })
     })

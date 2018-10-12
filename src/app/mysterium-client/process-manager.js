@@ -81,15 +81,24 @@ class ProcessManager {
       this._logError(`Starting process logging failed.`, error.message)
       this._bugReporter.captureErrorException(error)
     })
-    await this._startProcess()
 
-    this._startLocalMonitoring()
-    // TODO: await?
-    this._checkVersionAndStartPublicMonitoring().then(() => {
-      this._sendRendererHealthcheckUp()
-      this._startRendererMonitoring()
-      this._restartProcessOnMonitoringDown()
-    })
+    try {
+      await this._startProcess()
+      this._startLocalMonitoring()
+
+      try {
+        await this._ensureClientVersion()
+      } finally {
+        this._sendRendererHealthcheckUp()
+        this._startRendererMonitoring()
+        this._restartProcessOnMonitoringDown()
+      }
+    } catch (error) {
+      // TODO: move this out to MysteriumVpn
+      this._communication.rendererShowError.send({ message: translations.processStartError })
+      this._logError(`Failed to start 'mysterium_client' process`, error)
+      this._bugReporter.captureErrorException(error)
+    }
   }
 
   async stop () {
@@ -120,27 +129,9 @@ class ProcessManager {
     this._process.onLog(processLogLevels.ERROR, (data) => this._logCache.pushToLevel(processLogLevels.ERROR, data))
   }
 
-  _restartProcessOnMonitoringDown () {
-    this._monitoring.onStatusDown(() => {
-      this._repairProcess()
-    })
-  }
-
   _startLocalMonitoring () {
     this._logInfo(`Starting 'mysterium_client' monitoring`)
     this._monitoring.start()
-  }
-
-  async _checkVersionAndStartPublicMonitoring () {
-    try {
-      await this._ensureClientVersion()
-    } catch (error) {
-      if (this._monitoring.isStarted()) {
-        this._communication.rendererShowError.send({ message: translations.processStartError })
-      }
-
-      this._logError(`Failed to start 'mysterium_client' process`, error)
-    }
   }
 
   async _ensureClientVersion () {
@@ -190,6 +181,12 @@ class ProcessManager {
     this._monitoring.onStatusChangeDown(() => this._sendRendererHealthcheckDown())
   }
 
+  _restartProcessOnMonitoringDown () {
+    this._monitoring.onStatusDown(() => {
+      this._repairProcess()
+    })
+  }
+
   _sendRendererHealthcheckDown () {
     this._logInfo(`'mysterium_client' is down`)
 
@@ -237,10 +234,11 @@ class ProcessManager {
 
   async _clientVersionMismatches (): Promise<boolean> {
     if (!this._featureToggle.clientVersionCheckEnabled()) {
-      this._logInfo(`Client version check disabled`)
+      this._logInfo('Client version check disabled')
       return false
     }
 
+    this._logInfo('Checking client version')
     const matches = await this._versionCheck.runningVersionMatchesPackageVersion()
     return !matches
   }
