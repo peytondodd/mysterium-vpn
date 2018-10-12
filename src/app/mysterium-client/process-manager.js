@@ -82,22 +82,15 @@ class ProcessManager {
       this._bugReporter.captureErrorException(error)
     })
 
-    try {
-      await this._startProcess()
-      this._startLocalMonitoring()
+    await this._startProcess()
+    this._startLocalMonitoring()
 
-      try {
-        await this._ensureClientVersion()
-      } finally {
-        this._sendRendererHealthcheckUp()
-        this._startRendererMonitoring()
-        this._restartProcessOnMonitoringDown()
-      }
-    } catch (error) {
-      // TODO: move this out to MysteriumVpn
-      this._communication.rendererShowError.send({ message: translations.processStartError })
-      this._logError(`Failed to start 'mysterium_client' process`, error)
-      this._bugReporter.captureErrorException(error)
+    try {
+      await this._ensureClientVersion()
+    } finally {
+      this._sendRendererHealthcheckUp()
+      this._startRendererMonitoring()
+      this._repairProcessOnProcessDown()
     }
   }
 
@@ -114,8 +107,6 @@ class ProcessManager {
   }
 
   onStatusChangeUp (callback: EmptyCallback) {
-    // TODO: invoke only when version is checked
-    // TODO: generalise - sending to renderer can be just another user
     this._monitoring.onStatusChangeUp(callback)
   }
 
@@ -158,7 +149,6 @@ class ProcessManager {
       await this._onProcessUp()
       this._logInfo('Restering: process is up')
     } catch (error) {
-      // TODO: bug reporter
       this._logError(`Failed to restart 'mysterium_client' process`, error)
       throw error
     }
@@ -181,7 +171,7 @@ class ProcessManager {
     this._monitoring.onStatusChangeDown(() => this._sendRendererHealthcheckDown())
   }
 
-  _restartProcessOnMonitoringDown () {
+  _repairProcessOnProcessDown () {
     this._monitoring.onStatusDown(() => {
       this._repairProcess()
     })

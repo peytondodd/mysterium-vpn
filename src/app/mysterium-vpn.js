@@ -177,7 +177,13 @@ class MysteriumVpn {
     this._buildTray()
 
     await this._processManager.ensureInstallation()
-    await this._processManager.start()
+    try {
+      await this._processManager.start()
+    } catch (error) {
+      this._communication.rendererShowError.send({ message: translations.processStartError })
+      logException(`Failed to start 'mysterium_client' process`, error)
+      this._bugReporter.captureErrorException(error)
+    }
 
     this._startAndSubscribeProposals()
 
