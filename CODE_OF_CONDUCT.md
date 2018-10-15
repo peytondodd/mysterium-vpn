@@ -1,116 +1,46 @@
-Code of Conduct
-===============
+# Contributor Covenant Code of Conduct
 
-This document describes how we collaborate developing Mysterium VPN app.
+## Our Pledge
 
-Main collaboration goals:
-- Fast feature delivery
-- Stable product
-- Well-being of teammates and contributors
+In the interest of fostering an open and welcoming environment, we as contributors and maintainers pledge to making participation in our project and our community a harassment-free experience for everyone, regardless of age, body size, disability, ethnicity, gender identity and expression, level of experience, nationality, personal appearance, race, religion, or sexual identity and orientation.
 
-Pull requests
--------------
+## Our Standards
 
-### Branch name
+Examples of behavior that contributes to creating a positive environment include:
 
-Choose appropriate branch name to clarify what this PR is about.
+* Using welcoming and inclusive language
+* Being respectful of differing viewpoints and experiences
+* Gracefully accepting constructive criticism
+* Focusing on what is best for the community
+* Showing empathy towards other community members
 
-- Select appropriate tag:
-    - `hotfix` for small and/or urgent bug fixes without JIRA story
-    - `bugfix` for bug-fixes for JIRA story
-    - `feature` for changes that change or add new functionality
-    - `refactor` for changes that does not change program behaviour
-- Append tag with JIRA task and description, i.e.:
-    - `feature/MYS-123-favorites`
-    - `bugfix/MYS-100-missing-logs`
-    - `hotfix/crash-with-unknown-names`
-    
-### Communication
+Examples of unacceptable behavior by participants include:
 
-We're all people, so have in mind that we can make mistakes, be subjective and have a feelings.
-When communicating in PRs, we should:
+* The use of sexualized language or imagery and unwelcome sexual attention or advances
+* Trolling, insulting/derogatory comments, and personal or political attacks
+* Public or private harassment
+* Publishing others' private information, such as a physical or electronic address, without explicit permission
+* Other conduct which could reasonably be considered inappropriate in a professional setting
 
-- Be **polite** and **friendly** - miscommunicating online is common, so it's very easy to misunderstand other people
-- Be **objective** when possible - i.e. using statistics or external resources instead of simply expressing your opinion
-- Be **open to different opinions** - everyone has a different mindset and the best solution could be achieved by investigating and considering different approaches
-- Consider **talking in real life** (or even **pair-programming**) when communication online gets tricky
+## Our Responsibilities
 
-### Submitting PRs
+Project maintainers are responsible for clarifying the standards of acceptable behavior and are expected to take appropriate and fair corrective action in response to any instances of unacceptable behavior.
 
-When submitting a PR, make sure you've prepared it well in order to save your own time as well as time and energy of your teammates:
+Project maintainers have the right and responsibility to remove, edit, or reject comments, commits, code, wiki edits, issues, and other contributions that are not aligned to this Code of Conduct, or to ban temporarily or permanently any contributor for other behaviors that they deem inappropriate, threatening, offensive, or harmful.
 
-- Make sure **CI passes**
-- Before making a PR, **review changes as if you were the reviewer** - see *Reviewing PR* section
-- (Optional) Add a **PR description** if changes are not obvious
+## Scope
 
-### Getting feedback
+This Code of Conduct applies both within project spaces and in public spaces when an individual is representing the project or its community. Examples of representing a project or community include using an official project e-mail address, posting via an official social media account, or acting as an appointed representative at an online or offline event. Representation of a project may be further defined and clarified by project maintainers.
 
-Not many people think reviewing PRs is fun, so getting feedback is like getting a 🎁.
+## Enforcement
 
-When disagreements happen:
-- Try discussing it and understanding why opinions differ and how to achieve the best solution without conflicts
-- Consider asking opinions of contributors outside of the discussion by tagging them
-- Try referencing topics (articles/documentations) which explain your arguments
+Instances of abusive, harassing, or otherwise unacceptable behavior may be reported by contacting the project team at team@mysterium.network. The project team will review and investigate all complaints, and will respond in a way that it deems appropriate to the circumstances. The project team is obligated to maintain confidentiality with regard to the reporter of an incident. Further details of specific enforcement policies may be posted separately.
 
-### Reviewing PRs
+Project maintainers who do not follow or enforce the Code of Conduct in good faith may face temporary or permanent repercussions as determined by other members of the project's leadership.
 
-When reviewing a PR, focus on the coding values first.
-It would be good if you could review functionality/business logic first.
-A good start could be making sure that the presented implementation is acceptable or can be improved, followed by reviewing tests that freeze the solution, and only after that commenting on code style and readability improvements.
+## Attribution
 
-Tips:
-- **Talk in person** before reviewing if PR is very unclear
-- Consider **checking-out PR branch and play around** with it to see PR in action or try applying some improvements yourself
-- Use **comment markers** (see below)
+This Code of Conduct is adapted from the [Contributor Covenant][homepage], version 1.4, available at [http://contributor-covenant.org/version/1/4][version]
 
-#### Comment markers
-
-Use markers to show comment intention. 
-First 2 symbols in comments describes comment type:
-
-1. Comment starts with `!!`:
-
-    Developer should react to this comment - make code change or describe why code can't be changed
-    
-2. Comment starts with `??`:
-
-    Code is hard to understand, developer should describe solution and reason
-    
-3. Comment starts with any other symbols:
-
-    It's just idea shared with developer. Developer can make changes or ignore comment
-
-Coding values
--------------
-
-### Functionality
-
-Code should do what it's supposed to do:
-- Changes should be **aligned with Jira task** (if present) and all acceptance criteria should be covered
-- All cases should be covered, including **unhappy paths** when user is not behaving as we expect him to behave. Make sure unhappy paths are covered:
-    - They do not break application more than necessary
-    - The team receives necessary debug info via bug reporting tools
-
-### Testing:
-
-Most of domain classes should be covered with **unit tests**.
-For essential features , higher-level **integration tests** should be used to see whether units work when joined together.
-UI should be tested separately from domain logic with **UI tests** - domain logic should be tested in unit tests, not in UI.
-
-![testPyramid](https://martinfowler.com/articles/practical-test-pyramid/testPyramid.png)
-- Happy, unhappy paths
-    
-### Maintainability
-
-To avoid slowing down once project gets bigger, we have to keep our code maintainable.
-It's not obvious what maintainable code is, so to have some objectivity, we prefer using popular design principles instead of personal opinions.
-These include:
-
-- [DRY](https://en.wikipedia.org/wiki/Don%27t_repeat_yourself) - don't repeat yourself
-- [SOLID](https://en.wikipedia.org/wiki/SOLID):
-    - [SRP](https://en.wikipedia.org/wiki/Single_responsibility_principle) - single responsibility principle
-    - [Open/closed principle](https://en.wikipedia.org/wiki/Open%E2%80%93closed_principle)
-    - [Liskov substitution principle](https://en.wikipedia.org/wiki/Liskov_substitution_principle)
-    - [Interface segregation principle](https://en.wikipedia.org/wiki/Interface_segregation_principle)
-    - [Dependency inversion principle](https://en.wikipedia.org/wiki/Dependency_inversion_principle)
-- [KISS](https://en.wikipedia.org/wiki/KISS_principle) - keep it simple, stupid 
+[homepage]: http://contributor-covenant.org
+[version]: http://contributor-covenant.org/version/1/4/
