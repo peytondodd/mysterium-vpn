@@ -28,7 +28,7 @@ class FeedbackForm {
   }
 
   show () {
-    this._raven.captureMessage('User opened issue report form.', { level: 'info' })
+    this._raven.captureMessage('User submitted the feedback form, at: ' + (new Date()).toISOString(), { level: 'info' })
     this._raven.setUserContext({ email: this._email })
     this._raven.showReportDialog()
   }
