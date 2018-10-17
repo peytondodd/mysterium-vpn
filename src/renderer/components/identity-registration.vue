@@ -16,7 +16,7 @@
   -->
 
 <template>
-  <div>
+  <div id="identity-registration">
     <div
       class="app__nav nav"
       id="registration-instructions"
@@ -105,9 +105,7 @@ export default {
     LogoIcon
   },
   data () {
-    return {
-      identityMenuOpen: false
-    }
+    return {}
   },
   methods: {
     hideInstructions () {
