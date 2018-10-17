@@ -56,6 +56,10 @@ class Logger {
   error (...data: Array<any>): void {
     this._logger.error(stringifyArgs(data))
   }
+
+  warn (...data: Array<any>): void {
+    this._logger.warn(stringifyArgs(data))
+  }
 }
 
 const logger = new Logger()

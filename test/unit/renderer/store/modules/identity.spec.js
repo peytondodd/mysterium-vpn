@@ -21,7 +21,6 @@ import { beforeEach, describe, expect, it } from '../../../../helpers/dependenci
 import factory from '../../../../../src/renderer/store/modules/identity'
 import type { State } from '../../../../../src/renderer/store/modules/identity'
 import IdentityDTO from 'mysterium-tequilapi/lib/dto/identity'
-import { captureError } from '../../../../helpers/utils'
 import types from '../../../../../src/renderer/store/types'
 import IdentityRegistrationDTO from 'mysterium-tequilapi/lib/dto/identity-registration'
 import BugReporterMock from '../../../../helpers/bug-reporter-mock'
@@ -56,18 +55,13 @@ describe('identity store', () => {
         expect(getters.currentIdentity(state)).to.eql('identity id')
       })
 
-      it('throws error when identity is not present', () => {
+      it('returns empty string when identity is not present', () => {
         const state: State = {
           current: null,
           unlocked: false,
           registration: null
         }
-        const error = captureError(() => getters.currentIdentity(state))
-        if (!error) {
-          throw new Error('Expected error not thrown')
-        }
-        expect(error).to.be.an('error')
-        expect(error.message).to.eql('Trying to get identity which is not present')
+        expect(getters.currentIdentity(state)).to.eql('')
       })
     })
   })
