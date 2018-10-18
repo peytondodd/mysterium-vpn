@@ -38,21 +38,24 @@ const winstonFormat = winston.format.combine(
   winston.format.printf(log => `${log.timestamp} ${log.level}: ${log.message}`)
 )
 
-function createWinstonLogger () {
+function createWinstonBaseLogger () {
   return winston.createLogger({
     format: winstonFormat,
-    transports: [ new winston.transports.Console() ]
+    transports: [
+      new winston.transports.Console(),
+      new winston.transports.File({ filename: 'logs.txt' })
+    ]
   })
 }
 
 function createWinstonCachingLogger (logCache: LogCache): StringLogger {
-  const winstonLogger = createWinstonLogger()
+  const winstonLogger = createWinstonBaseLogger()
   winstonLogger.add(new WinstonTransportCaching(logCache))
   return winstonLogger
 }
 
 function createWinstonSyncComLogger (communication: SyncRendererCommunication) {
-  const winstonLogger = createWinstonLogger()
+  const winstonLogger = createWinstonBaseLogger()
   winstonLogger.add(new WinstonTransportSyncCom(communication))
   return winstonLogger
 }
