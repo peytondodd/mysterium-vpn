@@ -24,6 +24,9 @@ import WinstonTransportCaching from './winston-transport-caching'
 import type { StringLogger } from './string-logger'
 import WinstonTransportSyncCom from './winston-transport-sync-com'
 import type { SyncRendererCommunication } from '../communication/sync/sync-communication'
+import path from 'path'
+
+const LOGS_FILENAME = 'logs.txt'
 
 type WinstonLevel = 'error' | 'info' | 'warn' | 'debug'
 
@@ -38,21 +41,25 @@ const winstonFormat = winston.format.combine(
   winston.format.printf(log => `${log.timestamp} ${log.level}: ${log.message}`)
 )
 
-function createWinstonLogger () {
+function createWinstonBaseLogger (logPath: string) {
+  const filename = path.join(logPath, LOGS_FILENAME)
   return winston.createLogger({
     format: winstonFormat,
-    transports: [ new winston.transports.Console() ]
+    transports: [
+      new winston.transports.Console(),
+      new winston.transports.File({ filename })
+    ]
   })
 }
 
-function createWinstonCachingLogger (logCache: LogCache): StringLogger {
-  const winstonLogger = createWinstonLogger()
+function createWinstonCachingLogger (logCache: LogCache, logPath: string): StringLogger {
+  const winstonLogger = createWinstonBaseLogger(logPath)
   winstonLogger.add(new WinstonTransportCaching(logCache))
   return winstonLogger
 }
 
-function createWinstonSyncComLogger (communication: SyncRendererCommunication) {
-  const winstonLogger = createWinstonLogger()
+function createWinstonSyncComLogger (communication: SyncRendererCommunication, logPath: string) {
+  const winstonLogger = createWinstonBaseLogger(logPath)
   winstonLogger.add(new WinstonTransportSyncCom(communication))
   return winstonLogger
 }

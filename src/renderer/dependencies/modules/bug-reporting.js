@@ -16,6 +16,7 @@
  */
 
 // @flow
+import { remote } from 'electron'
 import type { Container } from '../../../app/di'
 import BugReporterRenderer from '../../../app/bug-reporting/bug-reporter-renderer'
 import { FeedbackForm } from '../../../app/bug-reporting/feedback-form'
@@ -38,7 +39,8 @@ function bootstrap (container: Container) {
     'logger',
     ['syncCommunication'],
     (syncCommunication: SyncRendererCommunication) => {
-      return createWinstonSyncComLogger(syncCommunication)
+      const logPath = remote.app.getPath('userData')
+      return createWinstonSyncComLogger(syncCommunication, logPath)
     }
   )
   container.factory(
