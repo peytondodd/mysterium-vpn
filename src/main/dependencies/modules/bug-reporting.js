@@ -16,6 +16,7 @@
  */
 
 // @flow
+import { app } from 'electron'
 import Raven from 'raven'
 import BugReporterMain from '../../../app/bug-reporting/bug-reporter-main'
 import type { Container } from '../../../app/di'
@@ -32,7 +33,8 @@ function bootstrap (container: Container) {
     'logger',
     ['backendLogCache'],
     (backendLogCache) => {
-      return createWinstonCachingLogger(backendLogCache)
+      const logPath = app.getPath('userData')
+      return createWinstonCachingLogger(backendLogCache, logPath)
     }
   )
 
