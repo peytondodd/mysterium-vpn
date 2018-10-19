@@ -26,6 +26,8 @@ import WinstonTransportSyncCom from './winston-transport-sync-com'
 import type { SyncRendererCommunication } from '../communication/sync/sync-communication'
 import path from 'path'
 
+const LOGS_FILENAME = 'logs.txt'
+
 type WinstonLevel = 'error' | 'info' | 'warn' | 'debug'
 
 type WinstonLogEntry = {
@@ -40,7 +42,7 @@ const winstonFormat = winston.format.combine(
 )
 
 function createWinstonBaseLogger (logPath: string) {
-  const filename = path.join(logPath, 'logs.txt')
+  const filename = path.join(logPath, LOGS_FILENAME)
   return winston.createLogger({
     format: winstonFormat,
     transports: [
