@@ -31,6 +31,7 @@ import { METRICS } from '../bug-reporting/metrics/metrics'
 import FeatureToggle from '../features/feature-toggle'
 import type { BugReporter } from '../bug-reporting/interface'
 import type { BugReporterMetrics } from '../bug-reporting/metrics/bug-reporter-metrics'
+import ServiceManagerInstaller from '../../libraries/mysterium-client/service-manager/service-manager-installer'
 
 const LOG_PREFIX = '[ProcessManager]'
 const MYSTERIUM_CLIENT_WAITING_THRESHOLD = 10000
@@ -138,15 +139,19 @@ class ProcessManager {
   async _restartClient () {
     try {
       this._logInfo('Restarting: killing process')
-      await this._process.kill()
+      // await this._process.kill()
 
-      this._logInfo('Restarting: waiting for process to be down')
-      await this._waitForProcessDown()
-      this._logInfo('Restarting: process is down, starting it up')
-      await this._process.start()
-      this._logInfo('Restarting: waiting for process to be up')
-      await this._waitForProcessUp()
-      this._logInfo('Restering: process is up')
+      // TODO: uninstall for windows
+      const i = ((this._installer: any): ServiceManagerInstaller)
+      await i._serviceManager.reinstall()
+
+      // this._logInfo('Restarting: waiting for process to be down')
+      // await this._waitForProcessDown()
+      // this._logInfo('Restarting: process is down, starting it up')
+      // await this._process.start()
+      // this._logInfo('Restarting: waiting for process to be up')
+      // await this._waitForProcessUp()
+      // this._logInfo('Restarting: process is up')
     } catch (error) {
       this._logError(`Failed to restart 'mysterium_client' process`, error)
       throw error
