@@ -53,12 +53,12 @@ class Logger {
     this._logger.info(stringifyArgs(data))
   }
 
-  error (...data: Array<any>): void {
-    this._logger.error(stringifyArgs(data))
-  }
-
   warn (...data: Array<any>): void {
     this._logger.warn(stringifyArgs(data))
+  }
+
+  error (...data: Array<any>): void {
+    this._logger.error(stringifyArgs(data))
   }
 }
 

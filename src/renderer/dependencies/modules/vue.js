@@ -20,6 +20,7 @@ import type { Container } from '../../../app/di'
 import Vue from 'vue'
 import axios from 'axios'
 import App from '../../app'
+import logger from '../../../app/logger'
 import routerFactory from '../../router/factory'
 import storeFactory from '../../store/factory'
 import mainFactory from '../../store/modules/main'
@@ -48,7 +49,8 @@ function bootstrap (container: Container) {
       Vue.config.productionTip = false
       Vue.config.errorHandler = (err) => {
         // eslint-disable-next-line
-        console.error('Unhandled error:', err)
+
+        logger.error('Unhandled error:', err)
       }
 
       return new Vue({

@@ -35,6 +35,7 @@
           </li>
           <li>
             <div
+              v-if="consumerId"
               class="consumer-id-view">
               <div class="consumer-id-view__item">
                 <logo-icon :active="registrationFetched" />
@@ -103,9 +104,6 @@ export default {
     CloseButton,
     CopyButton,
     LogoIcon
-  },
-  data () {
-    return {}
   },
   methods: {
     hideInstructions () {

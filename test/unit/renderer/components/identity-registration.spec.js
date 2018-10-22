@@ -71,7 +71,7 @@ describe('IdentityRegistration', () => {
     })
   }
 
-  describe('HTML rendering when State is  not OK', () => {
+  describe('HTML rendering when State is not OK', () => {
     beforeEach(() => {
       mountEverything({
         current: null
