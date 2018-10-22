@@ -48,8 +48,6 @@ function bootstrap (container: Container) {
       Vue.http = Vue.prototype.$http = axios
       Vue.config.productionTip = false
       Vue.config.errorHandler = (err) => {
-        // eslint-disable-next-line
-
         logger.error('Unhandled error:', err)
       }
 
