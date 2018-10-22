@@ -93,7 +93,7 @@ export default class ServiceManager {
 
   async reinstall (): Promise<string> {
     const commands = ['uninstall', 'install', 'start']
-    const state = this.getServiceState()
+    const state: ServiceState = await this.getServiceState()
     if (state === SERVICE_STATE.RUNNING) {
       commands.unshift('stop')
     }

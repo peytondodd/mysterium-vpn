@@ -36,8 +36,10 @@ interface Monitoring {
   onStatus (callback: StatusCallback): void,
 
   onStatusUp (callback: EmptyCallback): void,
+  onNewStatusUp (callback: EmptyCallback): void,
 
   onStatusDown (callback: EmptyCallback): void,
+  onNewStatusDown (callback: EmptyCallback): void,
 
   onStatusChangeUp (callback: EmptyCallback): void,
 
@@ -70,11 +72,19 @@ class StatusMonitoring {
     }
   }
 
+  onNewStatusUp (callback: EmptyCallback): void {
+    this._upSubscriber.subscribe(callback)
+  }
+
   onStatusDown (callback: EmptyCallback): void {
     this._downSubscriber.subscribe(callback)
     if (this._lastStatus === false) {
       callback()
     }
+  }
+
+  onNewStatusDown (callback: EmptyCallback): void {
+    this._downSubscriber.subscribe(callback)
   }
 
   onStatusChangeUp (callback: EmptyCallback): void {
