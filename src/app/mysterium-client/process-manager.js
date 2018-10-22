@@ -149,9 +149,9 @@ class ProcessManager {
       // await this._waitForProcessDown()
       // this._logInfo('Restarting: process is down, starting it up')
       // await this._process.start()
-      // this._logInfo('Restarting: waiting for process to be up')
-      // await this._waitForProcessUp()
-      // this._logInfo('Restarting: process is up')
+      this._logInfo('Restarting: waiting for process to be up')
+      await this._waitForProcessUp()
+      this._logInfo('Restarting: process is up')
     } catch (error) {
       this._logError(`Failed to restart 'mysterium_client' process`, error)
       throw error
@@ -166,7 +166,7 @@ class ProcessManager {
 
   _waitForProcessUp (): Promise<void> {
     return onFirstEventOrTimeout(
-      this._monitoring.onStatusUp.bind(this._monitoring),
+      this._monitoring.onNewStatusUp.bind(this._monitoring),
       MYSTERIUM_CLIENT_WAITING_THRESHOLD)
   }
 
