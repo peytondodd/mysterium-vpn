@@ -33,9 +33,6 @@ import ClientLogSubscriber from '../../../libraries/mysterium-client/client-log-
 import LaunchDaemonInstaller from '../../../libraries/mysterium-client/launch-daemon/launch-daemon-installer'
 import LaunchDaemonProcess from '../../../libraries/mysterium-client/launch-daemon/launch-daemon-process'
 
-import StandaloneClientInstaller from '../../../libraries/mysterium-client/standalone/standalone-client-installer'
-import StandaloneClientProcess from '../../../libraries/mysterium-client/standalone/standalone-client-process'
-
 import ServiceManagerInstaller, { SERVICE_MANAGER_BIN }
   from '../../../libraries/mysterium-client/service-manager/service-manager-installer'
 import ServiceManagerProcess from '../../../libraries/mysterium-client/service-manager/service-manager-process'
@@ -105,15 +102,17 @@ function bootstrap (container: Container) {
 
   container.service(
     'mysteriumClientInstaller',
-    ['mysteriumClient.config', 'mysteriumClient.platform', 'serviceManager'],
-    (config: ClientConfig, platform: string, serviceManager: ServiceManager) => {
+    ['mysteriumClient.config', 'mysteriumClient.platform', 'serviceManager', 'bugReporter'],
+    (config: ClientConfig, platform: string, serviceManager: ServiceManager, bugReporter: BugReporter) => {
       switch (platform) {
         case OSX:
           return new LaunchDaemonInstaller(config, new OSSystem())
         case WINDOWS:
           return new ServiceManagerInstaller(new OSSystem(), config, serviceManager)
         default:
-          return new StandaloneClientInstaller()
+          const message = `No installer implementation for platform: ${platform}`
+          bugReporter.captureErrorMessage(message)
+          throw new Error(message)
       }
     }
   )
@@ -153,7 +152,8 @@ function bootstrap (container: Container) {
       'mysteriumClient.logSubscriber',
       'mysteriumClient.platform',
       'mysteriumClientMonitoring',
-      'serviceManager'
+      'serviceManager',
+      'bugReporter'
     ],
     (
       tequilapiClient: TequilapiClient,
@@ -161,7 +161,8 @@ function bootstrap (container: Container) {
       logSubscriber: ClientLogSubscriber,
       platform: string,
       monitoring: Monitoring,
-      serviceManager: ServiceManager
+      serviceManager: ServiceManager,
+      bugReporter: BugReporter
     ) => {
       switch (platform) {
         case OSX:
@@ -174,7 +175,9 @@ function bootstrap (container: Container) {
             new OSSystem()
           )
         default:
-          return new StandaloneClientProcess(config)
+          const message = `No process implementation for platform: ${platform}`
+          bugReporter.captureErrorMessage(message)
+          throw new Error(message)
       }
     }
   )
