@@ -61,11 +61,11 @@ function mutationsFactory (bugReporter: BugReporter, communication: RendererComm
 }
 
 const getters = {
-  currentIdentity (state: State): string {
+  currentIdentity (state: State): ?string {
     const identity = state.current
     if (!identity) {
       logger.warn('Trying to get identity which is not present')
-      return ''
+      return null
     }
     return identity.id
   },

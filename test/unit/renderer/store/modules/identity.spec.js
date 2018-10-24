@@ -55,13 +55,13 @@ describe('identity store', () => {
         expect(getters.currentIdentity(state)).to.eql('identity id')
       })
 
-      it('returns empty string when identity is not present', () => {
+      it('returns null when identity is not present', () => {
         const state: State = {
           current: null,
           unlocked: false,
           registration: null
         }
-        expect(getters.currentIdentity(state)).to.eql('')
+        expect(getters.currentIdentity(state)).to.eql(null)
       })
     })
   })

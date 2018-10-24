@@ -40,8 +40,8 @@ function bootstrap (container: Container) {
   )
   container.service(
     'vue-application',
-    [],
-    () => {
+    ['bugReporter'],
+    (bugReporter) => {
       if (!process.env.IS_WEB) {
         Vue.use(require('vue-electron'))
       }
@@ -49,6 +49,7 @@ function bootstrap (container: Container) {
       Vue.config.productionTip = false
       Vue.config.errorHandler = (err) => {
         logger.error('Unhandled error:', err)
+        bugReporter.captureErrorException(err)
       }
 
       return new Vue({
