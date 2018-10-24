@@ -33,7 +33,6 @@ type EmptyCallback = () => void
 interface Monitoring {
   start (): void,
   stop (): void,
-  isStarted (): boolean,
 
   onStatus (callback: StatusCallback): void,
 
@@ -183,10 +182,6 @@ class TequilaMonitoring extends StatusMonitoring implements Monitoring {
     this._api = tequilapi
   }
 
-  isStarted (): boolean {
-    return this._isStarted
-  }
-
   start () {
     if (this._isStarted) {
       return
@@ -203,7 +198,7 @@ class TequilaMonitoring extends StatusMonitoring implements Monitoring {
   }
 
   async _healthCheckLoop (): Promise<void> {
-    if (!this.isStarted) {
+    if (!this._isStarted) {
       return
     }
 

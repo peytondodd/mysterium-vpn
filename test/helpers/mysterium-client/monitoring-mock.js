@@ -29,10 +29,6 @@ class MonitoringMock extends StatusMonitoring implements Monitoring {
 
   stop (): void {
   }
-
-  isStarted (): boolean {
-    return this._started
-  }
 }
 
 export default MonitoringMock

@@ -194,15 +194,6 @@ describe('ProcessManager', () => {
       expect(process.started).to.be.true
     })
 
-    it('starts monitoring', async () => {
-      expect(monitoring.isStarted()).to.be.false
-
-      processManager.start()
-      await nextTick()
-
-      expect(monitoring.isStarted()).to.be.true
-    })
-
     describe('when client version matches', () => {
       it('does not kill process', async () => {
         const startPromise = processManager.start()
