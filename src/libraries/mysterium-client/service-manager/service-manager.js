@@ -21,6 +21,7 @@ import path from 'path'
 import type { Command, System } from '../system'
 import logger from '../../../app/logger'
 import { SERVICE_NAME } from './service-manager-installer'
+import type { Monitoring } from '../monitoring'
 
 const SERVICE_STATE = {
   UNKNOWN: 'UNKNOWN',
@@ -77,10 +78,12 @@ const needReinstall = (e: Error): boolean => {
 export default class ServiceManager {
   _path: string
   _system: System
+  _monitoring: Monitoring
 
-  constructor (serviceManagerPath: string, system: System) {
+  constructor (serviceManagerPath: string, system: System, monitoring: Monitoring) {
     this._path = serviceManagerPath
     this._system = system
+    this._monitoring = monitoring
   }
 
   get directory (): string {
@@ -97,7 +100,9 @@ export default class ServiceManager {
     if (state === SERVICE_STATE.RUNNING) {
       commands.unshift('stop')
     }
-    return this._execOperations(...commands)
+    const result = this._execOperations(...commands)
+    await this._monitoring.waitForNewStatusUpWithTimeout()
+    return result
   }
 
   async start (): Promise<ServiceState> {
@@ -144,7 +149,7 @@ export default class ServiceManager {
       const result = await this._execOperations(operation)
       return parseServiceState(result)
     } catch (e) {
-      if (e instanceof Error && reinstallOnError && needReinstall(e)) {
+      if (reinstallOnError && e instanceof Error && needReinstall(e)) {
         await this.reinstall()
         return SERVICE_STATE.START_PENDING
       } else {

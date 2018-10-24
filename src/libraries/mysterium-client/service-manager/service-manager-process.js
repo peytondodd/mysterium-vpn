@@ -71,6 +71,10 @@ class ServiceManagerProcess implements Process {
     await this._repair()
   }
 
+  async upgrade (): Promise<void> {
+    await this._serviceManager.reinstall()
+  }
+
   async stop (): Promise<void> {
     // we shouldn't kill the process, just make sure it's disconnected
     // since this is service managed process

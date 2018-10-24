@@ -20,20 +20,19 @@
 import { beforeEach, describe, expect, it } from '../../../helpers/dependencies'
 import ProcessManager from '../../../../src/app/mysterium-client/process-manager'
 import type { Installer, Process } from '../../../../src/libraries/mysterium-client'
-import type { Monitoring } from '../../../../src/libraries/mysterium-client/monitoring'
 import VersionCheck from '../../../../src/libraries/mysterium-client/version-check'
 import { buildMainCommunication } from '../../../../src/app/communication/main-communication'
 import LogCache from '../../../../src/app/logging/log-cache'
 import FeatureToggle from '../../../../src/app/features/feature-toggle'
 import { buildRendererCommunication } from '../../../../src/app/communication/renderer-communication'
-import { CallbackRecorder, captureAsyncError, nextTick, RepeatableCallbackRecorder } from '../../../helpers/utils'
+import { CallbackRecorder, captureAsyncError, nextTick } from '../../../helpers/utils'
 import DirectMessageBus from '../../../helpers/direct-message-bus'
 import { SUDO_PROMT_PERMISSION_DENIED }
   from '../../../../src/libraries/mysterium-client/launch-daemon/launch-daemon-installer'
 import BugReporterMock from '../../../helpers/bug-reporter-mock'
 import BugReporterMetricsStore from '../../../../src/app/bug-reporting/metrics/bug-reporter-metrics-store'
 import TequilapiVersionMock from '../../../helpers/mysterium-tequilapi/tequilapi-version-check.spec'
-import { StatusMonitoring } from '../../../../src/libraries/mysterium-client/monitoring'
+import MonitoringMock from '../../../helpers/mysterium-client/monitoring-mock'
 
 class InstallerMock implements Installer {
   needsInstallationMock: boolean = false
@@ -57,6 +56,7 @@ class ProcessMock implements Process {
   startedCount: number = 0
   repaired: boolean = false
   killed: boolean = false
+  upgraded: boolean = false
 
   async start (): Promise<void> {
     this.startedCount++
@@ -68,6 +68,10 @@ class ProcessMock implements Process {
 
   async repair (): Promise<void> {
     this.repaired = true
+  }
+
+  async upgrade (): Promise<void> {
+    this.upgraded = true
   }
 
   async stop (): Promise<void> {
@@ -84,21 +88,6 @@ class ProcessMock implements Process {
     if (this.setupLoggingErrorMock) {
       throw this.setupLoggingErrorMock
     }
-  }
-}
-
-class MonitoringMock extends StatusMonitoring implements Monitoring {
-  _started: boolean = false
-
-  start (): void {
-    this._started = true
-  }
-
-  stop (): void {
-  }
-
-  isStarted (): boolean {
-    return this._started
   }
 }
 
@@ -217,7 +206,7 @@ describe('ProcessManager', () => {
     describe('when client version matches', () => {
       it('does not kill process', async () => {
         const startPromise = processManager.start()
-
+        await nextTick()
         monitoring.updateStatus(true)
         await startPromise
 
@@ -226,7 +215,7 @@ describe('ProcessManager', () => {
 
       it('sends message when process goes up', async () => {
         const startPromise = processManager.start()
-
+        await nextTick()
         const recorder = new CallbackRecorder()
         remoteCommunication.healthcheckUp.on(recorder.getCallback())
 
@@ -238,7 +227,7 @@ describe('ProcessManager', () => {
 
       it('repairs process when process goes down', async () => {
         const startPromise = processManager.start()
-
+        await nextTick()
         monitoring.updateStatus(true)
         await startPromise
 
@@ -250,7 +239,7 @@ describe('ProcessManager', () => {
 
     it('sends message when process goes down', async () => {
       const startPromise = processManager.start()
-
+      await nextTick()
       monitoring.updateStatus(true)
       await startPromise
 
@@ -267,39 +256,14 @@ describe('ProcessManager', () => {
         tequilapi.versionMock = '0.0.1'
       })
 
-      it('kills process, waits for healthcheck down and starts it', async () => {
-        processManager.start()
-
-        monitoring.updateStatus(true)
-        await nextTick()
-
-        expect(process.killed).to.be.true
-        expect(process.startedCount).to.eql(1)
-
-        monitoring.updateStatus(false)
-        await nextTick()
-
-        expect(process.startedCount).to.eql(2)
-      })
-
-      it('sends healthcheck up messages only after process is restarted', async () => {
-        const recorder = new RepeatableCallbackRecorder()
-        expect(remoteCommunication.healthcheckUp.on(recorder.getCallback()))
-
+      it('upgrades process', async () => {
         const startPromise = processManager.start()
-        monitoring.updateStatus(true)
         await nextTick()
-
-        monitoring.updateStatus(false)
-        expect(recorder.invokesCount).to.eql(0)
 
         monitoring.updateStatus(true)
         await startPromise
-        expect(recorder.invokesCount).to.eql(1)
 
-        monitoring.updateStatus(false)
-        monitoring.updateStatus(true)
-        expect(recorder.invokesCount).to.eql(2)
+        expect(process.upgraded).to.be.true
       })
     })
   })

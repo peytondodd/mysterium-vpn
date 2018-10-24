@@ -19,33 +19,68 @@
 
 import ClientLogSubscriber from '../../../../../src/libraries/mysterium-client/client-log-subscriber'
 import BugReporterMock from '../../../../helpers/bug-reporter-mock'
-import { describe, expect, it } from '../../../../helpers/dependencies'
+import { beforeEach, describe, expect, it } from '../../../../helpers/dependencies'
 import LaunchDaemonProcess from '../../../../../src/libraries/mysterium-client/launch-daemon/launch-daemon-process'
 import MockAdapter from 'axios-mock-adapter'
 import axios from 'axios'
 import EmptyTequilapiClientMock from '../../../renderer/store/modules/empty-tequilapi-client-mock'
+import MonitoringMock from '../../../../helpers/mysterium-client/monitoring-mock'
+import { nextTick } from '../../../../helpers/utils'
+
+class TequilapiClientMock extends EmptyTequilapiClientMock {
+  stopped: boolean = false
+
+  async stop (): Promise<void> {
+    this.stopped = true
+  }
+}
 
 describe('LaunchDaemonProcess', () => {
+  let process: LaunchDaemonProcess
+  let monitoring: MonitoringMock
+  let tequilApi: TequilapiClientMock
+
+  let processStarted: boolean
+
+  beforeEach(() => {
+    const logSubscriber = new ClientLogSubscriber(new BugReporterMock(), '', '', '', () => new Date(), () => {})
+    tequilApi = new TequilapiClientMock()
+    monitoring = new MonitoringMock()
+    process = new LaunchDaemonProcess(
+      tequilApi,
+      logSubscriber,
+      1234,
+      monitoring
+    )
+
+    processStarted = false
+    const axiosMock = new MockAdapter(axios)
+    axiosMock.onGet('http://127.0.0.1:1234').reply(() => {
+      processStarted = true
+      return [200]
+    })
+  })
+
   describe('.start', () => {
     it('makes a request to given localhost port', async () => {
-      const axiosMock = new MockAdapter(axios)
-      let invoked = false
-      axiosMock.onGet('http://127.0.0.1:1234').reply(() => {
-        invoked = true
-        return [200]
-      })
-
-      const logSubscriber = new ClientLogSubscriber(new BugReporterMock(), '', '', '', () => new Date(), () => {})
-      const tequilApi = new EmptyTequilapiClientMock()
-      const process = new LaunchDaemonProcess(
-        tequilApi,
-        logSubscriber,
-        1234
-      )
-
       await process.start()
+      expect(processStarted).to.be.true
+    })
+  })
 
-      expect(invoked).to.be.true
+  describe('.upgrade', () => {
+    it('kills process, waits for healthcheck down and starts it', async () => {
+      const upgradePromise = process.upgrade()
+
+      expect(tequilApi.stopped).to.be.true
+
+      expect(processStarted).to.be.false
+      monitoring.updateStatus(false)
+      await nextTick()
+      monitoring.updateStatus(true)
+
+      await upgradePromise
+      expect(processStarted).to.be.true
     })
   })
 })

@@ -24,6 +24,7 @@ import SystemMock from '../../../../helpers/system-mock'
 import type { SystemMockManager } from '../../../../helpers/system-mock'
 import type { System } from '../../../../../src/libraries/mysterium-client/system'
 import ServiceManager from '../../../../../src/libraries/mysterium-client/service-manager/service-manager'
+import MonitoringMock from '../../../../helpers/mysterium-client/monitoring-mock'
 
 const SERVICE_MANAGER_DIR = '/service-manager/bin'
 const SERVICE_MANAGER_PATH = SERVICE_MANAGER_DIR + '/servicemanager.exe'
@@ -86,7 +87,8 @@ describe('ServiceManagerInstaller', () => {
     const systemMock = createSystemMock()
     system = (systemMock: System)
     systemMockManager = (systemMock: SystemMockManager)
-    serviceManager = new ServiceManager(SERVICE_MANAGER_PATH, system)
+    const monitoringMock = new MonitoringMock()
+    serviceManager = new ServiceManager(SERVICE_MANAGER_PATH, system, monitoringMock)
   })
 
   describe('.needsInstallation()', () => {

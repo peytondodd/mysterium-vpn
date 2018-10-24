@@ -280,7 +280,7 @@ describe('Monitoring module', () => {
     })
   })
 
-  describe('.waitForStatusUp', () => {
+  describe('.waitForStatusUpWithTimeout', () => {
     it('finishes after healthcheck passes', async () => {
       await waitForStatusUp(tequilapiClient, 6000)
       expect(tequilapiClient.healthCheckCallCount).to.be.eql(1)

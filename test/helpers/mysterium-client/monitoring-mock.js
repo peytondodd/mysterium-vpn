@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 The "mysteriumnetwork/mysterium-vpn" Authors.
+ * Copyright (C) 2018 The "mysteriumnetwork/mysterium-vpn" Authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,14 +16,23 @@
  */
 
 // @flow
-import type { MessageReceiver } from './message-receiver'
 
-function onceOnMessage<T> (receiver: MessageReceiver<T>, callback: T => void) {
-  const wrapperCallback = (data: T) => {
-    callback(data)
-    receiver.removeCallback(wrapperCallback)
+import type { Monitoring } from '../../../src/libraries/mysterium-client/monitoring'
+import { StatusMonitoring } from '../../../src/libraries/mysterium-client/monitoring'
+
+class MonitoringMock extends StatusMonitoring implements Monitoring {
+  _started: boolean = false
+
+  start (): void {
+    this._started = true
   }
-  receiver.on(wrapperCallback)
+
+  stop (): void {
+  }
+
+  isStarted (): boolean {
+    return this._started
+  }
 }
 
-export { onceOnMessage }
+export default MonitoringMock

@@ -17,7 +17,8 @@
 
 // @flow
 
-import { onceOnMessage, onFirstEvent } from '../../../../src/app/communication/utils'
+import { onceOnMessage } from '../../../../src/app/communication/utils'
+import { onFirstEvent } from '../../../../src/app/events'
 import { beforeEach, describe, expect, it } from '../../../helpers/dependencies'
 import MessageTransport from '../../../../src/app/communication/message-transport'
 import DirectMessageBus from '../../../helpers/direct-message-bus'

@@ -20,8 +20,10 @@ import { promisify } from 'util'
 import type { TequilapiClient } from 'mysterium-tequilapi/lib/client'
 import sleep from '../sleep'
 import Subscriber from '../subscriber'
+import { onFirstEventOrTimeout } from '../../app/events'
 
 const HEALTH_CHECK_INTERVAL = 1500
+const MYSTERIUM_CLIENT_WAITING_THRESHOLD = 10000
 const healthCheckTimeout = 500
 
 type StatusCallback = (boolean) => void
@@ -30,22 +32,44 @@ type EmptyCallback = () => void
 // TODO: allow unsubscribing from events
 interface Monitoring {
   start (): void,
-
   stop (): void,
+  isStarted (): boolean,
 
   onStatus (callback: StatusCallback): void,
 
+  /**
+   * Triggers once service is up. Triggers instantly if it is already up.
+   */
   onStatusUp (callback: EmptyCallback): void,
+  waitForStatusUpWithTimeout (): Promise<void>,
+
+  /**
+   * Triggers once service is up. Does not trigger instantly if it is already up.
+   */
   onNewStatusUp (callback: EmptyCallback): void,
+  waitForNewStatusUpWithTimeout (): Promise<void>,
 
-  onStatusDown (callback: EmptyCallback): void,
-  onNewStatusDown (callback: EmptyCallback): void,
-
+  /**
+   * Triggers once service status changes to up.
+   */
   onStatusChangeUp (callback: EmptyCallback): void,
 
-  onStatusChangeDown (callback: EmptyCallback): void,
+  /**
+   * Triggers once service is down. Triggers instantly if it is already down.
+   */
+  onStatusDown (callback: EmptyCallback): void,
+  waitForStatusDownWithTimeout (): Promise<void>,
 
-  isStarted (): boolean
+  /**
+   * Triggers once service is down. Does not trigger instantly if it is already down.
+   */
+  onNewStatusDown (callback: EmptyCallback): void,
+  waitForNewStatusDownWithTimeout (): Promise<void>,
+
+  /**
+   * Triggers once service status changes to down.
+   */
+  onStatusChangeDown (callback: EmptyCallback): void
 }
 
 class StatusMonitoring {
@@ -66,7 +90,7 @@ class StatusMonitoring {
   }
 
   onStatusUp (callback: EmptyCallback): void {
-    this._upSubscriber.subscribe(callback)
+    this.onNewStatusUp(callback)
     if (this._lastStatus) {
       callback()
     }
@@ -76,8 +100,20 @@ class StatusMonitoring {
     this._upSubscriber.subscribe(callback)
   }
 
+  onStatusChangeUp (callback: EmptyCallback): void {
+    this._changeUpSubscriber.subscribe(callback)
+  }
+
+  waitForNewStatusUpWithTimeout (): Promise<void> {
+    return onFirstEventOrTimeout(this.onNewStatusUp.bind(this), MYSTERIUM_CLIENT_WAITING_THRESHOLD)
+  }
+
+  waitForStatusUpWithTimeout (): Promise<void> {
+    return onFirstEventOrTimeout(this.onStatusUp.bind(this), MYSTERIUM_CLIENT_WAITING_THRESHOLD)
+  }
+
   onStatusDown (callback: EmptyCallback): void {
-    this._downSubscriber.subscribe(callback)
+    this.onNewStatusDown(callback)
     if (this._lastStatus === false) {
       callback()
     }
@@ -87,12 +123,16 @@ class StatusMonitoring {
     this._downSubscriber.subscribe(callback)
   }
 
-  onStatusChangeUp (callback: EmptyCallback): void {
-    this._changeUpSubscriber.subscribe(callback)
-  }
-
   onStatusChangeDown (callback: EmptyCallback): void {
     this._changeDownSubscriber.subscribe(callback)
+  }
+
+  waitForStatusDownWithTimeout (): Promise<void> {
+    return onFirstEventOrTimeout(this.onStatusDown.bind(this), MYSTERIUM_CLIENT_WAITING_THRESHOLD)
+  }
+
+  waitForNewStatusDownWithTimeout (): Promise<void> {
+    return onFirstEventOrTimeout(this.onNewStatusDown.bind(this), MYSTERIUM_CLIENT_WAITING_THRESHOLD)
   }
 
   updateStatus (status: boolean) {

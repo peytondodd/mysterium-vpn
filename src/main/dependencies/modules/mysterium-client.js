@@ -88,12 +88,12 @@ function bootstrap (container: Container) {
 
   container.service(
     'serviceManager',
-    ['mysteriumVpnApplication.config', 'mysteriumClient.platform'],
-    (mysteriumVpnConfig: MysteriumVpnConfig, platform: string) => {
+    ['mysteriumVpnApplication.config', 'mysteriumClient.platform', 'mysteriumClientMonitoring'],
+    (mysteriumVpnConfig: MysteriumVpnConfig, platform: string, mysteriumClientMonitoring: Monitoring) => {
       switch (platform) {
         case WINDOWS:
           let serviceManagerPath = path.join(mysteriumVpnConfig.contentsDirectory, 'bin', SERVICE_MANAGER_BIN)
-          return new ServiceManager(serviceManagerPath, new OSSystem())
+          return new ServiceManager(serviceManagerPath, new OSSystem(), mysteriumClientMonitoring)
         default:
           return null
       }
@@ -166,7 +166,7 @@ function bootstrap (container: Container) {
     ) => {
       switch (platform) {
         case OSX:
-          return new LaunchDaemonProcess(tequilapiClient, logSubscriber, LAUNCH_DAEMON_PORT)
+          return new LaunchDaemonProcess(tequilapiClient, logSubscriber, LAUNCH_DAEMON_PORT, monitoring)
         case WINDOWS:
           return new ServiceManagerProcess(
             tequilapiClient,
