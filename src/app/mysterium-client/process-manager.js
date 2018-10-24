@@ -19,7 +19,8 @@
 
 import type { Installer, Process } from '../../libraries/mysterium-client'
 import { logLevels as processLogLevels } from '../../libraries/mysterium-client'
-import type { EmptyCallback, Monitoring } from '../../libraries/mysterium-client/monitoring'
+import Monitoring from '../../libraries/mysterium-client/monitoring/monitoring'
+import type { EmptyCallback } from '../../libraries/mysterium-client/monitoring/monitoring'
 import type { MainCommunication } from '../communication/main-communication'
 import LogCache from '../logging/log-cache'
 import VersionCheck from '../../libraries/mysterium-client/version-check'

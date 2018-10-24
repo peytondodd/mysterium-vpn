@@ -21,7 +21,7 @@ import type { TequilapiClient } from 'mysterium-tequilapi/lib/client'
 import type { LogCallback, Process } from '../index'
 import axios from 'axios'
 import ClientLogSubscriber from '../client-log-subscriber'
-import type { Monitoring } from '../monitoring'
+import Monitoring from '../monitoring/monitoring'
 import logger from '../../../app/logger'
 
 /**

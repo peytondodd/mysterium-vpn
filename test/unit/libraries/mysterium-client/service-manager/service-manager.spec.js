@@ -25,7 +25,8 @@ import type { ServiceState } from '../../../../../src/libraries/mysterium-client
 import ServiceManager, { SERVICE_STATE }
   from '../../../../../src/libraries/mysterium-client/service-manager/service-manager'
 import { captureAsyncError, nextTick } from '../../../../helpers/utils'
-import MonitoringMock from '../../../../helpers/mysterium-client/monitoring-mock'
+import { MockStatusNotifier } from '../../../../helpers/mysterium-client/monitoring-mock'
+import Monitoring from '../../../../../src/libraries/mysterium-client/monitoring/monitoring'
 
 const SERVICE_MANAGER_PATH = '/service-manager/bin/servicemanager.exe'
 
@@ -59,7 +60,8 @@ describe('ServiceManager', () => {
   let systemMockManager: SystemMockManager
   let system: System
   let serviceManager: ServiceManager
-  let monitoringMock: MonitoringMock
+  let notifierMock: MockStatusNotifier
+  let monitoring: Monitoring
 
   const testCommand = async (command: () => Promise<ServiceState>, doCommand: string, resultState: ServiceState) => {
     const state = await command()
@@ -73,8 +75,10 @@ describe('ServiceManager', () => {
     const systemMock = createSystemMock()
     system = (systemMock: System)
     systemMockManager = (systemMock: SystemMockManager)
-    monitoringMock = new MonitoringMock()
-    serviceManager = new ServiceManager(SERVICE_MANAGER_PATH, system, monitoringMock)
+    notifierMock = new MockStatusNotifier()
+    monitoring = new Monitoring(notifierMock)
+    monitoring.start()
+    serviceManager = new ServiceManager(SERVICE_MANAGER_PATH, system, monitoring)
   })
 
   describe('.install', () => {
@@ -108,13 +112,13 @@ describe('ServiceManager', () => {
 
       expect(reinstalled).to.be.false
 
-      monitoringMock.updateStatus(true)
+      notifierMock.notifyStatus(true)
       await nextTick()
       expect(reinstalled).to.be.true
     })
 
     it('does not finishes if service is still up', async () => {
-      monitoringMock.updateStatus(true)
+      notifierMock.notifyStatus(true)
 
       let reinstalled = false
       serviceManager.reinstall().then(() => { reinstalled = true })
@@ -153,7 +157,7 @@ describe('ServiceManager', () => {
           ' && "/service-manager/bin/servicemanager.exe" --do=start'
       )
 
-      monitoringMock.updateStatus(true)
+      notifierMock.notifyStatus(true)
       await startPromise
     })
   })
@@ -199,7 +203,7 @@ describe('ServiceManager', () => {
         ' && "/service-manager/bin/servicemanager.exe" --do=start'
       )
 
-      monitoringMock.updateStatus(true)
+      notifierMock.notifyStatus(true)
       await restartPromise
     })
   })

@@ -32,7 +32,8 @@ import { SUDO_PROMT_PERMISSION_DENIED }
 import BugReporterMock from '../../../helpers/bug-reporter-mock'
 import BugReporterMetricsStore from '../../../../src/app/bug-reporting/metrics/bug-reporter-metrics-store'
 import TequilapiVersionMock from '../../../helpers/mysterium-tequilapi/tequilapi-version-check.spec'
-import MonitoringMock from '../../../helpers/mysterium-client/monitoring-mock'
+import { MockStatusNotifier } from '../../../helpers/mysterium-client/monitoring-mock'
+import Monitoring from '../../../../src/libraries/mysterium-client/monitoring/monitoring'
 
 class InstallerMock implements Installer {
   needsInstallationMock: boolean = false
@@ -92,6 +93,7 @@ class ProcessMock implements Process {
 }
 
 describe('ProcessManager', () => {
+  let notifierMock
   let monitoring
   let installer
   let process
@@ -102,7 +104,8 @@ describe('ProcessManager', () => {
   let remoteCommunication
 
   beforeEach(() => {
-    monitoring = new MonitoringMock()
+    notifierMock = new MockStatusNotifier()
+    monitoring = new Monitoring(notifierMock)
     installer = new InstallerMock()
     process = new ProcessMock()
     const logCache = new LogCache()
@@ -198,7 +201,7 @@ describe('ProcessManager', () => {
       it('does not kill process', async () => {
         const startPromise = processManager.start()
         await nextTick()
-        monitoring.updateStatus(true)
+        notifierMock.notifyStatus(true)
         await startPromise
 
         expect(process.killed).to.be.false
@@ -210,7 +213,7 @@ describe('ProcessManager', () => {
         const recorder = new CallbackRecorder()
         remoteCommunication.healthcheckUp.on(recorder.getCallback())
 
-        monitoring.updateStatus(true)
+        notifierMock.notifyStatus(true)
         await startPromise
 
         expect(recorder.invoked).to.be.true
@@ -219,10 +222,10 @@ describe('ProcessManager', () => {
       it('repairs process when process goes down', async () => {
         const startPromise = processManager.start()
         await nextTick()
-        monitoring.updateStatus(true)
+        notifierMock.notifyStatus(true)
         await startPromise
 
-        monitoring.updateStatus(false)
+        notifierMock.notifyStatus(false)
 
         expect(process.repaired).to.be.true
       })
@@ -231,13 +234,13 @@ describe('ProcessManager', () => {
     it('sends message when process goes down', async () => {
       const startPromise = processManager.start()
       await nextTick()
-      monitoring.updateStatus(true)
+      notifierMock.notifyStatus(true)
       await startPromise
 
       const recorder = new CallbackRecorder()
       remoteCommunication.healthcheckDown.on(recorder.getCallback())
 
-      monitoring.updateStatus(false)
+      notifierMock.notifyStatus(false)
 
       expect(recorder.invoked).to.be.true
     })
@@ -251,7 +254,7 @@ describe('ProcessManager', () => {
         const startPromise = processManager.start()
         await nextTick()
 
-        monitoring.updateStatus(true)
+        notifierMock.notifyStatus(true)
         await startPromise
 
         expect(process.upgraded).to.be.true

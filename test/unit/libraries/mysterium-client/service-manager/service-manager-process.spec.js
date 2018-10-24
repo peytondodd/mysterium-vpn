@@ -35,7 +35,8 @@ import type { ServiceState }
   from '../../../../../src/libraries/mysterium-client/service-manager/service-manager'
 import ServiceManager, { SERVICE_STATE }
   from '../../../../../src/libraries/mysterium-client/service-manager/service-manager'
-import MonitoringMock from '../../../../helpers/mysterium-client/monitoring-mock'
+import { MockStatusNotifier } from '../../../../helpers/mysterium-client/monitoring-mock'
+import Monitoring from '../../../../../src/libraries/mysterium-client/monitoring/monitoring'
 
 const SERVICE_MANAGER_PATH = '/service-manager/bin/servicemanager.exe'
 
@@ -145,7 +146,8 @@ describe('ServiceManagerProcess', () => {
 
     tequilapiClient = new TequilapiMock()
     clientLogSubscriber = new ClientLogSubscriberMock()
-    const monitoring = new MonitoringMock()
+    const mockNotifier = new MockStatusNotifier()
+    const monitoring = new Monitoring(mockNotifier)
     serviceManager = new ServiceManager(SERVICE_MANAGER_PATH, system, monitoring)
     process = new ServiceManagerProcess(tequilapiClient, clientLogSubscriber, serviceManager, system)
   })

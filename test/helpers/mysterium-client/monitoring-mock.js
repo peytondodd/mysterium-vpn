@@ -17,11 +17,15 @@
 
 // @flow
 
-import type { Monitoring } from '../../../src/libraries/mysterium-client/monitoring'
-import { StatusMonitoring } from '../../../src/libraries/mysterium-client/monitoring'
+import type { StatusCallback }
+  from '../../../src/libraries/mysterium-client/monitoring/monitoring'
+import Subscriber from '../../../src/libraries/subscriber'
+import type { StatusNotifier } from '../../../src/libraries/mysterium-client/monitoring/status-notifier'
 
-class MonitoringMock extends StatusMonitoring implements Monitoring {
+class MockStatusNotifier implements StatusNotifier {
   _started: boolean = false
+  _lastStatus: ?boolean = null
+  _statusSubscriber: Subscriber<boolean> = new Subscriber()
 
   start (): void {
     this._started = true
@@ -29,6 +33,19 @@ class MonitoringMock extends StatusMonitoring implements Monitoring {
 
   stop (): void {
   }
+
+  onStatus (callback: StatusCallback): void {
+    this._statusSubscriber.subscribe(callback)
+    const status = this._lastStatus
+    if (status != null) {
+      // TODO: remove this initial invokation in this class?
+      callback(status)
+    }
+  }
+
+  notifyStatus (status: boolean) {
+    this._statusSubscriber.notify(status)
+  }
 }
 
-export default MonitoringMock
+export { MockStatusNotifier }

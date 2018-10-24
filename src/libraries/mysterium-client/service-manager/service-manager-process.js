@@ -22,9 +22,10 @@ import type { LogCallback, Process } from '../index'
 import type { TequilapiClient } from 'mysterium-tequilapi/lib/client'
 import type { System } from '../system'
 import ClientLogSubscriber from '../client-log-subscriber'
-import { HEALTH_CHECK_INTERVAL, waitForStatusUp } from '../monitoring'
+import { HEALTH_CHECK_INTERVAL } from '../monitoring/monitoring'
 import ServiceManager, { SERVICE_STATE } from './service-manager'
 import type { ServiceState } from './service-manager'
+import { waitForStatusUp } from '../monitoring/utils'
 
 /***
  * Time in milliseconds required to fully activate Mysterium client after restart

@@ -21,7 +21,7 @@ import path from 'path'
 import type { Command, System } from '../system'
 import logger from '../../../app/logger'
 import { SERVICE_NAME } from './service-manager-installer'
-import type { Monitoring } from '../monitoring'
+import Monitoring from '../monitoring/monitoring'
 
 const SERVICE_STATE = {
   UNKNOWN: 'UNKNOWN',

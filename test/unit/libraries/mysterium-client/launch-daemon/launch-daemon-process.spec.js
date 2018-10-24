@@ -24,8 +24,9 @@ import LaunchDaemonProcess from '../../../../../src/libraries/mysterium-client/l
 import MockAdapter from 'axios-mock-adapter'
 import axios from 'axios'
 import EmptyTequilapiClientMock from '../../../renderer/store/modules/empty-tequilapi-client-mock'
-import MonitoringMock from '../../../../helpers/mysterium-client/monitoring-mock'
+import { MockStatusNotifier } from '../../../../helpers/mysterium-client/monitoring-mock'
 import { nextTick } from '../../../../helpers/utils'
+import Monitoring from '../../../../../src/libraries/mysterium-client/monitoring/monitoring'
 
 class TequilapiClientMock extends EmptyTequilapiClientMock {
   stopped: boolean = false
@@ -37,7 +38,8 @@ class TequilapiClientMock extends EmptyTequilapiClientMock {
 
 describe('LaunchDaemonProcess', () => {
   let process: LaunchDaemonProcess
-  let monitoring: MonitoringMock
+  let notifierMock: MockStatusNotifier
+  let monitoring: Monitoring
   let tequilApi: TequilapiClientMock
 
   let processStarted: boolean
@@ -45,7 +47,9 @@ describe('LaunchDaemonProcess', () => {
   beforeEach(() => {
     const logSubscriber = new ClientLogSubscriber(new BugReporterMock(), '', '', '', () => new Date(), () => {})
     tequilApi = new TequilapiClientMock()
-    monitoring = new MonitoringMock()
+    notifierMock = new MockStatusNotifier()
+    monitoring = new Monitoring(notifierMock)
+    monitoring.start()
     process = new LaunchDaemonProcess(
       tequilApi,
       logSubscriber,
@@ -75,9 +79,9 @@ describe('LaunchDaemonProcess', () => {
       expect(tequilApi.stopped).to.be.true
 
       expect(processStarted).to.be.false
-      monitoring.updateStatus(false)
+      notifierMock.notifyStatus(false)
       await nextTick()
-      monitoring.updateStatus(true)
+      notifierMock.notifyStatus(true)
 
       await upgradePromise
       expect(processStarted).to.be.true

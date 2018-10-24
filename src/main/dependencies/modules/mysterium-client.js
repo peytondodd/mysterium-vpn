@@ -41,13 +41,13 @@ import { LAUNCH_DAEMON_PORT } from '../../../libraries/mysterium-client/launch-d
 import OSSystem from '../../../libraries/mysterium-client/system'
 import ServiceManager from '../../../libraries/mysterium-client/service-manager/service-manager'
 import ProcessManager from '../../../app/mysterium-client/process-manager'
-import TequilaMonitoring from '../../../libraries/mysterium-client/monitoring'
+import Monitoring from '../../../libraries/mysterium-client/monitoring/monitoring'
 import type { MainCommunication } from '../../../app/communication/main-communication'
 import LogCache from '../../../app/logging/log-cache'
 import VersionCheck from '../../../libraries/mysterium-client/version-check'
 import FeatureToggle from '../../../app/features/feature-toggle'
 import type { BugReporterMetrics } from '../../../app/bug-reporting/metrics/bug-reporter-metrics'
-import type { Monitoring } from '../../../libraries/mysterium-client/monitoring'
+import { TequilapiStatusNotifier } from '../../../libraries/mysterium-client/monitoring/tequilapi-status-notifier'
 
 declare var MYSTERIUM_CLIENT_VERSION: string
 
@@ -185,7 +185,10 @@ function bootstrap (container: Container) {
   container.service(
     'mysteriumClientMonitoring',
     ['tequilapiClient'],
-    (tequilapiClient) => new TequilaMonitoring(tequilapiClient)
+    (tequilapiClient) => {
+      const process = new TequilapiStatusNotifier(tequilapiClient)
+      return new Monitoring(process)
+    }
   )
 
   container.service(
