@@ -20,13 +20,13 @@
 import ClientLogSubscriber from '../../../../../src/libraries/mysterium-client/client-log-subscriber'
 import BugReporterMock from '../../../../helpers/bug-reporter-mock'
 import { describe, expect, it } from '../../../../helpers/dependencies'
-import Process from '../../../../../src/libraries/mysterium-client/launch-daemon/launch-daemon-process'
+import LaunchDaemonProcess from '../../../../../src/libraries/mysterium-client/launch-daemon/launch-daemon-process'
 import MockAdapter from 'axios-mock-adapter'
 import axios from 'axios'
 import EmptyTequilapiClientMock from '../../../renderer/store/modules/empty-tequilapi-client-mock'
 
-describe('Process', () => {
-  describe('start()', () => {
+describe('LaunchDaemonProcess', () => {
+  describe('.start', () => {
     it('makes a request to given localhost port', async () => {
       const axiosMock = new MockAdapter(axios)
       let invoked = false
@@ -37,7 +37,7 @@ describe('Process', () => {
 
       const logSubscriber = new ClientLogSubscriber(new BugReporterMock(), '', '', '', () => new Date(), () => {})
       const tequilApi = new EmptyTequilapiClientMock()
-      const process = new Process(
+      const process = new LaunchDaemonProcess(
         tequilApi,
         logSubscriber,
         1234
