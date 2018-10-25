@@ -30,26 +30,25 @@
           <i class="burger__bar burger__bar--3"/>
         </div>
       </div>
-      <ul class="nav__list">
-        <li class="nav__item">
-          <a
-            class="nav__trigger"
-            href="#"
-            @click="openRemoteLink('https://mysterium.network/')">
-            <icon-eye class="nav__icon nav__icon--eye"/>
-            <span class="nav__text">about</span>
-          </a>
-        </li>
-        <li class="nav__item">
-          <a
-            class="nav__trigger"
-            href="#"
-            @click="reportIssue">
-            <icon-issue class="nav__icon nav__icon--issue"/>
-            <span class="nav__text">report issue</span>
-          </a>
-        </li>
-      </ul>
+      <nav-list>
+        <a
+          slot="item"
+          class="nav__trigger"
+          href="#"
+          @click="openRemoteLink('https://mysterium.network/')">
+          <icon-eye class="nav__icon nav__icon--eye"/>
+          <span class="nav__text">about</span>
+        </a>
+        <a
+          slot="item"
+          class="nav__trigger"
+          href="#"
+          @click="reportIssue">
+          <icon-issue class="nav__icon nav__icon--issue"/>
+          <span class="nav__text">report issue</span>
+        </a>
+      </nav-list>
+
       <div class="nav__settings">
         <disconnect-notification-settings/>
       </div>
@@ -79,6 +78,7 @@ import IconIssue from '@/assets/img/icon--issue.svg'
 import IconEye from '@/assets/img/icon--eye.svg'
 import IconQuit from '@/assets/img/icon--quit.svg'
 import DisconnectNotificationSettings from '@/components/disconnect-notification-setting'
+import NavList from '../components/nav-list'
 import { getVersionLabel } from '../../libraries/version'
 
 export default {
@@ -88,7 +88,8 @@ export default {
     IconEye,
     IconIssue,
     IconQuit,
-    DisconnectNotificationSettings
+    DisconnectNotificationSettings,
+    NavList
   },
   computed: {
     // mix the getters into computed with object spread operator

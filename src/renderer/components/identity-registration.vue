@@ -29,54 +29,53 @@
           <close-button :click="hideInstructions"/>
         </div>
 
-        <ul class="nav__list identity-registration-content">
-          <li>
-            <h1>Mysterium ID</h1>
-          </li>
-          <li>
+        <nav-list class="identity-registration-content">
+          <h1 slot="item">Mysterium ID</h1>
+
+          <div
+            slot="item"
+            v-if="consumerId"
+            class="consumer-id-view">
+            <div class="consumer-id-view__item">
+              <logo-icon :active="registrationFetched"/>
+            </div>
+            <div class="consumer-id-view__item">
+              <span
+                class="consumer-id-view__id-text"
+                :class="{'consumer-id-view__id-text--registered': registrationFetched}">
+                {{ consumerId }}
+              </span>
+            </div>
+            <div class="consumer-id-view__item">
+              <copy-button :text="consumerId"/>
+            </div>
+          </div>
+
+          <div
+            slot="item"
+            v-if="!registrationFetched">
+            <p>
+              In order to use Mysterium VPN you need to have registered ID in Mysterium Blockchain
+              by staking your MYST tokens on it (i.e. paying for it).
+            </p>
+            <p>
+              To pay for the ID we suggest to use MetaMask wallet.
+              Please follow below instructions to proceed further:
+            </p>
+            <ul>
+              <li>1. Click on the “Register Your ID” button</li>
+              <li>2. Claim MYST and ETH test tokens</li>
+              <li>3. Allow Mysterium SmartContract to reserve MYST tokens</li>
+              <li>4. Register your ID by clicking on “Pay & Register For ID”</li>
+              <li>5. Wait for few minutes until the payment is processed</li>
+            </ul>
             <div
-              v-if="consumerId"
-              class="consumer-id-view">
-              <div class="consumer-id-view__item">
-                <logo-icon :active="registrationFetched" />
-              </div>
-              <div class="consumer-id-view__item">
-                <span
-                  class="consumer-id-view__id-text"
-                  :class="{'consumer-id-view__id-text--registered': registrationFetched}">
-                  {{ consumerId }}
-                </span>
-              </div>
-              <div class="consumer-id-view__item">
-                <copy-button :text="consumerId" />
-              </div>
+              class="btn"
+              @click="openPaymentsUrl()">
+              Register Your ID
             </div>
-          </li>
-          <li>
-            <div v-if="!registrationFetched">
-              <p>
-                In order to use Mysterium VPN you need to have registered ID in Mysterium Blockchain
-                by staking your MYST tokens on it (i.e. paying for it).
-              </p>
-              <p>
-                To pay for the ID we suggest to use MetaMask wallet.
-                Please follow below instructions to proceed further:
-              </p>
-              <ul>
-                <li>1. Click on the “Register Your ID” button</li>
-                <li>2. Claim MYST and ETH test tokens</li>
-                <li>3. Allow Mysterium SmartContract to reserve MYST tokens</li>
-                <li>4. Register your ID by clicking on “Pay & Register For ID”</li>
-                <li>5. Wait for few minutes until the payment is processed</li>
-              </ul>
-              <div
-                class="btn"
-                @click="openPaymentsUrl()">
-                Register Your ID
-              </div>
-            </div>
-          </li>
-        </ul>
+          </div>
+        </nav-list>
       </div>
       <transition name="fade">
         <div
@@ -92,6 +91,7 @@
 
 import CloseButton from './close-button'
 import CopyButton from './copy-button'
+import NavList from './nav-list'
 import types from '../store/types'
 import { shell, clipboard } from 'electron'
 import { mapGetters } from 'vuex'
@@ -103,7 +103,8 @@ export default {
   components: {
     CloseButton,
     CopyButton,
-    LogoIcon
+    LogoIcon,
+    NavList
   },
   methods: {
     hideInstructions () {
