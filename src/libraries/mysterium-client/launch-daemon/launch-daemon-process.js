@@ -21,6 +21,8 @@ import type { TequilapiClient } from 'mysterium-tequilapi/lib/client'
 import type { LogCallback, Process } from '../index'
 import axios from 'axios'
 import ClientLogSubscriber from '../client-log-subscriber'
+import Monitoring from '../monitoring/monitoring'
+import logger from '../../../app/logger'
 
 /**
  * Spawns and stops 'mysterium_client' daemon on OSX
@@ -29,6 +31,7 @@ class LaunchDaemonProcess implements Process {
   _tequilapi: TequilapiClient
   _daemonPort: number
   _logs: ClientLogSubscriber
+  _monitoring: Monitoring
 
   /**
    * @constructor
@@ -36,10 +39,11 @@ class LaunchDaemonProcess implements Process {
    * @param {ClientLogSubscriber} logs
    * @param {string} daemonPort - port at which the daemon is spawned
    */
-  constructor (tequilapi: TequilapiClient, logs: ClientLogSubscriber, daemonPort: number) {
+  constructor (tequilapi: TequilapiClient, logs: ClientLogSubscriber, daemonPort: number, monitoring: Monitoring) {
     this._tequilapi = tequilapi
     this._logs = logs
     this._daemonPort = daemonPort
+    this._monitoring = monitoring
   }
 
   async start (): Promise<void> {
@@ -48,6 +52,20 @@ class LaunchDaemonProcess implements Process {
 
   async repair (): Promise<void> {
     await this.start()
+  }
+
+  async upgrade (): Promise<void> {
+    logger.info('Restarting: killing process')
+    await this.kill()
+    logger.info('Restarting: waiting for process to be down')
+    await this._monitoring.waitForStatusDownWithTimeout()
+
+    logger.info('Restarting: process is down, starting it up')
+    await this.start()
+    logger.info('Restarting: waiting for process to be up')
+    await this._monitoring.waitForStatusUpWithTimeout()
+
+    logger.info('Restarting: process is up')
   }
 
   async stop (): Promise<void> {

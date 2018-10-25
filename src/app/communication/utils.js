@@ -18,46 +18,6 @@
 // @flow
 import type { MessageReceiver } from './message-receiver'
 
-type Callback = (data: any) => void
-type Subscriber = (Callback) => void
-
-/**
- * Subscribes for specific event and resolves when first event is received.
- *
- * @param subscriber - function to subscribe for specific event
- *
- * @returns {Promise<any>}
- */
-function onFirstEvent (subscriber: Subscriber): Promise<any> {
-  return new Promise((resolve) => {
-    subscriber((data) => {
-      resolve(data)
-    })
-  })
-}
-
-/**
- * Subscribes for specific event and resolves when first event is received.
- *
- * @param subscriber - function to subscribe for specific event
- * @param timeout - timeout in miliseccons
- *
- * @returns {Promise<any>}
- */
-function onFirstEventOrTimeout (subscriber: Subscriber, timeout: number): Promise<void> {
-  return new Promise((resolve, reject) => {
-    const timer = setTimeout(
-      () => reject(new Error(`Promise timed out after ${timeout} ms`)),
-      timeout
-    )
-
-    subscriber((data) => {
-      clearTimeout(timer)
-      resolve(data)
-    })
-  })
-}
-
 function onceOnMessage<T> (receiver: MessageReceiver<T>, callback: T => void) {
   const wrapperCallback = (data: T) => {
     callback(data)
@@ -66,4 +26,4 @@ function onceOnMessage<T> (receiver: MessageReceiver<T>, callback: T => void) {
   receiver.on(wrapperCallback)
 }
 
-export { onFirstEvent, onFirstEventOrTimeout, onceOnMessage }
+export { onceOnMessage }

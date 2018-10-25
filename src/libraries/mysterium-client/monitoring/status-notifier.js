@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2017 The "mysteriumnetwork/mysterium-vpn" Authors.
+ * Copyright (C) 2018 The "mysteriumnetwork/mysterium-vpn" Authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,15 +17,14 @@
 
 // @flow
 
-import type { Installer } from '../index'
+import type { StatusCallback } from './monitoring'
 
-class StandaloneClientInstaller implements Installer {
-  async needsInstallation (): Promise<boolean> {
-    return false
-  }
+interface StatusNotifier {
+  start (): void,
 
-  async install (): Promise<void> {
-  }
+  stop (): void,
+
+  onStatus (callback: StatusCallback): void
 }
 
-export default StandaloneClientInstaller
+export type { StatusNotifier }

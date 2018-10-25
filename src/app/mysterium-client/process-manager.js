@@ -18,22 +18,21 @@
 // @flow
 
 import type { Installer, Process } from '../../libraries/mysterium-client'
-import type { Monitoring, EmptyCallback } from '../../libraries/mysterium-client/monitoring'
+import { logLevels as processLogLevels } from '../../libraries/mysterium-client'
+import Monitoring from '../../libraries/mysterium-client/monitoring/monitoring'
+import type { EmptyCallback } from '../../libraries/mysterium-client/monitoring/monitoring'
 import type { MainCommunication } from '../communication/main-communication'
 import LogCache from '../logging/log-cache'
 import VersionCheck from '../../libraries/mysterium-client/version-check'
 import translations from '../messages'
 import { SUDO_PROMT_PERMISSION_DENIED } from '../../libraries/mysterium-client/launch-daemon/launch-daemon-installer'
 import logger from '../logger'
-import { logLevels as processLogLevels } from '../../libraries/mysterium-client'
-import { onFirstEventOrTimeout } from '../communication/utils'
 import { METRICS } from '../bug-reporting/metrics/metrics'
 import FeatureToggle from '../features/feature-toggle'
 import type { BugReporter } from '../bug-reporting/interface'
 import type { BugReporterMetrics } from '../bug-reporting/metrics/bug-reporter-metrics'
 
 const LOG_PREFIX = '[ProcessManager]'
-const MYSTERIUM_CLIENT_WAITING_THRESHOLD = 10000
 
 class ProcessManager {
   _installer: Installer
@@ -126,43 +125,22 @@ class ProcessManager {
 
   async _ensureClientVersion () {
     this._logInfo('Waiting for process to check version')
-    await this._waitForProcessUp()
+    await this._monitoring.waitForStatusUpWithTimeout()
     if (await this._clientVersionMismatches()) {
       this._logInfo(`'mysterium_client' installed version does not match running version, killing it.`)
-      await this._restartClient()
+      await this._upgradeClient()
     } else {
       this._logInfo(`'mysterium_client' installed version matches running version`)
     }
   }
 
-  async _restartClient () {
+  async _upgradeClient () {
     try {
-      this._logInfo('Restarting: killing process')
-      await this._process.kill()
-
-      this._logInfo('Restarting: waiting for process to be down')
-      await this._waitForProcessDown()
-      this._logInfo('Restarting: process is down, starting it up')
-      await this._process.start()
-      this._logInfo('Restarting: waiting for process to be up')
-      await this._waitForProcessUp()
-      this._logInfo('Restering: process is up')
+      await this._process.upgrade()
     } catch (error) {
       this._logError(`Failed to restart 'mysterium_client' process`, error)
       throw error
     }
-  }
-
-  _waitForProcessDown (): Promise<void> {
-    return onFirstEventOrTimeout(
-      this._monitoring.onStatusDown.bind(this._monitoring),
-      MYSTERIUM_CLIENT_WAITING_THRESHOLD)
-  }
-
-  _waitForProcessUp (): Promise<void> {
-    return onFirstEventOrTimeout(
-      this._monitoring.onStatusUp.bind(this._monitoring),
-      MYSTERIUM_CLIENT_WAITING_THRESHOLD)
   }
 
   _startStatusReporting () {

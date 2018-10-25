@@ -34,6 +34,12 @@ interface Process {
   repair (): Promise<void>,
 
   /**
+   * Upgrades currently running process to the newest version.
+   * Should be invoked when old process is already running.
+   */
+  upgrade (): Promise<void>,
+
+  /**
    * Stop process gracefully.
    */
   stop (): Promise<void>,
