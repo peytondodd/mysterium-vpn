@@ -33,9 +33,6 @@ import ClientLogSubscriber from '../../../libraries/mysterium-client/client-log-
 import LaunchDaemonInstaller from '../../../libraries/mysterium-client/launch-daemon/launch-daemon-installer'
 import LaunchDaemonProcess from '../../../libraries/mysterium-client/launch-daemon/launch-daemon-process'
 
-import StandaloneClientInstaller from '../../../libraries/mysterium-client/standalone/standalone-client-installer'
-import StandaloneClientProcess from '../../../libraries/mysterium-client/standalone/standalone-client-process'
-
 import ServiceManagerInstaller, { SERVICE_MANAGER_BIN }
   from '../../../libraries/mysterium-client/service-manager/service-manager-installer'
 import ServiceManagerProcess from '../../../libraries/mysterium-client/service-manager/service-manager-process'
@@ -44,13 +41,13 @@ import { LAUNCH_DAEMON_PORT } from '../../../libraries/mysterium-client/launch-d
 import OSSystem from '../../../libraries/mysterium-client/system'
 import ServiceManager from '../../../libraries/mysterium-client/service-manager/service-manager'
 import ProcessManager from '../../../app/mysterium-client/process-manager'
-import TequilaMonitoring from '../../../libraries/mysterium-client/monitoring'
+import Monitoring from '../../../libraries/mysterium-client/monitoring/monitoring'
 import type { MainCommunication } from '../../../app/communication/main-communication'
 import LogCache from '../../../app/logging/log-cache'
 import VersionCheck from '../../../libraries/mysterium-client/version-check'
 import FeatureToggle from '../../../app/features/feature-toggle'
 import type { BugReporterMetrics } from '../../../app/bug-reporting/metrics/bug-reporter-metrics'
-import type { Monitoring } from '../../../libraries/mysterium-client/monitoring'
+import { TequilapiStatusNotifier } from '../../../libraries/mysterium-client/monitoring/tequilapi-status-notifier'
 
 declare var MYSTERIUM_CLIENT_VERSION: string
 
@@ -91,12 +88,12 @@ function bootstrap (container: Container) {
 
   container.service(
     'serviceManager',
-    ['mysteriumVpnApplication.config', 'mysteriumClient.platform'],
-    (mysteriumVpnConfig: MysteriumVpnConfig, platform: string) => {
+    ['mysteriumVpnApplication.config', 'mysteriumClient.platform', 'mysteriumClientMonitoring'],
+    (mysteriumVpnConfig: MysteriumVpnConfig, platform: string, mysteriumClientMonitoring: Monitoring) => {
       switch (platform) {
         case WINDOWS:
           let serviceManagerPath = path.join(mysteriumVpnConfig.contentsDirectory, 'bin', SERVICE_MANAGER_BIN)
-          return new ServiceManager(serviceManagerPath, new OSSystem())
+          return new ServiceManager(serviceManagerPath, new OSSystem(), mysteriumClientMonitoring)
         default:
           return null
       }
@@ -105,15 +102,17 @@ function bootstrap (container: Container) {
 
   container.service(
     'mysteriumClientInstaller',
-    ['mysteriumClient.config', 'mysteriumClient.platform', 'serviceManager'],
-    (config: ClientConfig, platform: string, serviceManager: ServiceManager) => {
+    ['mysteriumClient.config', 'mysteriumClient.platform', 'serviceManager', 'bugReporter'],
+    (config: ClientConfig, platform: string, serviceManager: ServiceManager, bugReporter: BugReporter) => {
       switch (platform) {
         case OSX:
           return new LaunchDaemonInstaller(config, new OSSystem())
         case WINDOWS:
           return new ServiceManagerInstaller(new OSSystem(), config, serviceManager)
         default:
-          return new StandaloneClientInstaller()
+          const message = `No installer implementation for platform: ${platform}`
+          bugReporter.captureErrorMessage(message)
+          throw new Error(message)
       }
     }
   )
@@ -153,7 +152,8 @@ function bootstrap (container: Container) {
       'mysteriumClient.logSubscriber',
       'mysteriumClient.platform',
       'mysteriumClientMonitoring',
-      'serviceManager'
+      'serviceManager',
+      'bugReporter'
     ],
     (
       tequilapiClient: TequilapiClient,
@@ -161,11 +161,12 @@ function bootstrap (container: Container) {
       logSubscriber: ClientLogSubscriber,
       platform: string,
       monitoring: Monitoring,
-      serviceManager: ServiceManager
+      serviceManager: ServiceManager,
+      bugReporter: BugReporter
     ) => {
       switch (platform) {
         case OSX:
-          return new LaunchDaemonProcess(tequilapiClient, logSubscriber, LAUNCH_DAEMON_PORT)
+          return new LaunchDaemonProcess(tequilapiClient, logSubscriber, LAUNCH_DAEMON_PORT, monitoring)
         case WINDOWS:
           return new ServiceManagerProcess(
             tequilapiClient,
@@ -174,7 +175,9 @@ function bootstrap (container: Container) {
             new OSSystem()
           )
         default:
-          return new StandaloneClientProcess(config)
+          const message = `No process implementation for platform: ${platform}`
+          bugReporter.captureErrorMessage(message)
+          throw new Error(message)
       }
     }
   )
@@ -182,7 +185,10 @@ function bootstrap (container: Container) {
   container.service(
     'mysteriumClientMonitoring',
     ['tequilapiClient'],
-    (tequilapiClient) => new TequilaMonitoring(tequilapiClient)
+    (tequilapiClient) => {
+      const notifier = new TequilapiStatusNotifier(tequilapiClient)
+      return new Monitoring(notifier)
+    }
   )
 
   container.service(

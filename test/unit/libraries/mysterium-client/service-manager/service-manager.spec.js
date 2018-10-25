@@ -24,7 +24,9 @@ import type { System } from '../../../../../src/libraries/mysterium-client/syste
 import type { ServiceState } from '../../../../../src/libraries/mysterium-client/service-manager/service-manager'
 import ServiceManager, { SERVICE_STATE }
   from '../../../../../src/libraries/mysterium-client/service-manager/service-manager'
-import { captureAsyncError } from '../../../../helpers/utils'
+import { captureAsyncError, nextTick } from '../../../../helpers/utils'
+import { MockStatusNotifier } from '../../../../helpers/mysterium-client/monitoring-mock'
+import Monitoring from '../../../../../src/libraries/mysterium-client/monitoring/monitoring'
 
 const SERVICE_MANAGER_PATH = '/service-manager/bin/servicemanager.exe'
 
@@ -58,6 +60,8 @@ describe('ServiceManager', () => {
   let systemMockManager: SystemMockManager
   let system: System
   let serviceManager: ServiceManager
+  let notifierMock: MockStatusNotifier
+  let monitoring: Monitoring
 
   const testCommand = async (command: () => Promise<ServiceState>, doCommand: string, resultState: ServiceState) => {
     const state = await command()
@@ -71,7 +75,10 @@ describe('ServiceManager', () => {
     const systemMock = createSystemMock()
     system = (systemMock: System)
     systemMockManager = (systemMock: SystemMockManager)
-    serviceManager = new ServiceManager(SERVICE_MANAGER_PATH, system)
+    notifierMock = new MockStatusNotifier()
+    monitoring = new Monitoring(notifierMock)
+    monitoring.start()
+    serviceManager = new ServiceManager(SERVICE_MANAGER_PATH, system, monitoring)
   })
 
   describe('.install', () => {
@@ -90,6 +97,37 @@ describe('ServiceManager', () => {
     })
   })
 
+  describe('.reinstall', () => {
+    it('re-installs service and waits for status up', async () => {
+      let reinstalled = false
+      serviceManager.reinstall().then(() => { reinstalled = true })
+      await nextTick()
+
+      expect(systemMockManager.sudoExecCalledCommands[0]).to.be.eql(
+        '"/service-manager/bin/servicemanager.exe" --do=stop' +
+        ' && "/service-manager/bin/servicemanager.exe" --do=uninstall' +
+        ' && "/service-manager/bin/servicemanager.exe" --do=install' +
+        ' && "/service-manager/bin/servicemanager.exe" --do=start'
+      )
+
+      expect(reinstalled).to.be.false
+
+      notifierMock.notifyStatus(true)
+      await nextTick()
+      expect(reinstalled).to.be.true
+    })
+
+    it('does not finishes if service is still up', async () => {
+      notifierMock.notifyStatus(true)
+
+      let reinstalled = false
+      serviceManager.reinstall().then(() => { reinstalled = true })
+      await nextTick()
+
+      expect(reinstalled).to.be.false
+    })
+  })
+
   describe('.start', () => {
     it('calls "servicemanager.exe start" with admin rights', async () => {
       await testCommand(serviceManager.start.bind(serviceManager), 'start', SERVICE_STATE.START_PENDING)
@@ -102,11 +140,14 @@ describe('ServiceManager', () => {
     })
 
     it('re-installs broken service', async () => {
+      systemMockManager.setMockCommandError('sc.exe query "MysteriumClient"', new Error('Status failed'))
       systemMockManager.setMockCommandError(
         '"/service-manager/bin/servicemanager.exe" --do=start',
         new Error('Command failed')
       )
-      await serviceManager.start()
+      const startPromise = serviceManager.start()
+      await nextTick()
+
       expect(systemMockManager.sudoExecCalledCommands).to.have.length(2)
       expect(systemMockManager.sudoExecCalledCommands[0])
         .to.be.eql('"/service-manager/bin/servicemanager.exe" --do=start')
@@ -115,6 +156,9 @@ describe('ServiceManager', () => {
           ' && "/service-manager/bin/servicemanager.exe" --do=install' +
           ' && "/service-manager/bin/servicemanager.exe" --do=start'
       )
+
+      notifierMock.notifyStatus(true)
+      await startPromise
     })
   })
 
@@ -146,15 +190,21 @@ describe('ServiceManager', () => {
         '"/service-manager/bin/servicemanager.exe" --do=restart',
         new Error('Command failed')
       )
-      await serviceManager.restart()
+      const restartPromise = serviceManager.restart()
+      await nextTick()
+
       expect(systemMockManager.sudoExecCalledCommands).to.have.length(2)
       expect(systemMockManager.sudoExecCalledCommands[0])
         .to.be.eql('"/service-manager/bin/servicemanager.exe" --do=restart')
       expect(systemMockManager.sudoExecCalledCommands[1]).to.be.eql(
-        '"/service-manager/bin/servicemanager.exe" --do=uninstall' +
+        '"/service-manager/bin/servicemanager.exe" --do=stop' +
+        ' && "/service-manager/bin/servicemanager.exe" --do=uninstall' +
         ' && "/service-manager/bin/servicemanager.exe" --do=install' +
         ' && "/service-manager/bin/servicemanager.exe" --do=start'
       )
+
+      notifierMock.notifyStatus(true)
+      await restartPromise
     })
   })
 
