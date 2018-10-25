@@ -24,8 +24,8 @@ import Monitoring from './monitoring'
 import sleep from '../../sleep'
 
 function waitForStatusUp (tequilapi: TequilapiClient, timeout: number): Promise<void> {
-  const process = new TequilapiStatusNotifier(tequilapi)
-  const monitoring = new Monitoring(process)
+  const notifier = new TequilapiStatusNotifier(tequilapi)
+  const monitoring = new Monitoring(notifier)
   const statusUpAsync = promisify(monitoring.onStatusChangeUp.bind(monitoring))
   monitoring.start()
 
@@ -33,7 +33,7 @@ function waitForStatusUp (tequilapi: TequilapiClient, timeout: number): Promise<
     throwErrorAfterTimeout(timeout),
     statusUpAsync()
   ]).finally(() => {
-    process.stop()
+    monitoring.stop()
   })
 }
 

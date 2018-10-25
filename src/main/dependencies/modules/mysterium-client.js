@@ -186,8 +186,8 @@ function bootstrap (container: Container) {
     'mysteriumClientMonitoring',
     ['tequilapiClient'],
     (tequilapiClient) => {
-      const process = new TequilapiStatusNotifier(tequilapiClient)
-      return new Monitoring(process)
+      const notifier = new TequilapiStatusNotifier(tequilapiClient)
+      return new Monitoring(notifier)
     }
   )
 
