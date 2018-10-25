@@ -27,6 +27,12 @@
     transform: translate3d(-100%, 0, 0);
     transition: transform 300ms @easeOutQuad;
   }
+  &__content-bottom {
+    height: 62%;
+    display: grid;
+    grid-template-columns: 1fr;
+    align-content: end;
+  }
   &__navicon {
     padding: 1.5rem;
     position: absolute;
@@ -89,10 +95,6 @@
     padding-left: 2.4rem;
   }
   &__logout {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    left: 0;
     padding: 1.2rem 0;
     border-top: 1px solid #eee;
   }

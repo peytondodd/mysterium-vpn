@@ -20,7 +20,6 @@
     class="nav"
     :class="{'is-open':navOpen}">
     <div class="nav__content">
-      <div class="control__version">{{ version }}</div>
       <div
         class="nav__navicon"
         @click="switchNav(!navOpen)">
@@ -43,8 +42,8 @@
           slot="item"
           class="nav__trigger"
           href="#"
-          @click="suggestFeature">
-          <icon-issue class="nav__icon nav__icon--issue"/>
+          @click="openRemoteLink('https://mysterium.network/')">
+          <icon-eye class="nav__icon nav__icon--eye"/>
           <span class="nav__text">suggest feature</span>
         </a>
         <a
@@ -60,14 +59,18 @@
       <div class="nav__settings">
         <disconnect-notification-settings/>
       </div>
-      <div class="nav__logout">
-        <a
-          class="nav__trigger"
-          href="#"
-          @click="quit()">
-          <icon-quit class="nav__icon nav__icon--quit"/>
-          <span class="nav__text">quit</span>
-        </a>
+
+      <div class="nav__content-bottom">
+        <div class="control__version">{{ version }}</div>
+        <div class="nav__logout">
+          <a
+            class="nav__trigger"
+            href="#"
+            @click="quit()">
+            <icon-quit class="nav__icon nav__icon--quit"/>
+            <span class="nav__text">quit</span>
+          </a>
+        </div>
       </div>
     </div>
     <transition name="fade">
@@ -113,9 +116,6 @@ export default {
     },
     openRemoteLink (url) {
       shell.openExternal(url)
-    },
-    suggestFeature () {
-      shell.openExternal('https://mysterium.network/')
     },
     reportIssue () {
       this.feedbackForm.show()
