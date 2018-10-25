@@ -43,6 +43,14 @@
           slot="item"
           class="nav__trigger"
           href="#"
+          @click="suggestFeature">
+          <icon-issue class="nav__icon nav__icon--issue"/>
+          <span class="nav__text">suggest feature</span>
+        </a>
+        <a
+          slot="item"
+          class="nav__trigger"
+          href="#"
           @click="reportIssue">
           <icon-issue class="nav__icon nav__icon--issue"/>
           <span class="nav__text">report issue</span>
@@ -105,6 +113,9 @@ export default {
     },
     openRemoteLink (url) {
       shell.openExternal(url)
+    },
+    suggestFeature () {
+      shell.openExternal('https://mysterium.network/')
     },
     reportIssue () {
       this.feedbackForm.show()
