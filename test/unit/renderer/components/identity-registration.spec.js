@@ -36,10 +36,10 @@ import types from '../../../../src/renderer/store/types'
 describe('IdentityRegistration', () => {
   let rendererCommunication: RendererCommunication
   let mainCommunication: MainCommunication
-  let vue: IdentityRegistration
+  let wrapper: IdentityRegistration
   let store: Vuex.Store
 
-  beforeEach(() => {
+  function mountEverything (stateOverride = {}) {
     const vm = createLocalVue()
     vm.use(Vuex)
 
@@ -56,11 +56,7 @@ describe('IdentityRegistration', () => {
     const bugReporter = new BugReporterMock()
     const identity = {
       ...identityStoreFactory(bugReporter, rendererCommunication),
-      state: {
-        current: {
-          id: '0x1'
-        }
-      }
+      state: stateOverride
     }
     store = new Vuex.Store({
       modules: {
@@ -69,24 +65,44 @@ describe('IdentityRegistration', () => {
       }
     })
 
-    vue = mount(IdentityRegistration, {
+    wrapper = mount(IdentityRegistration, {
       localVue: vm,
       store
     })
+  }
+
+  describe('HTML rendering when State is not OK', () => {
+    beforeEach(() => {
+      mountEverything({
+        current: null
+      })
+    })
+
+    it('should still render component', () => {
+      expect(wrapper.findAll('#identity-registration')).to.have.lengthOf(1)
+    })
   })
 
-  describe('HTML rendering', () => {
+  describe('HTML rendering when State is OK', () => {
+    beforeEach(() => {
+      mountEverything({
+        current: {
+          id: '0x1'
+        }
+      })
+    })
+
     it('renders instructions when menu is opened', () => {
       mainCommunication.identityRegistration.send(new IdentityRegistrationDTO({ registered: false }))
-      expect(vue.findAll('#registration-instructions.is-open')).to.have.lengthOf(0)
+      expect(wrapper.findAll('#registration-instructions.is-open')).to.have.lengthOf(0)
       store.commit(types.SHOW_IDENTITY_MENU)
-      expect(vue.findAll('#registration-instructions.is-open')).to.have.lengthOf(1)
+      expect(wrapper.findAll('#registration-instructions.is-open')).to.have.lengthOf(1)
     })
 
     it('renders client ID', () => {
-      expect(vue.findAll('.consumer-id-view__item')).to.have.lengthOf(3, 'has 3 elements')
-      expect(vue.findAll('.consumer-id-view__id-text')).to.have.lengthOf(1, 'has ID text')
-      expect(vue.findAll('.copy-button')).to.have.lengthOf(1, 'has Copy Button')
+      expect(wrapper.findAll('.consumer-id-view__item')).to.have.lengthOf(3, 'has 3 elements')
+      expect(wrapper.findAll('.consumer-id-view__id-text')).to.have.lengthOf(1, 'has ID text')
+      expect(wrapper.findAll('.copy-button')).to.have.lengthOf(1, 'has Copy Button')
     })
   })
 })

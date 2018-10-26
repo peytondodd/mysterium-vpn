@@ -20,6 +20,7 @@ import type { Container } from '../../../app/di'
 import Vue from 'vue'
 import axios from 'axios'
 import App from '../../app'
+import logger from '../../../app/logger'
 import routerFactory from '../../router/factory'
 import storeFactory from '../../store/factory'
 import mainFactory from '../../store/modules/main'
@@ -39,13 +40,17 @@ function bootstrap (container: Container) {
   )
   container.service(
     'vue-application',
-    [],
-    () => {
+    ['bugReporter'],
+    (bugReporter) => {
       if (!process.env.IS_WEB) {
         Vue.use(require('vue-electron'))
       }
       Vue.http = Vue.prototype.$http = axios
       Vue.config.productionTip = false
+      Vue.config.errorHandler = (err) => {
+        logger.error('Unhandled error:', err)
+        bugReporter.captureErrorException(err)
+      }
 
       return new Vue({
         components: { App },

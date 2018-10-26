@@ -21,6 +21,7 @@ import IdentityDTO from 'mysterium-tequilapi/lib/dto/identity'
 import type { BugReporter } from '../../../app/bug-reporting/interface'
 import type { RendererCommunication } from '../../../app/communication/renderer-communication'
 import IdentityRegistrationDTO from 'mysterium-tequilapi/lib/dto/identity-registration'
+import logger from '../../../app/logger'
 
 type State = {
   current: ?IdentityDTO,
@@ -60,10 +61,11 @@ function mutationsFactory (bugReporter: BugReporter, communication: RendererComm
 }
 
 const getters = {
-  currentIdentity (state: State): string {
+  currentIdentity (state: State): ?string {
     const identity = state.current
     if (!identity) {
-      throw new Error('Trying to get identity which is not present')
+      logger.warn('Trying to get identity which is not present')
+      return null
     }
     return identity.id
   },
