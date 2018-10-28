@@ -17,6 +17,8 @@
 
 .nav {
   &__content {
+    display: grid;
+    align-content: space-between;
     background-color: @white;
     width: 24.2rem;
     position: absolute;
@@ -28,7 +30,6 @@
     transition: transform 300ms @easeOutQuad;
   }
   &__content-bottom {
-    height: 62%;
     display: grid;
     grid-template-columns: 1fr;
     align-content: end;
