@@ -21,13 +21,16 @@
  */
 export default {
   name: 'NavList',
+  functional: true,
   props: {
 
   },
   components: {},
-  render (h) {
-    let links = this.$slots.item.map(l => h('li', { class: 'nav__item' }, [l]))
-    return h('ul', { class: 'nav__list' }, links)
+  render (h, { slots, data }) {
+    let links = slots().item.map(slotItem => h('li', { class: 'nav__item' }, [slotItem]))
+
+    const classNames = data.staticClass ? `nav__list ${data.staticClass}` : 'nav__list'
+    return h('ul', { class: classNames }, links)
   }
 }
 </script>
