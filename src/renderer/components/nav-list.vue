@@ -22,10 +22,6 @@
 export default {
   name: 'NavList',
   functional: true,
-  props: {
-
-  },
-  components: {},
   render (h, { slots, data }) {
     let links = slots().item.map(slotItem => h('li', { class: 'nav__item' }, [slotItem]))
 

@@ -17,8 +17,9 @@
 
 .nav {
   &__content {
-    display: grid;
-    align-content: space-between;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     background-color: @white;
     width: 24.2rem;
     position: absolute;
@@ -30,8 +31,8 @@
     transition: transform 300ms @easeOutQuad;
   }
   &__content-bottom {
-    display: grid;
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
     align-content: end;
   }
   &__navicon {
