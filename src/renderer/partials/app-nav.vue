@@ -43,8 +43,8 @@
             slot="item"
             class="nav__trigger"
             href="#"
-            @click="openRemoteLink('https://mysterium.network/')">
-            <icon-eye class="nav__icon nav__icon--eye"/>
+            @click="openRemoteLink('https://mysterium.typeform.com/to/gP2jAk')">
+            <icon-lightbulb class="nav__icon nav__icon--eye"/>
             <span class="nav__text">suggest feature</span>
           </a>
           <a
@@ -90,6 +90,7 @@ import { mapGetters, mapActions } from 'vuex'
 import IconIssue from '@/assets/img/icon--issue.svg'
 import IconEye from '@/assets/img/icon--eye.svg'
 import IconQuit from '@/assets/img/icon--quit.svg'
+import IconLightbulb from '@/assets/img/icon--lightbulb.svg'
 import DisconnectNotificationSettings from '@/components/disconnect-notification-setting'
 import NavList from '../components/nav-list'
 import { getVersionLabel } from '../../libraries/version'
@@ -101,6 +102,7 @@ export default {
     IconEye,
     IconIssue,
     IconQuit,
+    IconLightbulb,
     DisconnectNotificationSettings,
     NavList
   },
