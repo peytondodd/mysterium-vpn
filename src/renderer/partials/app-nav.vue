@@ -20,47 +20,59 @@
     class="nav"
     :class="{'is-open':navOpen}">
     <div class="nav__content">
-      <div class="control__version">{{ version }}</div>
-      <div
-        class="nav__navicon"
-        @click="switchNav(!navOpen)">
-        <div class="nav__burger burger">
-          <i class="burger__bar burger__bar--1"/>
-          <i class="burger__bar burger__bar--2"/>
-          <i class="burger__bar burger__bar--3"/>
+      <div class="nav__content-top">
+        <div
+          class="nav__navicon"
+          @click="switchNav(!navOpen)">
+          <div class="nav__burger burger">
+            <i class="burger__bar burger__bar--1"/>
+            <i class="burger__bar burger__bar--2"/>
+            <i class="burger__bar burger__bar--3"/>
+          </div>
         </div>
-      </div>
-      <ul class="nav__list">
-        <li class="nav__item">
+        <nav-list>
           <a
+            slot="item"
             class="nav__trigger"
             href="#"
             @click="openRemoteLink('https://mysterium.network/')">
             <icon-eye class="nav__icon nav__icon--eye"/>
             <span class="nav__text">about</span>
           </a>
-        </li>
-        <li class="nav__item">
           <a
+            slot="item"
+            class="nav__trigger"
+            href="#"
+            @click="openRemoteLink('https://mysterium.typeform.com/to/gP2jAk')">
+            <icon-lightbulb class="nav__icon nav__icon--eye"/>
+            <span class="nav__text">suggest feature</span>
+          </a>
+          <a
+            slot="item"
             class="nav__trigger"
             href="#"
             @click="reportIssue">
             <icon-issue class="nav__icon nav__icon--issue"/>
             <span class="nav__text">report issue</span>
           </a>
-        </li>
-      </ul>
-      <div class="nav__settings">
-        <disconnect-notification-settings/>
+        </nav-list>
+
+        <div class="nav__settings">
+          <disconnect-notification-settings/>
+        </div>
       </div>
-      <div class="nav__logout">
-        <a
-          class="nav__trigger"
-          href="#"
-          @click="quit()">
-          <icon-quit class="nav__icon nav__icon--quit"/>
-          <span class="nav__text">quit</span>
-        </a>
+
+      <div class="nav__content-bottom">
+        <div class="control__version">{{ version }}</div>
+        <div class="nav__logout">
+          <a
+            class="nav__trigger"
+            href="#"
+            @click="quit()">
+            <icon-quit class="nav__icon nav__icon--quit"/>
+            <span class="nav__text">quit</span>
+          </a>
+        </div>
       </div>
     </div>
     <transition name="fade">
@@ -78,7 +90,9 @@ import { mapGetters, mapActions } from 'vuex'
 import IconIssue from '@/assets/img/icon--issue.svg'
 import IconEye from '@/assets/img/icon--eye.svg'
 import IconQuit from '@/assets/img/icon--quit.svg'
+import IconLightbulb from '@/assets/img/icon--lightbulb.svg'
 import DisconnectNotificationSettings from '@/components/disconnect-notification-setting'
+import NavList from '../components/nav-list'
 import { getVersionLabel } from '../../libraries/version'
 
 export default {
@@ -88,7 +102,9 @@ export default {
     IconEye,
     IconIssue,
     IconQuit,
-    DisconnectNotificationSettings
+    IconLightbulb,
+    DisconnectNotificationSettings,
+    NavList
   },
   computed: {
     // mix the getters into computed with object spread operator
