@@ -20,8 +20,6 @@
     id="app"
     class="app">
     <div id="content">
-      <IdentityRegistration v-if="paymentsAreEnabled"/>
-
       <app-modal
         v-if="overlayError"
         :close="false">
@@ -46,7 +44,6 @@
 <script>
 import { mapGetters } from 'vuex'
 import type from '@/store/types'
-import IdentityRegistration from './components/identity-registration'
 import AppVisual from '@/partials/app-visual'
 import AppNav from '@/partials/app-nav'
 import AppError from '@/partials/app-error'
@@ -60,8 +57,7 @@ export default {
     AppVisual,
     AppNav,
     AppError,
-    AppModal,
-    IdentityRegistration
+    AppModal
   },
   dependencies: ['rendererCommunication', 'syncCommunication', 'logger', 'bugReporterMetrics', 'featureToggle'],
   computed: {
