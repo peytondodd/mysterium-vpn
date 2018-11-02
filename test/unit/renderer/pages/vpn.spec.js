@@ -54,6 +54,7 @@ describe('Vpn', () => {
     dependencies.constant('userSettingsStore', new UserSettingsProxy(communication))
     dependencies.constant('countryImageResolver', new CountryImageResolver(bugReporterMock))
     dependencies.constant('featureToggle', new FeatureToggle({ payments: paymentsEnabled }))
+    dependencies.constant('getPaymentLink', () => {})
 
     const store = new Store({
       getters: {
