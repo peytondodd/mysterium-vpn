@@ -1,6 +1,7 @@
 dist/electron/*
 dist/web/*
 build/*
+!build/installer.nsh
 !build/icons
 !build/background.*
 node_modules/
