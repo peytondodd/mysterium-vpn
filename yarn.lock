@@ -7814,10 +7814,10 @@ mute-stream@0.0.7, mute-stream@~0.0.4:
   resolved "https://registry.yarnpkg.com/mute-stream/-/mute-stream-0.0.7.tgz#3075ce93bc21b8fab43e1bc4da7e8115ed1e7bab"
   integrity sha1-MHXOk7whuPq0PhvE2n6BFe0ee6s=
 
-mysterium-client-bin@0.2.3:
-  version "0.2.3"
-  resolved "https://registry.yarnpkg.com/mysterium-client-bin/-/mysterium-client-bin-0.2.3.tgz#3b8fd8e1fee7f37200cd4552299db95396818301"
-  integrity sha512-soI2LBAYOq/UHQiAUVDd8A+4+EFyCHWvkNQDwagWNxQPunqL3K74yMjVtcKeFaTWfs1j0E4VgJAn32u0s1Ri0A==
+mysterium-client-bin@0.3.2:
+  version "0.3.2"
+  resolved "https://registry.yarnpkg.com/mysterium-client-bin/-/mysterium-client-bin-0.3.2.tgz#d4920c7cba4f996b9c151d925afdcbb9971bb874"
+  integrity sha512-E9Wfj2TYM3AmHZ5JOUtJM3IMr+iVehxsTeAJYyi5GX9WglTV+RzxQslZzSW0I4piyO8LVJ5YoPi468qcK6z0Eg==
   dependencies:
     extract-zip "^1.6.7"
     follow-redirects "^1.5.2"
