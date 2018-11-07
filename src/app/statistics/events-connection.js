@@ -20,6 +20,7 @@
 // @flow
 
 import type { EventSender } from './event-sender'
+import EVENT_NAMES from './event-names'
 
 type UserTime = {
   localTime: number,
@@ -61,15 +62,15 @@ class ConnectEventTracker {
     this._insertEndTimesIntoEventDetails()
     if (error) {
       this._eventDetails['error'] = error
-      return this._eventSender.send('connect_failed', this._eventDetails)
+      return this._eventSender.send(EVENT_NAMES.CONNECT_FAILED, this._eventDetails)
     }
-    return this._eventSender.send('connect_successful', this._eventDetails)
+    return this._eventSender.send(EVENT_NAMES.CONNECT_SUCCESSFUL, this._eventDetails)
   }
 
   async connectCanceled (): Promise<any> {
     this._checkConnectStarted()
     this._insertEndTimesIntoEventDetails()
-    return this._eventSender.send('connect_canceled', this._eventDetails)
+    return this._eventSender.send(EVENT_NAMES.CONNECT_CANCELED, this._eventDetails)
   }
 
   _checkConnectStarted (): void {

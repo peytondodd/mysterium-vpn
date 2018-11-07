@@ -20,6 +20,7 @@
 import type from '../types'
 import type { TequilapiClient } from 'mysterium-tequilapi/lib/client'
 import type { EventSender } from '../../../app/statistics/event-sender'
+import EVENT_NAMES from '../../../app/statistics/event-names'
 
 type State = {
   init: string,
@@ -97,8 +98,6 @@ const mutations = {
   }
 }
 
-const CLIENT_STARTED_EVENT = 'client_started'
-
 function actionsFactory (tequilapi: TequilapiClient, eventSender: EventSender) {
   return {
     switchNav ({ commit }, open: boolean) {
@@ -111,7 +110,7 @@ function actionsFactory (tequilapi: TequilapiClient, eventSender: EventSender) {
       const res = await tequilapi.healthCheck()
       const version = res.version
       commit(type.CLIENT_VERSION, version)
-      eventSender.send(CLIENT_STARTED_EVENT, { client_version: version })
+      eventSender.send(EVENT_NAMES.CLIENT_STARTED, { client_version: version })
     },
     setNavVisibility ({ commit }, visible: boolean) {
       commit(type.SET_NAV_VISIBLE, visible)
