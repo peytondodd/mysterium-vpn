@@ -91,8 +91,8 @@ function bootstrap (container: Container) {
   )
   container.service(
     'vue-store.main',
-    ['tequilapiClient'],
-    (tequilapiClient) => mainFactory(tequilapiClient)
+    ['tequilapiClient', 'eventSender'],
+    (tequilapiClient, eventSender) => mainFactory(tequilapiClient, eventSender)
   )
   container.service(
     'vue-store.identity',
