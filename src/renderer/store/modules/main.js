@@ -19,6 +19,8 @@
 // TODO: rename to `vpn.js` to be consistent with `Vpn.vue`
 import type from '../types'
 import type { TequilapiClient } from 'mysterium-tequilapi/lib/client'
+import type { EventSender } from '../../../app/statistics/event-sender'
+import EVENT_NAMES from '../../../app/statistics/event-names'
 
 type State = {
   init: string,
@@ -96,7 +98,7 @@ const mutations = {
   }
 }
 
-function actionsFactory (tequilapi: TequilapiClient) {
+function actionsFactory (tequilapi: TequilapiClient, eventSender: EventSender) {
   return {
     switchNav ({ commit }, open: boolean) {
       commit(type.SET_NAV_OPEN, open)
@@ -106,7 +108,9 @@ function actionsFactory (tequilapi: TequilapiClient) {
     },
     async [type.CLIENT_VERSION] ({ commit }) {
       const res = await tequilapi.healthCheck()
-      commit(type.CLIENT_VERSION, res.version)
+      const version = res.version
+      commit(type.CLIENT_VERSION, version)
+      eventSender.send(EVENT_NAMES.CLIENT_STARTED, { client_version: version })
     },
     setNavVisibility ({ commit }, visible: boolean) {
       commit(type.SET_NAV_VISIBLE, visible)
@@ -114,12 +118,12 @@ function actionsFactory (tequilapi: TequilapiClient) {
   }
 }
 
-function factory (tequilapi: TequilapiClient) {
+function factory (tequilapi: TequilapiClient, eventSender: EventSender) {
   return {
     state: stateFactory(),
     mutations,
     getters,
-    actions: actionsFactory(tequilapi)
+    actions: actionsFactory(tequilapi, eventSender)
   }
 }
 

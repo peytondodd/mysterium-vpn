@@ -20,10 +20,7 @@
 import os from 'os'
 import type { EventSender } from './event-sender'
 import osName from 'os-name'
-
-const STARTUP_EVENT_NAME = 'runtime_environment_details'
-const APP_START_EVENT_NAME = 'app_start'
-const APP_START_SUCCESS_EVENT_NAME = 'app_start_success'
+import EVENT_NAMES from './event-names'
 
 /**
  * Sends startup event.
@@ -36,11 +33,11 @@ class StartupEventTracker {
   }
 
   async sendAppStartEvent () {
-    await this._eventSender.send(APP_START_EVENT_NAME, {})
+    await this._eventSender.send(EVENT_NAMES.APP_START, {})
   }
 
   async sendAppStartSuccessEvent () {
-    await this._eventSender.send(APP_START_SUCCESS_EVENT_NAME, {})
+    await this._eventSender.send(EVENT_NAMES.APP_START_SUCCESS, {})
   }
 
   async sendRuntimeEnvironmentDetails (identity: string) {
@@ -50,7 +47,7 @@ class StartupEventTracker {
       osRelease: os.release(),
       identity
     }
-    await this._eventSender.send(STARTUP_EVENT_NAME, context)
+    await this._eventSender.send(EVENT_NAMES.STARTUP, context)
   }
 }
 
