@@ -111,7 +111,7 @@ function actionsFactory (tequilapi: TequilapiClient, eventSender: EventSender) {
       const res = await tequilapi.healthCheck()
       const version = res.version
       commit(type.CLIENT_VERSION, version)
-      eventSender.send(CLIENT_STARTED_EVENT, { version: version })
+      eventSender.send(CLIENT_STARTED_EVENT, { client_version: version })
     },
     setNavVisibility ({ commit }, visible: boolean) {
       commit(type.SET_NAV_VISIBLE, visible)

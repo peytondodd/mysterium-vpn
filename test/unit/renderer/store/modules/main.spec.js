@@ -136,7 +136,12 @@ describe('main store', () => {
 
         await actions[type.CLIENT_VERSION]({ commit })
 
-        expect(mockEventSender.events).to.eql([{ eventName: 'client_started', context: { version: 'mock version' } }])
+        expect(mockEventSender.events).to.eql([
+          {
+            eventName: 'client_started',
+            context: { client_version: 'mock version' }
+          }
+        ])
       })
     })
   })
