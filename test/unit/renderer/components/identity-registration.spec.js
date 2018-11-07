@@ -32,6 +32,7 @@ import EmptyTequilapiClientMock from '../store/modules/empty-tequilapi-client-mo
 import identityStoreFactory from '../../../../src/renderer/store/modules/identity'
 import BugReporterMock from '../../../helpers/bug-reporter-mock'
 import types from '../../../../src/renderer/store/types'
+import MockEventSender from '../../../helpers/statistics/mock-event-sender'
 
 describe('IdentityRegistration', () => {
   let rendererCommunication: RendererCommunication
@@ -60,7 +61,7 @@ describe('IdentityRegistration', () => {
     }
     store = new Vuex.Store({
       modules: {
-        main: mainStoreFactory(tequilapi),
+        main: mainStoreFactory(tequilapi, new MockEventSender()),
         identity: identity
       }
     })

@@ -64,7 +64,7 @@ describe('Vpn', () => {
         showError () {}
       },
       modules: {
-        main: mainStoreFactory(new EmptyTequilapiClientMock()),
+        main: mainStoreFactory(new EmptyTequilapiClientMock(), new MockEventSender()),
         identity: identityStoreFactory(bugReporterMock, communication)
       }
     })

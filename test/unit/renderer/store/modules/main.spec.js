@@ -26,6 +26,7 @@ import type { NodeHealthcheckDTO } from 'mysterium-tequilapi/lib/dto/node-health
 import NodeBuildInfoDTO from 'mysterium-tequilapi/lib/dto/node-build-info'
 import type { State } from '../../../../../src/renderer/store/modules/main'
 import factory from '../../../../../src/renderer/store/modules/main'
+import MockEventSender from '../../../../helpers/statistics/mock-event-sender'
 
 function initialState (): State {
   return {
@@ -59,10 +60,12 @@ class MainTequilapiClientMock extends EmptyTequilapiClientMock {
 describe('main store', () => {
   let store
   let client: MainTequilapiClientMock
+  let mockEventSender: MockEventSender
 
   beforeEach(() => {
     client = new MainTequilapiClientMock()
-    store = factory(client)
+    mockEventSender = new MockEventSender()
+    store = factory(client, mockEventSender)
   })
 
   describe('mutations', () => {
@@ -125,6 +128,20 @@ describe('main store', () => {
         await actions[type.CLIENT_VERSION]({ commit })
 
         expect(recorder.arguments).to.eql([type.CLIENT_VERSION, 'mock version'])
+      })
+
+      it('sends version to Elk', async () => {
+        const recorder = new CallbackRecorder()
+        const commit = recorder.getCallback()
+
+        await actions[type.CLIENT_VERSION]({ commit })
+
+        expect(mockEventSender.events).to.eql([
+          {
+            eventName: 'client_started',
+            context: { client_version: 'mock version' }
+          }
+        ])
       })
     })
   })

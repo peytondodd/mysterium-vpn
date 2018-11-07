@@ -40,6 +40,7 @@ import { nextTick } from '../../../helpers/utils'
 import FakeMessageBus from '../../../helpers/fake-message-bus'
 import TequilapiError from 'mysterium-tequilapi/lib/tequilapi-error'
 import { buildRendererCommunication } from '../../../../src/app/communication/renderer-communication'
+import MockEventSender from '../../../helpers/statistics/mock-event-sender'
 
 describe('VpnLoader', () => {
   const tequilapi = tequilapiMockCreate()
@@ -66,7 +67,7 @@ describe('VpnLoader', () => {
     const store = new Vuex.Store({
       modules: {
         identity: idStoreFactory(bugReporter, communication),
-        main: mainStoreFactory(tequilapi),
+        main: mainStoreFactory(tequilapi, new MockEventSender()),
         errors: errorStoreFactory(),
         connection: {
           actions: {
