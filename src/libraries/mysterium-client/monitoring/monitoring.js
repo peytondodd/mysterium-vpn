@@ -96,6 +96,11 @@ class Monitoring {
     }
   }
 
+  // TODO: unify
+  removeOnStatusDown (callback: EmptyCallback): void {
+    this._downSubscriber.unsubscribe(callback)
+  }
+
   waitForStatusDownWithTimeout (): Promise<void> {
     return onFirstEventOrTimeout(this.onStatusDown.bind(this), MYSTERIUM_CLIENT_WAITING_THRESHOLD)
   }
