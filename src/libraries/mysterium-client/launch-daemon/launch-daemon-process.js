@@ -70,7 +70,8 @@ class LaunchDaemonProcess implements Process {
     const unsubscribe = this._monitoring.onStatusDown(() => { this.start() })
     try {
       logger.info('Upgrading: waiting for upgraded client')
-      await this._waitForUpgrade(15000)
+      const UPGRADE_WAITING_TIMEOUT = 15000
+      await this._waitForUpgrade(UPGRADE_WAITING_TIMEOUT)
     } finally {
       unsubscribe()
     }
@@ -84,13 +85,13 @@ class LaunchDaemonProcess implements Process {
       timeFinished = true
     }, timeout)
 
+    const RETRY_DELAY = 200
     // eslint-disable-next-line no-unmodified-loop-condition
     while (!timeFinished) {
       if (await this._isUpgradeFinished()) {
         return
       }
-      const delay = 200
-      await sleep(delay)
+      await sleep(RETRY_DELAY)
     }
     throw new Error('Waiting for upgrade timed out')
   }
