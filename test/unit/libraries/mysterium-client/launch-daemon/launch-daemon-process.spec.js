@@ -27,12 +27,25 @@ import EmptyTequilapiClientMock from '../../../renderer/store/modules/empty-tequ
 import { MockStatusNotifier } from '../../../../helpers/mysterium-client/monitoring-mock'
 import { nextTick } from '../../../../helpers/utils'
 import Monitoring from '../../../../../src/libraries/mysterium-client/monitoring/monitoring'
+import VersionCheck from '../../../../../src/libraries/mysterium-client/version-check'
+import type { NodeHealthcheckDTO } from 'mysterium-tequilapi/lib/dto/node-healthcheck'
+import NodeBuildInfoDTO from 'mysterium-tequilapi/lib/dto/node-build-info'
 
 class TequilapiClientMock extends EmptyTequilapiClientMock {
   stopped: boolean = false
+  mockVersion: string = '1.0.0'
 
   async stop (): Promise<void> {
     this.stopped = true
+  }
+
+  async healthCheck (_timeout: ?number): Promise<NodeHealthcheckDTO> {
+    return {
+      uptime: '',
+      process: 0,
+      version: this.mockVersion,
+      buildInfo: new NodeBuildInfoDTO({})
+    }
   }
 }
 
@@ -54,7 +67,8 @@ describe('LaunchDaemonProcess', () => {
       tequilApi,
       logSubscriber,
       1234,
-      monitoring
+      monitoring,
+      new VersionCheck(tequilApi, '1.1.0')
     )
 
     processStarted = false
@@ -73,17 +87,25 @@ describe('LaunchDaemonProcess', () => {
   })
 
   describe('.upgrade', () => {
-    it('kills process, waits for healthcheck down and starts it', async () => {
+    it('kills process and waits for new client version', async () => {
       const upgradePromise = process.upgrade()
 
       expect(tequilApi.stopped).to.be.true
 
+      tequilApi.mockVersion = '1.1.0'
+      await upgradePromise
+    })
+
+    it('starts client when it is down', async () => {
+      const upgradePromise = process.upgrade()
+      await nextTick()
+
       expect(processStarted).to.be.false
       notifierMock.notifyStatus(false)
-      await nextTick()
-      notifierMock.notifyStatus(true)
 
+      tequilApi.mockVersion = '1.1.0'
       await upgradePromise
+
       expect(processStarted).to.be.true
     })
   })
