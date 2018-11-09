@@ -70,4 +70,17 @@ describe('Subscriber', () => {
     expect(value1).to.eql('hey')
     expect(value2).to.eql('hey')
   })
+
+  it('returns function which unsubscribes', () => {
+    const values: Array<string> = []
+    const unsubscribe = subscriber.subscribe((value: string) => {
+      values.push(value)
+    })
+
+    subscriber.notify('hello')
+    unsubscribe()
+    subscriber.notify('world')
+
+    expect(values).to.eql(['hello'])
+  })
 })

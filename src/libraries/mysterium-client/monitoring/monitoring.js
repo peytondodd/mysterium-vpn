@@ -19,6 +19,7 @@
 import Subscriber from '../../subscriber'
 import type { StatusNotifier } from './status-notifier'
 import { onFirstEventOrTimeout } from '../../../app/events'
+import type { Unsubscriber } from '../../subscriber'
 
 const HEALTH_CHECK_INTERVAL = 1500
 
@@ -27,7 +28,7 @@ type EmptyCallback = () => void
 
 const MYSTERIUM_CLIENT_WAITING_THRESHOLD = 10000
 
-// TODO: allow unsubscribing from events
+// TODO: ensure that users unsubscribe
 class Monitoring {
   _statusSubscriber: Subscriber<boolean> = new Subscriber()
   _upSubscriber: Subscriber<void> = new Subscriber()
@@ -57,70 +58,65 @@ class Monitoring {
   /**
    * Triggers once service is up. Triggers instantly if it is already up.
    */
-  onStatusUp (callback: EmptyCallback): void {
-    this.onNewStatusUp(callback)
+  onStatusUp (callback: EmptyCallback): Unsubscriber {
     if (this._lastStatus) {
       callback()
     }
+    return this.onNewStatusUp(callback)
   }
 
   waitForStatusUpWithTimeout (): Promise<void> {
-    return onFirstEventOrTimeout(this.onStatusUp.bind(this), MYSTERIUM_CLIENT_WAITING_THRESHOLD)
+    return onFirstEventOrTimeout((cb) => { this.onStatusUp(cb) }, MYSTERIUM_CLIENT_WAITING_THRESHOLD)
   }
 
   /**
    * Triggers once service is up. Does not trigger instantly if it is already up.
    */
-  onNewStatusUp (callback: EmptyCallback): void {
-    this._upSubscriber.subscribe(callback)
+  onNewStatusUp (callback: EmptyCallback): Unsubscriber {
+    return this._upSubscriber.subscribe(callback)
   }
 
   waitForNewStatusUpWithTimeout (): Promise<void> {
-    return onFirstEventOrTimeout(this.onNewStatusUp.bind(this), MYSTERIUM_CLIENT_WAITING_THRESHOLD)
+    return onFirstEventOrTimeout((cb) => { this.onNewStatusUp(cb) }, MYSTERIUM_CLIENT_WAITING_THRESHOLD)
   }
 
   /**
    * Triggers once service status changes to up.
    */
-  onStatusChangeUp (callback: EmptyCallback): void {
-    this._changeUpSubscriber.subscribe(callback)
+  onStatusChangeUp (callback: EmptyCallback): Unsubscriber {
+    return this._changeUpSubscriber.subscribe(callback)
   }
 
   /**
    * Triggers once service is down. Triggers instantly if it is already down.
    */
-  onStatusDown (callback: EmptyCallback): void {
-    this.onNewStatusDown(callback)
+  onStatusDown (callback: EmptyCallback): Unsubscriber {
     if (this._lastStatus === false) {
       callback()
     }
-  }
-
-  // TODO: unify
-  removeOnStatusDown (callback: EmptyCallback): void {
-    this._downSubscriber.unsubscribe(callback)
+    return this.onNewStatusDown(callback)
   }
 
   waitForStatusDownWithTimeout (): Promise<void> {
-    return onFirstEventOrTimeout(this.onStatusDown.bind(this), MYSTERIUM_CLIENT_WAITING_THRESHOLD)
+    return onFirstEventOrTimeout((cb) => { this.onStatusDown(cb) }, MYSTERIUM_CLIENT_WAITING_THRESHOLD)
   }
 
   /**
    * Triggers once service is down. Does not trigger instantly if it is already down.
    */
-  onNewStatusDown (callback: EmptyCallback): void {
-    this._downSubscriber.subscribe(callback)
+  onNewStatusDown (callback: EmptyCallback): Unsubscriber {
+    return this._downSubscriber.subscribe(callback)
   }
 
   waitForNewStatusDownWithTimeout (): Promise<void> {
-    return onFirstEventOrTimeout(this.onNewStatusDown.bind(this), MYSTERIUM_CLIENT_WAITING_THRESHOLD)
+    return onFirstEventOrTimeout((cb) => { this.onNewStatusDown(cb) }, MYSTERIUM_CLIENT_WAITING_THRESHOLD)
   }
 
   /**
    * Triggers once service status changes to down.
    */
-  onStatusChangeDown (callback: EmptyCallback): void {
-    this._changeDownSubscriber.subscribe(callback)
+  onStatusChangeDown (callback: EmptyCallback): Unsubscriber {
+    return this._changeDownSubscriber.subscribe(callback)
   }
 
   _updateStatus (status: boolean) {

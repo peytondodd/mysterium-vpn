@@ -67,13 +67,12 @@ class LaunchDaemonProcess implements Process {
     logger.info('Upgrading: killing process')
     await this.kill()
 
-    const startClient = () => { this.start() }
-    this._monitoring.onStatusDown(startClient)
+    const unsubscribe = this._monitoring.onStatusDown(() => { this.start() })
     try {
       logger.info('Upgrading: waiting for upgraded client')
       await this._waitForUpgrade()
     } finally {
-      this._monitoring.removeOnStatusDown(startClient)
+      unsubscribe()
     }
 
     logger.info('Upgrading: upgraded process is up')
