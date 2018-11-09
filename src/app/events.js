@@ -43,6 +43,7 @@ function onFirstEvent (subscriber: Subscriber): Promise<any> {
  *
  * @returns {Promise<any>}
  */
+// TODO: unsubscribe after timeout or event
 function onFirstEventOrTimeout (subscriber: Subscriber, timeout: number): Promise<void> {
   return new Promise((resolve, reject) => {
     const timer = setTimeout(
