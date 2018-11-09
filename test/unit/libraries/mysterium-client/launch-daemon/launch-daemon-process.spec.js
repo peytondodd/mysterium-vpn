@@ -19,17 +19,18 @@
 
 import ClientLogSubscriber from '../../../../../src/libraries/mysterium-client/client-log-subscriber'
 import BugReporterMock from '../../../../helpers/bug-reporter-mock'
-import { beforeEach, describe, expect, it } from '../../../../helpers/dependencies'
+import { after, before, beforeEach, describe, expect, it } from '../../../../helpers/dependencies'
 import LaunchDaemonProcess from '../../../../../src/libraries/mysterium-client/launch-daemon/launch-daemon-process'
 import MockAdapter from 'axios-mock-adapter'
 import axios from 'axios'
 import EmptyTequilapiClientMock from '../../../renderer/store/modules/empty-tequilapi-client-mock'
 import { MockStatusNotifier } from '../../../../helpers/mysterium-client/monitoring-mock'
-import { nextTick } from '../../../../helpers/utils'
+import { captureAsyncError, nextTick } from '../../../../helpers/utils'
 import Monitoring from '../../../../../src/libraries/mysterium-client/monitoring/monitoring'
 import VersionCheck from '../../../../../src/libraries/mysterium-client/version-check'
 import type { NodeHealthcheckDTO } from 'mysterium-tequilapi/lib/dto/node-healthcheck'
 import NodeBuildInfoDTO from 'mysterium-tequilapi/lib/dto/node-build-info'
+import lolex from 'lolex'
 
 class TequilapiClientMock extends EmptyTequilapiClientMock {
   stopped: boolean = false
@@ -107,6 +108,31 @@ describe('LaunchDaemonProcess', () => {
       await upgradePromise
 
       expect(processStarted).to.be.true
+    })
+
+    describe('with faked clock', () => {
+      let clock
+
+      before(() => {
+        clock = lolex.install()
+      })
+
+      after(() => {
+        clock.uninstall()
+      })
+
+      it('fails after timeout', async () => {
+        const upgradePromise = process.upgrade()
+
+        await nextTick()
+        clock.tick(15000)
+
+        const err = await captureAsyncError(() => upgradePromise)
+        if (!(err instanceof Error)) {
+          throw new Error('Expected error')
+        }
+        expect(err.message).to.eql('Waiting for upgrade timed out')
+      })
     })
   })
 })
