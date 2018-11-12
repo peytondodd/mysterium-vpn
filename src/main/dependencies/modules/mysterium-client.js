@@ -153,7 +153,8 @@ function bootstrap (container: Container) {
       'mysteriumClient.platform',
       'mysteriumClientMonitoring',
       'serviceManager',
-      'bugReporter'
+      'bugReporter',
+      'mysteriumClientVersionCheck'
     ],
     (
       tequilapiClient: TequilapiClient,
@@ -162,11 +163,12 @@ function bootstrap (container: Container) {
       platform: string,
       monitoring: Monitoring,
       serviceManager: ServiceManager,
-      bugReporter: BugReporter
+      bugReporter: BugReporter,
+      versionCheck: VersionCheck
     ) => {
       switch (platform) {
         case OSX:
-          return new LaunchDaemonProcess(tequilapiClient, logSubscriber, LAUNCH_DAEMON_PORT, monitoring)
+          return new LaunchDaemonProcess(tequilapiClient, logSubscriber, LAUNCH_DAEMON_PORT, monitoring, versionCheck)
         case WINDOWS:
           return new ServiceManagerProcess(
             tequilapiClient,

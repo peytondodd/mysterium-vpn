@@ -23,6 +23,9 @@ import axios from 'axios'
 import ClientLogSubscriber from '../client-log-subscriber'
 import Monitoring from '../monitoring/monitoring'
 import logger from '../../../app/logger'
+import VersionCheck from '../version-check'
+import sleep from '../../sleep'
+import config from '../../../renderer/config'
 
 /**
  * Spawns and stops 'mysterium_client' daemon on OSX
@@ -32,6 +35,7 @@ class LaunchDaemonProcess implements Process {
   _daemonPort: number
   _logs: ClientLogSubscriber
   _monitoring: Monitoring
+  _versionCheck: VersionCheck
 
   /**
    * @constructor
@@ -39,11 +43,17 @@ class LaunchDaemonProcess implements Process {
    * @param {ClientLogSubscriber} logs
    * @param {string} daemonPort - port at which the daemon is spawned
    */
-  constructor (tequilapi: TequilapiClient, logs: ClientLogSubscriber, daemonPort: number, monitoring: Monitoring) {
+  constructor (
+    tequilapi: TequilapiClient,
+    logs: ClientLogSubscriber,
+    daemonPort: number,
+    monitoring: Monitoring,
+    versionCheck: VersionCheck) {
     this._tequilapi = tequilapi
     this._logs = logs
     this._daemonPort = daemonPort
     this._monitoring = monitoring
+    this._versionCheck = versionCheck
   }
 
   async start (): Promise<void> {
@@ -55,17 +65,51 @@ class LaunchDaemonProcess implements Process {
   }
 
   async upgrade (): Promise<void> {
-    logger.info('Restarting: killing process')
+    logger.info('Upgrading: killing process')
     await this.kill()
-    logger.info('Restarting: waiting for process to be down')
-    await this._monitoring.waitForStatusDownWithTimeout()
 
-    logger.info('Restarting: process is down, starting it up')
-    await this.start()
-    logger.info('Restarting: waiting for process to be up')
-    await this._monitoring.waitForStatusUpWithTimeout()
+    const unsubscribe = this._monitoring.onStatusDown(() => { this.start() })
+    try {
+      logger.info('Upgrading: waiting for upgraded client')
+      await this._waitForUpgrade(config.upgradeWaitingTimeout)
+    } finally {
+      unsubscribe()
+    }
 
-    logger.info('Restarting: process is up')
+    logger.info('Upgrading: upgraded process is up')
+  }
+
+  async _waitForUpgrade (timeout: number) {
+    let timeFinished = false
+    setTimeout(() => {
+      timeFinished = true
+    }, timeout)
+
+    // eslint-disable-next-line no-unmodified-loop-condition
+    while (!timeFinished) {
+      if (await this._isUpgradeFinished()) {
+        await this._monitoring.waitForStatusUpWithTimeout()
+        return
+      }
+      await sleep(config.upgradeDelay)
+    }
+    throw new Error('Waiting for upgrade timed out')
+  }
+
+  async _isUpgradeFinished (): Promise<boolean> {
+    try {
+      logger.info('Checking if upgrade finished')
+      let matches = await this._versionCheck.runningVersionMatchesPackageVersion()
+      if (matches) {
+        logger.info('Upgrade finished - versions matched')
+      } else {
+        logger.info('Upgrade not finished yet - versions mismatch')
+      }
+      return matches
+    } catch (err) {
+      logger.info('Upgrade not finished yet - client is down, probably still restarting')
+      return false
+    }
   }
 
   async stop (): Promise<void> {
@@ -73,7 +117,7 @@ class LaunchDaemonProcess implements Process {
   }
 
   async kill (): Promise<void> {
-    await this._tequilapi.stop()
+    await this.stop()
   }
 
   async setupLogging (): Promise<void> {

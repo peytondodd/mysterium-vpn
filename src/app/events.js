@@ -17,43 +17,82 @@
 
 // @flow
 
+import logger from './logger'
+
 type Callback = (data: any) => void
-type Subscriber = (Callback) => void
+type Unsubscribe = () => void
+type Subscribe = (Callback) => Unsubscribe
 
 /**
  * Subscribes for specific event and resolves when first event is received.
  *
- * @param subscriber - function to subscribe for specific event
+ * @param subscribe - function to subscribe for specific event
  *
  * @returns {Promise<any>}
  */
-function onFirstEvent (subscriber: Subscriber): Promise<any> {
+function onFirstEvent (subscribe: Subscribe): Promise<any> {
   return new Promise((resolve) => {
-    subscriber((data) => {
+    let eventReceived = false
+    let unsubscribe: ?Unsubscribe = null
+
+    unsubscribe = subscribe((data) => {
+      if (unsubscribe != null) {
+        unsubscribe()
+      } else {
+        eventReceived = true
+      }
       resolve(data)
     })
+
+    if (eventReceived) {
+      unsubscribe()
+    }
   })
 }
 
 /**
  * Subscribes for specific event and resolves when first event is received.
  *
- * @param subscriber - function to subscribe for specific event
+ * @param subscribe - function to subscribe for specific event
  * @param timeout - timeout in miliseccons
  *
  * @returns {Promise<any>}
  */
-function onFirstEventOrTimeout (subscriber: Subscriber, timeout: number): Promise<void> {
+function onFirstEventOrTimeout (subscribe: Subscribe, timeout: number): Promise<any> {
   return new Promise((resolve, reject) => {
+    let eventReceived = false
+    let unsubscribe: ?Unsubscribe = null
+
     const timer = setTimeout(
-      () => reject(new Error(`Promise timed out after ${timeout} ms`)),
+      () => {
+        if (eventReceived) {
+          return
+        }
+
+        reject(new Error(`Promise timed out after ${timeout} ms`))
+
+        if (unsubscribe == null) {
+          logger.error('Expected unsubscribe to be set in onFirstEventOrTimeout')
+          return
+        }
+        unsubscribe()
+      },
       timeout
     )
 
-    subscriber((data) => {
+    unsubscribe = subscribe((data) => {
       clearTimeout(timer)
+      if (unsubscribe != null) {
+        unsubscribe()
+      } else {
+        eventReceived = true
+      }
       resolve(data)
     })
+
+    if (eventReceived) {
+      unsubscribe()
+    }
   })
 }
 
