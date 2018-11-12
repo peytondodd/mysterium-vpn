@@ -93,7 +93,9 @@ describe('LaunchDaemonProcess', () => {
 
       expect(tequilApi.stopped).to.be.true
 
+      notifierMock.notifyStatus(true)
       tequilApi.mockVersion = '1.1.0'
+
       await upgradePromise
     })
 
@@ -104,7 +106,9 @@ describe('LaunchDaemonProcess', () => {
       expect(processStarted).to.be.false
       notifierMock.notifyStatus(false)
 
+      notifierMock.notifyStatus(true)
       tequilApi.mockVersion = '1.1.0'
+
       await upgradePromise
 
       expect(processStarted).to.be.true
