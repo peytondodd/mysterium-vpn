@@ -66,7 +66,7 @@ class Monitoring {
   }
 
   waitForStatusUpWithTimeout (): Promise<void> {
-    return onFirstEventOrTimeout((cb) => { this.onStatusUp(cb) }, MYSTERIUM_CLIENT_WAITING_THRESHOLD)
+    return onFirstEventOrTimeout(this.onStatusUp.bind(this), MYSTERIUM_CLIENT_WAITING_THRESHOLD)
   }
 
   /**
@@ -77,7 +77,7 @@ class Monitoring {
   }
 
   waitForNewStatusUpWithTimeout (): Promise<void> {
-    return onFirstEventOrTimeout((cb) => { this.onNewStatusUp(cb) }, MYSTERIUM_CLIENT_WAITING_THRESHOLD)
+    return onFirstEventOrTimeout(this.onNewStatusUp.bind(this), MYSTERIUM_CLIENT_WAITING_THRESHOLD)
   }
 
   /**
@@ -98,7 +98,7 @@ class Monitoring {
   }
 
   waitForStatusDownWithTimeout (): Promise<void> {
-    return onFirstEventOrTimeout((cb) => { this.onStatusDown(cb) }, MYSTERIUM_CLIENT_WAITING_THRESHOLD)
+    return onFirstEventOrTimeout(this.onStatusDown.bind(this), MYSTERIUM_CLIENT_WAITING_THRESHOLD)
   }
 
   /**
@@ -109,7 +109,7 @@ class Monitoring {
   }
 
   waitForNewStatusDownWithTimeout (): Promise<void> {
-    return onFirstEventOrTimeout((cb) => { this.onNewStatusDown(cb) }, MYSTERIUM_CLIENT_WAITING_THRESHOLD)
+    return onFirstEventOrTimeout(this.onNewStatusDown.bind(this), MYSTERIUM_CLIENT_WAITING_THRESHOLD)
   }
 
   /**

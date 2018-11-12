@@ -317,9 +317,7 @@ class MysteriumVpn {
       htmlContent: this._terms.getContent()
     })
 
-    const termsAnsweredDTO = await onFirstEvent((callback) => {
-      this._communication.termsAnswered.on(callback)
-    })
+    const termsAnsweredDTO = await onFirstEvent(this._communication.termsAnswered.on.bind(this))
     const termsAnswer = termsAnsweredDTO.isAccepted
     if (!termsAnswer) {
       return false

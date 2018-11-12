@@ -17,22 +17,98 @@
 
 // @flow
 
+// TODO: fix file name
+
 import { onceOnMessage } from '../../../../src/app/communication/utils'
-import { onFirstEvent } from '../../../../src/app/events'
+import { onFirstEvent, onFirstEventOrTimeout } from '../../../../src/app/events'
 import { beforeEach, describe, expect, it } from '../../../helpers/dependencies'
 import MessageTransport from '../../../../src/app/communication/message-transport'
 import DirectMessageBus from '../../../helpers/direct-message-bus'
-import { RepeatableCallbackRecorder } from '../../../helpers/utils'
+import { captureAsyncError, RepeatableCallbackRecorder } from '../../../helpers/utils'
 import { MessageReceiver } from '../../../../src/app/communication/message-receiver'
 import { MessageSender } from '../../../../src/app/communication/message-sender'
-
-const subscription = (onResolve) => onResolve('resolution of instant data')
 
 describe('utils', () => {
   describe('.onFirstEvent', () => {
     it('resolves once serial data is passed to callback', async () => {
-      const resolvedData = await onFirstEvent(subscription)
+      const subscriber = (onResolve) => {
+        onResolve('resolution of instant data')
+        return () => {}
+      }
+
+      const resolvedData = await onFirstEvent(subscriber)
       expect(resolvedData).to.eql('resolution of instant data')
+    })
+
+    it('unsubscribes from listener if event resolves instantly', async () => {
+      let unsubscribed = false
+      const subscriber = (onResolve) => {
+        onResolve('resolution of instant data')
+        return () => { unsubscribed = true }
+      }
+
+      await onFirstEvent(subscriber)
+      expect(unsubscribed).to.be.true
+    })
+
+    it('unsubscribes from listener if event resolves later', async () => {
+      let unsubscribed = false
+      let callback: ?(() => void) = null
+      const subscriber = (onResolve) => {
+        callback = onResolve
+        return () => { unsubscribed = true }
+      }
+
+      const promise = onFirstEvent(subscriber)
+      expect(unsubscribed).to.be.false
+      if (callback == null) {
+        throw Error('Expected callback to be set')
+      }
+      callback()
+      await promise
+      expect(unsubscribed).to.be.true
+    })
+  })
+
+  describe('.onFirstEventOrTimeout', () => {
+    it('unsubscribes from listener if event resolves instantly', async () => {
+      let unsubscribed = false
+      const subscriber = (onResolve) => {
+        onResolve('resolution of instant data')
+        return () => { unsubscribed = true }
+      }
+
+      await onFirstEventOrTimeout(subscriber, 1)
+      expect(unsubscribed).to.be.true
+    })
+
+    it('unsubscribes from listener if event resolves later', async () => {
+      let unsubscribed = false
+      let callback: ?(() => void) = null
+      const subscriber = (onResolve) => {
+        callback = onResolve
+        return () => { unsubscribed = true }
+      }
+
+      const promise = onFirstEventOrTimeout(subscriber, 1)
+      expect(unsubscribed).to.be.false
+      if (callback == null) {
+        throw Error('Expected callback to be set')
+      }
+      callback()
+      await promise
+      expect(unsubscribed).to.be.true
+    })
+
+    it('unsubscribes from listener when waiting timeouts', async () => {
+      let unsubscribed = false
+      const subscriber = (_onResolve) => {
+        return () => { unsubscribed = true }
+      }
+
+      const promise = onFirstEventOrTimeout(subscriber, 1)
+      await captureAsyncError(() => promise)
+      expect(unsubscribed).to.be.true
     })
   })
 
