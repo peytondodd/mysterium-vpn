@@ -17,8 +17,11 @@
 
 // @flow
 
+import logger from './logger'
+
 type Callback = (data: any) => void
-type Subscriber = (Callback) => void
+type Unsubscriber = () => void
+type Subscriber = (Callback) => Unsubscriber
 
 /**
  * Subscribes for specific event and resolves when first event is received.
@@ -29,9 +32,21 @@ type Subscriber = (Callback) => void
  */
 function onFirstEvent (subscriber: Subscriber): Promise<any> {
   return new Promise((resolve) => {
-    subscriber((data) => {
+    let eventReceived = false
+    let unsubscriber: ?Unsubscriber = null
+
+    unsubscriber = subscriber((data) => {
+      if (unsubscriber != null) {
+        unsubscriber()
+      } else {
+        eventReceived = true
+      }
       resolve(data)
     })
+
+    if (eventReceived) {
+      unsubscriber()
+    }
   })
 }
 
@@ -43,18 +58,41 @@ function onFirstEvent (subscriber: Subscriber): Promise<any> {
  *
  * @returns {Promise<any>}
  */
-// TODO: unsubscribe after timeout or event
 function onFirstEventOrTimeout (subscriber: Subscriber, timeout: number): Promise<void> {
   return new Promise((resolve, reject) => {
+    let eventReceived = false
+    let unsubscriber: ?Unsubscriber = null
+
     const timer = setTimeout(
-      () => reject(new Error(`Promise timed out after ${timeout} ms`)),
+      () => {
+        if (eventReceived) {
+          return
+        }
+
+        reject(new Error(`Promise timed out after ${timeout} ms`))
+
+        if (unsubscriber == null) {
+          logger.error('Expected unsubscriber to be set in onFirstEventOrTimeout')
+          return
+        }
+        unsubscriber()
+      },
       timeout
     )
 
-    subscriber((data) => {
+    unsubscriber = subscriber((data) => {
       clearTimeout(timer)
+      if (unsubscriber != null) {
+        unsubscriber()
+      } else {
+        eventReceived = true
+      }
       resolve(data)
     })
+
+    if (eventReceived) {
+      unsubscriber()
+    }
   })
 }
 

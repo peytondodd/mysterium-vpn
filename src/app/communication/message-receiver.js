@@ -18,6 +18,8 @@
 // @flow
 import type { MessageBus } from './message-bus'
 
+type Unsubscriber = () => void
+
 class MessageReceiver<T> {
   _channel: string
   _messageBus: MessageBus
@@ -27,8 +29,9 @@ class MessageReceiver<T> {
     this._messageBus = messageBus
   }
 
-  on (callback: T => void) {
+  on (callback: T => void): Unsubscriber {
     this._messageBus.on(this._channel, callback)
+    return () => { this.removeCallback(callback) }
   }
 
   removeCallback (callback: T => void) {
