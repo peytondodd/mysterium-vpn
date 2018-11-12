@@ -129,7 +129,6 @@ class ProcessManager {
     if (await this._clientVersionMismatches()) {
       this._logInfo(`'mysterium_client' installed version does not match running version, killing it.`)
       await this._upgradeClient()
-      await this._monitoring.waitForStatusUpWithTimeout()
     } else {
       this._logInfo(`'mysterium_client' installed version matches running version`)
     }
