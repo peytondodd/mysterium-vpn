@@ -31,35 +31,35 @@ import { MessageSender } from '../../../../src/app/communication/message-sender'
 describe('utils', () => {
   describe('.onFirstEvent', () => {
     it('resolves once serial data is passed to callback', async () => {
-      const subscriber = (onResolve) => {
+      const subscribe = (onResolve) => {
         onResolve('resolution of instant data')
         return () => {}
       }
 
-      const resolvedData = await onFirstEvent(subscriber)
+      const resolvedData = await onFirstEvent(subscribe)
       expect(resolvedData).to.eql('resolution of instant data')
     })
 
     it('unsubscribes from listener if event resolves instantly', async () => {
       let unsubscribed = false
-      const subscriber = (onResolve) => {
+      const subscribe = (onResolve) => {
         onResolve('resolution of instant data')
         return () => { unsubscribed = true }
       }
 
-      await onFirstEvent(subscriber)
+      await onFirstEvent(subscribe)
       expect(unsubscribed).to.be.true
     })
 
     it('unsubscribes from listener if event resolves later', async () => {
       let unsubscribed = false
       let callback: ?(() => void) = null
-      const subscriber = (onResolve) => {
+      const subscribe = (onResolve) => {
         callback = onResolve
         return () => { unsubscribed = true }
       }
 
-      const promise = onFirstEvent(subscriber)
+      const promise = onFirstEvent(subscribe)
       expect(unsubscribed).to.be.false
       if (callback == null) {
         throw Error('Expected callback to be set')
@@ -73,24 +73,24 @@ describe('utils', () => {
   describe('.onFirstEventOrTimeout', () => {
     it('unsubscribes from listener if event resolves instantly', async () => {
       let unsubscribed = false
-      const subscriber = (onResolve) => {
+      const subscribe = (onResolve) => {
         onResolve('resolution of instant data')
         return () => { unsubscribed = true }
       }
 
-      await onFirstEventOrTimeout(subscriber, 1)
+      await onFirstEventOrTimeout(subscribe, 1)
       expect(unsubscribed).to.be.true
     })
 
     it('unsubscribes from listener if event resolves later', async () => {
       let unsubscribed = false
       let callback: ?(() => void) = null
-      const subscriber = (onResolve) => {
+      const subscribe = (onResolve) => {
         callback = onResolve
         return () => { unsubscribed = true }
       }
 
-      const promise = onFirstEventOrTimeout(subscriber, 1)
+      const promise = onFirstEventOrTimeout(subscribe, 1)
       expect(unsubscribed).to.be.false
       if (callback == null) {
         throw Error('Expected callback to be set')
@@ -102,11 +102,11 @@ describe('utils', () => {
 
     it('unsubscribes from listener when waiting timeouts', async () => {
       let unsubscribed = false
-      const subscriber = (_onResolve) => {
+      const subscribe = (_onResolve) => {
         return () => { unsubscribed = true }
       }
 
-      const promise = onFirstEventOrTimeout(subscriber, 1)
+      const promise = onFirstEventOrTimeout(subscribe, 1)
       await captureAsyncError(() => promise)
       expect(unsubscribed).to.be.true
     })
