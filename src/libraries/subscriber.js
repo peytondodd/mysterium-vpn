@@ -20,7 +20,7 @@
 import logger from '../app/logger'
 
 type Callback<T> = (T) => any
-type Unsubscriber = () => void
+type Unsubscribe = () => void
 
 /**
  * Allows subscribing callbacks and notifying them with data.
@@ -28,7 +28,7 @@ type Unsubscriber = () => void
 class Subscriber<T> {
   _callbacks: Array<Callback<T>> = []
 
-  subscribe (callback: Callback<T>): Unsubscriber {
+  subscribe (callback: Callback<T>): Unsubscribe {
     this._callbacks.push(callback)
     return () => { this.unsubscribe(callback) }
   }
@@ -52,6 +52,6 @@ class Subscriber<T> {
   }
 }
 
-export type { Callback, Unsubscriber }
+export type { Callback, Unsubscribe }
 
 export default Subscriber

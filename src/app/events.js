@@ -20,24 +20,24 @@
 import logger from './logger'
 
 type Callback = (data: any) => void
-type Unsubscriber = () => void
-type Subscriber = (Callback) => Unsubscriber
+type Unsubscribe = () => void
+type Subscribe = (Callback) => Unsubscribe
 
 /**
  * Subscribes for specific event and resolves when first event is received.
  *
- * @param subscriber - function to subscribe for specific event
+ * @param subscribe - function to subscribe for specific event
  *
  * @returns {Promise<any>}
  */
-function onFirstEvent (subscriber: Subscriber): Promise<any> {
+function onFirstEvent (subscribe: Subscribe): Promise<any> {
   return new Promise((resolve) => {
     let eventReceived = false
-    let unsubscriber: ?Unsubscriber = null
+    let unsubscribe: ?Unsubscribe = null
 
-    unsubscriber = subscriber((data) => {
-      if (unsubscriber != null) {
-        unsubscriber()
+    unsubscribe = subscribe((data) => {
+      if (unsubscribe != null) {
+        unsubscribe()
       } else {
         eventReceived = true
       }
@@ -45,7 +45,7 @@ function onFirstEvent (subscriber: Subscriber): Promise<any> {
     })
 
     if (eventReceived) {
-      unsubscriber()
+      unsubscribe()
     }
   })
 }
@@ -53,15 +53,15 @@ function onFirstEvent (subscriber: Subscriber): Promise<any> {
 /**
  * Subscribes for specific event and resolves when first event is received.
  *
- * @param subscriber - function to subscribe for specific event
+ * @param subscribe - function to subscribe for specific event
  * @param timeout - timeout in miliseccons
  *
  * @returns {Promise<any>}
  */
-function onFirstEventOrTimeout (subscriber: Subscriber, timeout: number): Promise<any> {
+function onFirstEventOrTimeout (subscribe: Subscribe, timeout: number): Promise<any> {
   return new Promise((resolve, reject) => {
     let eventReceived = false
-    let unsubscriber: ?Unsubscriber = null
+    let unsubscribe: ?Unsubscribe = null
 
     const timer = setTimeout(
       () => {
@@ -71,19 +71,19 @@ function onFirstEventOrTimeout (subscriber: Subscriber, timeout: number): Promis
 
         reject(new Error(`Promise timed out after ${timeout} ms`))
 
-        if (unsubscriber == null) {
-          logger.error('Expected unsubscriber to be set in onFirstEventOrTimeout')
+        if (unsubscribe == null) {
+          logger.error('Expected unsubscribe to be set in onFirstEventOrTimeout')
           return
         }
-        unsubscriber()
+        unsubscribe()
       },
       timeout
     )
 
-    unsubscriber = subscriber((data) => {
+    unsubscribe = subscribe((data) => {
       clearTimeout(timer)
-      if (unsubscriber != null) {
-        unsubscriber()
+      if (unsubscribe != null) {
+        unsubscribe()
       } else {
         eventReceived = true
       }
@@ -91,7 +91,7 @@ function onFirstEventOrTimeout (subscriber: Subscriber, timeout: number): Promis
     })
 
     if (eventReceived) {
-      unsubscriber()
+      unsubscribe()
     }
   })
 }
