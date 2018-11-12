@@ -88,6 +88,7 @@ class LaunchDaemonProcess implements Process {
     // eslint-disable-next-line no-unmodified-loop-condition
     while (!timeFinished) {
       if (await this._isUpgradeFinished()) {
+        await this._monitoring.waitForStatusUpWithTimeout()
         return
       }
       await sleep(config.upgradeDelay)
