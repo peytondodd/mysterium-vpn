@@ -25,6 +25,7 @@ import Monitoring from '../monitoring/monitoring'
 import logger from '../../../app/logger'
 import VersionCheck from '../version-check'
 import sleep from '../../sleep'
+import config from '../../../renderer/config'
 
 /**
  * Spawns and stops 'mysterium_client' daemon on OSX
@@ -70,8 +71,7 @@ class LaunchDaemonProcess implements Process {
     const unsubscribe = this._monitoring.onStatusDown(() => { this.start() })
     try {
       logger.info('Upgrading: waiting for upgraded client')
-      const UPGRADE_WAITING_TIMEOUT = 15000
-      await this._waitForUpgrade(UPGRADE_WAITING_TIMEOUT)
+      await this._waitForUpgrade(config.upgradeWaitingTimeout)
     } finally {
       unsubscribe()
     }
@@ -85,13 +85,12 @@ class LaunchDaemonProcess implements Process {
       timeFinished = true
     }, timeout)
 
-    const RETRY_DELAY = 200
     // eslint-disable-next-line no-unmodified-loop-condition
     while (!timeFinished) {
       if (await this._isUpgradeFinished()) {
         return
       }
-      await sleep(RETRY_DELAY)
+      await sleep(config.upgradeDelay)
     }
     throw new Error('Waiting for upgrade timed out')
   }
