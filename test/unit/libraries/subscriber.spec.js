@@ -19,6 +19,7 @@
 
 import { beforeEach, describe, expect, it } from '../../helpers/dependencies'
 import Subscriber from '../../../src/libraries/subscriber'
+import { captureError } from '../../helpers/utils'
 
 describe('Subscriber', () => {
   let subscriber: Subscriber<string>
@@ -82,5 +83,18 @@ describe('Subscriber', () => {
     subscriber.notify('world')
 
     expect(values).to.eql(['hello'])
+  })
+
+  describe('.unsubscribe', () => {
+    it('returns error if unsubscribing twice', () => {
+      const cb = () => {}
+      subscriber.subscribe(cb)
+      subscriber.unsubscribe(cb)
+      const err = captureError(() => subscriber.unsubscribe(cb))
+      if (!(err instanceof Error)) {
+        throw Error('Expected error')
+      }
+      expect(err.message).to.eql('Callback being unsubscribed was not found')
+    })
   })
 })
