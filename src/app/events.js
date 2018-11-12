@@ -58,7 +58,7 @@ function onFirstEvent (subscriber: Subscriber): Promise<any> {
  *
  * @returns {Promise<any>}
  */
-function onFirstEventOrTimeout (subscriber: Subscriber, timeout: number): Promise<void> {
+function onFirstEventOrTimeout (subscriber: Subscriber, timeout: number): Promise<any> {
   return new Promise((resolve, reject) => {
     let eventReceived = false
     let unsubscriber: ?Unsubscriber = null
