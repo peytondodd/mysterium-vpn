@@ -20,7 +20,7 @@
 import type { TequilapiClient } from 'mysterium-tequilapi/lib/client'
 import type { LogCallback, Process } from '../index'
 import axios from 'axios'
-import ClientLogSubscriber from '../client-log-subscriber'
+import ClientLogPublisher from '../client-log-publisher'
 import Monitoring from '../monitoring/monitoring'
 import logger from '../../../app/logger'
 import VersionCheck from '../version-check'
@@ -33,19 +33,19 @@ import config from '../../../renderer/config'
 class LaunchDaemonProcess implements Process {
   _tequilapi: TequilapiClient
   _daemonPort: number
-  _logs: ClientLogSubscriber
+  _logs: ClientLogPublisher
   _monitoring: Monitoring
   _versionCheck: VersionCheck
 
   /**
    * @constructor
    * @param {TequilapiClient} tequilapi - api to be used
-   * @param {ClientLogSubscriber} logs
+   * @param {ClientLogPublisher} logs
    * @param {string} daemonPort - port at which the daemon is spawned
    */
   constructor (
     tequilapi: TequilapiClient,
-    logs: ClientLogSubscriber,
+    logs: ClientLogPublisher,
     daemonPort: number,
     monitoring: Monitoring,
     versionCheck: VersionCheck) {

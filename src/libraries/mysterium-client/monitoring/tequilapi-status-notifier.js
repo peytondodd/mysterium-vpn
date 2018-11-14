@@ -19,7 +19,7 @@
 
 import type { StatusNotifier } from './status-notifier'
 import type { TequilapiClient } from 'mysterium-tequilapi/lib/client'
-import Subscriber from '../../subscriber'
+import Publisher from '../../publisher'
 import type { StatusCallback } from './monitoring'
 import { HEALTH_CHECK_INTERVAL } from './monitoring'
 
@@ -32,7 +32,7 @@ class TequilapiStatusNotifier implements StatusNotifier {
 
   _isStarted: boolean = false
 
-  _statusSubscriber: Subscriber<boolean> = new Subscriber()
+  _statusPublisher: Publisher<boolean> = new Publisher()
 
   constructor (tequilapi: TequilapiClient) {
     this._api = tequilapi
@@ -54,7 +54,7 @@ class TequilapiStatusNotifier implements StatusNotifier {
   }
 
   onStatus (callback: StatusCallback): void {
-    this._statusSubscriber.subscribe(callback)
+    this._statusPublisher.subscribe(callback)
   }
 
   async _healthCheckLoop (): Promise<void> {
@@ -83,7 +83,7 @@ class TequilapiStatusNotifier implements StatusNotifier {
   }
 
   _updateStatus (status: boolean) {
-    this._statusSubscriber.notify(status)
+    this._statusPublisher.notify(status)
   }
 }
 

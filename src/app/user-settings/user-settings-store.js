@@ -17,7 +17,7 @@
 
 // @flow
 import type { UserSettings } from './user-settings'
-import type { Callback } from '../../libraries/subscriber'
+import type { Callback } from '../../libraries/publisher'
 
 const userSettingName = {
   showDisconnectNotifications: 'showDisconnectNotifications',

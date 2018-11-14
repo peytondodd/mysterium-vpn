@@ -23,9 +23,9 @@ type Callback<T> = (T) => any
 type Unsubscribe = () => void
 
 /**
- * Allows subscribing callbacks and notifying them with data.
+ * Allows subscribing callbacks and publishing data to them.
  */
-class Subscriber<T> {
+class Publisher<T> {
   _callbacks: Array<Callback<T>> = []
 
   subscribe (callback: Callback<T>): Unsubscribe {
@@ -46,7 +46,7 @@ class Subscriber<T> {
       try {
         callback(data)
       } catch (err) {
-        logger.error('Callback call in Subscriber failed', err)
+        logger.error('Callback call in Publisher failed', err)
       }
     })
   }
@@ -54,4 +54,4 @@ class Subscriber<T> {
 
 export type { Callback, Unsubscribe }
 
-export default Subscriber
+export default Publisher

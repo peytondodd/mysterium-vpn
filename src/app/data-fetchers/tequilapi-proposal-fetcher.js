@@ -20,15 +20,15 @@
 import ProposalDTO from 'mysterium-tequilapi/lib/dto/proposal'
 import type { TequilapiClient } from 'mysterium-tequilapi/lib/client'
 import { FunctionLooper } from '../../libraries/function-looper'
-import type { Callback } from '../../libraries/subscriber'
-import Subscriber from '../../libraries/subscriber'
+import type { Callback } from '../../libraries/publisher'
+import Publisher from '../../libraries/publisher'
 import type { ProposalFetcher } from './proposal-fetcher'
 
 class TequilapiProposalFetcher implements ProposalFetcher {
   _api: TequilapiClient
   _loop: FunctionLooper
-  _proposalSubscriber: Subscriber<ProposalDTO[]> = new Subscriber()
-  _errorSubscriber: Subscriber<Error> = new Subscriber()
+  _proposalPublisher: Publisher<ProposalDTO[]> = new Publisher()
+  _errorPublisher: Publisher<Error> = new Publisher()
 
   constructor (api: TequilapiClient, interval: number = 5000) {
     this._api = api
@@ -37,7 +37,7 @@ class TequilapiProposalFetcher implements ProposalFetcher {
       await this.fetch()
     }, interval)
     this._loop.onFunctionError((error) => {
-      this._errorSubscriber.notify(error)
+      this._errorPublisher.notify(error)
     })
   }
 
@@ -54,7 +54,7 @@ class TequilapiProposalFetcher implements ProposalFetcher {
   async fetch (): Promise<ProposalDTO[]> {
     const proposals = await this._api.findProposals()
 
-    this._proposalSubscriber.notify(proposals)
+    this._proposalPublisher.notify(proposals)
 
     return proposals
   }
@@ -64,11 +64,11 @@ class TequilapiProposalFetcher implements ProposalFetcher {
   }
 
   onFetchedProposals (subscriber: Callback<ProposalDTO[]>): void {
-    this._proposalSubscriber.subscribe(subscriber)
+    this._proposalPublisher.subscribe(subscriber)
   }
 
   onFetchingError (subscriber: Callback<Error>): void {
-    this._errorSubscriber.subscribe(subscriber)
+    this._errorPublisher.subscribe(subscriber)
   }
 }
 

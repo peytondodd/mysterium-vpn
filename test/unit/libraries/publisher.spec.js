@@ -18,23 +18,23 @@
 // @flow
 
 import { beforeEach, describe, expect, it } from '../../helpers/dependencies'
-import Subscriber from '../../../src/libraries/subscriber'
+import Publisher from '../../../src/libraries/publisher'
 import { captureError } from '../../helpers/utils'
 
-describe('Subscriber', () => {
-  let subscriber: Subscriber<string>
+describe('Publisher', () => {
+  let publisher: Publisher<string>
   beforeEach(() => {
-    subscriber = new Subscriber()
+    publisher = new Publisher()
   })
 
   it('notifies each event', () => {
     const values: Array<string> = []
-    subscriber.subscribe((value: string) => {
+    publisher.subscribe((value: string) => {
       values.push(value)
     })
 
-    subscriber.notify('hello')
-    subscriber.notify('world')
+    publisher.notify('hello')
+    publisher.notify('world')
 
     expect(values).to.eql(['hello', 'world'])
   })
@@ -42,14 +42,14 @@ describe('Subscriber', () => {
   it('notifies multiple subscribers', () => {
     let value1 = null
     let value2 = null
-    subscriber.subscribe((value: string) => {
+    publisher.subscribe((value: string) => {
       value1 = value
     })
-    subscriber.subscribe((value: string) => {
+    publisher.subscribe((value: string) => {
       value2 = value
     })
 
-    subscriber.notify('hey')
+    publisher.notify('hey')
 
     expect(value1).to.eql('hey')
     expect(value2).to.eql('hey')
@@ -58,15 +58,15 @@ describe('Subscriber', () => {
   it('notifies all subscribers when first is failing', () => {
     let value1 = null
     let value2 = null
-    subscriber.subscribe((value: string) => {
+    publisher.subscribe((value: string) => {
       value1 = value
       throw new Error('mock error')
     })
-    subscriber.subscribe((value: string) => {
+    publisher.subscribe((value: string) => {
       value2 = value
     })
 
-    subscriber.notify('hey')
+    publisher.notify('hey')
 
     expect(value1).to.eql('hey')
     expect(value2).to.eql('hey')
@@ -74,13 +74,13 @@ describe('Subscriber', () => {
 
   it('returns function which unsubscribes', () => {
     const values: Array<string> = []
-    const unsubscribe = subscriber.subscribe((value: string) => {
+    const unsubscribe = publisher.subscribe((value: string) => {
       values.push(value)
     })
 
-    subscriber.notify('hello')
+    publisher.notify('hello')
     unsubscribe()
-    subscriber.notify('world')
+    publisher.notify('world')
 
     expect(values).to.eql(['hello'])
   })
@@ -88,9 +88,9 @@ describe('Subscriber', () => {
   describe('.unsubscribe', () => {
     it('returns error if unsubscribing twice', () => {
       const cb = () => {}
-      subscriber.subscribe(cb)
-      subscriber.unsubscribe(cb)
-      const err = captureError(() => subscriber.unsubscribe(cb))
+      publisher.subscribe(cb)
+      publisher.unsubscribe(cb)
+      const err = captureError(() => publisher.unsubscribe(cb))
       if (!(err instanceof Error)) {
         throw Error('Expected error')
       }

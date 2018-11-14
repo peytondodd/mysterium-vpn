@@ -17,7 +17,7 @@
 
 // @flow
 
-import type { Callback } from '../../libraries/subscriber'
+import type { Callback } from '../../libraries/publisher'
 import ProposalDTO from 'mysterium-tequilapi/lib/dto/proposal'
 
 interface ProposalFetcher {

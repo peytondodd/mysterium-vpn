@@ -20,7 +20,7 @@
 import type { FavoriteProviders, UserSettings } from './user-settings'
 import { Observable } from '../../libraries/observable'
 import type { UserSettingName } from './user-settings-store'
-import type { Callback } from '../../libraries/subscriber'
+import type { Callback } from '../../libraries/publisher'
 import { userSettingName } from './user-settings-store'
 
 function getDefaultSettings (): UserSettings {
@@ -36,7 +36,7 @@ type ObservableSettings = {
 }
 
 /**
- * Keeps user settings and notifies subscribers when settings change.
+ * Keeps user settings and publishes changes to subscribers.
  */
 class ObservableUserSettings {
   _observables: ObservableSettings

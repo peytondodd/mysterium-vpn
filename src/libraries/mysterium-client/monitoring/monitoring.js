@@ -16,10 +16,10 @@
  */
 
 // @flow
-import Subscriber from '../../subscriber'
+import Publisher from '../../publisher'
 import type { StatusNotifier } from './status-notifier'
 import { onFirstEventOrTimeout } from '../../../app/events'
-import type { Unsubscribe } from '../../subscriber'
+import type { Unsubscribe } from '../../publisher'
 
 const HEALTH_CHECK_INTERVAL = 1500
 
@@ -30,11 +30,11 @@ const MYSTERIUM_CLIENT_WAITING_THRESHOLD = 10000
 
 // TODO: ensure that users unsubscribe
 class Monitoring {
-  _statusSubscriber: Subscriber<boolean> = new Subscriber()
-  _upSubscriber: Subscriber<void> = new Subscriber()
-  _downSubscriber: Subscriber<void> = new Subscriber()
-  _changeUpSubscriber: Subscriber<void> = new Subscriber()
-  _changeDownSubscriber: Subscriber<void> = new Subscriber()
+  _statusPublisher: Publisher<boolean> = new Publisher()
+  _upPublisher: Publisher<void> = new Publisher()
+  _downPublisher: Publisher<void> = new Publisher()
+  _changeUpPublisher: Publisher<void> = new Publisher()
+  _changeDownPublisher: Publisher<void> = new Publisher()
 
   _lastStatus: ?boolean = null
 
@@ -73,7 +73,7 @@ class Monitoring {
    * Triggers once service is up. Does not trigger instantly if it is already up.
    */
   onNewStatusUp (callback: EmptyCallback): Unsubscribe {
-    return this._upSubscriber.subscribe(callback)
+    return this._upPublisher.subscribe(callback)
   }
 
   waitForNewStatusUpWithTimeout (): Promise<void> {
@@ -84,7 +84,7 @@ class Monitoring {
    * Triggers once service status changes to up.
    */
   onStatusChangeUp (callback: EmptyCallback): Unsubscribe {
-    return this._changeUpSubscriber.subscribe(callback)
+    return this._changeUpPublisher.subscribe(callback)
   }
 
   /**
@@ -105,7 +105,7 @@ class Monitoring {
    * Triggers once service is down. Does not trigger instantly if it is already down.
    */
   onNewStatusDown (callback: EmptyCallback): Unsubscribe {
-    return this._downSubscriber.subscribe(callback)
+    return this._downPublisher.subscribe(callback)
   }
 
   waitForNewStatusDownWithTimeout (): Promise<void> {
@@ -116,7 +116,7 @@ class Monitoring {
    * Triggers once service status changes to down.
    */
   onStatusChangeDown (callback: EmptyCallback): Unsubscribe {
-    return this._changeDownSubscriber.subscribe(callback)
+    return this._changeDownPublisher.subscribe(callback)
   }
 
   _updateStatus (status: boolean) {
@@ -125,12 +125,12 @@ class Monitoring {
   }
 
   _triggerStatus (status: boolean) {
-    this._statusSubscriber.notify(status)
+    this._statusPublisher.notify(status)
 
     if (status) {
-      this._upSubscriber.notify()
+      this._upPublisher.notify()
     } else {
-      this._downSubscriber.notify()
+      this._downPublisher.notify()
     }
 
     if (status !== this._lastStatus) {
@@ -147,11 +147,11 @@ class Monitoring {
   }
 
   _triggerStatusChangeUp () {
-    this._changeUpSubscriber.notify()
+    this._changeUpPublisher.notify()
   }
 
   _triggerStatusChangeDown () {
-    this._changeDownSubscriber.notify()
+    this._changeDownPublisher.notify()
   }
 }
 

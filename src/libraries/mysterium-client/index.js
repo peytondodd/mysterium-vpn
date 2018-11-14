@@ -17,7 +17,7 @@
 
 // @flow
 
-import type { Callback } from '../subscriber'
+import type { Callback } from '../publisher'
 import logLevels from './log-levels'
 
 type LogCallback = Callback<any>

@@ -17,7 +17,7 @@
 
 // @flow
 
-import type { Callback } from '../../libraries/subscriber'
+import type { Callback } from '../../libraries/publisher'
 import IdentityRegistrationDTO from 'mysterium-tequilapi/lib/dto/identity-registration'
 
 interface RegistrationFetcher {

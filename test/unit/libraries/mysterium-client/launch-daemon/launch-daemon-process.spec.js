@@ -17,7 +17,7 @@
 
 // @flow
 
-import ClientLogSubscriber from '../../../../../src/libraries/mysterium-client/client-log-subscriber'
+import ClientLogPublisher from '../../../../../src/libraries/mysterium-client/client-log-publisher'
 import BugReporterMock from '../../../../helpers/bug-reporter-mock'
 import { after, before, beforeEach, describe, expect, it } from '../../../../helpers/dependencies'
 import LaunchDaemonProcess from '../../../../../src/libraries/mysterium-client/launch-daemon/launch-daemon-process'
@@ -59,14 +59,14 @@ describe('LaunchDaemonProcess', () => {
   let processStarted: boolean
 
   beforeEach(() => {
-    const logSubscriber = new ClientLogSubscriber(new BugReporterMock(), '', '', '', () => new Date(), () => {})
+    const logPublisher = new ClientLogPublisher(new BugReporterMock(), '', '', '', () => new Date(), () => {})
     tequilApi = new TequilapiClientMock()
     notifierMock = new MockStatusNotifier()
     monitoring = new Monitoring(notifierMock)
     monitoring.start()
     process = new LaunchDaemonProcess(
       tequilApi,
-      logSubscriber,
+      logPublisher,
       1234,
       monitoring,
       new VersionCheck(tequilApi, '1.1.0')
