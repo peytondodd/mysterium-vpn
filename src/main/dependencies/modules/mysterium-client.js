@@ -61,7 +61,7 @@ function bootstrap (container: Container) {
     'mysteriumClient.config',
     ['mysteriumClient.platform', 'mysteriumVpnApplication.config'],
     (platform: string, mysteriumVpnConfig: MysteriumVpnConfig): ClientConfig => {
-      let clientBin = path.join(mysteriumVpnConfig.contentsDirectory, 'bin', 'mysterium_client')
+      let clientBin = path.join(mysteriumVpnConfig.contentsDirectory, 'bin', 'myst')
       let openvpnBin = path.join(mysteriumVpnConfig.contentsDirectory, 'bin', 'openvpn')
       let systemLogPath = '/var/log/system.log'
 

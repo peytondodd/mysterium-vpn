@@ -69,7 +69,7 @@
       "icon": "build/icons/icon.png",
       "extraFiles": [
         "./bin/openvpn",
-        "./bin/mysterium_client"
+        "./bin/myst"
       ],
       "category": "public.app-category.utilities"
     },
@@ -112,7 +112,7 @@
     "less-loader": "^4.1.0",
     "lolex": "^2.7.4",
     "md5": "^2.2.1",
-    "mysterium-client-bin": "0.3.2",
+    "mysterium-client-bin": "0.4.0",
     "mysterium-tequilapi": "^0.1.0",
     "os-name": "^2.0.1",
     "raven": "^2.4.1",
