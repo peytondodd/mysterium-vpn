@@ -20,7 +20,7 @@ import type { Country } from '../countries'
 import Publisher from '../../libraries/publisher'
 import { getSortedCountryListFromProposals } from '../countries'
 import ProposalDTO from 'mysterium-tequilapi/lib/dto/proposal'
-import type { Callback } from '../../libraries/publisher'
+import type { Subscriber } from '../../libraries/publisher'
 import type { FavoriteProviders } from '../user-settings/user-settings'
 import type { ProposalFetcher } from './proposal-fetcher'
 import type { UserSettingsStore } from '../user-settings/user-settings-store'
@@ -41,8 +41,8 @@ class CountryList {
     this._subscribeToFavoriteChanges()
   }
 
-  onUpdate (listener: Callback<Array<Country>>) {
-    this._publisher.subscribe(listener)
+  onUpdate (listener: Subscriber<Array<Country>>) {
+    this._publisher.addSubscriber(listener)
   }
 
   _subscribeToFavoriteChanges () {
@@ -53,7 +53,7 @@ class CountryList {
   }
 
   _notify () {
-    this._publisher.notify(getSortedCountryListFromProposals(this._proposals, this._favorites))
+    this._publisher.publish(getSortedCountryListFromProposals(this._proposals, this._favorites))
   }
 
   _subscribeToProposalFetches () {

@@ -75,7 +75,7 @@ class ClientLogPublisher {
       throw new Error(`Unknown process logging level: ${level}`)
     }
 
-    this._publishers[level].subscribe(cb)
+    this._publishers[level].addSubscriber(cb)
   }
 
   _tailLogs () {
@@ -120,7 +120,7 @@ class ClientLogPublisher {
   }
 
   _notifySubscribersWithLog (level: string, data: string): void {
-    this._publishers[level].notify(data)
+    this._publishers[level].publish(data)
   }
 
   _tailFile (filePath: string, subscriberCallback: LogCallback): void {

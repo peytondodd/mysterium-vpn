@@ -73,7 +73,7 @@ class Monitoring {
    * Triggers once service is up. Does not trigger instantly if it is already up.
    */
   onNewStatusUp (callback: EmptyCallback): Unsubscribe {
-    return this._upPublisher.subscribe(callback)
+    return this._upPublisher.addSubscriber(callback)
   }
 
   waitForNewStatusUpWithTimeout (): Promise<void> {
@@ -84,7 +84,7 @@ class Monitoring {
    * Triggers once service status changes to up.
    */
   onStatusChangeUp (callback: EmptyCallback): Unsubscribe {
-    return this._changeUpPublisher.subscribe(callback)
+    return this._changeUpPublisher.addSubscriber(callback)
   }
 
   /**
@@ -105,7 +105,7 @@ class Monitoring {
    * Triggers once service is down. Does not trigger instantly if it is already down.
    */
   onNewStatusDown (callback: EmptyCallback): Unsubscribe {
-    return this._downPublisher.subscribe(callback)
+    return this._downPublisher.addSubscriber(callback)
   }
 
   waitForNewStatusDownWithTimeout (): Promise<void> {
@@ -116,7 +116,7 @@ class Monitoring {
    * Triggers once service status changes to down.
    */
   onStatusChangeDown (callback: EmptyCallback): Unsubscribe {
-    return this._changeDownPublisher.subscribe(callback)
+    return this._changeDownPublisher.addSubscriber(callback)
   }
 
   _updateStatus (status: boolean) {
@@ -125,12 +125,12 @@ class Monitoring {
   }
 
   _triggerStatus (status: boolean) {
-    this._statusPublisher.notify(status)
+    this._statusPublisher.publish(status)
 
     if (status) {
-      this._upPublisher.notify()
+      this._upPublisher.publish()
     } else {
-      this._downPublisher.notify()
+      this._downPublisher.publish()
     }
 
     if (status !== this._lastStatus) {
@@ -147,11 +147,11 @@ class Monitoring {
   }
 
   _triggerStatusChangeUp () {
-    this._changeUpPublisher.notify()
+    this._changeUpPublisher.publish()
   }
 
   _triggerStatusChangeDown () {
-    this._changeDownPublisher.notify()
+    this._changeDownPublisher.publish()
   }
 }
 

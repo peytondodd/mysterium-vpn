@@ -20,7 +20,7 @@
 import ProposalDTO from 'mysterium-tequilapi/lib/dto/proposal'
 import type { TequilapiClient } from 'mysterium-tequilapi/lib/client'
 import { FunctionLooper } from '../../libraries/function-looper'
-import type { Callback } from '../../libraries/publisher'
+import type { Subscriber } from '../../libraries/publisher'
 import Publisher from '../../libraries/publisher'
 import type { ProposalFetcher } from './proposal-fetcher'
 
@@ -37,7 +37,7 @@ class TequilapiProposalFetcher implements ProposalFetcher {
       await this.fetch()
     }, interval)
     this._loop.onFunctionError((error) => {
-      this._errorPublisher.notify(error)
+      this._errorPublisher.publish(error)
     })
   }
 
@@ -54,7 +54,7 @@ class TequilapiProposalFetcher implements ProposalFetcher {
   async fetch (): Promise<ProposalDTO[]> {
     const proposals = await this._api.findProposals()
 
-    this._proposalPublisher.notify(proposals)
+    this._proposalPublisher.publish(proposals)
 
     return proposals
   }
@@ -63,12 +63,12 @@ class TequilapiProposalFetcher implements ProposalFetcher {
     await this._loop.stop()
   }
 
-  onFetchedProposals (subscriber: Callback<ProposalDTO[]>): void {
-    this._proposalPublisher.subscribe(subscriber)
+  onFetchedProposals (subscriber: Subscriber<ProposalDTO[]>): void {
+    this._proposalPublisher.addSubscriber(subscriber)
   }
 
-  onFetchingError (subscriber: Callback<Error>): void {
-    this._errorPublisher.subscribe(subscriber)
+  onFetchingError (subscriber: Subscriber<Error>): void {
+    this._errorPublisher.addSubscriber(subscriber)
   }
 }
 

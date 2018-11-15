@@ -17,7 +17,7 @@
 
 // @flow
 import type { UserSettings } from './user-settings'
-import type { Callback } from '../../libraries/publisher'
+import type { Subscriber } from '../../libraries/publisher'
 
 const userSettingName = {
   showDisconnectNotifications: 'showDisconnectNotifications',
@@ -30,8 +30,8 @@ interface UserSettingsStore {
   setFavorite (id: string, isFavorite: boolean): Promise<void>,
   setShowDisconnectNotifications (show: boolean): Promise<void>,
   getAll (): UserSettings,
-  onChange (property: UserSettingName, callback: Callback<any>): void,
-  removeOnChange (property: UserSettingName, callback: Callback<any>): void
+  onChange (property: UserSettingName, callback: Subscriber<any>): void,
+  removeOnChange (property: UserSettingName, callback: Subscriber<any>): void
 }
 
 export type { UserSettingsStore, UserSettingName }

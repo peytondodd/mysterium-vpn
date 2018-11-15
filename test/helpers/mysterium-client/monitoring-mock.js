@@ -35,7 +35,7 @@ class MockStatusNotifier implements StatusNotifier {
   }
 
   onStatus (callback: StatusCallback): void {
-    this._statusPublisher.subscribe(callback)
+    this._statusPublisher.addSubscriber(callback)
     const status = this._lastStatus
     if (status != null) {
       // TODO: remove this initial invokation in this class?
@@ -44,7 +44,7 @@ class MockStatusNotifier implements StatusNotifier {
   }
 
   notifyStatus (status: boolean) {
-    this._statusPublisher.notify(status)
+    this._statusPublisher.publish(status)
   }
 }
 

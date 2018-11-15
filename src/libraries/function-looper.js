@@ -122,7 +122,7 @@ class FunctionLooper {
         this._currentExecutor = new ThresholdExecutor(
           this._func,
           this._threshold,
-          (err) => this._errorPublisher.notify(err)
+          (err) => this._errorPublisher.publish(err)
         )
         this._currentPromise = this._currentExecutor.execute()
         await this._currentPromise
@@ -141,7 +141,7 @@ class FunctionLooper {
   }
 
   onFunctionError (callback: (Error) => void) {
-    this._errorPublisher.subscribe(callback)
+    this._errorPublisher.addSubscriber(callback)
   }
 
   async _waitForStartedPromise (): Promise<void> {

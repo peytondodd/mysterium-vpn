@@ -20,7 +20,7 @@
 import type { FavoriteProviders, UserSettings } from './user-settings'
 import { Observable } from '../../libraries/observable'
 import type { UserSettingName } from './user-settings-store'
-import type { Callback } from '../../libraries/publisher'
+import type { Subscriber } from '../../libraries/publisher'
 import { userSettingName } from './user-settings-store'
 
 function getDefaultSettings (): UserSettings {
@@ -53,12 +53,12 @@ class ObservableUserSettings {
     return (settings: any)
   }
 
-  onChange (property: UserSettingName, callback: Callback<any>) {
-    this._observables[property].subscribe(callback)
+  onChange (property: UserSettingName, callback: Subscriber<any>) {
+    this._observables[property].addSubscriber(callback)
   }
 
-  removeOnChange (property: UserSettingName, callback: Callback<any>) {
-    this._observables[property].unsubscribe(callback)
+  removeOnChange (property: UserSettingName, callback: Subscriber<any>) {
+    this._observables[property].removeSubscriber(callback)
   }
 
   _buildObservables (): ObservableSettings {

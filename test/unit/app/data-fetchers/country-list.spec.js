@@ -18,7 +18,7 @@
 // @flow
 import type { ProposalFetcher } from '../../../../src/app/data-fetchers/proposal-fetcher'
 import ProposalDTO from 'mysterium-tequilapi/lib/dto/proposal'
-import type { Callback } from '../../../../src/libraries/publisher'
+import type { Subscriber } from '../../../../src/libraries/publisher'
 import { afterEach, beforeEach, describe, expect, it } from '../../../helpers/dependencies'
 import CountryList from '../../../../src/app/data-fetchers/country-list'
 import { UserSettingsStorage } from '../../../../src/app/user-settings/user-settings-storage'
@@ -27,7 +27,7 @@ import { unlinkSyncIfPresent } from '../../../helpers/file-system'
 import type { UserSettingsStore } from '../../../../src/app/user-settings/user-settings-store'
 
 class ProposalFetcherMock implements ProposalFetcher {
-  _subscriber: Callback<ProposalDTO[]>
+  _subscriber: Subscriber<ProposalDTO[]>
   _data: ProposalDTO[]
 
   async fetch (): Promise<Array<ProposalDTO>> {
@@ -35,7 +35,7 @@ class ProposalFetcherMock implements ProposalFetcher {
     return this._data
   }
 
-  onFetchedProposals (cb: Callback<ProposalDTO[]>) {
+  onFetchedProposals (cb: Subscriber<ProposalDTO[]>) {
     this._subscriber = cb
   }
 

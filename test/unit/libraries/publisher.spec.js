@@ -27,46 +27,46 @@ describe('Publisher', () => {
     publisher = new Publisher()
   })
 
-  it('notifies each event', () => {
+  it('publishes each event', () => {
     const values: Array<string> = []
-    publisher.subscribe((value: string) => {
+    publisher.addSubscriber((value: string) => {
       values.push(value)
     })
 
-    publisher.notify('hello')
-    publisher.notify('world')
+    publisher.publish('hello')
+    publisher.publish('world')
 
     expect(values).to.eql(['hello', 'world'])
   })
 
-  it('notifies multiple subscribers', () => {
+  it('publishes event to multiple subscribers', () => {
     let value1 = null
     let value2 = null
-    publisher.subscribe((value: string) => {
+    publisher.addSubscriber((value: string) => {
       value1 = value
     })
-    publisher.subscribe((value: string) => {
+    publisher.addSubscriber((value: string) => {
       value2 = value
     })
 
-    publisher.notify('hey')
+    publisher.publish('hey')
 
     expect(value1).to.eql('hey')
     expect(value2).to.eql('hey')
   })
 
-  it('notifies all subscribers when first is failing', () => {
+  it('publishes event to all subscribers when first is failing', () => {
     let value1 = null
     let value2 = null
-    publisher.subscribe((value: string) => {
+    publisher.addSubscriber((value: string) => {
       value1 = value
       throw new Error('mock error')
     })
-    publisher.subscribe((value: string) => {
+    publisher.addSubscriber((value: string) => {
       value2 = value
     })
 
-    publisher.notify('hey')
+    publisher.publish('hey')
 
     expect(value1).to.eql('hey')
     expect(value2).to.eql('hey')
@@ -74,23 +74,23 @@ describe('Publisher', () => {
 
   it('returns function which unsubscribes', () => {
     const values: Array<string> = []
-    const unsubscribe = publisher.subscribe((value: string) => {
+    const unsubscribe = publisher.addSubscriber((value: string) => {
       values.push(value)
     })
 
-    publisher.notify('hello')
+    publisher.publish('hello')
     unsubscribe()
-    publisher.notify('world')
+    publisher.publish('world')
 
     expect(values).to.eql(['hello'])
   })
 
-  describe('.unsubscribe', () => {
+  describe('.removeSubscriber', () => {
     it('returns error if unsubscribing twice', () => {
       const cb = () => {}
-      publisher.subscribe(cb)
-      publisher.unsubscribe(cb)
-      const err = captureError(() => publisher.unsubscribe(cb))
+      publisher.addSubscriber(cb)
+      publisher.removeSubscriber(cb)
+      const err = captureError(() => publisher.removeSubscriber(cb))
       if (!(err instanceof Error)) {
         throw Error('Expected error')
       }

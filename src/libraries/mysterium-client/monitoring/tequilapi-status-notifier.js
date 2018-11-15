@@ -54,7 +54,7 @@ class TequilapiStatusNotifier implements StatusNotifier {
   }
 
   onStatus (callback: StatusCallback): void {
-    this._statusPublisher.subscribe(callback)
+    this._statusPublisher.addSubscriber(callback)
   }
 
   async _healthCheckLoop (): Promise<void> {
@@ -83,7 +83,7 @@ class TequilapiStatusNotifier implements StatusNotifier {
   }
 
   _updateStatus (status: boolean) {
-    this._statusPublisher.notify(status)
+    this._statusPublisher.publish(status)
   }
 }
 

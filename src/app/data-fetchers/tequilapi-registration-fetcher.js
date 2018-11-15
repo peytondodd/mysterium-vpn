@@ -19,7 +19,7 @@
 
 import type { TequilapiClient } from 'mysterium-tequilapi/lib/client'
 import { FunctionLooper } from '../../libraries/function-looper'
-import type { Callback } from '../../libraries/publisher'
+import type { Subscriber } from '../../libraries/publisher'
 import Publisher from '../../libraries/publisher'
 import type { RegistrationFetcher } from './registration-fetcher'
 import IdentityRegistrationDTO from 'mysterium-tequilapi/lib/dto/identity-registration'
@@ -38,7 +38,7 @@ class TequilapiRegistrationFetcher implements RegistrationFetcher {
       await this.fetch()
     }, interval)
     this._loop.onFunctionError((error) => {
-      this._errorPublisher.notify(error)
+      this._errorPublisher.publish(error)
     })
   }
 
@@ -58,7 +58,7 @@ class TequilapiRegistrationFetcher implements RegistrationFetcher {
   async fetch (): Promise<IdentityRegistrationDTO> {
     const registration = await this._api.identityRegistration(this._identityId)
 
-    this._registrationPublisher.notify(registration)
+    this._registrationPublisher.publish(registration)
 
     return registration
   }
@@ -67,12 +67,12 @@ class TequilapiRegistrationFetcher implements RegistrationFetcher {
     await this._loop.stop()
   }
 
-  onFetchedRegistration (subscriber: Callback<IdentityRegistrationDTO>): void {
-    this._registrationPublisher.subscribe(subscriber)
+  onFetchedRegistration (subscriber: Subscriber<IdentityRegistrationDTO>): void {
+    this._registrationPublisher.addSubscriber(subscriber)
   }
 
-  onFetchingError (subscriber: Callback<Error>): void {
-    this._errorPublisher.subscribe(subscriber)
+  onFetchingError (subscriber: Subscriber<Error>): void {
+    this._errorPublisher.addSubscriber(subscriber)
   }
 }
 
