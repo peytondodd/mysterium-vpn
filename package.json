@@ -69,7 +69,7 @@
       "icon": "build/icons/icon.png",
       "extraFiles": [
         "./bin/openvpn",
-        "./bin/mysterium_client"
+        "./bin/myst"
       ],
       "category": "public.app-category.utilities"
     },
