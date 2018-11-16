@@ -74,7 +74,8 @@ describe('UserSettingsProxy', () => {
     it('returns default settings initially', () => {
       const defaultSettings: UserSettings = {
         showDisconnectNotifications: true,
-        favoriteProviders: new Set()
+        favoriteProviders: new Set(),
+        showAllProviders: false
       }
       expect(settingsProxy.getAll()).to.eql(defaultSettings)
     })
@@ -83,7 +84,8 @@ describe('UserSettingsProxy', () => {
       settingsProxy.startListening()
       const updatedSettings: UserSettings = {
         showDisconnectNotifications: false,
-        favoriteProviders: new Set()
+        favoriteProviders: new Set(),
+        showAllProviders: false
       }
       msgBus.triggerOn(messages.USER_SETTINGS, updatedSettings)
       expect(settingsProxy.getAll()).to.eql(updatedSettings)
@@ -131,7 +133,8 @@ describe('UserSettingsProxy', () => {
 
       const updatedSettings: UserSettings = {
         showDisconnectNotifications: false,
-        favoriteProviders: new Set()
+        favoriteProviders: new Set(),
+        showAllProviders: false
       }
       msgBus.triggerOn(messages.USER_SETTINGS, updatedSettings)
       expect(recorder.invokesCount).to.eql(2)
@@ -144,7 +147,8 @@ describe('UserSettingsProxy', () => {
       const favoriteProviders = new Set('new provider')
       const updatedSettings: UserSettings = {
         showDisconnectNotifications: true,
-        favoriteProviders: favoriteProviders
+        favoriteProviders: favoriteProviders,
+        showAllProviders: false
       }
       msgBus.triggerOn(messages.USER_SETTINGS, updatedSettings)
       expect(recorder.invokesCount).to.eql(2)
@@ -161,7 +165,8 @@ describe('UserSettingsProxy', () => {
 
       const updatedSettings: UserSettings = {
         showDisconnectNotifications: false,
-        favoriteProviders: new Set()
+        favoriteProviders: new Set(),
+        showAllProviders: false
       }
       msgBus.triggerOn(messages.USER_SETTINGS, updatedSettings)
       expect(recorder.invokesCount).to.eql(1)

@@ -37,7 +37,8 @@ describe('storage', () => {
     it('exports a valid json file', async () => {
       const settings: UserSettings = {
         showDisconnectNotifications: false,
-        favoriteProviders: new Set(['id_123'])
+        favoriteProviders: new Set(['id_123']),
+        showAllProviders: false
       }
       await saveSettings(saveSettingsPath, settings)
       const data = readFileSync(saveSettingsPath, { encoding: 'utf8' })
@@ -45,7 +46,8 @@ describe('storage', () => {
       expect(data.toString()).to.eql(
         '{' +
         '"showDisconnectNotifications":false,' +
-        '"favoriteProviders":["id_123"]' +
+        '"favoriteProviders":["id_123"],' +
+        '"showAllProviders":false' +
         '}'
       )
     })
@@ -58,7 +60,8 @@ describe('storage', () => {
       before(() => {
         const settings: UserSettings = {
           showDisconnectNotifications: false,
-          favoriteProviders: new Set(['id_123'])
+          favoriteProviders: new Set(['id_123']),
+          showAllProviders: false
         }
         writeFileSync(
           loadSettingsPath,

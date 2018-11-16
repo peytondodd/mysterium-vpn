@@ -26,13 +26,15 @@ import { userSettingName } from './user-settings-store'
 function getDefaultSettings (): UserSettings {
   return {
     showDisconnectNotifications: true,
-    favoriteProviders: new Set()
+    favoriteProviders: new Set(),
+    showAllProviders: false
   }
 }
 
 type ObservableSettings = {
   showDisconnectNotifications: Observable<boolean>,
-  favoriteProviders: Observable<FavoriteProviders>
+  favoriteProviders: Observable<FavoriteProviders>,
+  showAllProviders: Observable<boolean>
 }
 
 /**

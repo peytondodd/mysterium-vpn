@@ -52,6 +52,10 @@ class UserSettingsProxy extends ObservableUserSettings implements UserSettingsSt
     this._communication.toggleFavoriteProvider.send({ id, isFavorite })
   }
 
+  async setShowAllProviders (show: boolean) {
+    this._communication.showAllProviders.send(show)
+  }
+
   async setShowDisconnectNotifications (show: boolean) {
     this._communication.showDisconnectNotification.send(show)
   }

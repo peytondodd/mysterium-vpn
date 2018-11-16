@@ -42,6 +42,7 @@ export default {
 
   TOGGLE_FAVORITE_PROVIDER: 'toggle.favorite.provider',
   SHOW_DISCONNECT_NOTIFICATION: 'show.disconnect.notification',
+  SHOW_ALL_PROVIDERS: 'show.all.providers',
 
   USER_SETTINGS: 'user.settings',
   USER_SETTINGS_REQUEST: 'user.settings.request',

@@ -86,6 +86,7 @@ export function buildMessageTransports (messageBus: MessageBus) {
 
   const toggleFavoriteProvider: MessageTransport<FavoriteProviderDTO> = build(messages.TOGGLE_FAVORITE_PROVIDER)
   const showDisconnectNotification: MessageTransport<boolean> = build(messages.SHOW_DISCONNECT_NOTIFICATION)
+  const showAllProviders: MessageTransport<boolean> = build(messages.SHOW_ALL_PROVIDERS)
 
   const userSettings: MessageTransport<UserSettings> = build(messages.USER_SETTINGS)
   const userSettingsRequest: MessageTransport<void> = build(messages.USER_SETTINGS_REQUEST)
@@ -116,6 +117,7 @@ export function buildMessageTransports (messageBus: MessageBus) {
 
     toggleFavoriteProvider,
     showDisconnectNotification,
+    showAllProviders,
 
     userSettings,
     userSettingsRequest,

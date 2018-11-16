@@ -55,6 +55,7 @@ export type RendererCommunication = {
 
   toggleFavoriteProvider: MessageSender<FavoriteProviderDTO>,
   showDisconnectNotification: MessageSender<boolean>,
+  showAllProviders: MessageSender<boolean>,
 
   userSettingsSender: MessageSender<UserSettings>,
   userSettingsReceiver: MessageReceiver<UserSettings>,
@@ -89,6 +90,7 @@ export function buildRendererCommunication (messageBus: MessageBus): RendererCom
 
     toggleFavoriteProvider: transports.toggleFavoriteProvider.buildSender(),
     showDisconnectNotification: transports.showDisconnectNotification.buildSender(),
+    showAllProviders: transports.showAllProviders.buildSender(),
 
     userSettingsSender: transports.userSettings.buildSender(),
     userSettingsReceiver: transports.userSettings.buildReceiver(),

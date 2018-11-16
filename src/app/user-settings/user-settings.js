@@ -20,7 +20,8 @@ type FavoriteProviders = Set<string>
 
 type UserSettings = {
   showDisconnectNotifications: boolean,
-  favoriteProviders: FavoriteProviders
+  favoriteProviders: FavoriteProviders,
+  showAllProviders: boolean
 }
 
 export type { UserSettings, FavoriteProviders }

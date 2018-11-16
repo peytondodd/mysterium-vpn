@@ -21,14 +21,15 @@ import type { Subscriber } from '../../libraries/publisher'
 
 const userSettingName = {
   showDisconnectNotifications: 'showDisconnectNotifications',
-  favoriteProviders: 'favoriteProviders'
+  favoriteProviders: 'favoriteProviders',
+  showAllProviders: 'showAllProviders'
 }
 
 type UserSettingName = $Values<typeof userSettingName>
-
 interface UserSettingsStore {
   setFavorite (id: string, isFavorite: boolean): Promise<void>,
   setShowDisconnectNotifications (show: boolean): Promise<void>,
+  setShowAllProviders (show: boolean): Promise<void>,
   getAll (): UserSettings,
   onChange (property: UserSettingName, callback: Subscriber<any>): void,
   removeOnChange (property: UserSettingName, callback: Subscriber<any>): void

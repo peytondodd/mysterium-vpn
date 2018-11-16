@@ -109,21 +109,27 @@ describe('CommunicationBindings', () => {
     })
   })
 
-  describe('.syncShowDisconnectNotifications', () => {
+  describe('.syncUserSettings', () => {
     const userSettingsStore = new UserSettingsStoreMock('some path')
 
     it('sends user settings when requested', () => {
-      comBinds.syncShowDisconnectNotifications(userSettingsStore)
+      comBinds.syncUserSettings(userSettingsStore)
       msgBus.triggerOn(messages.USER_SETTINGS_REQUEST)
 
       expect(msgBus.sentData[0].channel).to.eql(messages.USER_SETTINGS)
       expect(msgBus.sentData[0].data).to.eql({
         showDisconnectNotifications: true,
-        favoriteProviders: new Set()
+        favoriteProviders: new Set(),
+        showAllProviders: false
       })
     })
+  })
+
+  describe('.syncShowDisconnectNotifications', () => {
+    const userSettingsStore = new UserSettingsStoreMock('some path')
 
     it('saves disconnect notification setting that was received from communication', () => {
+      comBinds.syncUserSettings(userSettingsStore)
       comBinds.syncShowDisconnectNotifications(userSettingsStore)
       msgBus.triggerOn(messages.SHOW_DISCONNECT_NOTIFICATION, false)
       expect(userSettingsStore.saveWasCalled).to.be.true

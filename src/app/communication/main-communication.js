@@ -59,6 +59,7 @@ export type MainCommunication = {
 
   toggleFavoriteProvider: MessageReceiver<FavoriteProviderDTO>,
   showDisconnectNotification: MessageReceiver<boolean>,
+  showAllProviders: MessageReceiver<boolean>,
 
   userSettingsReceiver: MessageReceiver<UserSettings>,
   userSettingsSender: MessageSender<UserSettings>,
@@ -93,6 +94,7 @@ export function buildMainCommunication (messageBus: MessageBus): MainCommunicati
 
     toggleFavoriteProvider: transports.toggleFavoriteProvider.buildReceiver(),
     showDisconnectNotification: transports.showDisconnectNotification.buildReceiver(),
+    showAllProviders: transports.showAllProviders.buildReceiver(),
 
     userSettingsReceiver: transports.userSettings.buildReceiver(),
     userSettingsSender: transports.userSettings.buildSender(),

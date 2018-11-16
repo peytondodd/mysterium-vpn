@@ -71,6 +71,11 @@ class UserSettingsStorage extends ObservableUserSettings implements UserSettings
     await this._save()
   }
 
+  async setShowAllProviders (show: boolean) {
+    this._updateProperty(userSettingName.showAllProviders, show)
+    await this._save()
+  }
+
   async _save () {
     return saveSettings(this._path, this.getAll())
   }

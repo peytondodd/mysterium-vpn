@@ -58,13 +58,21 @@ class CommunicationBindings {
     })
   }
 
-  syncShowDisconnectNotifications (userSettingsStore: UserSettingsStore) {
+  syncUserSettings (userSettingsStore: UserSettingsStore) {
     this._communication.userSettingsRequest.on(() => {
       this._communication.userSettingsSender.send(userSettingsStore.getAll())
     })
+  }
 
+  syncShowDisconnectNotifications (userSettingsStore: UserSettingsStore) {
     this._communication.showDisconnectNotification.on((show) => {
       userSettingsStore.setShowDisconnectNotifications(show)
+    })
+  }
+
+  syncShowAllProviders (userSettingsStore: UserSettingsStore) {
+    this._communication.showAllProviders.on((show: boolean) => {
+      userSettingsStore.setShowAllProviders(show)
     })
   }
 

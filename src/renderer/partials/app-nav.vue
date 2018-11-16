@@ -58,6 +58,10 @@
         </nav-list>
 
         <div class="nav__settings">
+          <show-all-providers-setting/>
+        </div>
+
+        <div class="nav__settings">
           <disconnect-notification-settings/>
         </div>
       </div>
@@ -94,11 +98,13 @@ import IconLightbulb from '@/assets/img/icon--lightbulb.svg'
 import DisconnectNotificationSettings from '@/components/disconnect-notification-setting'
 import NavList from '../components/nav-list'
 import { getVersionLabel } from '../../libraries/version'
+import ShowAllProvidersSetting from '../components/show-all-providers-setting'
 
 export default {
   name: 'AppNav',
   dependencies: ['mysteriumVpnReleaseID', 'feedbackForm'],
   components: {
+    ShowAllProvidersSetting,
     IconEye,
     IconIssue,
     IconQuit,
