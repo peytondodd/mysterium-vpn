@@ -23,11 +23,15 @@ import type { FavoriteProviders } from '../user-settings/user-settings'
 const COUNTRY_NAME_UNRESOLVED = 'N/A'
 const COUNTRY_CODE_LENGTH = 2
 
+const UNKNOWN_PROPOSAL_SUCCESS_RATE = 0
+const NEW_PROPOSAL_SUCCESS_RATE = 1
+
 type Country = {
   id: string,
   code: ?string,
   name: string,
-  isFavorite: boolean
+  isFavorite: boolean,
+  successRate: number
 }
 
 function getCountryLabel (country: Country, maxNameLength: ?number = null, maxIdentityLength: ?number = 9) {
@@ -62,10 +66,11 @@ function countryFavoriteMapper (favorites: FavoriteProviders): (Country) => Coun
 
 function getCountryFromProposal (proposal: ProposalDTO): Country {
   return {
-    id: proposal.providerId,
+    id: proposal.providerId || '',
     code: getCountryCodeFromProposal(proposal),
     name: getCountryNameFromProposal(proposal),
-    isFavorite: false
+    isFavorite: false,
+    successRate: getCountrySuccessRateFromProposal(proposal)
   }
 }
 
@@ -74,6 +79,10 @@ function compareCountries (a: Country, b: Country) {
     return -1
   } else if (!a.isFavorite && b.isFavorite) {
     return 1
+  } else if (a.successRate < b.successRate) {
+    return 1
+  } else if (b.successRate < a.successRate) {
+    return -1
   } else if (a.name > b.name) {
     return 1
   } else if (b.name > a.name) {
@@ -118,6 +127,18 @@ function getCountryCodeFromProposal (proposal: ProposalDTO): ?string {
   }
 
   return proposal.serviceDefinition.locationOriginate.country
+}
+
+function getCountrySuccessRateFromProposal (proposal: ProposalDTO): number {
+  if (!proposal.metrics || !proposal.metrics.connectCount) {
+    return UNKNOWN_PROPOSAL_SUCCESS_RATE
+  }
+  const count = proposal.metrics.connectCount
+  const total = count.success + count.fail
+  if (total > 0) {
+    return count.success / (count.success + count.fail)
+  }
+  return NEW_PROPOSAL_SUCCESS_RATE
 }
 
 export type { Country }

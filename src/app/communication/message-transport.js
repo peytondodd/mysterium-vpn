@@ -78,7 +78,7 @@ export function buildMessageTransports (messageBus: MessageBus) {
   const healthcheckUp: MessageTransport<void> = build(messages.HEALTHCHECK_UP)
   const healthcheckDown: MessageTransport<void> = build(messages.HEALTHCHECK_DOWN)
 
-  const proposalsUpdate: MessageTransport<void> = build(messages.PROPOSALS_UPDATE)
+  const proposalsUpdate: MessageTransport<boolean> = build(messages.PROPOSALS_UPDATE)
   const countryUpdate: MessageTransport<CountriesDTO> = build(messages.COUNTRY_UPDATE)
 
   // TODO: handle class serialization

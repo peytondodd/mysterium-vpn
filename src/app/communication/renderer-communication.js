@@ -48,7 +48,7 @@ export type RendererCommunication = {
   healthcheckUp: MessageReceiver<void>,
   healthcheckDown: MessageReceiver<void>,
 
-  proposalsUpdate: MessageSender<void>,
+  proposalsUpdate: MessageSender<boolean>,
   countryUpdate: MessageReceiver<CountriesDTO>,
 
   identityRegistration: MessageReceiver<IdentityRegistrationDTO>,

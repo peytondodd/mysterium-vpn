@@ -21,7 +21,7 @@ import type { Callback } from '../../libraries/subscriber'
 import ProposalDTO from 'mysterium-tequilapi/lib/dto/proposal'
 
 interface ProposalFetcher {
-  fetch(): Promise<ProposalDTO[]>,
+  fetch(showMore: boolean): Promise<ProposalDTO[]>,
   onFetchedProposals(Callback<ProposalDTO[]>): void
 }
 

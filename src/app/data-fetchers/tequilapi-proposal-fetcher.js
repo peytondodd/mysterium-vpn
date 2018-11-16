@@ -26,18 +26,28 @@ import Subscriber from '../../libraries/subscriber'
 import type { ProposalFetcher } from './proposal-fetcher'
 
 const proposalsQueryWithMetric = new ProposalsQuery({ fetchConnectCounts: true })
+const filterFailedProposals = (proposal: ProposalDTO) => {
+  if (proposal.metrics && proposal.metrics.connectCount) {
+    const count = proposal.metrics.connectCount
+    if (count.success < 30 && count.fail > 0) {
+      return false
+    }
+  }
+  return true
+}
 
 class TequilapiProposalFetcher implements ProposalFetcher {
   _api: TequilapiClient
   _loop: FunctionLooper
   _proposalSubscriber: Subscriber<ProposalDTO[]> = new Subscriber()
   _errorSubscriber: Subscriber<Error> = new Subscriber()
+  _showMore: boolean = false
 
   constructor (api: TequilapiClient, interval: number = 5000) {
     this._api = api
 
     this._loop = new FunctionLooper(async () => {
-      await this.fetch()
+      await this.fetch(this._showMore)
     }, interval)
 
     this._loop.onFunctionError((error) => {
@@ -55,8 +65,13 @@ class TequilapiProposalFetcher implements ProposalFetcher {
   /**
    * Forces proposals to be fetched without delaying.
    */
-  async fetch (): Promise<ProposalDTO[]> {
-    const proposals = await this._api.findProposals(proposalsQueryWithMetric)
+  async fetch (showMore: boolean): Promise<ProposalDTO[]> {
+    let proposals = await this._api.findProposals(proposalsQueryWithMetric)
+
+    this._showMore = showMore
+    if (!showMore) {
+      proposals = proposals.filter(filterFailedProposals)
+    }
 
     this._proposalSubscriber.notify(proposals)
 

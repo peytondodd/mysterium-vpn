@@ -26,16 +26,6 @@ import type { ProposalFetcher } from './proposal-fetcher'
 import type { UserSettingsStore } from '../user-settings/user-settings-store'
 import { userSettingName } from '../user-settings/user-settings-store'
 
-const defaultProposalFilter = (proposal: ProposalDTO) => {
-  if (proposal.metrics && proposal.metrics.connectCount) {
-    const count = proposal.metrics.connectCount
-    if (count.success === 0 && count.fail > 0) {
-      return false
-    }
-  }
-  return true
-}
-
 class CountryList {
   _proposalFetcher: ProposalFetcher
   _userSettingsStore: UserSettingsStore
@@ -43,8 +33,6 @@ class CountryList {
 
   _proposals: ProposalDTO[] = []
   _favorites: FavoriteProviders = new Set()
-
-  _proposalsFilter: ProposalDTO => boolean = defaultProposalFilter
 
   constructor (proposalFetcher: ProposalFetcher, store: UserSettingsStore) {
     this._proposalFetcher = proposalFetcher
@@ -55,10 +43,6 @@ class CountryList {
 
   onUpdate (listener: Callback<Array<Country>>) {
     this._listeners.subscribe(listener)
-  }
-
-  setProposalFilter (filter: ProposalDTO => boolean) {
-    this._proposalsFilter = filter
   }
 
   _subscribeToFavoriteChanges () {
@@ -74,7 +58,7 @@ class CountryList {
 
   _subscribeToProposalFetches () {
     this._proposalFetcher.onFetchedProposals((proposals: ProposalDTO[]) => {
-      this._proposals = proposals.filter(this._proposalsFilter)
+      this._proposals = proposals
       this._notify()
     })
   }
