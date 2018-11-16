@@ -17,12 +17,12 @@
 
 // @flow
 
-import type { Callback } from '../../libraries/subscriber'
+import type { Subscriber } from '../../libraries/publisher'
 import IdentityRegistrationDTO from 'mysterium-tequilapi/lib/dto/identity-registration'
 
 interface RegistrationFetcher {
   fetch(): Promise<IdentityRegistrationDTO>,
-  onFetchedRegistration(Callback<IdentityRegistrationDTO>): void
+  onFetchedRegistration(Subscriber<IdentityRegistrationDTO>): void
 }
 
 export type { RegistrationFetcher }

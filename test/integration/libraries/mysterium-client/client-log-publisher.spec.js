@@ -21,14 +21,14 @@ import type { LogCallback } from '../../../../src/libraries/mysterium-client'
 import logLevels from '../../../../src/libraries/mysterium-client/log-levels'
 import BugReporterMock from '../../../helpers/bug-reporter-mock'
 import { afterEach, beforeEach, describe, expect, it } from '../../../helpers/dependencies'
-import ClientLogSubscriber from '../../../../src/libraries/mysterium-client/client-log-subscriber'
+import ClientLogPublisher from '../../../../src/libraries/mysterium-client/client-log-publisher'
 import { existsSync, unlinkSync } from 'fs'
 import path from 'path'
 import { CallbackRecorder } from '../../../helpers/utils'
 
-describe('ClientLogSubscriber', () => {
+describe('ClientLogPublisher', () => {
   let logCallbackParam = ''
-  let subscriber
+  let publisher
   const stdout = path.join(process.cwd(), __dirname, 'stdout.log')
   const stderr = path.join(process.cwd(), __dirname, 'stderr.log')
   const dateFunction = () => new Date('2018-01-01')
@@ -37,7 +37,7 @@ describe('ClientLogSubscriber', () => {
   }
 
   beforeEach(() => {
-    subscriber = new ClientLogSubscriber(new BugReporterMock(), stdout, stderr, stdout, dateFunction, tailFunction)
+    publisher = new ClientLogPublisher(new BugReporterMock(), stdout, stderr, stdout, dateFunction, tailFunction)
   })
 
   afterEach(() => {
@@ -50,7 +50,7 @@ describe('ClientLogSubscriber', () => {
       expect(existsSync(stdout)).to.be.false
       expect(existsSync(stderr)).to.be.false
 
-      await subscriber.setup()
+      await publisher.setup()
 
       expect(existsSync(stdout)).to.be.true
       expect(existsSync(stderr)).to.be.true
@@ -62,9 +62,9 @@ describe('ClientLogSubscriber', () => {
       logCallbackParam = 'info line'
 
       const sub = new CallbackRecorder()
-      subscriber.onLog(logLevels.INFO, sub.getCallback())
+      publisher.onLog(logLevels.INFO, sub.getCallback())
 
-      await subscriber.setup()
+      await publisher.setup()
 
       expect(sub.invoked).to.be.true
       expect(sub.arguments).to.be.eql([logCallbackParam])
@@ -74,9 +74,9 @@ describe('ClientLogSubscriber', () => {
       logCallbackParam = 'error line'
       const sub = new CallbackRecorder()
 
-      subscriber.onLog(logLevels.ERROR, sub.getCallback())
+      publisher.onLog(logLevels.ERROR, sub.getCallback())
 
-      await subscriber.setup()
+      await publisher.setup()
 
       expect(sub.invoked).to.be.true
       expect(sub.arguments).to.be.eql(['2018-01-01T00:00:00.000Z error line'])

@@ -21,7 +21,7 @@ import logger from '../../../app/logger'
 import type { LogCallback, Process } from '../index'
 import type { TequilapiClient } from 'mysterium-tequilapi/lib/client'
 import type { System } from '../system'
-import ClientLogSubscriber from '../client-log-subscriber'
+import ClientLogPublisher from '../client-log-publisher'
 import { HEALTH_CHECK_INTERVAL } from '../monitoring/monitoring'
 import ServiceManager, { SERVICE_STATE } from './service-manager'
 import type { ServiceState } from './service-manager'
@@ -41,14 +41,14 @@ const SERVICE_CHECK_TIME = HEALTH_CHECK_INTERVAL
 
 class ServiceManagerProcess implements Process {
   _tequilapi: TequilapiClient
-  _logs: ClientLogSubscriber
+  _logs: ClientLogPublisher
   _serviceManager: ServiceManager
   _system: System
   _repairIsRunning: boolean = false
 
   constructor (
     tequilapi: TequilapiClient,
-    logs: ClientLogSubscriber,
+    logs: ClientLogPublisher,
     serviceManager: ServiceManager,
     system: System) {
     this._tequilapi = tequilapi

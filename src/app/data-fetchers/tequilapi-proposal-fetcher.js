@@ -21,8 +21,8 @@ import ProposalDTO from 'mysterium-tequilapi/lib/dto/proposal'
 import ProposalsQuery from 'mysterium-tequilapi/lib/adapters/proposals-query'
 import type { TequilapiClient } from 'mysterium-tequilapi/lib/client'
 import { FunctionLooper } from '../../libraries/function-looper'
-import type { Callback } from '../../libraries/subscriber'
-import Subscriber from '../../libraries/subscriber'
+import type { Subscriber } from '../../libraries/publisher'
+import Publisher from '../../libraries/publisher'
 import type { ProposalFetcher } from './proposal-fetcher'
 
 const proposalsQueryWithMetric = new ProposalsQuery({ fetchConnectCounts: true })
@@ -39,8 +39,8 @@ const filterFailedProposals = (proposal: ProposalDTO) => {
 class TequilapiProposalFetcher implements ProposalFetcher {
   _api: TequilapiClient
   _loop: FunctionLooper
-  _proposalSubscriber: Subscriber<ProposalDTO[]> = new Subscriber()
-  _errorSubscriber: Subscriber<Error> = new Subscriber()
+  _proposalPublisher: Publisher<ProposalDTO[]> = new Publisher()
+  _errorPublisher: Publisher<Error> = new Publisher()
   _showMore: boolean = false
 
   constructor (api: TequilapiClient, interval: number = 5000) {
@@ -51,7 +51,7 @@ class TequilapiProposalFetcher implements ProposalFetcher {
     }, interval)
 
     this._loop.onFunctionError((error) => {
-      this._errorSubscriber.notify(error)
+      this._errorPublisher.publish(error)
     })
   }
 
@@ -73,7 +73,7 @@ class TequilapiProposalFetcher implements ProposalFetcher {
       proposals = proposals.filter(filterFailedProposals)
     }
 
-    this._proposalSubscriber.notify(proposals)
+    this._proposalPublisher.publish(proposals)
 
     return proposals
   }
@@ -82,12 +82,12 @@ class TequilapiProposalFetcher implements ProposalFetcher {
     await this._loop.stop()
   }
 
-  onFetchedProposals (subscriber: Callback<ProposalDTO[]>): void {
-    this._proposalSubscriber.subscribe(subscriber)
+  onFetchedProposals (subscriber: Subscriber<ProposalDTO[]>): void {
+    this._proposalPublisher.addSubscriber(subscriber)
   }
 
-  onFetchingError (subscriber: Callback<Error>): void {
-    this._errorSubscriber.subscribe(subscriber)
+  onFetchingError (subscriber: Subscriber<Error>): void {
+    this._errorPublisher.addSubscriber(subscriber)
   }
 }
 

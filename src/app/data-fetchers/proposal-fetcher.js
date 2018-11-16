@@ -17,12 +17,12 @@
 
 // @flow
 
-import type { Callback } from '../../libraries/subscriber'
+import type { Subscriber } from '../../libraries/publisher'
 import ProposalDTO from 'mysterium-tequilapi/lib/dto/proposal'
 
 interface ProposalFetcher {
   fetch(showMore: boolean): Promise<ProposalDTO[]>,
-  onFetchedProposals(Callback<ProposalDTO[]>): void
+  onFetchedProposals(Subscriber<ProposalDTO[]>): void
 }
 
 export type { ProposalFetcher }

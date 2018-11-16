@@ -24,11 +24,11 @@ import type { BugReporter } from '../../../app/bug-reporting/interface'
 import type { Container } from '../../../app/di'
 import type { MysteriumVpnConfig } from '../../../app/mysterium-vpn-config'
 import type { Installer, LogCallback, Process } from '../../../libraries/mysterium-client'
-import type { TailFunction } from '../../../libraries/mysterium-client/client-log-subscriber'
+import type { TailFunction } from '../../../libraries/mysterium-client/client-log-publisher'
 import type { ClientConfig } from '../../../libraries/mysterium-client/config'
 import type { TequilapiClient } from 'mysterium-tequilapi/lib/client'
 
-import ClientLogSubscriber from '../../../libraries/mysterium-client/client-log-subscriber'
+import ClientLogPublisher from '../../../libraries/mysterium-client/client-log-publisher'
 
 import LaunchDaemonInstaller from '../../../libraries/mysterium-client/launch-daemon/launch-daemon-installer'
 import LaunchDaemonProcess from '../../../libraries/mysterium-client/launch-daemon/launch-daemon-process'
@@ -131,10 +131,10 @@ function bootstrap (container: Container) {
   )
 
   container.service(
-    'mysteriumClient.logSubscriber',
+    'mysteriumClient.logPublisher',
     ['bugReporter', 'mysteriumClient.config', 'mysteriumClient.tailFunction'],
     (bugReporter: BugReporter, config: ClientConfig, tailFunction: TailFunction) => {
-      return new ClientLogSubscriber(
+      return new ClientLogPublisher(
         bugReporter,
         path.join(config.logDir, config.stdOutFileName),
         path.join(config.logDir, config.stdErrFileName),
@@ -149,7 +149,7 @@ function bootstrap (container: Container) {
     'mysteriumClientProcess',
     ['tequilapiClient',
       'mysteriumClient.config',
-      'mysteriumClient.logSubscriber',
+      'mysteriumClient.logPublisher',
       'mysteriumClient.platform',
       'mysteriumClientMonitoring',
       'serviceManager',
@@ -159,7 +159,7 @@ function bootstrap (container: Container) {
     (
       tequilapiClient: TequilapiClient,
       config: ClientConfig,
-      logSubscriber: ClientLogSubscriber,
+      logPublisher: ClientLogPublisher,
       platform: string,
       monitoring: Monitoring,
       serviceManager: ServiceManager,
@@ -168,11 +168,11 @@ function bootstrap (container: Container) {
     ) => {
       switch (platform) {
         case OSX:
-          return new LaunchDaemonProcess(tequilapiClient, logSubscriber, LAUNCH_DAEMON_PORT, monitoring, versionCheck)
+          return new LaunchDaemonProcess(tequilapiClient, logPublisher, LAUNCH_DAEMON_PORT, monitoring, versionCheck)
         case WINDOWS:
           return new ServiceManagerProcess(
             tequilapiClient,
-            logSubscriber,
+            logPublisher,
             serviceManager,
             new OSSystem()
           )

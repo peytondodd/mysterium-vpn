@@ -19,39 +19,39 @@
 
 import logger from '../app/logger'
 
-type Callback<T> = (T) => any
+type Subscriber<T> = (T) => any
 type Unsubscribe = () => void
 
 /**
- * Allows subscribing callbacks and notifying them with data.
+ * Allows subscribing callbacks and publishing data to them.
  */
-class Subscriber<T> {
-  _callbacks: Array<Callback<T>> = []
+class Publisher<T> {
+  _subscribers: Array<Subscriber<T>> = []
 
-  subscribe (callback: Callback<T>): Unsubscribe {
-    this._callbacks.push(callback)
-    return () => { this.unsubscribe(callback) }
+  addSubscriber (subscriber: Subscriber<T>): Unsubscribe {
+    this._subscribers.push(subscriber)
+    return () => { this.removeSubscriber(subscriber) }
   }
 
-  unsubscribe (callback: Callback<T>) {
-    const index = this._callbacks.indexOf(callback)
+  removeSubscriber (subscriber: Subscriber<T>) {
+    const index = this._subscribers.indexOf(subscriber)
     if (index === -1) {
       throw new Error('Callback being unsubscribed was not found')
     }
-    this._callbacks.splice(index, 1)
+    this._subscribers.splice(index, 1)
   }
 
-  notify (data: T) {
-    this._callbacks.forEach((callback: Callback<T>) => {
+  publish (data: T) {
+    this._subscribers.forEach((callback: Subscriber<T>) => {
       try {
         callback(data)
       } catch (err) {
-        logger.error('Callback call in Subscriber failed', err)
+        logger.error('Callback call in Publisher failed', err)
       }
     })
   }
 }
 
-export type { Callback, Unsubscribe }
+export type { Subscriber, Unsubscribe }
 
-export default Subscriber
+export default Publisher

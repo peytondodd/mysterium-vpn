@@ -17,7 +17,7 @@
 
 // @flow
 import sleep from './sleep'
-import Subscriber from './subscriber'
+import Publisher from './publisher'
 
 type AsyncFunctionWithoutParams = () => Promise<any>
 
@@ -101,7 +101,7 @@ class FunctionLooper {
   _func: AsyncFunctionWithoutParams
   _threshold: number
   _running: boolean = false
-  _errorSubscriber: Subscriber<Error> = new Subscriber()
+  _errorPublisher: Publisher<Error> = new Publisher()
   _currentExecutor: ?ThresholdExecutor
   _currentPromise: ?Promise<void>
 
@@ -122,7 +122,7 @@ class FunctionLooper {
         this._currentExecutor = new ThresholdExecutor(
           this._func,
           this._threshold,
-          (err) => this._errorSubscriber.notify(err)
+          (err) => this._errorPublisher.publish(err)
         )
         this._currentPromise = this._currentExecutor.execute()
         await this._currentPromise
@@ -141,7 +141,7 @@ class FunctionLooper {
   }
 
   onFunctionError (callback: (Error) => void) {
-    this._errorSubscriber.subscribe(callback)
+    this._errorPublisher.addSubscriber(callback)
   }
 
   async _waitForStartedPromise (): Promise<void> {
