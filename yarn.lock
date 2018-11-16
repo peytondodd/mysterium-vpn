@@ -7830,7 +7830,7 @@ mysterium-client-bin@0.4.0:
     follow-redirects "^1.5.2"
     targz "^1.0.1"
 
-mysterium-tequilapi@^0.2.3:
+mysterium-tequilapi@^0.2.3-alpha.1:
   version "0.2.3"
   resolved "https://registry.yarnpkg.com/mysterium-tequilapi/-/mysterium-tequilapi-0.2.3.tgz#75156aacf1e687fee5fca6caa3f0eb1a4127f1ed"
   integrity sha512-ZMXZurrrFYd9dgp31i4le2GZlFvYoMGP89g0oiFjQe+xiw91D/3CDWgw+OOZX1oDBMbpDX7OKg3cQig9Xx6DYg==
