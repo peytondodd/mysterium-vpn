@@ -25,7 +25,7 @@ import EmptyTequilapiClientMock from '../../../renderer/store/modules/empty-tequ
 import SystemMock from '../../../../helpers/system-mock'
 import type { NodeHealthcheckDTO } from 'mysterium-tequilapi/lib/dto/node-healthcheck'
 import NodeBuildInfoDTO from 'mysterium-tequilapi/lib/dto/node-build-info'
-import ClientLogSubscriber from '../../../../../src/libraries/mysterium-client/client-log-subscriber'
+import ClientLogPublisher from '../../../../../src/libraries/mysterium-client/client-log-publisher'
 import type { LogCallback } from '../../../../../src/libraries/mysterium-client'
 import type { SystemMockManager } from '../../../../helpers/system-mock'
 import type { System } from '../../../../../src/libraries/mysterium-client/system'
@@ -84,7 +84,7 @@ class TequilapiMock extends EmptyTequilapiClientMock {
   }
 }
 
-class ClientLogSubscriberMock extends ClientLogSubscriber {
+class ClientLogPublisherMock extends ClientLogPublisher {
   constructor () {
     const bugReporter = new BugReporterMock()
     super(bugReporter, '', '', '', () => new Date(), (filePath: string, logCallback: LogCallback) => {})
@@ -102,7 +102,7 @@ describe('ServiceManagerProcess', () => {
   let system: System
   let tequilapiClient: TequilapiMock
   let process: ServiceManagerProcess
-  let clientLogSubscriber: ClientLogSubscriberMock
+  let clientLogPublisher: ClientLogPublisherMock
   let serviceManager: ServiceManager
   let clock: lolex
 
@@ -145,11 +145,11 @@ describe('ServiceManagerProcess', () => {
     systemMockManager = (systemMock: SystemMockManager)
 
     tequilapiClient = new TequilapiMock()
-    clientLogSubscriber = new ClientLogSubscriberMock()
+    clientLogPublisher = new ClientLogPublisherMock()
     const mockNotifier = new MockStatusNotifier()
     const monitoring = new Monitoring(mockNotifier)
     serviceManager = new ServiceManager(SERVICE_MANAGER_PATH, system, monitoring)
-    process = new ServiceManagerProcess(tequilapiClient, clientLogSubscriber, serviceManager, system)
+    process = new ServiceManagerProcess(tequilapiClient, clientLogPublisher, serviceManager, system)
   })
 
   describe('.start', () => {

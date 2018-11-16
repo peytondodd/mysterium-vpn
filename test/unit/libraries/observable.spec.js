@@ -32,20 +32,20 @@ describe('Observable', () => {
     })
 
     it('invokes callback instantly with current value', () => {
-      observable.subscribe(recorder.getCallback())
+      observable.addSubscriber(recorder.getCallback())
       expect(recorder.invokesCount).to.eql(1)
       expect(recorder.lastArguments).to.eql([{ hey: 'how' }])
     })
 
     it('invokes callback with new value when it changes', () => {
-      observable.subscribe(recorder.getCallback())
+      observable.addSubscriber(recorder.getCallback())
       observable.value = { hello: 'world' }
       expect(recorder.invokesCount).to.eql(2)
       expect(recorder.lastArguments).to.eql([{ hello: 'world' }])
     })
 
     it('does not invoke callback when same value is set', () => {
-      observable.subscribe(recorder.getCallback())
+      observable.addSubscriber(recorder.getCallback())
       observable.value = { hey: 'how' }
       expect(recorder.invokesCount).to.eql(1)
     })

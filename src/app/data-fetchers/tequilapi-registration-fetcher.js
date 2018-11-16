@@ -19,16 +19,16 @@
 
 import type { TequilapiClient } from 'mysterium-tequilapi/lib/client'
 import { FunctionLooper } from '../../libraries/function-looper'
-import type { Callback } from '../../libraries/subscriber'
-import Subscriber from '../../libraries/subscriber'
+import type { Subscriber } from '../../libraries/publisher'
+import Publisher from '../../libraries/publisher'
 import type { RegistrationFetcher } from './registration-fetcher'
 import IdentityRegistrationDTO from 'mysterium-tequilapi/lib/dto/identity-registration'
 
 class TequilapiRegistrationFetcher implements RegistrationFetcher {
   _api: TequilapiClient
   _loop: FunctionLooper
-  _registrationSubscriber: Subscriber<IdentityRegistrationDTO> = new Subscriber()
-  _errorSubscriber: Subscriber<Error> = new Subscriber()
+  _registrationPublisher: Publisher<IdentityRegistrationDTO> = new Publisher()
+  _errorPublisher: Publisher<Error> = new Publisher()
   _identityId: string
 
   constructor (api: TequilapiClient, interval: number = 5000) {
@@ -38,7 +38,7 @@ class TequilapiRegistrationFetcher implements RegistrationFetcher {
       await this.fetch()
     }, interval)
     this._loop.onFunctionError((error) => {
-      this._errorSubscriber.notify(error)
+      this._errorPublisher.publish(error)
     })
   }
 
@@ -58,7 +58,7 @@ class TequilapiRegistrationFetcher implements RegistrationFetcher {
   async fetch (): Promise<IdentityRegistrationDTO> {
     const registration = await this._api.identityRegistration(this._identityId)
 
-    this._registrationSubscriber.notify(registration)
+    this._registrationPublisher.publish(registration)
 
     return registration
   }
@@ -67,12 +67,12 @@ class TequilapiRegistrationFetcher implements RegistrationFetcher {
     await this._loop.stop()
   }
 
-  onFetchedRegistration (subscriber: Callback<IdentityRegistrationDTO>): void {
-    this._registrationSubscriber.subscribe(subscriber)
+  onFetchedRegistration (subscriber: Subscriber<IdentityRegistrationDTO>): void {
+    this._registrationPublisher.addSubscriber(subscriber)
   }
 
-  onFetchingError (subscriber: Callback<Error>): void {
-    this._errorSubscriber.subscribe(subscriber)
+  onFetchingError (subscriber: Subscriber<Error>): void {
+    this._errorPublisher.addSubscriber(subscriber)
   }
 }
 

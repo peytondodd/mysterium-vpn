@@ -18,15 +18,15 @@
 // @flow
 import fs from 'fs'
 import type { BugReporter } from '../../app/bug-reporting/interface'
-import Subscriber from '../subscriber'
+import Publisher from '../publisher'
 import logLevels from './log-levels'
 import type { LogCallback } from './index'
 import createFileIfMissing from '../create-file-if-missing'
 import { INVERSE_DOMAIN_PACKAGE_NAME } from './launch-daemon/config'
 import { toISOString, prependWithFn } from '../strings'
 
-type Subscribers = {
-  [logLevels.INFO | logLevels.ERROR]: Subscriber<string>,
+type Publishers = {
+  [logLevels.INFO | logLevels.ERROR]: Publisher<string>,
 }
 
 type DateFunction = () => Date
@@ -34,8 +34,8 @@ type TailFunction = (filePath: string, logCallback: LogCallback) => void
 
 const prependWithSpace = prependWithFn(() => ` `)
 
-class ClientLogSubscriber {
-  _subscribers: Subscribers
+class ClientLogPublisher {
+  _publishers: Publishers
   _bugReporter: BugReporter
   _stdoutPath: string
   _stderrPath: string
@@ -58,9 +58,9 @@ class ClientLogSubscriber {
     this._dateFunction = dateFunction
     this._tailFunction = tailFunction
 
-    this._subscribers = {
-      [logLevels.INFO]: new Subscriber(),
-      [logLevels.ERROR]: new Subscriber()
+    this._publishers = {
+      [logLevels.INFO]: new Publisher(),
+      [logLevels.ERROR]: new Publisher()
     }
   }
 
@@ -71,11 +71,11 @@ class ClientLogSubscriber {
   }
 
   onLog (level: string, cb: LogCallback): void {
-    if (!this._subscribers[level]) {
+    if (!this._publishers[level]) {
       throw new Error(`Unknown process logging level: ${level}`)
     }
 
-    this._subscribers[level].subscribe(cb)
+    this._publishers[level].addSubscriber(cb)
   }
 
   _tailLogs () {
@@ -120,7 +120,7 @@ class ClientLogSubscriber {
   }
 
   _notifySubscribersWithLog (level: string, data: string): void {
-    this._subscribers[level].notify(data)
+    this._publishers[level].publish(data)
   }
 
   _tailFile (filePath: string, subscriberCallback: LogCallback): void {
@@ -133,5 +133,5 @@ class ClientLogSubscriber {
   }
 }
 
-export default ClientLogSubscriber
+export default ClientLogPublisher
 export type { TailFunction }

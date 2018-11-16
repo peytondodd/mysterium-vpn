@@ -19,13 +19,13 @@
 
 import type { StatusCallback }
   from '../../../src/libraries/mysterium-client/monitoring/monitoring'
-import Subscriber from '../../../src/libraries/subscriber'
+import Publisher from '../../../src/libraries/publisher'
 import type { StatusNotifier } from '../../../src/libraries/mysterium-client/monitoring/status-notifier'
 
 class MockStatusNotifier implements StatusNotifier {
   _started: boolean = false
   _lastStatus: ?boolean = null
-  _statusSubscriber: Subscriber<boolean> = new Subscriber()
+  _statusPublisher: Publisher<boolean> = new Publisher()
 
   start (): void {
     this._started = true
@@ -35,7 +35,7 @@ class MockStatusNotifier implements StatusNotifier {
   }
 
   onStatus (callback: StatusCallback): void {
-    this._statusSubscriber.subscribe(callback)
+    this._statusPublisher.addSubscriber(callback)
     const status = this._lastStatus
     if (status != null) {
       // TODO: remove this initial invokation in this class?
@@ -44,7 +44,7 @@ class MockStatusNotifier implements StatusNotifier {
   }
 
   notifyStatus (status: boolean) {
-    this._statusSubscriber.notify(status)
+    this._statusPublisher.publish(status)
   }
 }
 

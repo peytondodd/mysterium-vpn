@@ -17,10 +17,10 @@
 
 // @flow
 import type { Country } from '../countries'
-import Subscriber from '../../libraries/subscriber'
+import Publisher from '../../libraries/publisher'
 import { getSortedCountryListFromProposals } from '../countries'
 import ProposalDTO from 'mysterium-tequilapi/lib/dto/proposal'
-import type { Callback } from '../../libraries/subscriber'
+import type { Subscriber } from '../../libraries/publisher'
 import type { FavoriteProviders } from '../user-settings/user-settings'
 import type { ProposalFetcher } from './proposal-fetcher'
 import type { UserSettingsStore } from '../user-settings/user-settings-store'
@@ -29,7 +29,7 @@ import { userSettingName } from '../user-settings/user-settings-store'
 class CountryList {
   _proposalFetcher: ProposalFetcher
   _userSettingsStore: UserSettingsStore
-  _listeners: Subscriber<Array<Country>> = new Subscriber()
+  _publisher: Publisher<Array<Country>> = new Publisher()
 
   _proposals: ProposalDTO[] = []
   _favorites: FavoriteProviders = new Set()
@@ -41,8 +41,8 @@ class CountryList {
     this._subscribeToFavoriteChanges()
   }
 
-  onUpdate (listener: Callback<Array<Country>>) {
-    this._listeners.subscribe(listener)
+  onUpdate (listener: Subscriber<Array<Country>>) {
+    this._publisher.addSubscriber(listener)
   }
 
   _subscribeToFavoriteChanges () {
@@ -53,7 +53,7 @@ class CountryList {
   }
 
   _notify () {
-    this._listeners.notify(getSortedCountryListFromProposals(this._proposals, this._favorites))
+    this._publisher.publish(getSortedCountryListFromProposals(this._proposals, this._favorites))
   }
 
   _subscribeToProposalFetches () {

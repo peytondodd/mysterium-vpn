@@ -18,15 +18,15 @@
 // @flow
 
 import logger from '../app/logger'
-import type { Callback } from './subscriber'
-import Subscriber from './subscriber'
+import type { Subscriber } from './publisher'
+import Publisher from './publisher'
 
 /**
  * Stores value and allows subscribing to value changes.
  */
 class Observable<T> {
   _value: T
-  _subscriber: Subscriber<T> = new Subscriber()
+  _publisher: Publisher<T> = new Publisher()
 
   get value (): T {
     return this._value
@@ -37,15 +37,15 @@ class Observable<T> {
       return
     }
     this._value = value
-    this._subscriber.notify(value)
+    this._publisher.publish(value)
   }
 
   constructor (initialValue: T) {
     this._value = initialValue
   }
 
-  subscribe (callback: Callback<T>) {
-    this._subscriber.subscribe(callback)
+  addSubscriber (callback: Subscriber<T>) {
+    this._publisher.addSubscriber(callback)
     try {
       callback(this._value)
     } catch (err) {
@@ -53,8 +53,8 @@ class Observable<T> {
     }
   }
 
-  unsubscribe (callback: Callback<T>) {
-    this._subscriber.unsubscribe(callback)
+  removeSubscriber (callback: Subscriber<T>) {
+    this._publisher.removeSubscriber(callback)
   }
 }
 
