@@ -31,8 +31,13 @@ function bootstrap (container: Container) {
     'getPaymentLink',
     ['paymentBaseUrl'],
     (paymentBaseUrl: string) =>
-      (identityRegistration: IdentityRegistrationDTO) =>
-        getPaymentLink(paymentBaseUrl, identityRegistration)
+      (identityRegistration: IdentityRegistrationDTO) => {
+        if (!identityRegistration.publicKey || !identityRegistration.signature) {
+          return paymentBaseUrl
+        } else {
+          return getPaymentLink(paymentBaseUrl, identityRegistration)
+        }
+      }
   )
 }
 
