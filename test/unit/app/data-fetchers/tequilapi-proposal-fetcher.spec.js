@@ -174,7 +174,7 @@ describe('TequilapiProposalFetcher', () => {
 
   describe('.fetch', () => {
     it('returns proposals', async () => {
-      const proposals = await fetcher.fetch()
+      const proposals = await fetcher.fetch(false)
 
       expect(proposals.length).to.equal(2)
       expect(proposals[0]).to.deep.equal({

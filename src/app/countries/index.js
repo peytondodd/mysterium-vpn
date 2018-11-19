@@ -66,7 +66,7 @@ function countryFavoriteMapper (favorites: FavoriteProviders): (Country) => Coun
 
 function getCountryFromProposal (proposal: ProposalDTO): Country {
   return {
-    id: proposal.providerId || '',
+    id: proposal.providerId,
     code: getCountryCodeFromProposal(proposal),
     name: getCountryNameFromProposal(proposal),
     isFavorite: false,
