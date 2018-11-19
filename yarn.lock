@@ -7830,10 +7830,10 @@ mysterium-client-bin@0.4.0:
     follow-redirects "^1.5.2"
     targz "^1.0.1"
 
-mysterium-tequilapi@^0.3.0:
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/mysterium-tequilapi/-/mysterium-tequilapi-0.3.0.tgz#ec8048ecca3163319312fb4f3cffe8959aa06bdf"
-  integrity sha512-XtjGlV+El5VkmWDg/ubIekXVOC8N0NfNW6cpb5GAHjZoGT3+IwtRL+REYJe6CRA7R+jkODH2FEF6EPC5GJpxPA==
+mysterium-tequilapi@^0.3.1-alpha.1:
+  version "0.3.1-alpha.1"
+  resolved "https://registry.yarnpkg.com/mysterium-tequilapi/-/mysterium-tequilapi-0.3.1-alpha.1.tgz#b3d3e0a11ff11f047f2a3775cbd3af59e8bc53b8"
+  integrity sha512-DzzAgIwLFS+MtYd3bWw3hmX1W+0rWvA6ZAdgHcsuSlYVPMcNMaltRJxZEvWL2ErMG6AYo5W3zTQ0QpNfoLt8nA==
   dependencies:
     "@babel/runtime" "^7.1.5"
     axios "^0.18.0"

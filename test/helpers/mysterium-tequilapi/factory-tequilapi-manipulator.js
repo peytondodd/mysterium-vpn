@@ -23,7 +23,7 @@ import ConnectionStatusDTO from 'mysterium-tequilapi/lib/dto/connection-status'
 import ConnectionIPDTO from 'mysterium-tequilapi/lib/dto/connection-ip'
 import ConnectionStatisticsDTO from 'mysterium-tequilapi/lib/dto/connection-statistics'
 import ConnectionStatusEnum from 'mysterium-tequilapi/lib/dto/connection-status-enum'
-import IdentityRegistrationDTO from 'mysterium-tequilapi/lib/dto/identity-registration'
+import IdentityRegistrationDTO, { PublicKeyDTO, SignatureDTO } from 'mysterium-tequilapi/lib/dto/identity-registration'
 
 function factoryTequilapiManipulator () {
   let statusFail = false
@@ -98,8 +98,8 @@ function factoryTequilapiManipulator () {
       }
       return new IdentityRegistrationDTO({
         registered: false,
-        publicKey: { part1: 'part-1', part2: 'part-2' },
-        signature: { r: 'r', s: 's', v: 'v' }
+        publicKey: new PublicKeyDTO({ part1: 'part-1', part2: 'part-2' }),
+        signature: new SignatureDTO({ r: 'r', s: 's', v: 'v' })
       })
     }
   }

@@ -32,7 +32,7 @@ class ProposalsTequilapiClientMock extends EmptyTequilapiClientMock {
     this._mockProposals = mockProposals
   }
 
-  async findProposals (filter): Promise<ProposalDTO[]> {
+  async findProposals (query): Promise<ProposalDTO[]> {
     return this._mockProposals
   }
 }
