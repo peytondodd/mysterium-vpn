@@ -35,7 +35,11 @@ function bootstrap (container: Container) {
         if (!identityRegistration.publicKey || !identityRegistration.signature) {
           return paymentBaseUrl
         } else {
-          return getPaymentLink(paymentBaseUrl, identityRegistration)
+          const identityProof = {
+            publicKey: identityRegistration.publicKey,
+            signature: identityRegistration.signature
+          }
+          return getPaymentLink(paymentBaseUrl, identityProof)
         }
       }
   )
