@@ -56,7 +56,7 @@ class EmptyTequilapiClientMock implements TequilapiClient {
     return new IdentityRegistrationDTO({ registered: true })
   }
 
-  async findProposals (filter: ?ProposalsQuery): Promise<Array<ProposalDTO>> {
+  async findProposals (query: ?ProposalsQuery): Promise<Array<ProposalDTO>> {
     return []
   }
 

@@ -34,7 +34,7 @@ class IdentityTequilapiClientMock extends EmptyTequilapiClientMock {
     this._proposals = proposals
   }
 
-  async findProposals (_filter): Promise<Array<ProposalDTO>> {
+  async findProposals (_query): Promise<Array<ProposalDTO>> {
     if (this._willFail) {
       throw this.mockError
     }

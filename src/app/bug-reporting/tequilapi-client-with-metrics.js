@@ -71,8 +71,8 @@ class TequilapiClientWithMetrics implements TequilapiClient {
     return result
   }
 
-  async findProposals (filter: ?ProposalsQuery): Promise<Array<ProposalDTO>> {
-    const result = await this._client.findProposals(filter)
+  async findProposals (query: ?ProposalsQuery): Promise<Array<ProposalDTO>> {
+    const result = await this._client.findProposals(query)
     if (!result || result.length === 0) {
       this._bugReporterMetrics.set(METRICS.PROPOSALS_FETCHED_ONCE, false)
     } else {
