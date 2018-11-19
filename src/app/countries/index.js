@@ -136,7 +136,7 @@ function getCountrySuccessRateFromProposal (proposal: ProposalDTO): number {
   const count = proposal.metrics.connectCount
   const total = count.success + count.fail
   if (total > 0) {
-    return count.success / (count.success + count.fail)
+    return count.success / total
   }
   return NEW_PROPOSAL_SUCCESS_RATE
 }
