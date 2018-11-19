@@ -53,7 +53,7 @@
 
           <div
             slot="item"
-            v-if="!registrationFetched">
+            v-if="registrationFetched && !registration.registered">
             <p>
               In order to use Mysterium VPN you need to have registered ID in Mysterium Blockchain
               by staking your MYST tokens on it (i.e. paying for it).
@@ -111,7 +111,10 @@ export default {
       this.$store.commit(types.HIDE_IDENTITY_MENU)
     },
     openPaymentsUrl () {
-      const url = this.getPaymentLink(this.registration)
+      if (!this.registration.publicKey || !this.registration.signature) {
+        throw Error('Not all required registration fields are present')
+      }
+      const url = this.getPaymentLink(this.registration.publicKey, this.registration.signature)
       shell.openExternal(url)
     },
     copyId () {
@@ -120,13 +123,14 @@ export default {
   },
   computed: {
     registrationFetched () {
-      return this.$store.getters.registration != null
+      return this.registration != null
     },
     isIdentityMenuOpen () {
       return this.$store.state.main.identityMenuOpen
     },
     ...mapGetters({
-      consumerId: 'currentIdentity'
+      consumerId: 'currentIdentity',
+      registration: 'registration'
     })
   }
 }

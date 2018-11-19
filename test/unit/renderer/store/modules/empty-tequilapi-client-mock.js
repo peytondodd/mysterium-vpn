@@ -21,7 +21,7 @@ import ConnectionStatusDTO from 'mysterium-tequilapi/lib/dto/connection-status'
 import ConnectionStatisticsDTO from 'mysterium-tequilapi/lib/dto/connection-statistics'
 import type { TequilapiClient } from 'mysterium-tequilapi/lib/client'
 import IdentityDTO from 'mysterium-tequilapi/lib/dto/identity'
-import ProposalsFilter from 'mysterium-tequilapi/lib/dto/proposals-filter'
+import ProposalsQuery from 'mysterium-tequilapi/lib/adapters/proposals-query'
 import ProposalDTO from 'mysterium-tequilapi/lib/dto/proposal'
 import ConsumerLocationDTO from 'mysterium-tequilapi/lib/dto/consumer-location'
 import type { NodeHealthcheckDTO } from 'mysterium-tequilapi/lib/dto/node-healthcheck'
@@ -53,10 +53,10 @@ class EmptyTequilapiClientMock implements TequilapiClient {
   }
 
   async identityRegistration (id: string): Promise<IdentityRegistrationDTO> {
-    return new IdentityRegistrationDTO({})
+    return new IdentityRegistrationDTO({ registered: true })
   }
 
-  async findProposals (filter: ?ProposalsFilter): Promise<Array<ProposalDTO>> {
+  async findProposals (query: ?ProposalsQuery): Promise<Array<ProposalDTO>> {
     return []
   }
 

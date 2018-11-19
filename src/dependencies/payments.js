@@ -17,7 +17,7 @@
 
 // @flow
 import type { Container } from '../app/di'
-import IdentityRegistrationDTO, { getPaymentLink } from 'mysterium-tequilapi/lib/dto/identity-registration'
+import { getPaymentLink, SignatureDTO, PublicKeyDTO } from 'mysterium-tequilapi/lib/dto/identity-registration'
 
 function bootstrap (container: Container) {
   container.constant(
@@ -31,8 +31,10 @@ function bootstrap (container: Container) {
     'getPaymentLink',
     ['paymentBaseUrl'],
     (paymentBaseUrl: string) =>
-      (identityRegistration: IdentityRegistrationDTO) =>
-        getPaymentLink(paymentBaseUrl, identityRegistration)
+      (publicKey: PublicKeyDTO, signature: SignatureDTO) => {
+        // TODO: require only IdentityProof once mysterium-tequilapi exposes it
+        return getPaymentLink(paymentBaseUrl, { publicKey, signature })
+      }
   )
 }
 
