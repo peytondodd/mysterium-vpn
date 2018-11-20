@@ -126,8 +126,8 @@ describe('tray', () => {
 
       it('renders favourite country with an asterisk (*)', () => {
         builder.updateCountries([
-          { id: 'proposalId_123', code: 'LT', name: 'Lithuania', isFavorite: true, successRate: 0 },
-          { id: 'proposalId_456', code: 'US', name: 'USA', isFavorite: false, successRate: 1 }
+          { id: 'proposalId_123', code: 'LT', name: 'Lithuania', isFavorite: true, successRate: 0, trusted: true },
+          { id: 'proposalId_456', code: 'US', name: 'USA', isFavorite: false, successRate: 1, trusted: false }
         ])
 
         const items = builder.build()
@@ -137,8 +137,8 @@ describe('tray', () => {
 
       it('connects', () => {
         builder.updateCountries([
-          { id: 'proposalId_123', code: 'LT', name: 'Lithuania', isFavorite: true, successRate: 0 },
-          { id: 'proposalId_456', code: 'US', name: 'USA', isFavorite: false, successRate: 1 }
+          { id: 'proposalId_123', code: 'LT', name: 'Lithuania', isFavorite: true, successRate: 0, trusted: true },
+          { id: 'proposalId_456', code: 'US', name: 'USA', isFavorite: false, successRate: 1, trusted: false }
         ])
 
         const items = builder.build()

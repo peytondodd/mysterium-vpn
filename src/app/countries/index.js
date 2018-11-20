@@ -19,7 +19,6 @@
 import countries from './list'
 import ProposalDTO from 'mysterium-tequilapi/lib/dto/proposal'
 import type { FavoriteProviders } from '../user-settings/user-settings'
-import ConnectCountDTO from 'mysterium-tequilapi/lib/dto/connect-count-dto'
 
 const COUNTRY_NAME_UNRESOLVED = 'N/A'
 const COUNTRY_CODE_LENGTH = 2

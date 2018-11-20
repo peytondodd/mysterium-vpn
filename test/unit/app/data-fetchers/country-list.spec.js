@@ -79,13 +79,13 @@ describe('CountryList', () => {
       proposalFetcher.setFetchData(proposal1)
       proposalFetcher.fetch()
       expect(cbRec.lastArguments).to.be.eql([
-        [{ id: '0x1', code: null, name: 'N/A', isFavorite: false, successRate: 0 }]
+        [{ id: '0x1', code: null, name: 'N/A', isFavorite: false, successRate: 0, trusted: false }]
       ])
 
       proposalFetcher.setFetchData(proposal2)
       proposalFetcher.fetch()
       expect(cbRec.lastArguments).to.be.eql([
-        [{ id: '0x2', code: 'lt', name: 'Lithuania', isFavorite: false, successRate: 0.8 }]
+        [{ id: '0x2', code: 'lt', name: 'Lithuania', isFavorite: false, successRate: 0.8, trusted: true }]
       ])
     })
 
@@ -97,7 +97,7 @@ describe('CountryList', () => {
       await store.setFavorite('0x2', true)
       expect(cbRec.invokesCount).to.eql(1)
       expect(cbRec.lastArguments).to.be.eql([
-        [{ id: '0x2', code: 'lt', name: 'Lithuania', isFavorite: true, successRate: 0.8 }]
+        [{ id: '0x2', code: 'lt', name: 'Lithuania', isFavorite: true, successRate: 0.8, trusted: true }]
       ])
     })
   })
