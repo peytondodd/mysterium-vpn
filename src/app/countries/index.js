@@ -65,7 +65,7 @@ function countryFavoriteMapper (favorites: FavoriteProviders): (Country) => Coun
   }
 }
 
-const isProposalTrusted = proposal => {
+function isProposalTrusted (proposal: ProposalDTO): boolean {
   if (proposal.metrics && proposal.metrics.connectCount) {
     const count = proposal.metrics.connectCount
     if (count.success === 0 && count.fail > 0) {
@@ -157,5 +157,6 @@ export type { Country }
 export {
   getCountryLabel,
   getSortedCountryListFromProposals,
-  isCountryKnown
+  isCountryKnown,
+  isProposalTrusted
 }
