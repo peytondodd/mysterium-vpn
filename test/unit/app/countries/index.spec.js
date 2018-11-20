@@ -17,8 +17,10 @@
 
 import {
   getSortedCountryListFromProposals,
-  getCountryLabel
+  getCountryLabel,
+  isProposalTrusted
 } from '../../../../src/app/countries'
+import ProposalDTO from 'mysterium-tequilapi/lib/dto/proposal'
 
 describe('Countries', () => {
   describe('getSortedCountryListFromProposals()', () => {
@@ -102,6 +104,40 @@ describe('Countries', () => {
       expect(getCountryLabel(list[0], 10)).to.be.eql('Australia (0x0987654..)')
       expect(getCountryLabel(list[1], 10)).to.be.eql('Congo, The.. (0x0987654..)')
       expect(getCountryLabel(list[2], 10)).to.be.eql('Lithuania (0x1234567..)')
+    })
+  })
+
+  describe('.isProposalTrusted', () => {
+    function createProposal (connectCount) {
+      return new ProposalDTO({
+        id: 1,
+        providerId: 'provider id',
+        serviceType: 'service type',
+        metrics: { connectCount }
+      })
+    }
+
+    it('returns true when there are successful connections', () => {
+      const proposal1 = createProposal({ success: 1, fail: 0, timeout: 1 })
+      expect(isProposalTrusted(proposal1)).to.be.true
+
+      const proposal2 = createProposal({ success: 1, fail: 100, timeout: 1 })
+      expect(isProposalTrusted(proposal2)).to.be.true
+    })
+
+    it('returns true for new proposal', () => {
+      const proposal = createProposal({ success: 0, fail: 0, timeout: 0 })
+      expect(isProposalTrusted(proposal)).to.be.true
+    })
+
+    it('returns true when metrics are unavailable', () => {
+      const proposal = new ProposalDTO({ id: 1, providerId: 'provider id', serviceType: 'service type' })
+      expect(isProposalTrusted(proposal)).to.be.true
+    })
+
+    it('returns false for proposals with only failed connections', () => {
+      const proposal = createProposal({ success: 0, fail: 1, timeout: 0 })
+      expect(isProposalTrusted(proposal)).to.be.false
     })
   })
 })

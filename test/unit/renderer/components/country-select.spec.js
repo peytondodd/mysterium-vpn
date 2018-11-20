@@ -30,26 +30,31 @@ const countryList = [
   {
     id: '0x1',
     code: 'lt',
-    name: 'Lithuania'
+    name: 'Lithuania',
+    trusted: true
   },
   {
     id: '0x2',
     code: 'gb',
-    name: 'United Kingdom'
+    name: 'United Kingdom',
+    trusted: true
   },
   {
     id: '0x3',
     code: 'unknown',
-    name: 'N/A'
+    name: 'N/A',
+    trusted: true
   },
   {
     id: '0x4',
     code: 'unknown',
-    name: 'N/A'
+    name: 'N/A',
+    trusted: true
   },
   {
     id: '0x4',
-    name: 'N/A'
+    name: 'N/A',
+    trusted: true
   }
 ]
 

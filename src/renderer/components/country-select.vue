@@ -24,12 +24,12 @@
       track-by="id"
       :custom-label="selectedCountryLabel"
       placeholder="Choose country"
-      :options="countryList"
+      :options="filteredCountries"
       :loading="countriesAreLoading"
       :searchable="true"
       :show-labels="false"
       :show-pointer="false"
-      @open="fetchCountries"
+      @open="fetchCountries()"
       @input="onChange">
       <template
         slot="option"
@@ -43,6 +43,13 @@
         <div
           class="multiselect__option-title"
           v-text="countryLabel(props.option)"/>
+      </template>
+      <template slot="afterList">
+        <div class="country-filter">
+          <a
+            @click="toggleShowMore()"
+            v-text="filterText" />
+        </div>
       </template>
     </multiselect>
 
@@ -84,6 +91,7 @@ export default {
   data () {
     return {
       country: null,
+      showMore: false,
       unresolvedCountryList: []
     }
   },
@@ -110,6 +118,9 @@ export default {
 
       this.country = selectedCountry
       this.$emit('selected', selectedCountry)
+    },
+    toggleShowMore () {
+      this.showMore = !this.showMore
     }
   },
   computed: {
@@ -118,6 +129,18 @@ export default {
         return null
       }
       return this.country.code
+    },
+    filterText () {
+      if (this.showMore) {
+        return 'Show less'
+      }
+      return 'Show more'
+    },
+    filteredCountries () {
+      if (this.showMore) {
+        return this.countryList
+      }
+      return this.countryList.filter(c => c.trusted)
     }
   },
   mounted () {

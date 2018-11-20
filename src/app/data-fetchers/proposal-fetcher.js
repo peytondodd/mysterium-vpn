@@ -21,7 +21,7 @@ import type { Subscriber } from '../../libraries/publisher'
 import ProposalDTO from 'mysterium-tequilapi/lib/dto/proposal'
 
 interface ProposalFetcher {
-  fetch(): Promise<ProposalDTO[]>,
+  fetch(showMore: boolean): Promise<ProposalDTO[]>,
   onFetchedProposals(Subscriber<ProposalDTO[]>): void
 }
 

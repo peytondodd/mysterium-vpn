@@ -50,12 +50,18 @@ describe('CountryList', () => {
   const settingsPath = 'settings.json'
   const store: UserSettingsStore = new UserSettingsStorage(settingsPath)
 
-  const proposal1 = [new ProposalDTO({ id: '1', providerId: '0x1', serviceType: 'mock' })]
-  const proposal2 = [new ProposalDTO({
+  const proposal1 = [new ProposalDTO({
     id: '1',
+    providerId: '0x1',
+    serviceType: 'mock',
+    metrics: { connectCount: { success: 0, fail: 10, timeout: 50 } }
+  })]
+  const proposal2 = [new ProposalDTO({
+    id: '2',
     providerId: '0x2',
     serviceType: 'mock',
-    serviceDefinition: { locationOriginate: { country: 'lt' } }
+    serviceDefinition: { locationOriginate: { country: 'lt' } },
+    metrics: { connectCount: { success: 20, fail: 5, timeout: 10 } }
   })]
 
   beforeEach(() => {
@@ -73,13 +79,13 @@ describe('CountryList', () => {
       proposalFetcher.setFetchData(proposal1)
       proposalFetcher.fetch()
       expect(cbRec.lastArguments).to.be.eql([
-        [{ id: '0x1', code: null, name: 'N/A', isFavorite: false }]
+        [{ id: '0x1', code: null, name: 'N/A', isFavorite: false, successRate: 0, trusted: false }]
       ])
 
       proposalFetcher.setFetchData(proposal2)
       proposalFetcher.fetch()
       expect(cbRec.lastArguments).to.be.eql([
-        [{ id: '0x2', code: 'lt', name: 'Lithuania', isFavorite: false }]
+        [{ id: '0x2', code: 'lt', name: 'Lithuania', isFavorite: false, successRate: 0.8, trusted: true }]
       ])
     })
 
@@ -91,7 +97,7 @@ describe('CountryList', () => {
       await store.setFavorite('0x2', true)
       expect(cbRec.invokesCount).to.eql(1)
       expect(cbRec.lastArguments).to.be.eql([
-        [{ id: '0x2', code: 'lt', name: 'Lithuania', isFavorite: true }]
+        [{ id: '0x2', code: 'lt', name: 'Lithuania', isFavorite: true, successRate: 0.8, trusted: true }]
       ])
     })
   })
