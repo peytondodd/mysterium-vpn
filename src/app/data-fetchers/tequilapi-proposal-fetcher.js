@@ -32,7 +32,6 @@ class TequilapiProposalFetcher implements ProposalFetcher {
   _loop: FunctionLooper
   _proposalPublisher: Publisher<ProposalDTO[]> = new Publisher()
   _errorPublisher: Publisher<Error> = new Publisher()
-  _showMore: boolean = false
 
   constructor (api: TequilapiClient, interval: number = 5000) {
     this._api = api
@@ -57,7 +56,7 @@ class TequilapiProposalFetcher implements ProposalFetcher {
    * Forces proposals to be fetched without delaying.
    */
   async fetch (): Promise<ProposalDTO[]> {
-    let proposals = await this._api.findProposals(proposalsQueryWithMetric)
+    const proposals = await this._api.findProposals(proposalsQueryWithMetric)
 
     this._proposalPublisher.publish(proposals)
 

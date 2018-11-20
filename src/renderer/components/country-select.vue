@@ -47,7 +47,7 @@
       <template slot="afterList">
         <div class="country-filter">
           <a
-            @click="filterToggle()"
+            @click="toggleShowMore()"
             v-text="filterText" />
         </div>
       </template>
@@ -119,7 +119,7 @@ export default {
       this.country = selectedCountry
       this.$emit('selected', selectedCountry)
     },
-    filterToggle () {
+    toggleShowMore () {
       this.showMore = !this.showMore
     }
   },
