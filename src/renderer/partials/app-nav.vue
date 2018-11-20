@@ -55,9 +55,8 @@
             <icon-eye class="nav__icon nav__icon--eye"/>
             <span class="nav__text">connection history</span>
           </a>
-        </li>
-        <li class="nav__item">
           <a
+            slot="item"
             class="nav__trigger"
             href="#"
             @click="reportIssue">
