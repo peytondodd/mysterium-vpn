@@ -52,7 +52,7 @@ export type MainCommunication = {
   healthcheckUp: MessageSender<void>,
   healthcheckDown: MessageSender<void>,
 
-  proposalsUpdate: MessageReceiver<boolean>,
+  proposalsUpdate: MessageReceiver<void>,
   countryUpdate: MessageSender<CountriesDTO>,
 
   identityRegistration: MessageSender<IdentityRegistrationDTO>,

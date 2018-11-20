@@ -153,9 +153,9 @@ export default {
   methods: {
     ...mapMutations({ hideErr: type.HIDE_ERROR }),
     setCountry (data) { this.country = data },
-    fetchCountries (showMore) {
+    fetchCountries () {
       this.countriesAreLoading = true
-      this.rendererCommunication.proposalsUpdate.send(showMore)
+      this.rendererCommunication.proposalsUpdate.send()
     },
     async toggleFavorite () {
       if (!this.country) return

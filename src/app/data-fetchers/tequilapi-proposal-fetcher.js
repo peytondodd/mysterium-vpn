@@ -26,15 +26,6 @@ import Publisher from '../../libraries/publisher'
 import type { ProposalFetcher } from './proposal-fetcher'
 
 const proposalsQueryWithMetric = new ProposalsQuery({ fetchConnectCounts: true })
-const filterFailedProposals = (proposal: ProposalDTO) => {
-  if (proposal.metrics && proposal.metrics.connectCount) {
-    const count = proposal.metrics.connectCount
-    if (count.success === 0 && count.fail > 0) {
-      return false
-    }
-  }
-  return true
-}
 
 class TequilapiProposalFetcher implements ProposalFetcher {
   _api: TequilapiClient
@@ -47,7 +38,7 @@ class TequilapiProposalFetcher implements ProposalFetcher {
     this._api = api
 
     this._loop = new FunctionLooper(async () => {
-      await this.fetch(this._showMore)
+      await this.fetch()
     }, interval)
 
     this._loop.onFunctionError((error) => {
@@ -65,13 +56,8 @@ class TequilapiProposalFetcher implements ProposalFetcher {
   /**
    * Forces proposals to be fetched without delaying.
    */
-  async fetch (showMore: boolean): Promise<ProposalDTO[]> {
+  async fetch (): Promise<ProposalDTO[]> {
     let proposals = await this._api.findProposals(proposalsQueryWithMetric)
-
-    this._showMore = showMore
-    if (!showMore) {
-      proposals = proposals.filter(filterFailedProposals)
-    }
 
     this._proposalPublisher.publish(proposals)
 

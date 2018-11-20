@@ -24,12 +24,12 @@
       track-by="id"
       :custom-label="selectedCountryLabel"
       placeholder="Choose country"
-      :options="countryList"
+      :options="filteredCountries"
       :loading="countriesAreLoading"
       :searchable="true"
       :show-labels="false"
       :show-pointer="false"
-      @open="fetchCountries(showMore)"
+      @open="fetchCountries()"
       @input="onChange">
       <template
         slot="option"
@@ -121,7 +121,6 @@ export default {
     },
     filterToggle () {
       this.showMore = !this.showMore
-      this.fetchCountries(this.showMore)
     }
   },
   computed: {
@@ -136,6 +135,12 @@ export default {
         return 'Show less'
       }
       return 'Show more'
+    },
+    filteredCountries () {
+      if (this.showMore) {
+        return this.countryList
+      }
+      return this.countryList.filter(c => c.trusted)
     }
   },
   mounted () {

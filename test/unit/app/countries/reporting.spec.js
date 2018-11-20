@@ -48,7 +48,7 @@ describe('.reportUnknownProposalCountries', () => {
     const bugReporter = new BugReporterMock()
     reportUnknownProposalCountries(proposalsFetcher, bugReporter)
 
-    await proposalsFetcher.fetch(true)
+    await proposalsFetcher.fetch()
     expect(bugReporter.infoMessages.length).to.eql(1)
     expect(bugReporter.infoMessages[0].message).to.eql('Country not found, code: unknown')
   })

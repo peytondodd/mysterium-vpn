@@ -19,6 +19,7 @@
 import countries from './list'
 import ProposalDTO from 'mysterium-tequilapi/lib/dto/proposal'
 import type { FavoriteProviders } from '../user-settings/user-settings'
+import ConnectCountDTO from 'mysterium-tequilapi/lib/dto/connect-count-dto'
 
 const COUNTRY_NAME_UNRESOLVED = 'N/A'
 const COUNTRY_CODE_LENGTH = 2
@@ -31,7 +32,8 @@ type Country = {
   code: ?string,
   name: string,
   isFavorite: boolean,
-  successRate: number
+  successRate: number,
+  trusted: boolean
 }
 
 function getCountryLabel (country: Country, maxNameLength: ?number = null, maxIdentityLength: ?number = 9) {
@@ -64,13 +66,24 @@ function countryFavoriteMapper (favorites: FavoriteProviders): (Country) => Coun
   }
 }
 
+const isProposalTrusted = proposal => {
+  if (proposal.metrics && proposal.metrics.connectCount) {
+    const count = proposal.metrics.connectCount
+    if (count.success === 0 && count.fail > 0) {
+      return false
+    }
+  }
+  return true
+}
+
 function getCountryFromProposal (proposal: ProposalDTO): Country {
   return {
     id: proposal.providerId,
     code: getCountryCodeFromProposal(proposal),
     name: getCountryNameFromProposal(proposal),
     isFavorite: false,
-    successRate: getCountrySuccessRateFromProposal(proposal)
+    successRate: getCountrySuccessRateFromProposal(proposal),
+    trusted: isProposalTrusted(proposal)
   }
 }
 
