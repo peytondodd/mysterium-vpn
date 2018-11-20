@@ -28,34 +28,22 @@ describe('ConnectionHistory', () => {
 
   const mockedSessions: SessionDto[] = [
     {
-      id: '5fefd260-c096-11e8-b371-ebde26989839',
-      proposal: {
-        providerId: '0x3b03a513fba4bd4868edd340f77da0c920150f3e'
-      },
-      location: {
-        country: 'lt'
-      },
-      statistics: {
-        dateStart: 1537787035230,
-        duration: 35 * 60,
-        bytesSent: 1024,
-        bytesReceived: 6000
-      }
+      sessionId: '5fefd260-c096-11e8-b371-ebde26989839',
+      providerId: '0x3b03a513fba4bd4868edd340f77da0c920150f3e',
+      providerCountry: 'lt',
+      dateStarted: 1537787035230,
+      bytesSent: 1024,
+      bytesReceived: 6000,
+      duration: 35 * 60
     },
     {
-      id: '64eef750-c096-11e8-b371-ebde26989839',
-      proposal: {
-        providerId: '0x3b03a513fba4bd4868edd340f77da0c920150f3e'
-      },
-      location: {
-        country: 'lt'
-      },
-      statistics: {
-        dateStart: 1537787035230,
-        duration: 35 * 60,
-        bytesSent: 1024,
-        bytesReceived: 6000
-      }
+      sessionId: '64eef750-c096-11e8-b371-ebde26989839',
+      providerId: '0x3b03a513fba4bd4868edd340f77da0c920150f3e',
+      providerCountry: 'lt',
+      dateStarted: 1537787035230,
+      bytesSent: 1024,
+      bytesReceived: 6000,
+      duration: 35 * 60
     }
   ]
 

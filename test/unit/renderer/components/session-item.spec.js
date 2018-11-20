@@ -26,19 +26,13 @@ function mountSessionItem () {
   const localVue = createLocalVue()
 
   const session: SessionDto = {
-    id: '691bb110-c096-11e8-b371-ebde26989839',
-    proposal: {
-      providerId: '0x3b03a513fba4bd4868edd340f77da0c920150f3e'
-    },
-    location: {
-      country: 'lt'
-    },
-    statistics: {
-      dateStart: new Date(2018, 8, 24, 14, 3, 55),
-      duration: 35 * 60,
-      bytesSent: 1024,
-      bytesReceived: 6000
-    }
+    sessionId: '691bb110-c096-11e8-b371-ebde26989839',
+    providerId: '0x3b03a513fba4bd4868edd340f77da0c920150f3e',
+    providerCountry: 'lt',
+    dateStarted: new Date(2018, 8, 24, 14, 3, 55),
+    bytesSent: 1024,
+    bytesReceived: 6000,
+    duration: 35 * 60
   }
 
   return mount(SessionItem, {

@@ -44,18 +44,18 @@ export default {
   },
   computed: {
     durationString () {
-      return formatTimeDisplayOrDefault(this.session.statistics.duration)
+      return formatTimeDisplayOrDefault(this.session.duration)
     },
     sent () {
-      const sent = formatBytesReadableOrDefault(this.session.statistics.bytesSent)
+      const sent = formatBytesReadableOrDefault(this.session.bytesSent)
       return sent.amount + sent.units
     },
     received () {
-      const received = formatBytesReadableOrDefault(this.session.statistics.bytesReceived)
+      const received = formatBytesReadableOrDefault(this.session.bytesReceived)
       return received.amount + received.units
     },
     shortIdentity () {
-      return limitedLengthString(this.session.proposal.providerId, 11)
+      return limitedLengthString(this.session.providerId, 11)
     },
     startDate () {
       return getReadableDate(this.dateObject)
@@ -64,10 +64,10 @@ export default {
       return getReadableTime(this.dateObject)
     },
     dateObject () {
-      return new Date(this.session.statistics.dateStart)
+      return new Date(this.session.dateStarted)
     },
     countryCode () {
-      return this.session.location.country
+      return this.session.providerCountry
     }
   }
 }
