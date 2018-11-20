@@ -29,7 +29,7 @@ const proposalsQueryWithMetric = new ProposalsQuery({ fetchConnectCounts: true }
 const filterFailedProposals = (proposal: ProposalDTO) => {
   if (proposal.metrics && proposal.metrics.connectCount) {
     const count = proposal.metrics.connectCount
-    if (count.success < 30 && count.fail > 0) {
+    if (count.success === 0 && count.fail > 0) {
       return false
     }
   }
