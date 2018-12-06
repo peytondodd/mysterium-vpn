@@ -21,7 +21,9 @@
       v-if="paymentsAreEnabled && !isIdentityMenuOpen"
       :registered="registered"
       :click="showInstructions"/>
-    <IdentityRegistration v-if="paymentsAreEnabled"/>
+
+    <IdentityRegistration />
+
     <div class="page__control control">
       <div class="control__top">
         <h1
