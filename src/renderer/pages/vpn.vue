@@ -22,7 +22,7 @@
       :registered="registered"
       :click="showInstructions"/>
 
-    <IdentityRegistration />
+    <IdentityRegistration v-if="paymentsAreEnabled" />
 
     <div class="page__control control">
       <div class="control__top">

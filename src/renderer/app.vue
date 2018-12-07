@@ -61,10 +61,7 @@ export default {
   },
   dependencies: ['rendererCommunication', 'syncCommunication', 'logger', 'bugReporterMetrics', 'featureToggle'],
   computed: {
-    ...mapGetters(['navVisible', 'loading', 'visual', 'overlayError']),
-    paymentsAreEnabled () {
-      return this.featureToggle.paymentsAreEnabled()
-    }
+    ...mapGetters(['navVisible', 'loading', 'visual', 'overlayError'])
   },
   async mounted () {
     logger.setLogger(this.logger)
