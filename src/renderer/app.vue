@@ -59,7 +59,7 @@ export default {
     AppError,
     AppModal
   },
-  dependencies: ['rendererCommunication', 'syncCommunication', 'logger', 'bugReporterMetrics', 'featureToggle'],
+  dependencies: ['rendererCommunication', 'syncCommunication', 'logger', 'bugReporterMetrics'],
   computed: {
     ...mapGetters(['navVisible', 'loading', 'visual', 'overlayError'])
   },
