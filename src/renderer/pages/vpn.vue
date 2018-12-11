@@ -21,6 +21,9 @@
       v-if="paymentsAreEnabled && !isIdentityMenuOpen"
       :registered="registered"
       :click="showInstructions"/>
+
+    <IdentityRegistration v-if="paymentsAreEnabled" />
+
     <div class="page__control control">
       <div class="control__top">
         <h1
@@ -85,6 +88,7 @@ import config from '../config'
 import { ActionLooperConfig } from '../store/modules/connection'
 import FavoriteButton from '../components/favorite-button'
 import IdentityButton from '../components/identity-button'
+import IdentityRegistration from '../components/identity-registration'
 
 export default {
   name: 'Main',
@@ -94,7 +98,8 @@ export default {
     ConnectionButton,
     StatsDisplay,
     AppError,
-    IdentityButton
+    IdentityButton,
+    IdentityRegistration
   },
   dependencies: [
     'bugReporter',
