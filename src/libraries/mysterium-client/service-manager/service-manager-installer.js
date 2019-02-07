@@ -152,7 +152,9 @@ class ServiceManagerInstaller implements Installer {
         `--data-dir=${this._config.dataDir}`,
         `--runtime-dir=${this._config.runtimeDir}`,
         `--openvpn.binary=${this._config.openVPNBin}`,
-        `--tequilapi.port=${this._config.tequilapiPort}`
+        `--tequilapi.port=${this._config.tequilapiPort}`,
+        '--experiment-promise-check=1',
+        'daemon'
       ],
       Logging: {
         Stderr: path.join(this._config.logDir, this._config.stdErrFileName),
