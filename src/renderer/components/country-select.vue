@@ -43,6 +43,7 @@
         <div
           class="multiselect__option-title"
           v-text="countryLabel(props.option)"/>
+        <QualityIndicator :level="props.option.qualityLevel"/>
       </template>
       <template slot="afterList">
         <div class="country-filter">
@@ -64,6 +65,7 @@ import { getCountryLabel } from '../../app/countries/utils'
 import Multiselect from 'vue-multiselect'
 import IconWorld from '@/assets/img/icon--world.svg'
 import CountryFlag from './country-flag'
+import QualityIndicator from './quality-indicator'
 
 export default {
   name: 'CountrySelect',
@@ -84,6 +86,7 @@ export default {
     }
   },
   components: {
+    QualityIndicator,
     CountryFlag,
     Multiselect,
     IconWorld

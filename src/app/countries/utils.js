@@ -19,7 +19,7 @@
 import countries from './list'
 import ProposalDTO from 'mysterium-tequilapi/lib/dto/proposal'
 import type { FavoriteProviders } from '../user-settings/user-settings'
-import { QualityCalculator, Metrics } from 'mysterium-vpn-js'
+import { Metrics, QualityCalculator, QualityLevel } from 'mysterium-vpn-js'
 
 const COUNTRY_NAME_UNRESOLVED = 'N/A'
 const COUNTRY_CODE_LENGTH = 2
@@ -29,7 +29,9 @@ type Country = {
   code: ?string,
   name: string,
   isFavorite: boolean,
-  successRate: number,
+  // TODO: rename to 'quality'
+  successRate: number | null,
+  qualityLevel: QualityLevel,
   trusted: boolean
 }
 
@@ -74,28 +76,51 @@ function isProposalTrusted (proposal: ProposalDTO): boolean {
 }
 
 function getCountryFromProposal (proposal: ProposalDTO): Country {
+  const calculator = new QualityCalculator()
+  const successRate = calculator.calculateValue(getMetrics(proposal))
+  const qualityLevel = calculator.calculateLevel(successRate)
+  const trusted = isProposalTrusted(proposal)
+
   return {
     id: proposal.providerId,
     code: getCountryCodeFromProposal(proposal),
     name: getCountryNameFromProposal(proposal),
     isFavorite: false,
-    successRate: getCountrySuccessRateFromProposal(proposal),
-    trusted: isProposalTrusted(proposal)
+    successRate,
+    qualityLevel,
+    trusted
   }
 }
 
 function compareCountries (a: Country, b: Country) {
   if (a.isFavorite && !b.isFavorite) {
     return -1
-  } else if (!a.isFavorite && b.isFavorite) {
+  }
+  if (!a.isFavorite && b.isFavorite) {
     return 1
-  } else if (a.successRate < b.successRate) {
+  }
+
+  if (a.successRate !== null || b.successRate !== null) {
+    if (a.successRate !== null && b.successRate !== null) {
+      if (a.successRate < b.successRate) {
+        return 1
+      }
+      if (b.successRate < a.successRate) {
+        return -1
+      }
+    } else {
+      if (a.successRate === null) {
+        return 1
+      } else {
+        return -1
+      }
+    }
+  }
+
+  if (a.name > b.name) {
     return 1
-  } else if (b.successRate < a.successRate) {
-    return -1
-  } else if (a.name > b.name) {
-    return 1
-  } else if (b.name > a.name) {
+  }
+  if (b.name > a.name) {
     return -1
   }
 
@@ -137,11 +162,6 @@ function getCountryCodeFromProposal (proposal: ProposalDTO): ?string {
   }
 
   return proposal.serviceDefinition.locationOriginate.country
-}
-
-function getCountrySuccessRateFromProposal (proposal: ProposalDTO): number {
-  const metrics = getMetrics(proposal)
-  return new QualityCalculator().calculateValue(metrics) || 0
 }
 
 function getMetrics (proposal: ProposalDTO): Metrics {

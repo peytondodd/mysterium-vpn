@@ -25,6 +25,7 @@ import { UserSettingsStorage } from '../../../../src/app/user-settings/user-sett
 import { RepeatableCallbackRecorder } from '../../../helpers/utils'
 import { unlinkSyncIfPresent } from '../../../helpers/file-system'
 import type { UserSettingsStore } from '../../../../src/app/user-settings/user-settings-store'
+import { QualityLevel } from 'mysterium-vpn-js'
 
 class ProposalFetcherMock implements ProposalFetcher {
   _subscriber: Subscriber<ProposalDTO[]>
@@ -79,13 +80,28 @@ describe('CountryList', () => {
       proposalFetcher.setFetchData(proposal1)
       proposalFetcher.fetch()
       expect(cbRec.lastArguments).to.be.eql([
-        [{ id: '0x1', code: null, name: 'N/A', isFavorite: false, successRate: 0, trusted: false }]
+        [{
+          id: '0x1',
+          code: null,
+          name: 'N/A',
+          isFavorite: false,
+          successRate: 0,
+          qualityLevel: QualityLevel.LOW,
+          trusted: false
+        }]
       ])
 
       proposalFetcher.setFetchData(proposal2)
       proposalFetcher.fetch()
       expect(cbRec.lastArguments).to.be.eql([
-        [{ id: '0x2', code: 'lt', name: 'Lithuania', isFavorite: false, successRate: 0.5, trusted: true }]
+        [{ id: '0x2',
+          code: 'lt',
+          name: 'Lithuania',
+          isFavorite: false,
+          successRate: 0.5,
+          qualityLevel: QualityLevel.HIGH,
+          trusted: true
+        }]
       ])
     })
 
@@ -97,7 +113,15 @@ describe('CountryList', () => {
       await store.setFavorite('0x2', true)
       expect(cbRec.invokesCount).to.eql(1)
       expect(cbRec.lastArguments).to.be.eql([
-        [{ id: '0x2', code: 'lt', name: 'Lithuania', isFavorite: true, successRate: 0.5, trusted: true }]
+        [{
+          id: '0x2',
+          code: 'lt',
+          name: 'Lithuania',
+          isFavorite: true,
+          successRate: 0.5,
+          qualityLevel: QualityLevel.HIGH,
+          trusted: true
+        }]
       ])
     })
   })
