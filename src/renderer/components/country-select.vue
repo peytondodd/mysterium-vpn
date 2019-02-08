@@ -61,7 +61,7 @@
 </template>
 
 <script>
-import { getCountryLabel } from '../../app/countries/utils'
+import { getCountryLabel, isCountryTrusted } from '../../app/countries/utils'
 import Multiselect from 'vue-multiselect'
 import IconWorld from '@/assets/img/icon--world.svg'
 import CountryFlag from './country-flag'
@@ -143,7 +143,7 @@ export default {
       if (this.showMore) {
         return this.countryList
       }
-      return this.countryList.filter(c => c.trusted)
+      return this.countryList.filter(isCountryTrusted)
     }
   },
   mounted () {

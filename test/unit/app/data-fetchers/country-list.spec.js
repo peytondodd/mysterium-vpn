@@ -86,8 +86,7 @@ describe('CountryList', () => {
           name: 'N/A',
           isFavorite: false,
           quality: 0,
-          qualityLevel: QualityLevel.LOW,
-          trusted: false
+          qualityLevel: QualityLevel.LOW
         }]
       ])
 
@@ -99,8 +98,7 @@ describe('CountryList', () => {
           name: 'Lithuania',
           isFavorite: false,
           quality: 0.5,
-          qualityLevel: QualityLevel.HIGH,
-          trusted: true
+          qualityLevel: QualityLevel.HIGH
         }]
       ])
     })
@@ -119,8 +117,7 @@ describe('CountryList', () => {
           name: 'Lithuania',
           isFavorite: true,
           quality: 0.5,
-          qualityLevel: QualityLevel.HIGH,
-          trusted: true
+          qualityLevel: QualityLevel.HIGH
         }]
       ])
     })

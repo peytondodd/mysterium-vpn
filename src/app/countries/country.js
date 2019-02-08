@@ -25,8 +25,7 @@ type Country = {
   name: string,
   isFavorite: boolean,
   quality: number | null,
-  qualityLevel: QualityLevel,
-  trusted: boolean
+  qualityLevel: QualityLevel
 }
 
 export type { Country }

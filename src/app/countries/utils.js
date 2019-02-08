@@ -17,8 +17,8 @@
 
 // @flow
 import countries from './list'
-import ProposalDTO from 'mysterium-tequilapi/lib/dto/proposal'
 import type { Country } from './country'
+import { QualityLevel } from 'mysterium-vpn-js'
 
 const COUNTRY_CODE_LENGTH = 2
 const COUNTRY_NAME_UNRESOLVED = 'N/A'
@@ -45,19 +45,13 @@ function isCountryKnown (countryCode: ?string): boolean {
     typeof countries[countryCode.toLocaleLowerCase()] !== 'undefined'
 }
 
-function isProposalTrusted (proposal: ProposalDTO): boolean {
-  if (proposal.metrics && proposal.metrics.connectCount) {
-    const count = proposal.metrics.connectCount
-    if (count.success === 0 && count.fail > 0) {
-      return false
-    }
-  }
-  return true
+function isCountryTrusted (country: Country): boolean {
+  return country.qualityLevel === QualityLevel.HIGH || country.qualityLevel === QualityLevel.MEDIUM
 }
 
 export {
   getCountryLabel,
   isCountryKnown,
-  isProposalTrusted,
+  isCountryTrusted,
   COUNTRY_NAME_UNRESOLVED
 }

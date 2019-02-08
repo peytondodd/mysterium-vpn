@@ -35,8 +35,7 @@ const countryList: Country[] = [
     name: 'Lithuania',
     isFavorite: false,
     quality: 0.5,
-    qualityLevel: QualityLevel.MEDIUM,
-    trusted: true
+    qualityLevel: QualityLevel.MEDIUM
   },
   {
     id: '0x2',
@@ -44,8 +43,7 @@ const countryList: Country[] = [
     name: 'United Kingdom',
     isFavorite: false,
     quality: 0.5,
-    qualityLevel: QualityLevel.MEDIUM,
-    trusted: true
+    qualityLevel: QualityLevel.MEDIUM
   },
   {
     id: '0x3',
@@ -53,8 +51,7 @@ const countryList: Country[] = [
     name: 'N/A',
     isFavorite: false,
     quality: 0.5,
-    qualityLevel: QualityLevel.MEDIUM,
-    trusted: true
+    qualityLevel: QualityLevel.MEDIUM
   },
   {
     id: '0x4',
@@ -62,8 +59,7 @@ const countryList: Country[] = [
     name: 'N/A',
     isFavorite: false,
     quality: 0.5,
-    qualityLevel: QualityLevel.MEDIUM,
-    trusted: true
+    qualityLevel: QualityLevel.MEDIUM
   },
   {
     id: '0x4',
@@ -71,8 +67,7 @@ const countryList: Country[] = [
     name: 'N/A',
     isFavorite: false,
     quality: 0.5,
-    qualityLevel: QualityLevel.MEDIUM,
-    trusted: true
+    qualityLevel: QualityLevel.MEDIUM
   }
 ]
 

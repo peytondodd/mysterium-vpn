@@ -22,7 +22,7 @@ import type { FavoriteProviders } from '../user-settings/user-settings'
 import type { Country } from './country'
 import { QualityCalculator, Metrics } from 'mysterium-vpn-js'
 import countries from './list'
-import { COUNTRY_NAME_UNRESOLVED, isCountryKnown, isProposalTrusted } from './utils'
+import { COUNTRY_NAME_UNRESOLVED, isCountryKnown } from './utils'
 
 function getSortedCountryListFromProposals (
   proposals: Array<ProposalDTO>,
@@ -35,7 +35,6 @@ function getCountryFromProposal (proposal: ProposalDTO): Country {
   const calculator = new QualityCalculator()
   const quality = calculator.calculateValue(getMetrics(proposal))
   const qualityLevel = calculator.calculateLevel(quality)
-  const trusted = isProposalTrusted(proposal)
 
   return {
     id: proposal.providerId,
@@ -44,8 +43,7 @@ function getCountryFromProposal (proposal: ProposalDTO): Country {
     name: getCountryNameFromProposal(proposal) || COUNTRY_NAME_UNRESOLVED,
     isFavorite: false,
     quality,
-    qualityLevel,
-    trusted
+    qualityLevel
   }
 }
 

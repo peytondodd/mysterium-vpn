@@ -17,10 +17,10 @@
 
 import {
   getCountryLabel,
-  isProposalTrusted
+  isCountryTrusted
 } from '../../../../src/app/countries/utils'
-import ProposalDTO from 'mysterium-tequilapi/lib/dto/proposal'
 import { getSortedCountryListFromProposals } from '../../../../src/app/countries/parsing'
+import { QualityLevel } from 'mysterium-vpn-js'
 
 describe('countries utils', () => {
   describe('.getSortedCountryListFromProposals', () => {
@@ -107,37 +107,25 @@ describe('countries utils', () => {
     })
   })
 
-  describe('.isProposalTrusted', () => {
-    function createProposal (connectCount) {
-      return new ProposalDTO({
-        id: 1,
-        providerId: 'provider id',
-        serviceType: 'service type',
-        metrics: { connectCount }
-      })
+  describe('.isCountryTrusted', () => {
+    function createCountry (qualityLevel) {
+      return {
+        id: '0x123',
+        name: 'name',
+        isFavorite: false,
+        quality: 0.1,
+        qualityLevel: qualityLevel
+      }
     }
 
-    it('returns true when there are successful connections', () => {
-      const proposal1 = createProposal({ success: 1, fail: 0, timeout: 1 })
-      expect(isProposalTrusted(proposal1)).to.be.true
-
-      const proposal2 = createProposal({ success: 1, fail: 100, timeout: 1 })
-      expect(isProposalTrusted(proposal2)).to.be.true
+    it('returns true for high-quality and medium-quality proposals', () => {
+      expect(isCountryTrusted(createCountry(QualityLevel.HIGH))).to.be.true
+      expect(isCountryTrusted(createCountry(QualityLevel.MEDIUM))).to.be.true
     })
 
-    it('returns true for new proposal', () => {
-      const proposal = createProposal({ success: 0, fail: 0, timeout: 0 })
-      expect(isProposalTrusted(proposal)).to.be.true
-    })
-
-    it('returns true when metrics are unavailable', () => {
-      const proposal = new ProposalDTO({ id: 1, providerId: 'provider id', serviceType: 'service type' })
-      expect(isProposalTrusted(proposal)).to.be.true
-    })
-
-    it('returns false for proposals with only failed connections', () => {
-      const proposal = createProposal({ success: 0, fail: 1, timeout: 0 })
-      expect(isProposalTrusted(proposal)).to.be.false
+    it('returns false for low-quality and unknown-quality proposals', () => {
+      expect(isCountryTrusted(createCountry(QualityLevel.LOW))).to.be.false
+      expect(isCountryTrusted(createCountry(QualityLevel.UNKNOWN))).to.be.false
     })
   })
 })

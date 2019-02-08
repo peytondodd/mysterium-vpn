@@ -133,16 +133,14 @@ describe('tray', () => {
             name: 'Lithuania',
             isFavorite: true,
             quality: 0,
-            qualityLevel: QualityLevel.LOW,
-            trusted: true
+            qualityLevel: QualityLevel.LOW
           },
           { id: 'proposalId_456',
             code: 'US',
             name: 'USA',
             isFavorite: false,
             quality: 1,
-            qualityLevel: QualityLevel.HIGH,
-            trusted: false
+            qualityLevel: QualityLevel.HIGH
           }
         ])
 
@@ -158,16 +156,14 @@ describe('tray', () => {
             name: 'Lithuania',
             isFavorite: true,
             quality: 0,
-            qualityLevel: QualityLevel.LOW,
-            trusted: true
+            qualityLevel: QualityLevel.LOW
           },
           { id: 'proposalId_456',
             code: 'US',
             name: 'USA',
             isFavorite: false,
             quality: 1,
-            qualityLevel: QualityLevel.HIGH,
-            trusted: false
+            qualityLevel: QualityLevel.HIGH
           }
         ])
 
