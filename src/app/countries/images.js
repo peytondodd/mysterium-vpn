@@ -17,7 +17,7 @@
 
 // @flow
 
-import { isCountryKnown } from './index'
+import { isCountryKnown } from './utils'
 import path from 'path'
 
 function getCountryImagePath (code: ?string): string {

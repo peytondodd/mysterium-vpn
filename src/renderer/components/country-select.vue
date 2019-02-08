@@ -60,7 +60,7 @@
 </template>
 
 <script>
-import { getCountryLabel } from '../../app/countries'
+import { getCountryLabel } from '../../app/countries/utils'
 import Multiselect from 'vue-multiselect'
 import IconWorld from '@/assets/img/icon--world.svg'
 import CountryFlag from './country-flag'

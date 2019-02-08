@@ -16,9 +16,9 @@
  */
 
 // @flow
-import type { Country } from '../countries'
+import type { Country } from '../countries/utils'
 import Publisher from '../../libraries/publisher'
-import { getSortedCountryListFromProposals } from '../countries'
+import { getSortedCountryListFromProposals } from '../countries/utils'
 import ProposalDTO from 'mysterium-tequilapi/lib/dto/proposal'
 import type { Subscriber } from '../../libraries/publisher'
 import type { FavoriteProviders } from '../user-settings/user-settings'

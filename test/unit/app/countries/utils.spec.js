@@ -19,11 +19,11 @@ import {
   getSortedCountryListFromProposals,
   getCountryLabel,
   isProposalTrusted
-} from '../../../../src/app/countries'
+} from '../../../../src/app/countries/utils'
 import ProposalDTO from 'mysterium-tequilapi/lib/dto/proposal'
 
-describe('Countries', () => {
-  describe('getSortedCountryListFromProposals()', () => {
+describe('countries utils', () => {
+  describe('.getSortedCountryListFromProposals', () => {
     const proposals = [
       {
         providerId: '0x1234567890',
@@ -67,7 +67,7 @@ describe('Countries', () => {
     })
   })
 
-  describe('getCountryLabel', () => {
+  describe('.getCountryLabel', () => {
     const proposals = [
       {
         providerId: '0x1234567890',

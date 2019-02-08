@@ -22,7 +22,7 @@ import TrayMenuBuilder from './menu-builder'
 import translations from './translations'
 import ConnectionStatusEnum from 'mysterium-tequilapi/lib/dto/connection-status-enum'
 import type { ConnectionStatus } from 'mysterium-tequilapi/lib/dto/connection-status-enum'
-import type { Country } from '../../app/countries'
+import type { Country } from '../../app/countries/utils'
 
 const TrayIcon = {
   active: 'active',
