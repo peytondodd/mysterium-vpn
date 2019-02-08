@@ -15,58 +15,53 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+// @flow
+
 import {
   getCountryLabel,
   isCountryTrusted
 } from '../../../../src/app/countries/utils'
-import { getSortedCountryListFromProposals } from '../../../../src/app/countries/parsing'
 import { QualityLevel } from 'mysterium-vpn-js'
+import { describe, expect, it } from '../../../helpers/dependencies'
+import type { Country } from '../../../../src/app/countries/country'
 
 describe('countries utils', () => {
   describe('.getCountryLabel', () => {
-    const proposals = [
-      {
-        providerId: '0x1234567890',
-        serviceDefinition: {
-          locationOriginate: {
-            country: 'LT'
-          }
-        }
-      },
-      {
-        providerId: '0x0987654321',
-        serviceDefinition: {
-          locationOriginate: {
-            country: 'AU'
-          }
-        }
-      },
-      {
-        providerId: '0x0987654321',
-        serviceDefinition: {
-          locationOriginate: {
-            country: 'CD'
-          }
-        }
+    function createCountry (id, name): Country {
+      return {
+        id,
+        code: null,
+        name,
+        isFavorite: false,
+        quality: 0.1,
+        qualityLevel: QualityLevel.MEDIUM
       }
+    }
+
+    const countries: Country[] = [
+      createCountry('0x0987654321', 'Australia'),
+      createCountry('0x0987654321', 'Congo, The Democratic Republic of the'),
+      createCountry('0x1234567890', 'Lithuania')
     ]
 
     it('truncates provider IDs', () => {
-      const list = getSortedCountryListFromProposals(proposals, new Set())
-      expect(getCountryLabel(list[0])).to.be.eql('Australia (0x0987654..)')
-      expect(getCountryLabel(list[1])).to.be.eql('Congo, The Democratic Republic of the (0x0987654..)')
-      expect(getCountryLabel(list[2])).to.be.eql('Lithuania (0x1234567..)')
+      expect(getCountryLabel(countries[0])).to.be.eql('Australia (0x0987654..)')
+      expect(getCountryLabel(countries[1])).to.be.eql('Congo, The Democratic Republic of the (0x0987654..)')
+      expect(getCountryLabel(countries[2])).to.be.eql('Lithuania (0x1234567..)')
+    })
 
-      expect(getCountryLabel(list[0], 10)).to.be.eql('Australia (0x0987654..)')
-      expect(getCountryLabel(list[1], 10)).to.be.eql('Congo, The.. (0x0987654..)')
-      expect(getCountryLabel(list[2], 10)).to.be.eql('Lithuania (0x1234567..)')
+    it('truncates country name when specified limit', () => {
+      expect(getCountryLabel(countries[0], 10)).to.be.eql('Australia (0x0987654..)')
+      expect(getCountryLabel(countries[1], 10)).to.be.eql('Congo, The.. (0x0987654..)')
+      expect(getCountryLabel(countries[2], 10)).to.be.eql('Lithuania (0x1234567..)')
     })
   })
 
   describe('.isCountryTrusted', () => {
-    function createCountry (qualityLevel) {
+    function createCountry (qualityLevel): Country {
       return {
         id: '0x123',
+        code: null,
         name: 'name',
         isFavorite: false,
         quality: 0.1,
