@@ -132,7 +132,7 @@ describe('tray', () => {
             code: 'LT',
             name: 'Lithuania',
             isFavorite: true,
-            successRate: 0,
+            quality: 0,
             qualityLevel: QualityLevel.LOW,
             trusted: true
           },
@@ -140,7 +140,7 @@ describe('tray', () => {
             code: 'US',
             name: 'USA',
             isFavorite: false,
-            successRate: 1,
+            quality: 1,
             qualityLevel: QualityLevel.HIGH,
             trusted: false
           }
@@ -157,7 +157,7 @@ describe('tray', () => {
             code: 'LT',
             name: 'Lithuania',
             isFavorite: true,
-            successRate: 0,
+            quality: 0,
             qualityLevel: QualityLevel.LOW,
             trusted: true
           },
@@ -165,7 +165,7 @@ describe('tray', () => {
             code: 'US',
             name: 'USA',
             isFavorite: false,
-            successRate: 1,
+            quality: 1,
             qualityLevel: QualityLevel.HIGH,
             trusted: false
           }

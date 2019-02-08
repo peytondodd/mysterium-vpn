@@ -29,8 +29,7 @@ type Country = {
   code: ?string,
   name: string,
   isFavorite: boolean,
-  // TODO: rename to 'quality'
-  successRate: number | null,
+  quality: number | null,
   qualityLevel: QualityLevel,
   trusted: boolean
 }
@@ -77,8 +76,8 @@ function isProposalTrusted (proposal: ProposalDTO): boolean {
 
 function getCountryFromProposal (proposal: ProposalDTO): Country {
   const calculator = new QualityCalculator()
-  const successRate = calculator.calculateValue(getMetrics(proposal))
-  const qualityLevel = calculator.calculateLevel(successRate)
+  const quality = calculator.calculateValue(getMetrics(proposal))
+  const qualityLevel = calculator.calculateLevel(quality)
   const trusted = isProposalTrusted(proposal)
 
   return {
@@ -86,7 +85,7 @@ function getCountryFromProposal (proposal: ProposalDTO): Country {
     code: getCountryCodeFromProposal(proposal),
     name: getCountryNameFromProposal(proposal),
     isFavorite: false,
-    successRate,
+    quality,
     qualityLevel,
     trusted
   }
@@ -100,16 +99,16 @@ function compareCountries (a: Country, b: Country) {
     return 1
   }
 
-  if (a.successRate !== null || b.successRate !== null) {
-    if (a.successRate !== null && b.successRate !== null) {
-      if (a.successRate < b.successRate) {
+  if (a.quality !== null || b.quality !== null) {
+    if (a.quality !== null && b.quality !== null) {
+      if (a.quality < b.quality) {
         return 1
       }
-      if (b.successRate < a.successRate) {
+      if (b.quality < a.quality) {
         return -1
       }
     } else {
-      if (a.successRate === null) {
+      if (a.quality === null) {
         return 1
       } else {
         return -1

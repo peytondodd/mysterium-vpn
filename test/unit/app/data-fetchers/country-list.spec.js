@@ -85,7 +85,7 @@ describe('CountryList', () => {
           code: null,
           name: 'N/A',
           isFavorite: false,
-          successRate: 0,
+          quality: 0,
           qualityLevel: QualityLevel.LOW,
           trusted: false
         }]
@@ -98,7 +98,7 @@ describe('CountryList', () => {
           code: 'lt',
           name: 'Lithuania',
           isFavorite: false,
-          successRate: 0.5,
+          quality: 0.5,
           qualityLevel: QualityLevel.HIGH,
           trusted: true
         }]
@@ -118,7 +118,7 @@ describe('CountryList', () => {
           code: 'lt',
           name: 'Lithuania',
           isFavorite: true,
-          successRate: 0.5,
+          quality: 0.5,
           qualityLevel: QualityLevel.HIGH,
           trusted: true
         }]

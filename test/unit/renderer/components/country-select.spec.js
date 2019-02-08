@@ -34,7 +34,7 @@ const countryList: Country[] = [
     code: 'lt',
     name: 'Lithuania',
     isFavorite: false,
-    successRate: 0.5,
+    quality: 0.5,
     qualityLevel: QualityLevel.MEDIUM,
     trusted: true
   },
@@ -43,7 +43,7 @@ const countryList: Country[] = [
     code: 'gb',
     name: 'United Kingdom',
     isFavorite: false,
-    successRate: 0.5,
+    quality: 0.5,
     qualityLevel: QualityLevel.MEDIUM,
     trusted: true
   },
@@ -52,7 +52,7 @@ const countryList: Country[] = [
     code: 'unknown',
     name: 'N/A',
     isFavorite: false,
-    successRate: 0.5,
+    quality: 0.5,
     qualityLevel: QualityLevel.MEDIUM,
     trusted: true
   },
@@ -61,7 +61,7 @@ const countryList: Country[] = [
     code: 'unknown',
     name: 'N/A',
     isFavorite: false,
-    successRate: 0.5,
+    quality: 0.5,
     qualityLevel: QualityLevel.MEDIUM,
     trusted: true
   },
@@ -70,7 +70,7 @@ const countryList: Country[] = [
     code: null,
     name: 'N/A',
     isFavorite: false,
-    successRate: 0.5,
+    quality: 0.5,
     qualityLevel: QualityLevel.MEDIUM,
     trusted: true
   }
