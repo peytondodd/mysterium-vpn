@@ -19,12 +19,10 @@
 import countries from './list'
 import ProposalDTO from 'mysterium-tequilapi/lib/dto/proposal'
 import type { FavoriteProviders } from '../user-settings/user-settings'
+import { QualityCalculator, Metrics } from 'mysterium-vpn-js'
 
 const COUNTRY_NAME_UNRESOLVED = 'N/A'
 const COUNTRY_CODE_LENGTH = 2
-
-const UNKNOWN_PROPOSAL_SUCCESS_RATE = 0
-const NEW_PROPOSAL_SUCCESS_RATE = 1
 
 type Country = {
   id: string,
@@ -142,15 +140,22 @@ function getCountryCodeFromProposal (proposal: ProposalDTO): ?string {
 }
 
 function getCountrySuccessRateFromProposal (proposal: ProposalDTO): number {
+  const metrics = getMetrics(proposal)
+  return new QualityCalculator().calculateValue(metrics) || 0
+}
+
+function getMetrics (proposal: ProposalDTO): Metrics {
   if (!proposal.metrics || !proposal.metrics.connectCount) {
-    return UNKNOWN_PROPOSAL_SUCCESS_RATE
+    return { connectCount: { success: 0, fail: 0, timeout: 0 } }
   }
-  const count = proposal.metrics.connectCount
-  const total = count.success + count.fail
-  if (total > 0) {
-    return count.success / total
+  const connectCount = proposal.metrics.connectCount
+  return {
+    connectCount: {
+      success: connectCount.success,
+      fail: connectCount.fail,
+      timeout: connectCount.timeout
+    }
   }
-  return NEW_PROPOSAL_SUCCESS_RATE
 }
 
 export type { Country }
