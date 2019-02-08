@@ -17,7 +17,7 @@
 
 // @flow
 
-import type { Country } from '../../app/countries/utils'
+import type { Country } from '../../app/countries/country'
 import { getCountryLabel } from '../../app/countries/utils'
 import ConnectionStatusEnum from 'mysterium-tequilapi/lib/dto/connection-status-enum'
 import type { ConnectionStatus } from 'mysterium-tequilapi/lib/dto/connection-status-enum'

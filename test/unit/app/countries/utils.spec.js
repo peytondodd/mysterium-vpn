@@ -16,11 +16,11 @@
  */
 
 import {
-  getSortedCountryListFromProposals,
   getCountryLabel,
   isProposalTrusted
 } from '../../../../src/app/countries/utils'
 import ProposalDTO from 'mysterium-tequilapi/lib/dto/proposal'
+import { getSortedCountryListFromProposals } from '../../../../src/app/countries/parsing'
 
 describe('countries utils', () => {
   describe('.getSortedCountryListFromProposals', () => {

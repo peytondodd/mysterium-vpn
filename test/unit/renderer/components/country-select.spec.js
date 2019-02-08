@@ -25,7 +25,7 @@ import { beforeEach, describe, expect, it } from '../../../helpers/dependencies'
 import BugReporterMock from '../../../helpers/bug-reporter-mock'
 import { buildRendererCommunication } from '../../../../src/app/communication/renderer-communication'
 import type { BugReporter } from '../../../../src/app/bug-reporting/interface'
-import type { Country } from '../../../../src/app/countries/utils'
+import type { Country } from '../../../../src/app/countries/country'
 import { QualityLevel } from 'mysterium-vpn-js'
 
 const countryList: Country[] = [
