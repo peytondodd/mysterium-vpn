@@ -241,9 +241,10 @@ class MysteriumVpn {
   }
 
   async _onRendererLoaded () {
-    logInfo('Waiting for window to be rendered')
+    logInfo('Waiting for renderer boot')
     try {
       await onFirstEvent(this._communication.rendererBooted.on.bind(this._communication.rendererBooted))
+      logInfo('Renderer booted')
     } catch (e) {
       // TODO: add an error wrapper method
       throw new Error('Failed to load app. ' + e)
