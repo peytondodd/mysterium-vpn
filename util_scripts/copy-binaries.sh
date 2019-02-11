@@ -8,16 +8,16 @@ if [ ! -f .env ]; then
 fi
 source .env
 
-if [ -z $MYSTERIUM_CLIENT_BIN ]; then
-    printf $ERROR_COLOR "MYSTERIUM_CLIENT_BIN value in .env must be set!"
+if [ -z $MYSTERIUM_NODE_BIN ]; then
+    printf $ERROR_COLOR "MYSTERIUM_NODE_BIN value in .env must be set!"
     exit 1
 fi
 
-if [ -z $MYSTERIUM_CLIENT_CONFIG ]; then
-    printf $ERROR_COLOR "MYSTERIUM_CLIENT_CONFIG value in .env must be set!"
+if [ -z $MYSTERIUM_NODE_CONFIG ]; then
+    printf $ERROR_COLOR "MYSTERIUM_NODE_CONFIG value in .env must be set!"
     exit 1
 fi
 
 mkdir -p ./bin \
-    && cp ${MYSTERIUM_CLIENT_BIN} ./bin/ \
-    && cp -r ${MYSTERIUM_CLIENT_CONFIG} ./bin/
+    && cp ${MYSTERIUM_NODE_BIN} ./bin/ \
+    && cp -r ${MYSTERIUM_NODE_CONFIG} ./bin/
