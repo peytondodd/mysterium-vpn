@@ -41,6 +41,14 @@ describe('Vpn', () => {
   let fakeMessageBus
   let bugReporterMock
 
+  function buildRegistrationDTO (registered: boolean): IdentityRegistrationDTO {
+    return new IdentityRegistrationDTO({
+      registered: registered,
+      publicKey: null,
+      signature: null
+    })
+  }
+
   function mountVpn (paymentsEnabled = true) {
     const vue = createLocalVue()
     vue.use(Vuex)
@@ -54,15 +62,22 @@ describe('Vpn', () => {
     dependencies.constant('userSettingsStore', new UserSettingsProxy(communication))
     dependencies.constant('countryImageResolver', new CountryImageResolver(bugReporterMock))
     dependencies.constant('featureToggle', new FeatureToggle({ payments: paymentsEnabled }))
-    dependencies.constant('getPaymentLink', () => {})
+    dependencies.constant('getPaymentLink', () => {
+    })
 
     const store = new Store({
       getters: {
-        connection () {},
-        status () { return 'NotConnected' },
-        ip () {},
-        errorMessage () {},
-        showError () {}
+        connection () {
+        },
+        status () {
+          return 'NotConnected'
+        },
+        ip () {
+        },
+        errorMessage () {
+        },
+        showError () {
+        }
       },
       modules: {
         main: mainStoreFactory(new EmptyTequilapiClientMock(), new MockEventSender()),
@@ -100,7 +115,7 @@ describe('Vpn', () => {
     })
 
     it('renders ID icon when identity becomes unregistered', () => {
-      const registration = new IdentityRegistrationDTO({ registered: false })
+      const registration = new IdentityRegistrationDTO(buildRegistrationDTO(false))
       vpnWrapper.vm.$store.commit(types.SET_IDENTITY_REGISTRATION, registration)
       expect(vpnWrapper.findAll('.identity-button')).to.have.lengthOf(1)
       expect(vpnWrapper.findAll('.identity-button--registered')).to.have.lengthOf(0)
@@ -108,7 +123,7 @@ describe('Vpn', () => {
     })
 
     it('renders ID icon when identity becomes registered', () => {
-      const registration = new IdentityRegistrationDTO({ registered: true })
+      const registration = new IdentityRegistrationDTO(buildRegistrationDTO(true))
       vpnWrapper.vm.$store.commit(types.SET_IDENTITY_REGISTRATION, registration)
       expect(vpnWrapper.findAll('.identity-button')).to.have.lengthOf(1)
       expect(vpnWrapper.findAll('.identity-button--registered')).to.have.lengthOf(1)

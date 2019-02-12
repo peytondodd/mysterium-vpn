@@ -69,7 +69,8 @@ class IdentityManager {
     }
 
     try {
-      await this._tequilapi.identityUnlock(this._state.current.id, PASSWORD)
+      // TODO: get rid of or statement
+      await this._tequilapi.identityUnlock(this._state.current.id || '', PASSWORD)
       this._commit(types.IDENTITY_UNLOCK_SUCCESS)
     } catch (err) {
       this._showErrorMessage(messages.identityUnlockFailed)

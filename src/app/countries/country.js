@@ -23,6 +23,7 @@ type Country = {
   id: string,
   code: ?string,
   name: string,
+  serviceType: string,
   isFavorite: boolean,
   quality: number | null,
   qualityLevel: QualityLevel

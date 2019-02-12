@@ -19,6 +19,7 @@
 
 type Provider = {
   id: string,
+  serviceType: string,
   country: ?string
 }
 

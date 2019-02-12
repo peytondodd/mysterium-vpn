@@ -51,7 +51,8 @@ describe('IdentityRegistration', () => {
     mainCommunication = buildMainCommunication(messageBus)
 
     dependencies.constant('rendererCommunication', rendererCommunication)
-    dependencies.constant('getPaymentLink', () => {})
+    dependencies.constant('getPaymentLink', () => {
+    })
 
     const tequilapi = new EmptyTequilapiClientMock()
     const bugReporter = new BugReporterMock()
@@ -94,7 +95,11 @@ describe('IdentityRegistration', () => {
     })
 
     it('renders instructions when menu is opened', () => {
-      mainCommunication.identityRegistration.send(new IdentityRegistrationDTO({ registered: false }))
+      mainCommunication.identityRegistration.send(new IdentityRegistrationDTO({
+        registered: false,
+        publicKey: null,
+        signature: null
+      }))
       expect(wrapper.findAll('#registration-instructions.is-open')).to.have.lengthOf(0)
       store.commit(types.SHOW_IDENTITY_MENU)
       expect(wrapper.findAll('#registration-instructions.is-open')).to.have.lengthOf(1)

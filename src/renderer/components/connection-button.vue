@@ -38,6 +38,10 @@ export default {
       type: String,
       required: true
     },
+    serviceType: {
+      type: String,
+      required: true
+    },
     providerCountry: {
       type: String,
       required: false,
@@ -71,8 +75,8 @@ export default {
       const status = comp.$store.getters.status
       const isTransparent = (
         status === ConnectionStatusEnum.CONNECTING ||
-          status === ConnectionStatusEnum.DISCONNECTING ||
-          status === ConnectionStatusEnum.CONNECTED
+        status === ConnectionStatusEnum.DISCONNECTING ||
+        status === ConnectionStatusEnum.CONNECTED
       )
 
       return isTransparent
@@ -84,7 +88,7 @@ export default {
       const canConnect = status === ConnectionStatusEnum.NOT_CONNECTED
       const canDisconnect = (
         status === ConnectionStatusEnum.CONNECTED ||
-          status === ConnectionStatusEnum.CONNECTING
+        status === ConnectionStatusEnum.CONNECTING
       )
 
       if (canDisconnect) {
@@ -98,7 +102,12 @@ export default {
       }
 
       if (canConnect) {
-        const provider = { id: this.providerId, country: this.providerCountry }
+        const provider = {
+          id: this.providerId,
+          country: this.providerCountry,
+          serviceType: this.serviceType
+        }
+
         this.$store.dispatch(type.CONNECT, provider)
       }
     }

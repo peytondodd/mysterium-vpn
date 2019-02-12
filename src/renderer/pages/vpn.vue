@@ -53,6 +53,7 @@
         </div>
         <connection-button
           :provider-id="providerIdentity"
+          :service-type="providerServiceType"
           :provider-country="providerCountry" />
       </div>
 
@@ -135,6 +136,9 @@ export default {
     },
     providerCountry () {
       return this.country ? this.country.code : null
+    },
+    providerServiceType () {
+      return this.country ? this.country.serviceType : ''
     },
     registrationFetched () {
       return this.registration != null

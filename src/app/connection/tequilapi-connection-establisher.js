@@ -27,7 +27,6 @@ import TequilapiError from 'mysterium-tequilapi/lib/tequilapi-error'
 import messages from '../messages'
 import logger from '../logger'
 import type { ConnectionEstablisher } from './connection-establisher'
-import ConnectionRequestDTO from 'mysterium-tequilapi/lib/dto/connection-request'
 import { FunctionLooper } from '../../libraries/function-looper'
 import type { ErrorMessage } from './error-message'
 import ConsumerLocationDTO from 'mysterium-tequilapi/lib/dto/consumer-location'
@@ -60,21 +59,24 @@ class TequilapiConnectionEstablisher implements ConnectionEstablisher {
     location: ?ConsumerLocationDTO,
     actionLooper: ?FunctionLooper) {
     const eventTracker = new ConnectEventTracker(this._eventSender, currentUserTime)
-    const connectDetails: ConnectDetails = {
-      consumerId,
-      providerId: provider.id
-    }
+    const connectDetails: ConnectDetails = { consumerId, providerId: provider.id }
     const originalCountry = this._getOriginalCountry(location) || ''
+
     eventTracker.connectStarted(connectDetails, originalCountry, provider.country || '')
+
     if (actionLooper) {
       await actionLooper.stop()
     }
+
     await connectionState.setConnectionStatus(ConnectionStatusEnum.CONNECTING)
     connectionState.resetStatistics()
     connectionState.setLastConnectionProvider(provider)
+
     try {
-      const request: ConnectionRequestDTO = new ConnectionRequestDTO(consumerId, provider.id, provider.country)
+      const request = { consumerId, providerId: provider.id, serviceType: provider.serviceType }
+
       await this._tequilapi.connectionCreate(request)
+
       eventTracker.connectEnded()
       errorMessage.hide()
     } catch (err) {

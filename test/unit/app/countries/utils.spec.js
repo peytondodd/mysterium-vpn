@@ -30,6 +30,7 @@ describe('countries utils', () => {
     function createCountry (id, name): Country {
       return {
         id,
+        serviceType: 'openvpn',
         code: null,
         name,
         isFavorite: false,
@@ -61,6 +62,7 @@ describe('countries utils', () => {
     function createCountry (qualityLevel): Country {
       return {
         id: '0x123',
+        serviceType: 'openvpn',
         code: null,
         name: 'name',
         isFavorite: false,

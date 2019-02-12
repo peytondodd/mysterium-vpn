@@ -129,6 +129,7 @@ describe('tray', () => {
         builder.updateCountries([
           {
             id: 'proposalId_123',
+            serviceType: 'openvpn',
             code: 'LT',
             name: 'Lithuania',
             isFavorite: true,
@@ -136,6 +137,7 @@ describe('tray', () => {
             qualityLevel: QualityLevel.LOW
           },
           { id: 'proposalId_456',
+            serviceType: 'openvpn',
             code: 'US',
             name: 'USA',
             isFavorite: false,
@@ -152,6 +154,7 @@ describe('tray', () => {
       it('connects', () => {
         builder.updateCountries([
           { id: 'proposalId_123',
+            serviceType: 'openvpn',
             code: 'LT',
             name: 'Lithuania',
             isFavorite: true,
@@ -159,6 +162,7 @@ describe('tray', () => {
             qualityLevel: QualityLevel.LOW
           },
           { id: 'proposalId_456',
+            serviceType: 'openvpn',
             code: 'US',
             name: 'USA',
             isFavorite: false,

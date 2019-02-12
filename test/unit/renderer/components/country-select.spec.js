@@ -31,6 +31,7 @@ import { QualityLevel } from 'mysterium-vpn-js'
 const countryList: Country[] = [
   {
     id: '0x1',
+    serviceType: 'openvpn',
     code: 'lt',
     name: 'Lithuania',
     isFavorite: false,
@@ -39,6 +40,7 @@ const countryList: Country[] = [
   },
   {
     id: '0x2',
+    serviceType: 'openvpn',
     code: 'gb',
     name: 'United Kingdom',
     isFavorite: false,
@@ -47,6 +49,7 @@ const countryList: Country[] = [
   },
   {
     id: '0x3',
+    serviceType: 'openvpn',
     code: 'unknown',
     name: 'N/A',
     isFavorite: false,
@@ -55,6 +58,7 @@ const countryList: Country[] = [
   },
   {
     id: '0x4',
+    serviceType: 'openvpn',
     code: 'unknown',
     name: 'N/A',
     isFavorite: false,
@@ -63,6 +67,7 @@ const countryList: Country[] = [
   },
   {
     id: '0x4',
+    serviceType: 'openvpn',
     code: null,
     name: 'N/A',
     isFavorite: false,
@@ -82,7 +87,8 @@ function mountWith (countryList, rendererCommunication, bugReporterMock: BugRepo
     localVue: vue,
     propsData: {
       countryList: countryList,
-      fetchCountries: () => {},
+      fetchCountries: () => {
+      },
       countriesAreLoading: false
     }
   })

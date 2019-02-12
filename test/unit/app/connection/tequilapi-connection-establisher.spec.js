@@ -107,7 +107,7 @@ describe('TequilapiConnectionEstablisher', () => {
 
   describe('.connect', () => {
     const consumerId = 'consumer'
-    const provider: Provider = { id: 'provider id', country: 'us' }
+    const provider: Provider = { id: 'provider id', country: 'us', serviceType: 'openvpn' }
 
     it('marks connecting status', async () => {
       await connectionEstablisher
@@ -131,7 +131,12 @@ describe('TequilapiConnectionEstablisher', () => {
     it('persists provider id', async () => {
       await connectionEstablisher
         .connect(consumerId, provider, mockConnectionState, mockErrorMessage, location, actionLooper)
-      expect(mockConnectionState.lastConnectionProvider).to.eql({ id: 'provider id', country: 'us' })
+
+      expect(mockConnectionState.lastConnectionProvider).to.eql({
+        id: 'provider id',
+        country: 'us',
+        serviceType: 'openvpn'
+      })
     })
 
     it('sends successful connection event', async () => {

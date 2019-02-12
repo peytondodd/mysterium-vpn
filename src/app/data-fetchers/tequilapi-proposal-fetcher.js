@@ -17,7 +17,7 @@
 
 // @flow
 
-import ProposalDTO from 'mysterium-tequilapi/lib/dto/proposal'
+import type { ProposalDTO } from 'mysterium-tequilapi/lib/dto/proposal'
 import ProposalsQuery from 'mysterium-tequilapi/lib/adapters/proposals-query'
 import type { TequilapiClient } from 'mysterium-tequilapi/lib/client'
 import { FunctionLooper } from '../../libraries/function-looper'

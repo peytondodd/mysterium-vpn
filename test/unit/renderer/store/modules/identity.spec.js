@@ -80,7 +80,7 @@ describe('identity store', () => {
           unlocked: false,
           registration: null
         }
-        const registration = new IdentityRegistrationDTO({ registered: true })
+        const registration = new IdentityRegistrationDTO({ registered: true, publicKey: null, signature: null })
         mutations[types.SET_IDENTITY_REGISTRATION](state, registration)
         expect(state.registration).to.eql(registration)
       })

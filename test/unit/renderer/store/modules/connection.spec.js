@@ -122,8 +122,10 @@ describe('connection', () => {
         }
         const provider: Provider = {
           id: 'id',
+          serviceType: 'openvpn',
           country: 'country'
         }
+
         setLastConnectionProvider(state, provider)
         expect(state.lastConnectionProvider).to.eql(provider)
       })
@@ -201,13 +203,15 @@ describe('connection', () => {
           statistics: {},
           actionLoopers: {}
         }
-        const actionLooper1 = new ActionLooper(type.CONNECTION_IP, new FunctionLooper(async () => {}, 1000))
+        const actionLooper1 = new ActionLooper(type.CONNECTION_IP, new FunctionLooper(async () => {
+        }, 1000))
         mutations[type.SET_ACTION_LOOPER](state, actionLooper1)
         expect(state.actionLoopers).to.eql({
           [actionLooper1.action]: actionLooper1.looper
         })
 
-        const actionLooper2 = new ActionLooper(type.FETCH_CONNECTION_STATUS, new FunctionLooper(async () => {}, 1000))
+        const actionLooper2 = new ActionLooper(type.FETCH_CONNECTION_STATUS, new FunctionLooper(async () => {
+        }, 1000))
         mutations[type.SET_ACTION_LOOPER](state, actionLooper2)
         expect(state.actionLoopers).to.eql({
           [actionLooper1.action]: actionLooper1.looper,
@@ -218,7 +222,8 @@ describe('connection', () => {
 
     describe('REMOVE_ACTION_LOOPER', () => {
       it('removes single action looper', () => {
-        const noop = async () => {}
+        const noop = async () => {
+        }
         const ipLooper = new FunctionLooper(noop, 1000)
         const statusLooper = new FunctionLooper(noop, 1000)
         const state = {
@@ -285,7 +290,8 @@ describe('connection', () => {
       })
 
       it('does not start second looper if it already exists', async () => {
-        const noop = async () => {}
+        const noop = async () => {
+        }
         const looper = new FunctionLooper(noop, 1000)
         const state = {
           status: ConnectionStatusEnum.CONNECTED,
@@ -306,7 +312,8 @@ describe('connection', () => {
 
     describe('STOP_ACTION_LOOPING', () => {
       it('stops and cleans update looper', async () => {
-        const actionLooper = new FunctionLooper(async () => {}, 0)
+        const actionLooper = new FunctionLooper(async () => {
+        }, 0)
         actionLooper.start()
         const state = {
           status: ConnectionStatusEnum.CONNECTED,
@@ -465,7 +472,8 @@ describe('connection', () => {
       })
 
       it('stops looping statistics when changing state from connected', async () => {
-        const noop = async () => {}
+        const noop = async () => {
+        }
         const looper = new FunctionLooper(noop, 1000)
         looper.start()
         const state = {
@@ -490,7 +498,8 @@ describe('connection', () => {
       })
 
       it('does nothing when changing state from connected to connected', async () => {
-        const noop = async () => {}
+        const noop = async () => {
+        }
         const looper = new FunctionLooper(noop, 1000)
         const state = {
           status: ConnectionStatusEnum.CONNECTED,
@@ -533,7 +542,8 @@ describe('connection', () => {
           status: ConnectionStatusEnum.CONNECTED,
           statistics: {},
           actionLoopers: {
-            [type.FETCH_CONNECTION_STATUS]: new FunctionLooper(async () => {}, 1000)
+            [type.FETCH_CONNECTION_STATUS]: new FunctionLooper(async () => {
+            }, 1000)
           },
           location: new ConsumerLocationDTO({
             original: { ip: '', country: '' },
@@ -565,7 +575,8 @@ describe('connection', () => {
       it('fails when last connection provider is not present', async () => {
         const state = {
           actionLoopers: {
-            [type.FETCH_CONNECTION_STATUS]: new FunctionLooper(async () => {}, 1000)
+            [type.FETCH_CONNECTION_STATUS]: new FunctionLooper(async () => {
+            }, 1000)
           },
           location: { originalCountry: '' }
         }
@@ -597,7 +608,11 @@ describe('connection', () => {
         const getters = {
           currentIdentity: 'consumer id'
         }
-        const provider: Provider = { id: 'provider', country: 'provider country' }
+        const provider = {
+          id: 'provider',
+          serviceType: 'openvpn',
+          country: 'provider country'
+        }
         await executeAction(type.CONNECT, state, provider, getters)
 
         const params = mockConnectionEstablisher.connectParams

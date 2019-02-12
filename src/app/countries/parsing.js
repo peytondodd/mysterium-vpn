@@ -17,7 +17,7 @@
 
 // @flow
 
-import ProposalDTO from 'mysterium-tequilapi/lib/dto/proposal'
+import type { ProposalDTO } from 'mysterium-tequilapi/lib/dto/proposal'
 import type { FavoriteProviders } from '../user-settings/user-settings'
 import type { Country } from './country'
 import { QualityCalculator, Metrics } from 'mysterium-vpn-js'
@@ -38,6 +38,7 @@ function getCountryFromProposal (proposal: ProposalDTO): Country {
 
   return {
     id: proposal.providerId,
+    serviceType: proposal.serviceType,
     code: getCountryCodeFromProposal(proposal),
     // TODO: return null instead of setting default value here
     name: getCountryNameFromProposal(proposal) || COUNTRY_NAME_UNRESOLVED,

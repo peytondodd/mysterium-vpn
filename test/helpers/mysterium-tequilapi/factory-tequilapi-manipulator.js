@@ -98,8 +98,8 @@ function factoryTequilapiManipulator () {
       }
       return new IdentityRegistrationDTO({
         registered: false,
-        publicKey: new PublicKeyDTO({ part1: 'part-1', part2: 'part-2' }),
-        signature: new SignatureDTO({ r: 'r', s: 's', v: 'v' })
+        publicKey: { part1: 'part-1', part2: 'part-2' },
+        signature: { r: 'r', s: 's', v: 'v' }
       })
     }
   }
