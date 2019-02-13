@@ -76,9 +76,8 @@ class CommunicationBindings {
 
   startRegistrationFetcherOnCurrentIdentity (registrationFetcher: TequilapiRegistrationFetcher) {
     onceOnMessage(this._communication.currentIdentityChanged, (identityChange: CurrentIdentityChangeDTO) => {
-      const identity = new IdentityDTO({ id: identityChange.id })
-      registrationFetcher.start(identity.id)
-      logger.info(`${LOG_PREFIX}Registration fetcher started with ID ${identity.id}`)
+      registrationFetcher.start(identityChange.id)
+      logger.info(`${LOG_PREFIX}Registration fetcher started with ID ${identityChange.id}`)
     })
   }
 

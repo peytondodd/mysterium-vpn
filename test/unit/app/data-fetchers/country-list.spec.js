@@ -17,7 +17,8 @@
 
 // @flow
 import type { ProposalFetcher } from '../../../../src/app/data-fetchers/proposal-fetcher'
-import ProposalDTO from 'mysterium-tequilapi/lib/dto/proposal'
+import type { ProposalDTO } from 'mysterium-tequilapi/lib/dto/proposal'
+import { parseProposalDTO } from 'mysterium-tequilapi/lib/dto/proposal'
 import type { Subscriber } from '../../../../src/libraries/publisher'
 import { afterEach, beforeEach, describe, expect, it } from '../../../helpers/dependencies'
 import CountryList from '../../../../src/app/data-fetchers/country-list'
@@ -51,13 +52,13 @@ describe('CountryList', () => {
   const settingsPath = 'settings.json'
   const store: UserSettingsStore = new UserSettingsStorage(settingsPath)
 
-  const proposal1 = [new ProposalDTO({
+  const proposal1 = [parseProposalDTO({
     id: '1',
     providerId: '0x1',
     serviceType: 'mock',
     metrics: { connectCount: { success: 0, fail: 10, timeout: 50 } }
   })]
-  const proposal2 = [new ProposalDTO({
+  const proposal2 = [parseProposalDTO({
     id: '2',
     providerId: '0x2',
     serviceType: 'mock',
@@ -93,7 +94,8 @@ describe('CountryList', () => {
       proposalFetcher.setFetchData(proposal2)
       proposalFetcher.fetch()
       expect(cbRec.lastArguments).to.be.eql([
-        [{ id: '0x2',
+        [{
+          id: '0x2',
           code: 'lt',
           name: 'Lithuania',
           isFavorite: false,

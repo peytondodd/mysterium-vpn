@@ -19,7 +19,8 @@
 import { describe, it, expect, before, beforeEach, after } from '../../../helpers/dependencies'
 import lolex from 'lolex'
 import TequilapiProposalFetcher from '../../../../src/app/data-fetchers/tequilapi-proposal-fetcher'
-import ProposalDTO from 'mysterium-tequilapi/lib/dto/proposal'
+import type { ProposalDTO } from 'mysterium-tequilapi/lib/dto/proposal'
+import { parseProposalDTO } from 'mysterium-tequilapi/lib/dto/proposal'
 import { nextTick } from '../../../helpers/utils'
 import EmptyTequilapiClientMock from '../../renderer/store/modules/empty-tequilapi-client-mock'
 import logger from '../../../../src/app/logger'
@@ -54,13 +55,13 @@ describe('TequilapiProposalFetcher', () => {
   let clock
   const interval = 1001
   const tequilapi = new IdentityTequilapiClientMock([
-    new ProposalDTO({
+    parseProposalDTO({
       id: '0x1',
       providerId: '0x1',
       serviceType: 'openvpn',
       serviceDefinition: {}
     }),
-    new ProposalDTO({
+    parseProposalDTO({
       id: '0x2',
       providerId: '0x2',
       serviceType: 'openvpn',

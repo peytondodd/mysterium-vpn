@@ -17,15 +17,15 @@
 
 // @flow
 
-import ProposalDTO from 'mysterium-tequilapi/lib/dto/proposal'
-import ProposalsQuery from 'mysterium-tequilapi/lib/adapters/proposals-query'
+import type { ProposalDTO } from 'mysterium-tequilapi/lib/dto/proposal'
+import type { ProposalQueryOptions } from 'mysterium-tequilapi/lib/dto/query/proposals-query-options'
 import type { TequilapiClient } from 'mysterium-tequilapi/lib/client'
 import { FunctionLooper } from '../../libraries/function-looper'
 import type { Subscriber } from '../../libraries/publisher'
 import Publisher from '../../libraries/publisher'
 import type { ProposalFetcher } from './proposal-fetcher'
 
-const proposalsQueryWithMetric = new ProposalsQuery({ fetchConnectCounts: true })
+const proposalsQueryWithMetric: ProposalQueryOptions = { fetchConnectCounts: true }
 
 class TequilapiProposalFetcher implements ProposalFetcher {
   _api: TequilapiClient

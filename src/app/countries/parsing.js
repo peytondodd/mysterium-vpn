@@ -17,7 +17,7 @@
 
 // @flow
 
-import ProposalDTO from 'mysterium-tequilapi/lib/dto/proposal'
+import type { ProposalDTO } from 'mysterium-tequilapi/lib/dto/proposal'
 import type { FavoriteProviders } from '../user-settings/user-settings'
 import type { Country } from './country'
 import { QualityCalculator, Metrics } from 'mysterium-vpn-js'
