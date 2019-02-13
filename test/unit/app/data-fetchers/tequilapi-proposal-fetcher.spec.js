@@ -56,13 +56,13 @@ describe('TequilapiProposalFetcher', () => {
   const interval = 1001
   const tequilapi = new IdentityTequilapiClientMock([
     parseProposalDTO({
-      id: '0x1',
+      id: 1,
       providerId: '0x1',
       serviceType: 'openvpn',
       serviceDefinition: {}
     }),
     parseProposalDTO({
-      id: '0x2',
+      id: 2,
       providerId: '0x2',
       serviceType: 'openvpn',
       serviceDefinition: {}
@@ -114,16 +114,18 @@ describe('TequilapiProposalFetcher', () => {
 
       expect(proposals.length).to.equal(2)
       expect(proposals[0]).to.deep.equal({
-        id: '0x1',
+        id: 1,
         providerId: '0x1',
         serviceType: 'openvpn',
-        serviceDefinition: {}
+        serviceDefinition: {},
+        metrics: undefined
       })
       expect(proposals[1]).to.deep.equal({
-        id: '0x2',
+        id: 2,
         providerId: '0x2',
         serviceType: 'openvpn',
-        serviceDefinition: {}
+        serviceDefinition: {},
+        metrics: undefined
       })
     })
 
@@ -179,16 +181,18 @@ describe('TequilapiProposalFetcher', () => {
 
       expect(proposals.length).to.equal(2)
       expect(proposals[0]).to.deep.equal({
-        id: '0x1',
+        id: 1,
         providerId: '0x1',
         serviceType: 'openvpn',
-        serviceDefinition: {}
+        serviceDefinition: {},
+        metrics: undefined
       })
       expect(proposals[1]).to.deep.equal({
-        id: '0x2',
+        id: 2,
         providerId: '0x2',
         serviceType: 'openvpn',
-        serviceDefinition: {}
+        serviceDefinition: {},
+        metrics: undefined
       })
     })
   })

@@ -41,8 +41,14 @@ class ProposalsTequilapiClientMock extends EmptyTequilapiClientMock {
 describe('.reportUnknownProposalCountries', () => {
   it('listens for new proposals and reports unknown countries', async () => {
     function countryProposal (country: ?string): ProposalDTO {
-      return parseProposalDTO({ id: 1, serviceDefinition: { locationOriginate: { country: country } } })
+      return parseProposalDTO({
+        id: 1,
+        serviceType: 'openvpn',
+        providerId: '0x1',
+        serviceDefinition: { locationOriginate: { country: country } }
+      })
     }
+
     const proposals = [countryProposal('lt'), countryProposal('unknown'), countryProposal(null)]
     const tequilapiClient = new ProposalsTequilapiClientMock(proposals)
     const proposalsFetcher = new TequilapiProposalFetcher(tequilapiClient)

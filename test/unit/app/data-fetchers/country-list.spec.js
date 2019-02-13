@@ -53,13 +53,14 @@ describe('CountryList', () => {
   const store: UserSettingsStore = new UserSettingsStorage(settingsPath)
 
   const proposal1 = [parseProposalDTO({
-    id: '1',
+    id: 1,
     providerId: '0x1',
     serviceType: 'mock',
+    serviceDefinition: { locationOriginate: { country: 'lt' } },
     metrics: { connectCount: { success: 0, fail: 10, timeout: 50 } }
   })]
   const proposal2 = [parseProposalDTO({
-    id: '2',
+    id: 2,
     providerId: '0x2',
     serviceType: 'mock',
     serviceDefinition: { locationOriginate: { country: 'lt' } },
@@ -83,8 +84,8 @@ describe('CountryList', () => {
       expect(cbRec.lastArguments).to.be.eql([
         [{
           id: '0x1',
-          code: null,
-          name: 'N/A',
+          code: 'lt',
+          name: 'Lithuania',
           isFavorite: false,
           quality: 0,
           qualityLevel: QualityLevel.LOW
