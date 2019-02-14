@@ -25,36 +25,49 @@ import { beforeEach, describe, expect, it } from '../../../helpers/dependencies'
 import BugReporterMock from '../../../helpers/bug-reporter-mock'
 import { buildRendererCommunication } from '../../../../src/app/communication/renderer-communication'
 import type { BugReporter } from '../../../../src/app/bug-reporting/interface'
+import type { Country } from '../../../../src/app/countries/country'
+import { QualityLevel } from 'mysterium-vpn-js'
 
-const countryList = [
+const countryList: Country[] = [
   {
     id: '0x1',
     code: 'lt',
     name: 'Lithuania',
-    trusted: true
+    isFavorite: false,
+    quality: 0.5,
+    qualityLevel: QualityLevel.MEDIUM
   },
   {
     id: '0x2',
     code: 'gb',
     name: 'United Kingdom',
-    trusted: true
+    isFavorite: false,
+    quality: 0.5,
+    qualityLevel: QualityLevel.MEDIUM
   },
   {
     id: '0x3',
     code: 'unknown',
     name: 'N/A',
-    trusted: true
+    isFavorite: false,
+    quality: 0.5,
+    qualityLevel: QualityLevel.MEDIUM
   },
   {
     id: '0x4',
     code: 'unknown',
     name: 'N/A',
-    trusted: true
+    isFavorite: false,
+    quality: 0.5,
+    qualityLevel: QualityLevel.MEDIUM
   },
   {
     id: '0x4',
+    code: null,
     name: 'N/A',
-    trusted: true
+    isFavorite: false,
+    quality: 0.5,
+    qualityLevel: QualityLevel.MEDIUM
   }
 ]
 

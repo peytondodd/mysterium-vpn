@@ -18,7 +18,7 @@
 // @flow
 import type { ConnectionStatus } from 'mysterium-tequilapi/lib/dto/connection-status-enum'
 import type { LogLevel } from '../logging/mysterium-vpn-log-levels'
-import type { Country } from '../countries'
+import type { Country } from '../countries/country'
 import type { Metric } from '../bug-reporting/metrics/metrics'
 
 export type ConnectionStatusChangeDTO = {

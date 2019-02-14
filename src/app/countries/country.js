@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 The "mysteriumnetwork/mysterium-vpn" Authors.
+ * Copyright (C) 2019 The "mysteriumnetwork/mysterium-vpn" Authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,18 +17,15 @@
 
 // @flow
 
-import { isCountryKnown } from './utils'
-import path from 'path'
+import { QualityLevel } from 'mysterium-vpn-js'
 
-function getCountryImagePath (code: ?string): string {
-  if (code == null || !isCountryKnown(code)) {
-    return getIconPath('world')
-  }
-  return getIconPath(code)
+type Country = {
+  id: string,
+  code: ?string,
+  name: string,
+  isFavorite: boolean,
+  quality: number | null,
+  qualityLevel: QualityLevel
 }
 
-function getIconPath (code: string): string {
-  return path.join('static', 'flags', code.toLowerCase() + '.svg')
-}
-
-export { getCountryImagePath }
+export type { Country }

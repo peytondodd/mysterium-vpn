@@ -18,7 +18,7 @@
 // @flow
 
 import type { BugReporter } from '../bug-reporting/interface'
-import { isCountryKnown } from './index'
+import { isCountryKnown } from './utils'
 
 /**
  * Allows finding unknown country codes and reporting unique codes.

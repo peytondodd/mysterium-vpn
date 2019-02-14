@@ -1,6 +1,6 @@
 {
   "name": "MysteriumVPN",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "author": "Mysterium Network <team@netsys.technology>",
   "description": "Mysterium VPN is a desktop application for accessing Mysterium Network - decentralized VPN built on blockchain.",
   "license": "GPL-3.0",
@@ -40,7 +40,7 @@
       "dist/electron/**/*"
     ],
     "extraResources": [
-      "./static/icons/notification.png",
+      "./static/icons/logo.svg",
       "./static/icons/trayActiveTemplate.png",
       "./static/icons/trayActiveTemplate@2x.png",
       "./static/icons/trayPassiveTemplate.png",
@@ -78,7 +78,7 @@
       "requestedExecutionLevel": "requireAdministrator",
       "extraFiles": [
         "./bin/openvpn.exe",
-        "./bin/mysterium_client.exe",
+        "./bin/myst.exe",
         "./bin/tap-windows.exe",
         "./bin/servicemanager.exe"
       ]
@@ -114,6 +114,7 @@
     "md5": "^2.2.1",
     "mysterium-client-bin": "0.4.0",
     "mysterium-tequilapi": "^0.3.1-alpha.1",
+    "mysterium-vpn-js": "^0.0.2",
     "os-name": "^2.0.1",
     "raven": "^2.4.1",
     "raven-js": "^3.22.3",

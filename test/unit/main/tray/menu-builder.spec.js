@@ -25,6 +25,7 @@ import DirectMessageBus from '../../../helpers/direct-message-bus'
 import { buildRendererCommunication } from '../../../../src/app/communication/renderer-communication'
 import { CallbackRecorder } from '../../../helpers/utils'
 import type { MessageReceiver } from '../../../../src/app/communication/message-receiver'
+import { QualityLevel } from 'mysterium-vpn-js'
 
 class FakeApplicationQuitter {
   didQuit: boolean = false
@@ -126,8 +127,21 @@ describe('tray', () => {
 
       it('renders favourite country with an asterisk (*)', () => {
         builder.updateCountries([
-          { id: 'proposalId_123', code: 'LT', name: 'Lithuania', isFavorite: true, successRate: 0, trusted: true },
-          { id: 'proposalId_456', code: 'US', name: 'USA', isFavorite: false, successRate: 1, trusted: false }
+          {
+            id: 'proposalId_123',
+            code: 'LT',
+            name: 'Lithuania',
+            isFavorite: true,
+            quality: 0,
+            qualityLevel: QualityLevel.LOW
+          },
+          { id: 'proposalId_456',
+            code: 'US',
+            name: 'USA',
+            isFavorite: false,
+            quality: 1,
+            qualityLevel: QualityLevel.HIGH
+          }
         ])
 
         const items = builder.build()
@@ -137,8 +151,20 @@ describe('tray', () => {
 
       it('connects', () => {
         builder.updateCountries([
-          { id: 'proposalId_123', code: 'LT', name: 'Lithuania', isFavorite: true, successRate: 0, trusted: true },
-          { id: 'proposalId_456', code: 'US', name: 'USA', isFavorite: false, successRate: 1, trusted: false }
+          { id: 'proposalId_123',
+            code: 'LT',
+            name: 'Lithuania',
+            isFavorite: true,
+            quality: 0,
+            qualityLevel: QualityLevel.LOW
+          },
+          { id: 'proposalId_456',
+            code: 'US',
+            name: 'USA',
+            isFavorite: false,
+            quality: 1,
+            qualityLevel: QualityLevel.HIGH
+          }
         ])
 
         const items = builder.build()
