@@ -49,6 +49,12 @@ class IdentityManager {
   }
 
   setCurrentIdentity (identity: IdentityDTO) {
+    if (!identity.id) {
+      const message = 'Cannot set empty identity.'
+
+      throw new Error(message)
+    }
+
     this._commit(types.SET_CURRENT_IDENTITY, identity)
   }
 

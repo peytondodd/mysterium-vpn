@@ -42,6 +42,7 @@ function mutationsFactory (bugReporter: BugReporter, communication: RendererComm
     [type.SET_CURRENT_IDENTITY] (state, identity: IdentityDTO) {
       state.current = identity
       bugReporter.setUser(identity)
+      // @TODO remove check
       communication.currentIdentityChanged.send({ id: identity.id || '' })
     },
     [type.IDENTITY_UNLOCK_SUCCESS] (state) {

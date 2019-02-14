@@ -26,7 +26,6 @@ export default {
   },
   identityListFailed: 'Identity list fetching failed',
   identityCreateFailed: 'Identity creation failed',
-  identityNotSet: 'Identity not set',
   identityUnlockFailed: 'Identity unlocking failed',
   processInstallationPermissionsError: 'Failed to install MysteriumVPN. Please restart the app and grant permissions.',
   processInstallationError: 'Failed to install MysteriumVPN.',
