@@ -94,7 +94,9 @@ describe('IdentityRegistration', () => {
     })
 
     it('renders instructions when menu is opened', () => {
-      mainCommunication.identityRegistration.send(new IdentityRegistrationDTO({ registered: false }))
+      const identityData = { registered: false, signature: null, publicKey: null }
+
+      mainCommunication.identityRegistration.send(new IdentityRegistrationDTO(identityData))
       expect(wrapper.findAll('#registration-instructions.is-open')).to.have.lengthOf(0)
       store.commit(types.SHOW_IDENTITY_MENU)
       expect(wrapper.findAll('#registration-instructions.is-open')).to.have.lengthOf(1)

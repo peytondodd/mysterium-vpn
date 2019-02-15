@@ -100,7 +100,7 @@ describe('Vpn', () => {
     })
 
     it('renders ID icon when identity becomes unregistered', () => {
-      const registration = new IdentityRegistrationDTO({ registered: false })
+      const registration = new IdentityRegistrationDTO({ registered: false, signature: null, publicKey: null })
       vpnWrapper.vm.$store.commit(types.SET_IDENTITY_REGISTRATION, registration)
       expect(vpnWrapper.findAll('.identity-button')).to.have.lengthOf(1)
       expect(vpnWrapper.findAll('.identity-button--registered')).to.have.lengthOf(0)
@@ -108,7 +108,7 @@ describe('Vpn', () => {
     })
 
     it('renders ID icon when identity becomes registered', () => {
-      const registration = new IdentityRegistrationDTO({ registered: true })
+      const registration = new IdentityRegistrationDTO({ registered: true, signature: null, publicKey: null })
       vpnWrapper.vm.$store.commit(types.SET_IDENTITY_REGISTRATION, registration)
       expect(vpnWrapper.findAll('.identity-button')).to.have.lengthOf(1)
       expect(vpnWrapper.findAll('.identity-button--registered')).to.have.lengthOf(1)

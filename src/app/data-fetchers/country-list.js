@@ -19,7 +19,7 @@
 import type { Country } from '../countries/country'
 import Publisher from '../../libraries/publisher'
 import { getSortedCountryListFromProposals } from '../countries/parsing'
-import ProposalDTO from 'mysterium-tequilapi/lib/dto/proposal'
+import type { ProposalDTO } from 'mysterium-tequilapi/lib/dto/proposal'
 import type { Subscriber } from '../../libraries/publisher'
 import type { FavoriteProviders } from '../user-settings/user-settings'
 import type { ProposalFetcher } from './proposal-fetcher'
