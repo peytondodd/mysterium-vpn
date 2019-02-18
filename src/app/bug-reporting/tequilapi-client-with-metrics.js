@@ -19,10 +19,10 @@
 
 import ConnectionStatusDTO from 'mysterium-tequilapi/lib/dto/connection-status'
 import type { NodeHealthcheckDTO } from 'mysterium-tequilapi/lib/dto/node-healthcheck'
-import ProposalDTO from 'mysterium-tequilapi/lib/dto/proposal'
-import ProposalsQuery from 'mysterium-tequilapi/lib/adapters/proposals-query'
+import type { ProposalDTO } from 'mysterium-tequilapi/lib/dto/proposal'
+import type { ProposalQueryOptions } from 'mysterium-tequilapi/lib/dto/query/proposals-query-options'
 import { TIMEOUT_DISABLED } from 'mysterium-tequilapi/lib/timeouts'
-import ConnectionRequestDTO from 'mysterium-tequilapi/lib/dto/connection-request'
+import type { ConnectionRequest } from 'mysterium-tequilapi/lib/dto/connection-request'
 import ConnectionStatisticsDTO from 'mysterium-tequilapi/lib/dto/connection-statistics'
 import ConnectionIPDTO from 'mysterium-tequilapi/lib/dto/connection-ip'
 import type { TequilapiClient } from 'mysterium-tequilapi/lib/client'
@@ -81,7 +81,7 @@ class TequilapiClientWithMetrics implements TequilapiClient {
     return result
   }
 
-  async findProposals (query: ?ProposalsQuery): Promise<Array<ProposalDTO>> {
+  async findProposals (query: ?ProposalQueryOptions): Promise<Array<ProposalDTO>> {
     const result = await this._client.findProposals(query)
     if (!result || result.length === 0) {
       this._bugReporterMetrics.set(METRICS.PROPOSALS_FETCHED_ONCE, false)
@@ -92,7 +92,7 @@ class TequilapiClientWithMetrics implements TequilapiClient {
   }
 
   async connectionCreate (
-    request: ConnectionRequestDTO,
+    request: ConnectionRequest,
     timeout: ?number = TIMEOUT_DISABLED): Promise<ConnectionStatusDTO> {
     this._bugReporterMetrics.set(METRICS.CONNECTION_ACTIVE, false)
     const result = await this._client.connectionCreate(request, timeout)

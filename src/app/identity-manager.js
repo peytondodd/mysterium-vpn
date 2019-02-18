@@ -49,6 +49,10 @@ class IdentityManager {
   }
 
   setCurrentIdentity (identity: IdentityDTO) {
+    if (!identity.id) {
+      throw new Error('Cannot set empty identity.')
+    }
+
     this._commit(types.SET_CURRENT_IDENTITY, identity)
   }
 
@@ -62,14 +66,18 @@ class IdentityManager {
   }
 
   async unlockCurrentIdentity (): Promise<void> {
-    if (this._state.current == null) {
+    const currentIdentity = this._state.current
+
+    if (currentIdentity == null || !currentIdentity.id) {
       const message = 'Identity is not available'
+
       this._showErrorMessage(message)
+
       throw new Error(message)
     }
 
     try {
-      await this._tequilapi.identityUnlock(this._state.current.id, PASSWORD)
+      await this._tequilapi.identityUnlock(currentIdentity.id, PASSWORD)
       this._commit(types.IDENTITY_UNLOCK_SUCCESS)
     } catch (err) {
       this._showErrorMessage(messages.identityUnlockFailed)

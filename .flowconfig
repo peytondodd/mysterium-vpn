@@ -1,4 +1,6 @@
 [ignore]
+.*/mysterium-tequilapi/node_modules/.*
+.*/mysterium-tequilapi/test/.*
 
 [include]
 
