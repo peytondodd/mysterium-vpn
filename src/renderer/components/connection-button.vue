@@ -28,7 +28,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import type from '../store/types'
-import ConnectionStatusEnum from 'mysterium-tequilapi/lib/dto/connection-status-enum'
+import { ConnectionStatus } from 'mysterium-tequilapi/lib/dto/connection-status'
 import messages from '../../app/messages'
 
 export default {
@@ -52,16 +52,16 @@ export default {
     buttonText: (vm) => {
       let text = 'Connect'
       switch (vm.$store.getters.status) {
-        case ConnectionStatusEnum.CONNECTED:
+        case ConnectionStatus.CONNECTED:
           text = 'Disconnect'
           break
-        case ConnectionStatusEnum.CONNECTING:
+        case ConnectionStatus.CONNECTING:
           text = 'Cancel'
           break
-        case ConnectionStatusEnum.NOT_CONNECTED:
+        case ConnectionStatus.NOT_CONNECTED:
           text = 'Connect'
           break
-        case ConnectionStatusEnum.DISCONNECTING:
+        case ConnectionStatus.DISCONNECTING:
           text = 'Disconnecting'
           break
       }
@@ -70,9 +70,9 @@ export default {
     buttonTransparent: (comp) => {
       const status = comp.$store.getters.status
       const isTransparent = (
-        status === ConnectionStatusEnum.CONNECTING ||
-          status === ConnectionStatusEnum.DISCONNECTING ||
-          status === ConnectionStatusEnum.CONNECTED
+        status === ConnectionStatus.CONNECTING ||
+          status === ConnectionStatus.DISCONNECTING ||
+          status === ConnectionStatus.CONNECTED
       )
 
       return isTransparent
@@ -81,10 +81,10 @@ export default {
   methods: {
     buttonPressed: function () {
       const status = this.$store.getters.status
-      const canConnect = status === ConnectionStatusEnum.NOT_CONNECTED
+      const canConnect = status === ConnectionStatus.NOT_CONNECTED
       const canDisconnect = (
-        status === ConnectionStatusEnum.CONNECTED ||
-          status === ConnectionStatusEnum.CONNECTING
+        status === ConnectionStatus.CONNECTED ||
+          status === ConnectionStatus.CONNECTING
       )
 
       if (canDisconnect) {

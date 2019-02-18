@@ -117,14 +117,14 @@ describe('TequilapiProposalFetcher', () => {
         id: 1,
         providerId: '0x1',
         serviceType: 'openvpn',
-        serviceDefinition: {},
+        serviceDefinition: { locationOriginate: undefined },
         metrics: undefined
       })
       expect(proposals[1]).to.deep.equal({
         id: 1,
         providerId: '0x2',
         serviceType: 'openvpn',
-        serviceDefinition: {},
+        serviceDefinition: { locationOriginate: undefined },
         metrics: undefined
       })
     })
@@ -184,14 +184,14 @@ describe('TequilapiProposalFetcher', () => {
         id: 1,
         providerId: '0x1',
         serviceType: 'openvpn',
-        serviceDefinition: {},
+        serviceDefinition: { locationOriginate: undefined },
         metrics: undefined
       })
       expect(proposals[1]).to.deep.equal({
         id: 1,
         providerId: '0x2',
         serviceType: 'openvpn',
-        serviceDefinition: {},
+        serviceDefinition: { locationOriginate: undefined },
         metrics: undefined
       })
     })

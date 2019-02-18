@@ -16,17 +16,17 @@
  */
 
 // @flow
-import ConnectionIPDTO from 'mysterium-tequilapi/lib/dto/connection-ip'
-import ConnectionStatusDTO from 'mysterium-tequilapi/lib/dto/connection-status'
-import ConnectionStatisticsDTO from 'mysterium-tequilapi/lib/dto/connection-statistics'
-import type { TequilapiClient } from 'mysterium-tequilapi/lib/client'
-import IdentityDTO from 'mysterium-tequilapi/lib/dto/identity'
+import type { ConnectionIPDTO } from 'mysterium-tequilapi/lib/dto/connection-ip'
+import type { ConnectionStatusDTO } from 'mysterium-tequilapi/lib/dto/connection-status-dto'
+import type { ConnectionStatisticsDTO } from 'mysterium-tequilapi/lib/dto/connection-statistics'
+import { TequilapiClient } from 'mysterium-tequilapi/lib/client'
+import type { IdentityDTO } from 'mysterium-tequilapi/lib/dto/identity'
 import type { ProposalQueryOptions } from 'mysterium-tequilapi/lib/dto/query/proposals-query-options'
 import type { ProposalDTO } from 'mysterium-tequilapi/lib/dto/proposal'
-import ConsumerLocationDTO from 'mysterium-tequilapi/lib/dto/consumer-location'
+import type { ConsumerLocationDTO } from 'mysterium-tequilapi/lib/dto/consumer-location'
 import type { NodeHealthcheckDTO } from 'mysterium-tequilapi/lib/dto/node-healthcheck'
-import NodeBuildInfoDTO from 'mysterium-tequilapi/lib/dto/node-build-info'
-import IdentityRegistrationDTO from 'mysterium-tequilapi/lib/dto/identity-registration'
+import type { IdentityRegistrationDTO } from 'mysterium-tequilapi/lib/dto/identity-registration/identity-registration'
+import { ConnectionStatus } from 'mysterium-tequilapi/lib/dto/connection-status'
 
 class EmptyTequilapiClientMock implements TequilapiClient {
   async healthCheck (_timeout: ?number): Promise<NodeHealthcheckDTO> {
@@ -34,7 +34,11 @@ class EmptyTequilapiClientMock implements TequilapiClient {
       uptime: '',
       process: 0,
       version: '',
-      buildInfo: new NodeBuildInfoDTO({})
+      buildInfo: {
+        branch: 'mock branch',
+        buildNumber: 'mock build number',
+        commit: 'mock commit'
+      }
     }
   }
 
@@ -46,14 +50,14 @@ class EmptyTequilapiClientMock implements TequilapiClient {
   }
 
   async identityCreate (passphrase: string): Promise<IdentityDTO> {
-    return new IdentityDTO({})
+    return { id: 'mocked identity' }
   }
 
   async identityUnlock (id: string, passphrase: string): Promise<void> {
   }
 
   async identityRegistration (id: string): Promise<IdentityRegistrationDTO> {
-    return new IdentityRegistrationDTO({ registered: true, signature: null, publicKey: null })
+    return { registered: true }
   }
 
   async findProposals (query: ?ProposalQueryOptions): Promise<Array<ProposalDTO>> {
@@ -61,26 +65,30 @@ class EmptyTequilapiClientMock implements TequilapiClient {
   }
 
   async connectionCreate (): Promise<ConnectionStatusDTO> {
-    return new ConnectionStatusDTO({})
+    return { status: ConnectionStatus.CONNECTED }
   }
 
   async connectionStatus (): Promise<ConnectionStatusDTO> {
-    return new ConnectionStatusDTO({})
+    return { status: ConnectionStatus.NOT_CONNECTED }
   }
 
   async connectionCancel (): Promise<void> {
   }
 
   async connectionIP (): Promise<ConnectionIPDTO> {
-    return new ConnectionIPDTO({})
+    return {}
   }
 
   async connectionStatistics (): Promise<ConnectionStatisticsDTO> {
-    return new ConnectionStatisticsDTO({})
+    return {
+      bytesSent: 0,
+      bytesReceived: 0,
+      duration: 0
+    }
   }
 
   async location (): Promise<ConsumerLocationDTO> {
-    return new ConsumerLocationDTO({})
+    return {}
   }
 }
 

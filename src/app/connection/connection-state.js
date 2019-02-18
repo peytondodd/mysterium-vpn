@@ -17,7 +17,7 @@
 
 // @flow
 
-import type { ConnectionStatus } from 'mysterium-tequilapi/lib/dto/connection-status-enum'
+import type { ConnectionStatus } from 'mysterium-tequilapi/lib/dto/connection-status'
 import type { Provider } from './provider'
 
 interface ConnectionState {

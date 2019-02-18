@@ -50,7 +50,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import ConnectionStatusEnum from 'mysterium-tequilapi/lib/dto/connection-status-enum'
+import { ConnectionStatus } from 'mysterium-tequilapi/lib/dto/connection-status'
 
 import headVisual from '@/assets/img/visual--head.svg'
 
@@ -71,16 +71,16 @@ export default {
         classes = ['is-loading', 'is-pulsing']
       } else if (this.$route.name === 'vpn') {
         switch (this.status) {
-          case ConnectionStatusEnum.CONNECTED:
+          case ConnectionStatus.CONNECTED:
             classes = []
             break
-          case ConnectionStatusEnum.CONNECTING:
+          case ConnectionStatus.CONNECTING:
             classes = ['is-pulsing', 'is-disabled']
             break
-          case ConnectionStatusEnum.NOT_CONNECTED:
+          case ConnectionStatus.NOT_CONNECTED:
             classes = ['not-connected', 'is-disabled']
             break
-          case ConnectionStatusEnum.DISCONNECTING:
+          case ConnectionStatus.DISCONNECTING:
             classes = ['is-pulsing', 'not-connected', 'is-disabled']
             break
           default:

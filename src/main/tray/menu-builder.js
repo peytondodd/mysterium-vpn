@@ -19,8 +19,7 @@
 
 import type { Country } from '../../app/countries/country'
 import { getCountryLabel } from '../../app/countries/utils'
-import ConnectionStatusEnum from 'mysterium-tequilapi/lib/dto/connection-status-enum'
-import type { ConnectionStatus } from 'mysterium-tequilapi/lib/dto/connection-status-enum'
+import { ConnectionStatus } from 'mysterium-tequilapi/lib/dto/connection-status'
 import TrayMenu from './menu'
 import TrayMenuItem from './menu-item'
 import TrayMenuSeparator from './menu-item-separator'
@@ -78,25 +77,25 @@ function getMenuItems (
   items.add(translations.quit, () => appQuit(), 'Command+Q')
 
   switch (connectionStatus) {
-    case ConnectionStatusEnum.CONNECTED:
+    case ConnectionStatus.CONNECTED:
       connect.hide()
       disconnect.show()
       statusItem.setLabel(translations.statusConnected)
       break
 
-    case ConnectionStatusEnum.CONNECTING:
+    case ConnectionStatus.CONNECTING:
       connect.hide()
       disconnect.hide()
       statusItem.setLabel(translations.statusConnecting)
       break
 
-    case ConnectionStatusEnum.DISCONNECTING:
+    case ConnectionStatus.DISCONNECTING:
       connect.hide()
       disconnect.hide()
       statusItem.setLabel(translations.statusDisconnecting)
       break
 
-    case ConnectionStatusEnum.NOT_CONNECTED:
+    case ConnectionStatus.NOT_CONNECTED:
       connect.show()
       disconnect.hide()
       statusItem.setLabel(translations.statusDisconnected)

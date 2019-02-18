@@ -18,7 +18,7 @@
 // @flow
 
 import types from '../renderer/store/types'
-import IdentityDTO from 'mysterium-tequilapi/lib/dto/identity'
+import type { IdentityDTO } from 'mysterium-tequilapi/lib/dto/identity'
 import type { TequilapiClient } from 'mysterium-tequilapi/lib/client'
 import type { State as IdentityState } from '../renderer/store/modules/identity'
 import messages from './messages'

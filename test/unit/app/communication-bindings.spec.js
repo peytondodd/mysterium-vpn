@@ -29,7 +29,7 @@ import BugReporterMock from '../../helpers/bug-reporter-mock'
 import factoryTequilapiManipulator from '../../helpers/mysterium-tequilapi/factory-tequilapi-manipulator'
 import { UserSettingsStorage } from '../../../src/app/user-settings/user-settings-storage'
 import Notification from '../../../src/app/notification'
-import ConnectionStatusEnum from 'mysterium-tequilapi/lib/dto/connection-status-enum'
+import { ConnectionStatus } from 'mysterium-tequilapi/lib/dto/connection-status'
 import { nextTick } from '../../helpers/utils'
 import { buildMainCommunication } from '../../../src/app/communication/main-communication'
 
@@ -78,8 +78,8 @@ describe('CommunicationBindings', () => {
     it('it shows notification when disconnected without user interaction', () => {
       comBinds.showNotificationOnDisconnect(userSettingsStore, notif)
       msgBus.triggerOn(messages.CONNECTION_STATUS_CHANGED, {
-        oldStatus: ConnectionStatusEnum.CONNECTED,
-        newStatus: ConnectionStatusEnum.NOT_CONNECTED
+        oldStatus: ConnectionStatus.CONNECTED,
+        newStatus: ConnectionStatus.NOT_CONNECTED
       })
 
       expect(notif.showWasCalled).to.be.true
@@ -89,8 +89,8 @@ describe('CommunicationBindings', () => {
       await userSettingsStore.setShowDisconnectNotifications(false)
       comBinds.showNotificationOnDisconnect(userSettingsStore, notif)
       msgBus.triggerOn(messages.CONNECTION_STATUS_CHANGED, {
-        oldStatus: ConnectionStatusEnum.CONNECTED,
-        newStatus: ConnectionStatusEnum.NOT_CONNECTED
+        oldStatus: ConnectionStatus.CONNECTED,
+        newStatus: ConnectionStatus.NOT_CONNECTED
       })
 
       expect(notif.showWasCalled).to.be.false

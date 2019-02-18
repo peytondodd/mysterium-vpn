@@ -22,7 +22,7 @@ import { FunctionLooper } from '../../libraries/function-looper'
 import type { Subscriber } from '../../libraries/publisher'
 import Publisher from '../../libraries/publisher'
 import type { RegistrationFetcher } from './registration-fetcher'
-import IdentityRegistrationDTO from 'mysterium-tequilapi/lib/dto/identity-registration'
+import type { IdentityRegistrationDTO } from 'mysterium-tequilapi/lib/dto/identity-registration/identity-registration'
 
 class TequilapiRegistrationFetcher implements RegistrationFetcher {
   _api: TequilapiClient

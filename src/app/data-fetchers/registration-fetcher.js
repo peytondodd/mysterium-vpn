@@ -18,7 +18,7 @@
 // @flow
 
 import type { Subscriber } from '../../libraries/publisher'
-import IdentityRegistrationDTO from 'mysterium-tequilapi/lib/dto/identity-registration'
+import type { IdentityRegistrationDTO } from 'mysterium-tequilapi/lib/dto/identity-registration/identity-registration'
 
 interface RegistrationFetcher {
   fetch(): Promise<IdentityRegistrationDTO>,

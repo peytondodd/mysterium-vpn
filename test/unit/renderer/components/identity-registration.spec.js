@@ -25,7 +25,7 @@ import { buildRendererCommunication } from '../../../../src/app/communication/re
 import { buildMainCommunication } from '../../../../src/app/communication/main-communication'
 import type { RendererCommunication } from '../../../../src/app/communication/renderer-communication'
 import type { MainCommunication } from '../../../../src/app/communication/main-communication'
-import IdentityRegistrationDTO from 'mysterium-tequilapi/lib/dto/identity-registration'
+import type { IdentityRegistrationDTO } from 'mysterium-tequilapi/lib/dto/identity-registration/identity-registration'
 import Vuex from 'vuex'
 import mainStoreFactory from '@/store/modules/main'
 import EmptyTequilapiClientMock from '../store/modules/empty-tequilapi-client-mock'
@@ -94,9 +94,9 @@ describe('IdentityRegistration', () => {
     })
 
     it('renders instructions when menu is opened', () => {
-      const identityData = { registered: false, signature: null, publicKey: null }
+      const registration: IdentityRegistrationDTO = { registered: false }
 
-      mainCommunication.identityRegistration.send(new IdentityRegistrationDTO(identityData))
+      mainCommunication.identityRegistration.send(registration)
       expect(wrapper.findAll('#registration-instructions.is-open')).to.have.lengthOf(0)
       store.commit(types.SHOW_IDENTITY_MENU)
       expect(wrapper.findAll('#registration-instructions.is-open')).to.have.lengthOf(1)
