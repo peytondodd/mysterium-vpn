@@ -17,7 +17,7 @@
 
 // @flow
 
-import { app, BrowserWindow } from 'electron'
+import { app, BrowserWindow, Tray } from 'electron'
 import type { MysteriumVpnParams } from './mysterium-vpn-params'
 import trayFactory from '../main/tray/factory'
 import translations from './messages'
@@ -75,6 +75,7 @@ class MysteriumVpn {
   _communicationBindings: CommunicationBindings
 
   _window: Window // TODO: convert to maybe type
+  _tray: Tray
 
   constructor (params: MysteriumVpnParams) {
     this._browserWindowFactory = params.browserWindowFactory
@@ -370,9 +371,9 @@ class MysteriumVpn {
 
   _buildTray () {
     logInfo('Building tray')
-    trayFactory(
-      this._communication,
-      this._countryList,
+
+    // need to store the instance, otherwise tray will be garbage collected
+    this._tray = trayFactory(
       this._window,
       path.join(this._config.staticDirectory, 'icons')
     )

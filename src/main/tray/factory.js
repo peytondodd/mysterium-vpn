@@ -16,42 +16,47 @@
  */
 
 // @flow
-import { app, Tray as ElectronTray, Menu } from 'electron'
+import path from 'path'
+import { app, Tray, Menu } from 'electron'
 import Window from '../../app/window'
-import TrayMenuBuilder from './menu-builder'
-import Tray from './tray'
-import type { ConnectionStatusChangeDTO } from '../../app/communication/dto'
-import CountryList from '../../app/data-fetchers/country-list'
-import type { MainCommunication } from '../../app/communication/main-communication'
 
 const trayFactory = (
-  communication: MainCommunication,
-  countryList: CountryList,
   window: Window,
   iconPath: string
 ) => {
-  const menuBuilder = new TrayMenuBuilder(
-    () => app.quit(),
-    () => window.show(),
-    () => window.toggleDevTools(),
-    communication
-  )
+  let theme = 'passive'
 
-  const trayFactory = (icon) => {
-    return new ElectronTray(icon)
-  }
+  // once we upgrade our Electron version, we can use this:
+  // const { remote } = require('electron')
+  // if (process.platform === 'darwin') {
+  //   const { systemPreferences } = remote
+  //
+  //   theme = systemPreferences.isDarkMode() ? 'passive' : 'active'
+  // }
 
-  const templateBuilder = (items) => {
-    return Menu.buildFromTemplate(items)
-  }
+  const icon = `tray-${theme}-mode.png`
 
-  const tray = new Tray(trayFactory, templateBuilder, menuBuilder, iconPath)
-  tray.build()
+  const contextMenu = Menu.buildFromTemplate([
+    {
+      label: 'Show app',
+      type: 'normal',
+      click () {
+        window.show()
+      }
+    },
+    {
+      label: 'Quit',
+      type: 'normal',
+      click () {
+        app.quit()
+      }
+    }
+  ])
 
-  communication.connectionStatusChanged.on((change: ConnectionStatusChangeDTO) => {
-    tray.setStatus(change.newStatus)
-  })
-  countryList.onUpdate(countries => tray.setCountries(countries))
+  const tray = new Tray(path.join(iconPath, icon))
+  tray.setContextMenu(contextMenu)
+
+  return tray
 }
 
 export default trayFactory
