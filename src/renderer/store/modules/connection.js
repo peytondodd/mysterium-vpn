@@ -207,6 +207,7 @@ function actionsFactory (
         const statistics = await tequilapi.connectionStatistics()
         commit(type.CONNECTION_STATISTICS, statistics)
       } catch (err) {
+        logger.warn(err)
         commit(type.SHOW_ERROR_MESSAGE, messages.connectionStatisticsFailed)
       }
     },

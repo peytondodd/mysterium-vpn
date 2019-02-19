@@ -23,10 +23,10 @@
  */
 class DelayedRetrier {
   _func: () => Promise<void>
-  _delay: () => Promise<void>
+  _delay: Error => Promise<void>
   _tries: number
 
-  constructor (func: () => Promise<void>, delay: () => Promise<void>, tries: number) {
+  constructor (func: () => Promise<void>, delay: Error => Promise<void>, tries: number) {
     this._func = func
     this._delay = delay
     this._tries = tries
@@ -41,7 +41,7 @@ class DelayedRetrier {
         if (i >= this._tries - 1) {
           throw e
         } else {
-          await this._delay()
+          await this._delay(e)
         }
       }
     }
