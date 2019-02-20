@@ -133,7 +133,7 @@ function actionsFactory (
         const locationDto = await tequilapi.location(config.locationUpdateTimeout)
         commit(type.LOCATION, locationDto)
       } catch (err) {
-        if (err instanceof TequilapiError) {
+        if (err.name === TequilapiError.name) {
           return
         }
         bugReporter.captureErrorException(err)
@@ -144,7 +144,7 @@ function actionsFactory (
         const ipModel = await tequilapi.connectionIP(config.ipUpdateTimeout)
         commit(type.CONNECTION_IP, ipModel.ip)
       } catch (err) {
-        if (err instanceof TequilapiError) {
+        if (err.name === TequilapiError.name) {
           return
         }
         bugReporter.captureErrorException(err)
