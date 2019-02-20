@@ -78,7 +78,7 @@ class TequilapiConnectionEstablisher implements ConnectionEstablisher {
       eventTracker.connectEnded()
       errorMessage.hide()
     } catch (err) {
-      if (err instanceof TequilapiError && err.isRequestClosedError) {
+      if (err.name === TequilapiError.name && err.isRequestClosedError) {
         eventTracker.connectCanceled()
         return
       }
@@ -110,7 +110,9 @@ class TequilapiConnectionEstablisher implements ConnectionEstablisher {
       } catch (err) {
         errorMessage.show(messages.disconnectFailed)
         logger.info('Connection cancelling failed:', err)
-        this._bugReporter.captureInfoException(err)
+        if (err.name !== TequilapiError.name) {
+          this._bugReporter.captureInfoException(err)
+        }
       }
       connectionStatsFetcher.fetchConnectionStatus()
       connectionStatsFetcher.fetchConnectionIp()
