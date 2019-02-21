@@ -1,5 +1,7 @@
 # Mysterium VPN - decentralized VPN built on blockchain
 
+[![Build Status](https://travis-ci.com/mysteriumnetwork/mysterium-vpn.svg?branch=master)](https://travis-ci.com/mysteriumnetwork/mysterium-vpn)
+
 Mysterium VPN is a desktop application for accessing Mysterium Network - decentralized VPN built on blockchain.
 
 - Homepage https://mysterium.network/
