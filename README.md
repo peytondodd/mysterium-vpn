@@ -1,5 +1,7 @@
 # Mysterium VPN - decentralized VPN built on blockchain
 
+[![Build Status](https://travis-ci.com/mysteriumnetwork/mysterium-vpn.svg?branch=master)](https://travis-ci.com/mysteriumnetwork/mysterium-vpn)
+
 Mysterium VPN is a desktop application for accessing Mysterium Network - decentralized VPN built on blockchain.
 
 - Homepage https://mysterium.network/
@@ -8,25 +10,31 @@ Mysterium VPN is a desktop application for accessing Mysterium Network - decentr
 
 ## Build Setup
 
-##### Note that currently, the only supported development environment is OSX, Windows and linux are work in progress.
+**Note** that currently, the actually supported development environment is *OSX*. Other important ones like Plan9 and Linux is work in progress. And if You're developing on Windows You'll probably suffer lots of handy configuration.
 
-Grab the latest `mysterium_client` binary for OSX from https://github.com/MysteriumNetwork/node/releases and put it into your project's `bin` directory (make sure to rename it to `mysterium_client`)
+* **Step 1.** Install project dependencies
 
-Install `openvpn` from https://openvpn.net/ or for OSX with homebrew run `brew install openvpn`
-
-Once `openvpn` is installed you need to symlink it to your project's directory:
-
-##### Note: If installed via brew you can get the installation path using `brew info openvpn`, the binary should be in `<install dir>/sbin/openvpn`
+Install `yarn` from https://yarnpkg.com/lang/en/docs/install/ and once you're all set, cd into your project's root directory.
 
 ```bash
-ln -s <path to openvpn binary> <full path to project dir>/bin/openvpn
+brew install yarn
+yarn install
 ```
 
-Download `update-resolv-conf` and `GeoLite2-Country.mmdb` from https://github.com/MysteriumNetwork/node/tree/master/bin/client_package/config and paste it into your project's `bin/config` directory.
+* **Step 2.** Install Mysterium Node dependency
+```bash
+yarn download:bins:osx
+```
 
-Install `yarn` from https://yarnpkg.com/lang/en/docs/install/
+**Purpose of script:**
+- Download `myst` binary from https://github.com/mysteriumnetwork/node/releases and put it into your project's `bin` directory
+- Download `update-resolv-conf` and other `myst` dependencies from https://github.com/mysteriumnetwork/node/tree/master/bin/package/config into your project's `bin/config` directory.
+- Install `openvpn` from https://openvpn.net/ or for OSX with homebrew run `brew install openvpn`
 
-Once you're all set, cd into your project's root directory.
+* **Step 3.** Woolia! Run application
+```bash
+yarn dev
+```
 
 ## Contributing
 
