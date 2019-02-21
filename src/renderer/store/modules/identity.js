@@ -17,10 +17,10 @@
 
 // @flow
 import type from '../types'
-import IdentityDTO from 'mysterium-tequilapi/lib/dto/identity'
+import type { IdentityDTO } from 'mysterium-tequilapi/lib/dto/identity'
 import type { BugReporter } from '../../../app/bug-reporting/interface'
 import type { RendererCommunication } from '../../../app/communication/renderer-communication'
-import IdentityRegistrationDTO from 'mysterium-tequilapi/lib/dto/identity-registration'
+import type { IdentityRegistrationDTO } from 'mysterium-tequilapi/lib/dto/identity-registration/identity-registration'
 import logger from '../../../app/logger'
 
 type State = {

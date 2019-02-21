@@ -28,7 +28,7 @@ import type {
   RequestTermsDTO,
   TermsAnsweredDTO
 } from './dto'
-import IdentityRegistrationDTO from 'mysterium-tequilapi/lib/dto/identity-registration'
+import type { IdentityRegistrationDTO } from 'mysterium-tequilapi/lib/dto/identity-registration/identity-registration'
 import messages from './messages'
 import type { UserSettings } from '../user-settings/user-settings'
 import { MessageReceiver } from './message-receiver'

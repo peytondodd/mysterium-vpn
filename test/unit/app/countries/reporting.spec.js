@@ -20,8 +20,7 @@
 import { describe, expect, it } from '../../../helpers/dependencies'
 import TequilapiProposalFetcher from '../../../../src/app/data-fetchers/tequilapi-proposal-fetcher'
 import EmptyTequilapiClientMock from '../../renderer/store/modules/empty-tequilapi-client-mock'
-import type { ProposalDTO } from 'mysterium-tequilapi/lib/dto/proposal'
-import { parseProposalDTO } from 'mysterium-tequilapi/lib/dto/proposal'
+import { ProposalDTO } from 'mysterium-tequilapi/lib/dto/proposal'
 import { reportUnknownProposalCountries } from '../../../../src/app/countries/reporting'
 import BugReporterMock from '../../../helpers/bug-reporter-mock'
 
@@ -41,12 +40,8 @@ class ProposalsTequilapiClientMock extends EmptyTequilapiClientMock {
 describe('.reportUnknownProposalCountries', () => {
   it('listens for new proposals and reports unknown countries', async () => {
     function countryProposal (country: ?string): ProposalDTO {
-      return parseProposalDTO({
-        id: 1,
-        serviceType: 'openvpn',
-        providerId: '0x1',
-        serviceDefinition: { locationOriginate: { country: country } }
-      })
+      const serviceDefinition = country ? { locationOriginate: { country } } : {}
+      return { id: 1, serviceType: 'openvpn', providerId: '0x1', serviceDefinition }
     }
 
     const proposals = [countryProposal('lt'), countryProposal('unknown'), countryProposal(null)]

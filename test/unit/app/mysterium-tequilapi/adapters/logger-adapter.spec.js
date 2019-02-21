@@ -24,6 +24,7 @@ import MockHttpAdapter from '../../../../helpers/adapters/MockHttpAdapter'
 import type { StringLogger } from '../../../../../src/app/logging/string-logger'
 import { Logger } from '../../../../../src/app/logger'
 import { captureAsyncError } from '../../../../helpers/utils'
+import { HttpQueryParams } from 'mysterium-tequilapi/lib/adapters/interface'
 
 class MockStringLogger implements StringLogger {
   logs: {level: string, message: string}[] = []
@@ -68,7 +69,8 @@ describe('LoggerAdapter', () => {
     it('delegates call to passed adapter', async () => {
       const mockResponse = 'hello'
       mockAdapter.mockResponse = mockResponse
-      const response = await adapter.get('path', { key: 'value' }, 5)
+      const query: HttpQueryParams = ({ key: 'value' }: { [string]: any })
+      const response = await adapter.get('path', query, 5)
       expect(response).to.eql(mockResponse)
 
       expect(mockAdapter.lastPath).to.eql('path')

@@ -35,8 +35,7 @@ function getCountryLabel (country: Country, maxNameLength: ?number = null, maxId
 }
 
 function isCountryKnown (countryCode: ?string): boolean {
-  return countryCode != null &&
-    typeof countries[countryCode.toLocaleLowerCase()] !== 'undefined'
+  return countryCode != null && !!countries[countryCode.toLowerCase()]
 }
 
 function isCountryTrusted (country: Country): boolean {

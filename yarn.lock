@@ -2614,7 +2614,12 @@ chokidar@^2.0.0, chokidar@^2.0.2, chokidar@^2.0.3:
   optionalDependencies:
     fsevents "^1.2.2"
 
-chownr@^1.0.1, chownr@~1.0.1:
+chownr@^1.0.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/chownr/-/chownr-1.1.1.tgz#54726b8b8fff4df053c42187e801fb4412df1494"
+  integrity sha512-j38EvO5+LHX84jlo6h4UzmOwi0UgW61WRyPtJz4qaadK5eY3BTS5TY/S1Stc3Uk2lIM6TPevAlULiEJwie860g==
+
+chownr@~1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/chownr/-/chownr-1.0.1.tgz#e2a75042a9551908bebd25b8523d5f9769d79181"
   integrity sha1-4qdQQqlVGQi+vSW4Uj1fl2nXkYE=
@@ -3468,12 +3473,19 @@ debug@2.6.9, debug@^2.1.2, debug@^2.1.3, debug@^2.2.0, debug@^2.3.3, debug@^2.6.
   dependencies:
     ms "2.0.0"
 
-debug@3.1.0, debug@^3.0.0, debug@^3.1.0, debug@~3.1.0:
+debug@3.1.0, debug@^3.0.0, debug@~3.1.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/debug/-/debug-3.1.0.tgz#5bb5a0672628b64149566ba16819e61518c67261"
   integrity sha512-OX8XqP7/1a9cqkxYw2yXss15f26NKWBpDXQd0/uK/KPqdQhxbPa994hnzjcE2VqQpDslf55723cKPUOGSmMY3g==
   dependencies:
     ms "2.0.0"
+
+debug@^3.1.0, debug@^3.2.6:
+  version "3.2.6"
+  resolved "https://registry.yarnpkg.com/debug/-/debug-3.2.6.tgz#e83d17de16d8a7efb7717edbe5fb10135eee629b"
+  integrity sha512-mel+jf7nrtEl5Pn1Qx46zARXKDpBbvzezse7p7LqINmdoIk8PYP5SySaxEmYv6TZ0JyEKA1hsCId6DIhgITtWQ==
+  dependencies:
+    ms "^2.1.1"
 
 debuglog@^1.0.1:
   version "1.0.1"
@@ -5047,12 +5059,19 @@ flush-write-stream@^1.0.0:
     inherits "^2.0.1"
     readable-stream "^2.0.4"
 
-follow-redirects@^1.0.0, follow-redirects@^1.3.0, follow-redirects@^1.5.2:
+follow-redirects@^1.0.0, follow-redirects@^1.3.0:
   version "1.5.7"
   resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.5.7.tgz#a39e4804dacb90202bca76a9e2ac10433ca6a69a"
   integrity sha512-NONJVIFiX7Z8k2WxfqBjtwqMifx7X42ORLFrOZ2LTKGj71G3C0kfdyTqGqr8fx5zSX6Foo/D95dgGWbPUiwnew==
   dependencies:
     debug "^3.1.0"
+
+follow-redirects@^1.5.2:
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.7.0.tgz#489ebc198dc0e7f64167bd23b03c4c19b5784c76"
+  integrity sha512-m/pZQy4Gj287eNy94nivy5wchN3Kp+Q5WgUPNy5lJSZ3sgkVKSYV/ZChMAQVIgx1SqfZ2zBZtPA2YlXIWxxJOQ==
+  dependencies:
+    debug "^3.2.6"
 
 for-in@^0.1.3:
   version "0.1.8"
@@ -7657,7 +7676,7 @@ minimalistic-crypto-utils@^1.0.0, minimalistic-crypto-utils@^1.0.1:
 
 minimist@0.0.8:
   version "0.0.8"
-  resolved "http://registry.npmjs.org/minimist/-/minimist-0.0.8.tgz#857fcabfc3397d2625b8228262e86aa7a011b05d"
+  resolved "https://registry.yarnpkg.com/minimist/-/minimist-0.0.8.tgz#857fcabfc3397d2625b8228262e86aa7a011b05d"
   integrity sha1-hX/Kv8M5fSYluCKCYuhqp6ARsF0=
 
 minimist@1.2.0, minimist@^1.1.0, minimist@^1.1.3, minimist@^1.2.0:
@@ -7821,19 +7840,19 @@ mute-stream@0.0.7, mute-stream@~0.0.4:
   resolved "https://registry.yarnpkg.com/mute-stream/-/mute-stream-0.0.7.tgz#3075ce93bc21b8fab43e1bc4da7e8115ed1e7bab"
   integrity sha1-MHXOk7whuPq0PhvE2n6BFe0ee6s=
 
-mysterium-client-bin@0.4.0:
-  version "0.4.0"
-  resolved "https://registry.yarnpkg.com/mysterium-client-bin/-/mysterium-client-bin-0.4.0.tgz#42a20dad0f4134f6ba0cd50cb7adcbe48938fd9c"
-  integrity sha512-/enwVtNyBXOrKJalQIJzkutL9c/O96dN4PdNfOOGJeKb/EotxaI6NFgfoRUclfp8ZuPUz+cBEF6hXpEs+8V+Cw==
+mysterium-client-bin@0.5.3:
+  version "0.5.3"
+  resolved "https://registry.yarnpkg.com/mysterium-client-bin/-/mysterium-client-bin-0.5.3.tgz#4188ae7253cda01e962446cb5d62b690a5a10c86"
+  integrity sha512-lEPfqQgEAy0rtpU/4Uh2PMXIt4mz+Z8s5NLqxIBGm1CxMFlALC16mWKbxnDirKjmt28mBhXu6grrWB9nHLkUJg==
   dependencies:
     extract-zip "^1.6.7"
     follow-redirects "^1.5.2"
     targz "^1.0.1"
 
-mysterium-tequilapi@^0.4.1:
-  version "0.4.2"
-  resolved "https://registry.yarnpkg.com/mysterium-tequilapi/-/mysterium-tequilapi-0.4.2.tgz#b5f7ab52a05f5e20e4b8abf654a32beb9196c7a1"
-  integrity sha512-ENWiHsk/qh6lvTbTvtPkSI9Mx3gWJNPCnWudF4FyVDyq5y5eRC1RFTjpj+9OFU/hcr4jDVbZXcjT2UIXyBuOFQ==
+mysterium-tequilapi@^0.5.0:
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/mysterium-tequilapi/-/mysterium-tequilapi-0.5.0.tgz#d4884385cdfd20429c684236cca5f0e9396392c4"
+  integrity sha512-uZ9Jh/EBu2CP9Qoi+WR6oGNmGUeW8S6meMpgUg+Amci+q2VIGlLp/oz9bbAjUmy/c7w2ufgD7GR7i4K7i4mHgQ==
   dependencies:
     "@babel/runtime" "^7.1.5"
     axios "^0.18.0"
@@ -10803,7 +10822,20 @@ tar-fs@^1.8.1:
     pump "^1.0.0"
     tar-stream "^1.1.2"
 
-tar-stream@^1.1.2, tar-stream@^1.5.0:
+tar-stream@^1.1.2:
+  version "1.6.2"
+  resolved "https://registry.yarnpkg.com/tar-stream/-/tar-stream-1.6.2.tgz#8ea55dab37972253d9a9af90fdcd559ae435c555"
+  integrity sha512-rzS0heiNf8Xn7/mpdSVVSMAWAoy9bfb1WOTYC78Z0UQKeKa/CWS8FOq0lKGNa8DWKAn9gxjCvMLYc5PGXYlK2A==
+  dependencies:
+    bl "^1.0.0"
+    buffer-alloc "^1.2.0"
+    end-of-stream "^1.0.0"
+    fs-constants "^1.0.0"
+    readable-stream "^2.3.0"
+    to-buffer "^1.1.1"
+    xtend "^4.0.0"
+
+tar-stream@^1.5.0:
   version "1.6.1"
   resolved "https://registry.yarnpkg.com/tar-stream/-/tar-stream-1.6.1.tgz#f84ef1696269d6223ca48f6e1eeede3f7e81f395"
   integrity sha512-IFLM5wp3QrJODQFPm6/to3LJZrONdBY/otxcvDIQzu217zKye6yVR3hhi9lAjrC2Z+m/j5oDxMPb1qcd8cIvpA==
@@ -10955,7 +10987,7 @@ to-arraybuffer@^1.0.0:
   resolved "https://registry.yarnpkg.com/to-arraybuffer/-/to-arraybuffer-1.0.1.tgz#7d229b1fcc637e466ca081180836a7aabff83f43"
   integrity sha1-fSKbH8xjfkZsoIEYCDanqr/4P0M=
 
-to-buffer@^1.1.0:
+to-buffer@^1.1.0, to-buffer@^1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/to-buffer/-/to-buffer-1.1.1.tgz#493bd48f62d7c43fcded313a03dcadb2e1213a80"
   integrity sha512-lx9B5iv7msuFYE3dytT+KE5tap+rNYw+K4jVkb9R/asAb+pbBSM17jtunHplhBe6RRJdZx3Pn2Jph24O32mOVg==

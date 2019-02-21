@@ -41,9 +41,9 @@ export default {
       const updateClientVersion = () => dispatch(type.CLIENT_VERSION)
       const initialize = () => this.vpnInitializer.initialize(identityManager, updateClientVersion)
 
-      const delay = async () => {
+      const delay = async (e) => {
         const msg = 'Initialization failed, will retry.'
-        logger.info(msg)
+        logger.info(msg, e)
         this.bugReporter.captureInfoMessage(msg)
         await this.sleeper.sleep(config.initializationSleepBetweenRetries)
       }

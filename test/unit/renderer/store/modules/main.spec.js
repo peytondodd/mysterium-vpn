@@ -23,7 +23,6 @@ import EmptyTequilapiClientMock from './empty-tequilapi-client-mock'
 import { beforeEach, describe, it } from '../../../../helpers/dependencies'
 import { CallbackRecorder } from '../../../../helpers/utils'
 import type { NodeHealthcheckDTO } from 'mysterium-tequilapi/lib/dto/node-healthcheck'
-import NodeBuildInfoDTO from 'mysterium-tequilapi/lib/dto/node-build-info'
 import type { State } from '../../../../../src/renderer/store/modules/main'
 import factory from '../../../../../src/renderer/store/modules/main'
 import MockEventSender from '../../../../helpers/statistics/mock-event-sender'
@@ -48,11 +47,11 @@ class MainTequilapiClientMock extends EmptyTequilapiClientMock {
       uptime: '',
       process: 0,
       version: 'mock version',
-      buildInfo: new NodeBuildInfoDTO({
+      buildInfo: {
         commit: 'mock commit',
         branch: 'mock branch',
         buildNumber: 'mock buildNumber'
-      })
+      }
     }
   }
 }

@@ -18,7 +18,8 @@
 // @flow
 import type { BugReporter } from './interface'
 import Raven from 'raven'
-import IdentityDTO from 'mysterium-tequilapi/lib/dto/identity'
+import { IdentityDTO } from 'mysterium-tequilapi/lib/dto/identity'
+import logger from '../logger'
 
 class BugReporterRenderer implements BugReporter {
   raven: Raven
@@ -48,10 +49,12 @@ class BugReporterRenderer implements BugReporter {
   }
 
   _captureMessage (message: string, level: 'error' | 'info', context: ?any): void {
+    logger.info(`Capturing bug reporter message (level: ${level}): ${message}`)
     this.raven.captureMessage(message, { level, extra: context })
   }
 
   _captureException (err: Error, level: 'error' | 'info', context: ?any): void {
+    logger.info(`Capturing bug reporter error (level: ${level}): ${err.toString()}`)
     this.raven.captureException(err, { level, extra: context })
   }
 }

@@ -17,7 +17,9 @@
 
 // @flow
 import type { Container } from '../app/di'
-import { getPaymentLink, SignatureDTO, PublicKeyDTO } from 'mysterium-tequilapi/lib/dto/identity-registration'
+import { getPaymentLink } from 'mysterium-tequilapi/lib/dto/identity-registration/get-payment-link'
+import type { PublicKeyDTO } from 'mysterium-tequilapi/lib/dto/identity-registration/public-key'
+import type { SignatureDTO } from 'mysterium-tequilapi/lib/dto/identity-registration/signature'
 
 function bootstrap (container: Container) {
   container.constant(

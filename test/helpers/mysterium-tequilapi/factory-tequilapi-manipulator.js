@@ -19,11 +19,11 @@
 
 import TequilapiError from 'mysterium-tequilapi/lib/tequilapi-error'
 import EmptyTequilapiClientMock from '../../unit/renderer/store/modules/empty-tequilapi-client-mock'
-import ConnectionStatusDTO from 'mysterium-tequilapi/lib/dto/connection-status'
-import ConnectionIPDTO from 'mysterium-tequilapi/lib/dto/connection-ip'
-import ConnectionStatisticsDTO from 'mysterium-tequilapi/lib/dto/connection-statistics'
-import ConnectionStatusEnum from 'mysterium-tequilapi/lib/dto/connection-status-enum'
-import IdentityRegistrationDTO, { PublicKeyDTO, SignatureDTO } from 'mysterium-tequilapi/lib/dto/identity-registration'
+import type { ConnectionStatusDTO } from 'mysterium-tequilapi/lib/dto/connection-status-dto'
+import type { ConnectionIPDTO } from 'mysterium-tequilapi/lib/dto/connection-ip'
+import type { ConnectionStatisticsDTO } from 'mysterium-tequilapi/lib/dto/connection-statistics'
+import { ConnectionStatus } from 'mysterium-tequilapi/lib/dto/connection-status'
+import type { IdentityRegistrationDTO } from 'mysterium-tequilapi/lib/dto/identity-registration/identity-registration'
 
 function factoryTequilapiManipulator () {
   let statusFail = false
@@ -47,20 +47,20 @@ function factoryTequilapiManipulator () {
       if (connectFail) {
         throw errorMock
       }
-      return new ConnectionStatusDTO({
+      return {
         sessionId: 'mock session',
-        status: ConnectionStatusEnum.CONNECTING
-      })
+        status: ConnectionStatus.CONNECTING
+      }
     }
 
     async connectionStatus (): Promise<ConnectionStatusDTO> {
       if (statusFail) {
         throw errorMock
       }
-      return new ConnectionStatusDTO({
+      return {
         sessionId: 'mock session',
-        status: ConnectionStatusEnum.NOT_CONNECTED
-      })
+        status: ConnectionStatus.NOT_CONNECTED
+      }
     }
 
     async connectionCancel (): Promise<void> {
@@ -76,31 +76,31 @@ function factoryTequilapiManipulator () {
       if (ipFail) {
         throw errorMock
       }
-      return new ConnectionIPDTO({
+      return {
         ip: 'mock ip'
-      })
+      }
     }
 
     async connectionStatistics (): Promise<ConnectionStatisticsDTO> {
       if (statisticsFail) {
         throw errorMock
       }
-      return new ConnectionStatisticsDTO({
+      return {
         duration: 1,
         bytesReceived: 0,
         bytesSent: 0
-      })
+      }
     }
 
     async identityRegistration (identity: string): Promise<IdentityRegistrationDTO> {
       if (identityRegistrationFail) {
         throw errorMock
       }
-      return new IdentityRegistrationDTO({
+      return {
         registered: false,
-        publicKey: new PublicKeyDTO({ part1: 'part-1', part2: 'part-2' }),
-        signature: new SignatureDTO({ r: 'r', s: 's', v: 'v' })
-      })
+        publicKey: { part1: 'part-1', part2: 'part-2' },
+        signature: { r: 'r', s: 's', v: 'v' }
+      }
     }
   }
 
