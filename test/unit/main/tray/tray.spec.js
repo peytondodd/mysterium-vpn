@@ -18,7 +18,7 @@
 import translations from '../../../../src/main/tray/translations'
 import Tray from '../../../../src/main/tray/tray'
 import { expect } from '../../../helpers/dependencies'
-import ConnectionStatusEnum from 'mysterium-tequilapi/lib/dto/connection-status-enum'
+import { ConnectionStatus } from 'mysterium-tequilapi/lib/dto/connection-status'
 
 describe('tray', () => {
   describe('Tray', () => {
@@ -119,7 +119,7 @@ describe('tray', () => {
         const tray = new Tray(factory, (items) => items, menuItemBuilder, iconPath)
 
         tray.build()
-        tray.setStatus(ConnectionStatusEnum.CONNECTED)
+        tray.setStatus(ConnectionStatus.CONNECTED)
 
         expect(calledSetContextMenu).to.equal(true)
         expect(calledUpdateConnectionStatus).to.equal(true)

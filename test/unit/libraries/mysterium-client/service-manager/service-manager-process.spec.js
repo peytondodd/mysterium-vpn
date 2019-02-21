@@ -24,7 +24,6 @@ import ServiceManagerProcess
 import EmptyTequilapiClientMock from '../../../renderer/store/modules/empty-tequilapi-client-mock'
 import SystemMock from '../../../../helpers/system-mock'
 import type { NodeHealthcheckDTO } from 'mysterium-tequilapi/lib/dto/node-healthcheck'
-import NodeBuildInfoDTO from 'mysterium-tequilapi/lib/dto/node-build-info'
 import ClientLogPublisher from '../../../../../src/libraries/mysterium-client/client-log-publisher'
 import type { LogCallback } from '../../../../../src/libraries/mysterium-client'
 import type { SystemMockManager } from '../../../../helpers/system-mock'
@@ -79,7 +78,11 @@ class TequilapiMock extends EmptyTequilapiClientMock {
       uptime: '',
       process: 0,
       version: '',
-      buildInfo: new NodeBuildInfoDTO({})
+      buildInfo: {
+        branch: 'mock branch',
+        buildNumber: 'mock build number',
+        commit: 'mock commit'
+      }
     }
   }
 }

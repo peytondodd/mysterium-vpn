@@ -20,9 +20,8 @@
 import { beforeEach, describe, expect, it } from '../../../../helpers/dependencies'
 import factory from '../../../../../src/renderer/store/modules/identity'
 import type { State } from '../../../../../src/renderer/store/modules/identity'
-import IdentityDTO from 'mysterium-tequilapi/lib/dto/identity'
 import types from '../../../../../src/renderer/store/types'
-import IdentityRegistrationDTO from 'mysterium-tequilapi/lib/dto/identity-registration'
+import type { IdentityRegistrationDTO } from 'mysterium-tequilapi/lib/dto/identity-registration/identity-registration'
 import BugReporterMock from '../../../../helpers/bug-reporter-mock'
 import { buildRendererCommunication } from '../../../../../src/app/communication/renderer-communication'
 import DirectMessageBus from '../../../../helpers/direct-message-bus'
@@ -48,7 +47,7 @@ describe('identity store', () => {
     describe('.currentIdentity', () => {
       it('returns id of identity', () => {
         const state: State = {
-          current: new IdentityDTO({ id: 'identity id' }),
+          current: { id: 'identity id' },
           unlocked: false,
           registration: null
         }
@@ -80,7 +79,7 @@ describe('identity store', () => {
           unlocked: false,
           registration: null
         }
-        const registration = new IdentityRegistrationDTO({ registered: true, signature: null, publicKey: null })
+        const registration: IdentityRegistrationDTO = { registered: true }
         mutations[types.SET_IDENTITY_REGISTRATION](state, registration)
         expect(state.registration).to.eql(registration)
       })

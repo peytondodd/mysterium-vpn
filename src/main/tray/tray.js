@@ -20,8 +20,7 @@ import path from 'path'
 import { Tray as ElectronTray } from 'electron'
 import TrayMenuBuilder from './menu-builder'
 import translations from './translations'
-import ConnectionStatusEnum from 'mysterium-tequilapi/lib/dto/connection-status-enum'
-import type { ConnectionStatus } from 'mysterium-tequilapi/lib/dto/connection-status-enum'
+import { ConnectionStatus } from 'mysterium-tequilapi/lib/dto/connection-status'
 import type { Country } from '../../app/countries/country'
 
 const TrayIcon = {
@@ -91,12 +90,12 @@ class Tray {
     this._connectionStatus = status
 
     switch (status) {
-      case ConnectionStatusEnum.CONNECTED:
+      case ConnectionStatus.CONNECTED:
         this._setIcon(TrayIcon.active)
         break
-      case ConnectionStatusEnum.NOT_CONNECTED:
-      case ConnectionStatusEnum.CONNECTING:
-      case ConnectionStatusEnum.DISCONNECTING:
+      case ConnectionStatus.NOT_CONNECTED:
+      case ConnectionStatus.CONNECTING:
+      case ConnectionStatus.DISCONNECTING:
         this._setIcon(TrayIcon.passive)
         break
       default:

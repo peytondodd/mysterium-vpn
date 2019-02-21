@@ -22,15 +22,15 @@ import type { BugReporter } from '../bug-reporting/interface'
 import type { TequilapiClient } from 'mysterium-tequilapi/lib/client'
 import type { ConnectDetails } from '../statistics/events-connection'
 import { ConnectEventTracker, currentUserTime } from '../statistics/events-connection'
-import ConnectionStatusEnum from 'mysterium-tequilapi/lib/dto/connection-status-enum'
+import { ConnectionStatus } from 'mysterium-tequilapi/lib/dto/connection-status'
 import TequilapiError from 'mysterium-tequilapi/lib/tequilapi-error'
 import messages from '../messages'
 import logger from '../logger'
 import type { ConnectionEstablisher } from './connection-establisher'
-import type { ConnectionRequest } from 'mysterium-tequilapi/lib/dto/connection-request'
+import type { ConnectionRequest } from 'mysterium-tequilapi/lib/dto/query/connection-request'
 import { FunctionLooper } from '../../libraries/function-looper'
 import type { ErrorMessage } from './error-message'
-import ConsumerLocationDTO from 'mysterium-tequilapi/lib/dto/consumer-location'
+import type { ConsumerLocationDTO } from 'mysterium-tequilapi/lib/dto/consumer-location'
 import type { ConnectionState } from './connection-state'
 import type { ConnectionStatsFetcher } from './connection-stats-fetcher'
 import type { Provider } from './provider'
@@ -69,7 +69,7 @@ class TequilapiConnectionEstablisher implements ConnectionEstablisher {
     if (actionLooper) {
       await actionLooper.stop()
     }
-    await connectionState.setConnectionStatus(ConnectionStatusEnum.CONNECTING)
+    await connectionState.setConnectionStatus(ConnectionStatus.CONNECTING)
     connectionState.resetStatistics()
     connectionState.setLastConnectionProvider(provider)
     try {
@@ -103,7 +103,7 @@ class TequilapiConnectionEstablisher implements ConnectionEstablisher {
     }
 
     try {
-      await connectionState.setConnectionStatus(ConnectionStatusEnum.DISCONNECTING)
+      await connectionState.setConnectionStatus(ConnectionStatus.DISCONNECTING)
 
       try {
         await this._tequilapi.connectionCancel()

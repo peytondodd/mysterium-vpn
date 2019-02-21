@@ -18,11 +18,10 @@
 // @flow
 
 import { beforeEach, describe, expect, it } from '../../../helpers/dependencies'
-import ConnectionStatusEnum from 'mysterium-tequilapi/lib/dto/connection-status-enum'
+import { ConnectionStatus } from 'mysterium-tequilapi/lib/dto/connection-status'
 import MockEventSender from '../../../helpers/statistics/mock-event-sender'
 import BugReporterMock from '../../../helpers/bug-reporter-mock'
-import ConsumerLocationDTO from 'mysterium-tequilapi/lib/dto/consumer-location'
-import type { ConnectionStatus } from 'mysterium-tequilapi/lib/dto/connection-status-enum'
+import type { ConsumerLocationDTO } from 'mysterium-tequilapi/lib/dto/consumer-location'
 import factoryTequilapiManipulator from '../../../helpers/mysterium-tequilapi/factory-tequilapi-manipulator'
 import TequilapiConnectionEstablisher from '../../../../src/app/connection/tequilapi-connection-establisher'
 import type { ErrorMessage } from '../../../../src/app/connection/error-message'
@@ -81,16 +80,9 @@ describe('TequilapiConnectionEstablisher', () => {
   let mockConnectionState: MockConnectionState
   let mockErrorMessage: MockErrorMessage
 
-  const location = new ConsumerLocationDTO({
-    original: {
-      ip: 'ORIGINAL_IP',
-      country: 'lt'
-    },
-    current: {
-      ip: 'CURRENT_IP',
-      country: 'CURRENT_COUNTRY'
-    }
-  })
+  const location: ConsumerLocationDTO = {
+    originalCountry: 'lt'
+  }
   const actionLooper: ?FunctionLooper = null
 
   beforeEach(() => {
@@ -113,7 +105,7 @@ describe('TequilapiConnectionEstablisher', () => {
       await connectionEstablisher
         .connect(consumerId, provider, mockConnectionState, mockErrorMessage, location, actionLooper)
 
-      expect(mockConnectionState.connectionStatus).to.eql(ConnectionStatusEnum.CONNECTING)
+      expect(mockConnectionState.connectionStatus).to.eql(ConnectionStatus.CONNECTING)
     })
 
     it('resets statistics', async () => {
@@ -196,7 +188,7 @@ describe('TequilapiConnectionEstablisher', () => {
     it('marks disconnecting status', async () => {
       await connectionEstablisher
         .disconnect(mockConnectionState, mockConnectionStatsFetcher, mockErrorMessage, actionLooper)
-      expect(mockConnectionState.connectionStatus).to.eql(ConnectionStatusEnum.DISCONNECTING)
+      expect(mockConnectionState.connectionStatus).to.eql(ConnectionStatus.DISCONNECTING)
     })
 
     describe('when disconnecting fails', () => {

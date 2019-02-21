@@ -17,7 +17,7 @@
 
 // @flow
 
-import IdentityDTO from 'mysterium-tequilapi/lib/dto/identity'
+import type { IdentityDTO } from 'mysterium-tequilapi/lib/dto/identity'
 import IdentityManager from './identity-manager'
 import type { TequilapiClient } from 'mysterium-tequilapi/lib/client'
 

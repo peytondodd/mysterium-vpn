@@ -17,7 +17,7 @@
 
 // @flow
 import TrayMenuBuilder from '../../../../src/main/tray/menu-builder'
-import ConnectionStatusEnum from 'mysterium-tequilapi/lib/dto/connection-status-enum'
+import { ConnectionStatus } from 'mysterium-tequilapi/lib/dto/connection-status'
 import translations from '../../../../src/main/tray/translations'
 import { describe, it, expect, beforeEach } from '../../../helpers/dependencies'
 import { buildMainCommunication } from '../../../../src/app/communication/main-communication'
@@ -84,7 +84,7 @@ describe('tray', () => {
 
     describe('.build', () => {
       it('renders menu items without disconnect when not connected', () => {
-        const items = builder.updateConnectionStatus(ConnectionStatusEnum.NOT_CONNECTED).build()
+        const items = builder.updateConnectionStatus(ConnectionStatus.NOT_CONNECTED).build()
         expect(items[1].type).to.equal(separator)
         expect(items[2].label).to.equal(translations.connect)
         expect(items[3].type).to.equal(separator)
@@ -95,7 +95,7 @@ describe('tray', () => {
       })
 
       it('renders menu items with disconnect when connected', () => {
-        const items = builder.updateConnectionStatus(ConnectionStatusEnum.CONNECTED).build()
+        const items = builder.updateConnectionStatus(ConnectionStatus.CONNECTED).build()
         expect(items[1].type).to.equal(separator)
         expect(items[2].label).to.equal(translations.disconnect)
         expect(items[3].type).to.equal(separator)
@@ -106,22 +106,22 @@ describe('tray', () => {
       })
 
       it('sets status to connected', () => {
-        const items = builder.updateConnectionStatus(ConnectionStatusEnum.CONNECTED).build()
+        const items = builder.updateConnectionStatus(ConnectionStatus.CONNECTED).build()
         expect(items[0].label).to.equal(translations.statusConnected)
       })
 
       it('sets status to disconnected', () => {
-        const items = builder.updateConnectionStatus(ConnectionStatusEnum.NOT_CONNECTED).build()
+        const items = builder.updateConnectionStatus(ConnectionStatus.NOT_CONNECTED).build()
         expect(items[0].label).to.equal(translations.statusDisconnected)
       })
 
       it('sets status to connecting', () => {
-        const items = builder.updateConnectionStatus(ConnectionStatusEnum.CONNECTING).build()
+        const items = builder.updateConnectionStatus(ConnectionStatus.CONNECTING).build()
         expect(items[0].label).to.equal(translations.statusConnecting)
       })
 
       it('sets status to disconnecting', () => {
-        const items = builder.updateConnectionStatus(ConnectionStatusEnum.DISCONNECTING).build()
+        const items = builder.updateConnectionStatus(ConnectionStatus.DISCONNECTING).build()
         expect(items[0].label).to.equal(translations.statusDisconnecting)
       })
 
@@ -177,7 +177,7 @@ describe('tray', () => {
       })
 
       it('disconnects', () => {
-        const items = builder.updateConnectionStatus(ConnectionStatusEnum.CONNECTED).build()
+        const items = builder.updateConnectionStatus(ConnectionStatus.CONNECTED).build()
         const recorder = new MessageRecorder(rendererCommunication.connectionCancel)
         expect(recorder.invoked).to.be.false
         items[2].click()

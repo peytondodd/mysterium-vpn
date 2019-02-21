@@ -19,7 +19,6 @@
 
 import EmptyTequilapiClientMock from '../../unit/renderer/store/modules/empty-tequilapi-client-mock'
 import type { NodeHealthcheckDTO } from 'mysterium-tequilapi/lib/dto/node-healthcheck'
-import NodeBuildInfoDTO from 'mysterium-tequilapi/lib/dto/node-build-info'
 
 class TequilapiVersionMock extends EmptyTequilapiClientMock {
   versionMock: string
@@ -34,7 +33,11 @@ class TequilapiVersionMock extends EmptyTequilapiClientMock {
       uptime: '',
       process: 0,
       version: this.versionMock,
-      buildInfo: new NodeBuildInfoDTO({})
+      buildInfo: {
+        branch: 'mock branch',
+        buildNumber: 'mock build number',
+        commit: 'mock commit'
+      }
     }
   }
 }

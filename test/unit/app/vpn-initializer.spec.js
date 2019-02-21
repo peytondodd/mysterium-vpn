@@ -20,7 +20,7 @@
 import VpnInitializer from '../../../src/app/vpn-initializer'
 import { beforeEach, describe, expect, it } from '../../helpers/dependencies'
 import type { State as IdentityState } from '../../../src/renderer/store/modules/identity'
-import IdentityDTO from 'mysterium-tequilapi/lib/dto/identity'
+import type { IdentityDTO } from 'mysterium-tequilapi/lib/dto/identity'
 import types from '../../../src/renderer/store/types'
 import { capturePromiseError } from '../../helpers/utils'
 import IdentityManager from '../../../src/app/identity-manager'
@@ -85,7 +85,7 @@ describe('VpnInitializer', () => {
     })
 
     describe('with some identities', () => {
-      const mockIdentity = new IdentityDTO({ id: '0xC001FACE' })
+      const mockIdentity: IdentityDTO = { id: '0xC001FACE' }
 
       beforeEach(() => {
         tequilapiManipulator.tequilapiMockIdentitiesList([mockIdentity])
@@ -106,7 +106,7 @@ describe('VpnInitializer', () => {
     })
 
     describe('with not identities', () => {
-      const mockCreatedIdentity = new IdentityDTO({ id: '0xC001FACY' })
+      const mockCreatedIdentity: IdentityDTO = { id: '0xC001FACY' }
 
       beforeEach(() => {
         tequilapiManipulator.tequilapiMockIdentitiesList([])
@@ -185,7 +185,7 @@ describe('VpnInitializer', () => {
 
       describe('when identity unlocking fails', () => {
         beforeEach(() => {
-          tequilapiManipulator.tequilapiMockIdentitiesList([new IdentityDTO({ id: '0xC001FACE' })])
+          tequilapiManipulator.tequilapiMockIdentitiesList([{ id: '0xC001FACE' }])
           tequilapiManipulator.tequilapiMockIdentityUnlockError(mockError)
         })
 

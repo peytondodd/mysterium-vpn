@@ -29,7 +29,6 @@ import { captureAsyncError, nextTick } from '../../../../helpers/utils'
 import Monitoring from '../../../../../src/libraries/mysterium-client/monitoring/monitoring'
 import VersionCheck from '../../../../../src/libraries/mysterium-client/version-check'
 import type { NodeHealthcheckDTO } from 'mysterium-tequilapi/lib/dto/node-healthcheck'
-import NodeBuildInfoDTO from 'mysterium-tequilapi/lib/dto/node-build-info'
 import lolex from 'lolex'
 
 class TequilapiClientMock extends EmptyTequilapiClientMock {
@@ -45,7 +44,11 @@ class TequilapiClientMock extends EmptyTequilapiClientMock {
       uptime: '',
       process: 0,
       version: this.mockVersion,
-      buildInfo: new NodeBuildInfoDTO({})
+      buildInfo: {
+        branch: 'mock branch',
+        buildNumber: 'mock build number',
+        commit: 'mock commit'
+      }
     }
   }
 }
