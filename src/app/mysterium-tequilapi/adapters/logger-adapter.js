@@ -32,22 +32,22 @@ class LoggerAdapter implements HttpInterface {
     this._adapter = adapter
   }
 
-  async get (path: string, query: ?HttpQueryParams, timeout: ?number): Promise<?any> {
+  async get (path: string, query?: HttpQueryParams, timeout?: number): Promise<?any> {
     const func = () => this._adapter.get(path, query, timeout)
     return this._captureHttpErrors(func)
   }
 
-  async post (path: string, data: mixed, timeout: ?number): Promise<?any> {
+  async post (path: string, data: mixed, timeout?: number): Promise<?any> {
     const func = () => this._adapter.post(path, data, timeout)
     return this._captureHttpErrors(func)
   }
 
-  async delete (path: string, timeout: ?number): Promise<?any> {
+  async delete (path: string, timeout?: number): Promise<?any> {
     const func = () => this._adapter.delete(path, timeout)
     return this._captureHttpErrors(func)
   }
 
-  async put (path: string, data: mixed, timeout: ?number): Promise<?any> {
+  async put (path: string, data: mixed, timeout?: number): Promise<?any> {
     const func = () => this._adapter.put(path, data, timeout)
     return this._captureHttpErrors(func)
   }

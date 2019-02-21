@@ -17,11 +17,11 @@
 
 // @flow
 
-import IdentityRegistrationDTO from 'mysterium-tequilapi/lib/dto/identity-registration'
+import type { IdentityRegistrationDTO } from 'mysterium-tequilapi/lib/dto/identity-registration/identity-registration'
 import type { CurrentIdentityChangeDTO } from './communication/dto'
 import TequilapiRegistrationFetcher from './data-fetchers/tequilapi-registration-fetcher'
-import IdentityDTO from 'mysterium-tequilapi/lib/dto/identity'
-import ConnectionStatusEnum from 'mysterium-tequilapi/lib/dto/connection-status-enum'
+import type { IdentityDTO } from 'mysterium-tequilapi/lib/dto/identity'
+import { ConnectionStatus } from 'mysterium-tequilapi/lib/dto/connection-status'
 import type { BugReporter } from './bug-reporting/interface'
 import StartupEventTracker from './statistics/startup-event-tracker'
 import logger from './logger'
@@ -43,8 +43,8 @@ class CommunicationBindings {
     this._communication.connectionStatusChanged.on((status) => {
       const shouldShowNotification =
         userSettingsStore.getAll().showDisconnectNotifications &&
-        (status.newStatus === ConnectionStatusEnum.NOT_CONNECTED &&
-          status.oldStatus === ConnectionStatusEnum.CONNECTED)
+        (status.newStatus === ConnectionStatus.NOT_CONNECTED &&
+          status.oldStatus === ConnectionStatus.CONNECTED)
 
       if (shouldShowNotification) {
         disconnectNotification.show()
@@ -83,7 +83,7 @@ class CommunicationBindings {
 
   syncCurrentIdentityForBugReporter (bugReporter: BugReporter) {
     this._communication.currentIdentityChanged.on((identityChange: CurrentIdentityChangeDTO) => {
-      const identity = new IdentityDTO({ id: identityChange.id })
+      const identity: IdentityDTO = { id: identityChange.id }
       bugReporter.setUser(identity)
     })
   }

@@ -41,8 +41,7 @@ function limitedLengthString (value: string, maxLength: ?number = null): string 
 }
 
 function isCountryKnown (countryCode: ?string): boolean {
-  return countryCode != null &&
-    typeof countries[countryCode.toLocaleLowerCase()] !== 'undefined'
+  return countryCode != null && !!countries[countryCode.toLowerCase()]
 }
 
 function isCountryTrusted (country: Country): boolean {

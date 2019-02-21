@@ -20,7 +20,7 @@
 import Vuex from 'vuex'
 import ConnectionButton from '../../../../src/renderer/components/connection-button'
 import type from '../../../../src/renderer/store/types'
-import ConnectionStatusEnum from 'mysterium-tequilapi/lib/dto/connection-status-enum'
+import { ConnectionStatus } from 'mysterium-tequilapi/lib/dto/connection-status'
 import connectionFactory from '@/store/modules/connection'
 import { createLocalVue, mount } from '@vue/test-utils'
 import { describe, expect, it } from '../../../helpers/dependencies'
@@ -85,7 +85,7 @@ describe('ConnectionButton', () => {
       expect(vm.$el.textContent).to.eql(rule[1])
     }
     // reset store
-    vm.$store.commit(type.SET_CONNECTION_STATUS, ConnectionStatusEnum.NOT_CONNECTED)
+    vm.$store.commit(type.SET_CONNECTION_STATUS, ConnectionStatus.NOT_CONNECTED)
   })
 
   it('changes state when clicked', () => {

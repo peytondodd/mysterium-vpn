@@ -21,10 +21,9 @@ import type from '../types'
 import { FunctionLooper } from '../../../libraries/function-looper'
 import config from '@/config'
 import type { TequilapiClient } from 'mysterium-tequilapi/lib/client'
-import type { ConnectionStatus } from 'mysterium-tequilapi/lib/dto/connection-status-enum'
-import ConnectionStatusEnum from 'mysterium-tequilapi/lib/dto/connection-status-enum'
-import ConnectionStatisticsDTO from 'mysterium-tequilapi/lib/dto/connection-statistics'
-import ConsumerLocationDTO from 'mysterium-tequilapi/lib/dto/consumer-location'
+import { ConnectionStatus } from 'mysterium-tequilapi/lib/dto/connection-status'
+import type { ConnectionStatisticsDTO } from 'mysterium-tequilapi/lib/dto/connection-statistics'
+import type { ConsumerLocationDTO } from 'mysterium-tequilapi/lib/dto/consumer-location'
 import type { BugReporter } from '../../../app/bug-reporting/interface'
 import logger from '../../../app/logger'
 import TequilapiError from 'mysterium-tequilapi/lib/tequilapi-error'
@@ -73,7 +72,7 @@ function stateFactory (): ConnectionStore {
     ip: null,
     location: null,
     lastConnectionProvider: null,
-    status: ConnectionStatusEnum.NOT_CONNECTED,
+    status: ConnectionStatus.NOT_CONNECTED,
     statistics: defaultStatistics,
     actionLoopers: {}
   }
@@ -133,7 +132,7 @@ function actionsFactory (
         const locationDto = await tequilapi.location(config.locationUpdateTimeout)
         commit(type.LOCATION, locationDto)
       } catch (err) {
-        if (err instanceof TequilapiError) {
+        if (err.name === TequilapiError.name) {
           return
         }
         bugReporter.captureErrorException(err)
@@ -144,7 +143,7 @@ function actionsFactory (
         const ipModel = await tequilapi.connectionIP(config.ipUpdateTimeout)
         commit(type.CONNECTION_IP, ipModel.ip)
       } catch (err) {
-        if (err instanceof TequilapiError) {
+        if (err.name === TequilapiError.name) {
           return
         }
         bugReporter.captureErrorException(err)
@@ -190,16 +189,16 @@ function actionsFactory (
       commit(type.SET_CONNECTION_STATUS, newStatus)
       communication.connectionStatusChanged.send({ oldStatus, newStatus })
 
-      if (newStatus === ConnectionStatusEnum.CONNECTED) {
+      if (newStatus === ConnectionStatus.CONNECTED) {
         commit(type.CONNECTION_IP, null)
         const statisticsLooperConfig =
           new ActionLooperConfig(type.CONNECTION_STATISTICS, config.statisticsUpdateThreshold)
         await dispatch(type.START_ACTION_LOOPING, statisticsLooperConfig)
       }
-      if (newStatus === ConnectionStatusEnum.NOT_CONNECTED) {
+      if (newStatus === ConnectionStatus.NOT_CONNECTED) {
         commit(type.CONNECTION_IP, null)
       }
-      if (oldStatus === ConnectionStatusEnum.CONNECTED) {
+      if (oldStatus === ConnectionStatus.CONNECTED) {
         await dispatch(type.STOP_ACTION_LOOPING, type.CONNECTION_STATISTICS)
       }
     },
@@ -208,6 +207,7 @@ function actionsFactory (
         const statistics = await tequilapi.connectionStatistics()
         commit(type.CONNECTION_STATISTICS, statistics)
       } catch (err) {
+        logger.warn(err)
         commit(type.SHOW_ERROR_MESSAGE, messages.connectionStatisticsFailed)
       }
     },

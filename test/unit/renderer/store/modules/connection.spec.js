@@ -22,16 +22,16 @@ import type from '@/store/types'
 import mainFactory, { ActionLooper, ActionLooperConfig } from '@/store/modules/connection'
 import { describe, it, beforeEach } from '../../../../helpers/dependencies'
 import { FunctionLooper } from '@/../libraries/function-looper'
-import ConnectionStatusEnum from 'mysterium-tequilapi/lib/dto/connection-status-enum'
+import { ConnectionStatus } from 'mysterium-tequilapi/lib/dto/connection-status'
 import communicationMessages from '@/../app/communication/messages'
 import FakeMessageBus from '../../../../helpers/fake-message-bus'
 import type { ConnectionStore } from '../../../../../src/renderer/store/modules/connection'
-import ConnectionStatisticsDTO from 'mysterium-tequilapi/lib/dto/connection-statistics'
+import type { ConnectionStatisticsDTO } from 'mysterium-tequilapi/lib/dto/connection-statistics'
 import BugReporterMock from '../../../../helpers/bug-reporter-mock'
 import factoryTequilapiManipulator from '../../../../helpers/mysterium-tequilapi/factory-tequilapi-manipulator'
 import type { ConnectionEstablisher } from '../../../../../src/app/connection/connection-establisher'
 import type { ErrorMessage } from '../../../../../src/app/connection/error-message'
-import ConsumerLocationDTO from 'mysterium-tequilapi/lib/dto/consumer-location'
+import type { ConsumerLocationDTO } from 'mysterium-tequilapi/lib/dto/consumer-location'
 import type { ConnectionState } from '../../../../../src/app/connection/connection-state'
 import type { ConnectionStatsFetcher } from '../../../../../src/app/connection/connection-stats-fetcher'
 import type { Provider } from '../../../../../src/app/connection/provider'
@@ -116,7 +116,7 @@ describe('connection', () => {
         const setLastConnectionProvider = mutations[type.SET_LAST_CONNECTION_PROVIDER]
 
         const state: ConnectionStore = {
-          status: ConnectionStatusEnum.CONNECTED,
+          status: ConnectionStatus.CONNECTED,
           statistics: {},
           actionLoopers: {}
         }
@@ -134,7 +134,7 @@ describe('connection', () => {
         const connectionStatus = mutations[type.SET_CONNECTION_STATUS]
 
         const state: ConnectionStore = {
-          status: ConnectionStatusEnum.CONNECTED,
+          status: ConnectionStatus.CONNECTED,
           statistics: {},
           actionLoopers: {}
         }
@@ -148,15 +148,15 @@ describe('connection', () => {
         const connectionStatistics = mutations[type.CONNECTION_STATISTICS]
 
         const state: ConnectionStore = {
-          status: ConnectionStatusEnum.CONNECTED,
+          status: ConnectionStatus.CONNECTED,
           statistics: {},
           actionLoopers: {}
         }
-        const stats = new ConnectionStatisticsDTO({
+        const stats: ConnectionStatisticsDTO = {
           duration: 13320,
           bytesReceived: 0,
           bytesSent: 0
-        })
+        }
 
         connectionStatistics(state, stats)
         expect(state.statistics).to.eql(stats)
@@ -169,7 +169,7 @@ describe('connection', () => {
 
         const state: ConnectionStore = {
           ip: 'old',
-          status: ConnectionStatusEnum.CONNECTED,
+          status: ConnectionStatus.CONNECTED,
           statistics: {},
           actionLoopers: {}
         }
@@ -181,7 +181,7 @@ describe('connection', () => {
     describe('CONNECTION_STATISTICS_RESET', () => {
       it('resets statistics', () => {
         const state: ConnectionStore = {
-          status: ConnectionStatusEnum.CONNECTED,
+          status: ConnectionStatus.CONNECTED,
           statistics: {
             duration: 13320,
             bytesReceived: 10,
@@ -197,7 +197,7 @@ describe('connection', () => {
     describe('SET_ACTION_LOOPER', () => {
       it('sets action loopers', () => {
         const state: ConnectionStore = {
-          status: ConnectionStatusEnum.CONNECTED,
+          status: ConnectionStatus.CONNECTED,
           statistics: {},
           actionLoopers: {}
         }
@@ -222,7 +222,7 @@ describe('connection', () => {
         const ipLooper = new FunctionLooper(noop, 1000)
         const statusLooper = new FunctionLooper(noop, 1000)
         const state = {
-          status: ConnectionStatusEnum.CONNECTED,
+          status: ConnectionStatus.CONNECTED,
           statistics: {},
           actionLoopers: {
             [type.CONNECTION_IP]: ipLooper,
@@ -256,7 +256,7 @@ describe('connection', () => {
     describe('START_ACTION_LOOPING', () => {
       it('sets update looper and performs first looper cycle', async () => {
         const state = {
-          status: ConnectionStatusEnum.CONNECTED,
+          status: ConnectionStatus.CONNECTED,
           statistics: {},
           actionLoopers: {}
         }
@@ -274,13 +274,14 @@ describe('connection', () => {
         expect(looper).to.be.an.instanceof(FunctionLooper)
         expect(looper.isRunning()).to.eql(true)
 
+        const expectedStatistics = {
+          duration: 1,
+          bytesReceived: 0,
+          bytesSent: 0
+        }
         expect(committed[1]).to.eql({
           key: type.CONNECTION_STATISTICS,
-          value: new ConnectionStatisticsDTO({
-            duration: 1,
-            bytesReceived: 0,
-            bytesSent: 0
-          })
+          value: expectedStatistics
         })
       })
 
@@ -288,7 +289,7 @@ describe('connection', () => {
         const noop = async () => {}
         const looper = new FunctionLooper(noop, 1000)
         const state = {
-          status: ConnectionStatusEnum.CONNECTED,
+          status: ConnectionStatus.CONNECTED,
           statistics: {},
           actionLoopers: {
             [type.CONNECTION_STATISTICS]: looper
@@ -309,7 +310,7 @@ describe('connection', () => {
         const actionLooper = new FunctionLooper(async () => {}, 0)
         actionLooper.start()
         const state = {
-          status: ConnectionStatusEnum.CONNECTED,
+          status: ConnectionStatus.CONNECTED,
           statistics: {},
           actionLoopers: {
             [type.CONNECTION_IP]: actionLooper
@@ -327,7 +328,7 @@ describe('connection', () => {
 
       it('does not throw error with no update looper', async () => {
         const state = {
-          status: ConnectionStatusEnum.CONNECTED,
+          status: ConnectionStatus.CONNECTED,
           statistics: {},
           actionLoopers: {}
         }
@@ -371,7 +372,7 @@ describe('connection', () => {
         expect(committed).to.be.lengthOf(2)
 
         expect(committed[0].key).to.eql(type.SET_CONNECTION_STATUS)
-        expect(committed[0].value).to.eql(ConnectionStatusEnum.NOT_CONNECTED)
+        expect(committed[0].value).to.eql(ConnectionStatus.NOT_CONNECTED)
 
         expect(committed[1].key).to.eql(type.CONNECTION_IP)
         expect(committed[1].value).to.eql(null)
@@ -393,44 +394,44 @@ describe('connection', () => {
       })
 
       it('commits new status', async () => {
-        const committed = await executeAction(type.SET_CONNECTION_STATUS, {}, ConnectionStatusEnum.CONNECTING)
+        const committed = await executeAction(type.SET_CONNECTION_STATUS, {}, ConnectionStatus.CONNECTING)
         expect(committed).to.eql([{
           key: type.SET_CONNECTION_STATUS,
-          value: ConnectionStatusEnum.CONNECTING
+          value: ConnectionStatus.CONNECTING
         }])
       })
 
       it('sends new status to IPC', async () => {
         const state = {
-          status: ConnectionStatusEnum.NOT_CONNECTED
+          status: ConnectionStatus.NOT_CONNECTED
         }
-        await executeAction(type.SET_CONNECTION_STATUS, state, ConnectionStatusEnum.CONNECTING)
+        await executeAction(type.SET_CONNECTION_STATUS, state, ConnectionStatus.CONNECTING)
         expect(fakeMessageBus.lastChannel).to.eql(communicationMessages.CONNECTION_STATUS_CHANGED)
         expect(fakeMessageBus.lastData).to.eql({
-          oldStatus: ConnectionStatusEnum.NOT_CONNECTED,
-          newStatus: ConnectionStatusEnum.CONNECTING
+          oldStatus: ConnectionStatus.NOT_CONNECTED,
+          newStatus: ConnectionStatus.CONNECTING
         })
       })
 
       it('does not send new status to IPC when status does not change', async () => {
         const state = {
-          status: ConnectionStatusEnum.NOT_CONNECTED
+          status: ConnectionStatus.NOT_CONNECTED
         }
-        await executeAction(type.SET_CONNECTION_STATUS, state, ConnectionStatusEnum.NOT_CONNECTED)
+        await executeAction(type.SET_CONNECTION_STATUS, state, ConnectionStatus.NOT_CONNECTED)
         expect(fakeMessageBus.lastChannel).to.eql(null)
       })
 
       it('starts looping statistics when changing state to connected, changes IP to Refreshing...', async () => {
         const state = {
-          status: ConnectionStatusEnum.NOT_CONNECTED,
+          status: ConnectionStatus.NOT_CONNECTED,
           statistics: {},
           actionLoopers: {}
         }
-        const committed = await executeAction(type.SET_CONNECTION_STATUS, state, ConnectionStatusEnum.CONNECTED)
+        const committed = await executeAction(type.SET_CONNECTION_STATUS, state, ConnectionStatus.CONNECTED)
         expect(committed).to.have.lengthOf(4)
         expect(committed[0]).to.eql({
           key: type.SET_CONNECTION_STATUS,
-          value: ConnectionStatusEnum.CONNECTED
+          value: ConnectionStatus.CONNECTED
         })
         expect(committed[1].key).to.eql(type.CONNECTION_IP)
         expect(committed[1].value).to.eql(null)
@@ -450,12 +451,12 @@ describe('connection', () => {
       })
 
       it('sets ip status to Refreshing when state changes to Disconnected', async () => {
-        const committed = await executeAction(type.SET_CONNECTION_STATUS, {}, ConnectionStatusEnum.NOT_CONNECTED)
+        const committed = await executeAction(type.SET_CONNECTION_STATUS, {}, ConnectionStatus.NOT_CONNECTED)
 
         expect(committed).to.eql([
           {
             key: type.SET_CONNECTION_STATUS,
-            value: ConnectionStatusEnum.NOT_CONNECTED
+            value: ConnectionStatus.NOT_CONNECTED
           },
           {
             key: type.CONNECTION_IP,
@@ -469,17 +470,17 @@ describe('connection', () => {
         const looper = new FunctionLooper(noop, 1000)
         looper.start()
         const state = {
-          status: ConnectionStatusEnum.CONNECTED,
+          status: ConnectionStatus.CONNECTED,
           actionLoopers: {
             [type.CONNECTION_STATISTICS]: looper
           }
         }
-        const committed = await executeAction(type.SET_CONNECTION_STATUS, state, ConnectionStatusEnum.DISCONNECTING)
+        const committed = await executeAction(type.SET_CONNECTION_STATUS, state, ConnectionStatus.DISCONNECTING)
 
         expect(committed).to.eql([
           {
             key: type.SET_CONNECTION_STATUS,
-            value: ConnectionStatusEnum.DISCONNECTING
+            value: ConnectionStatus.DISCONNECTING
           },
           {
             key: type.REMOVE_ACTION_LOOPER,
@@ -493,13 +494,13 @@ describe('connection', () => {
         const noop = async () => {}
         const looper = new FunctionLooper(noop, 1000)
         const state = {
-          status: ConnectionStatusEnum.CONNECTED,
+          status: ConnectionStatus.CONNECTED,
           actionLoopers: {
             [type.CONNECTION_STATISTICS]: looper
           }
         }
 
-        const committed = await executeAction(type.SET_CONNECTION_STATUS, state, ConnectionStatusEnum.CONNECTED)
+        const committed = await executeAction(type.SET_CONNECTION_STATUS, state, ConnectionStatus.CONNECTED)
         expect(committed).to.eql([])
       })
     })
@@ -529,16 +530,17 @@ describe('connection', () => {
 
     describe('RECONNECT', () => {
       it('invokes connection establisher with last connection provider', async () => {
+        const location: ConsumerLocationDTO = {
+          original: { ip: '', country: '' },
+          current: { ip: '', country: '' }
+        }
         const state: ConnectionStore = {
-          status: ConnectionStatusEnum.CONNECTED,
+          status: ConnectionStatus.CONNECTED,
           statistics: {},
           actionLoopers: {
             [type.FETCH_CONNECTION_STATUS]: new FunctionLooper(async () => {}, 1000)
           },
-          location: new ConsumerLocationDTO({
-            original: { ip: '', country: '' },
-            current: { ip: '', country: '' }
-          })
+          location
         }
         const getters = {
           currentIdentity: 'current',
@@ -585,14 +587,15 @@ describe('connection', () => {
 
     describe('CONNECT', () => {
       it('invokes connection establisher with given provider', async () => {
+        const location: ConsumerLocationDTO = {
+          original: { ip: '', country: '' },
+          current: { ip: '', country: '' }
+        }
         const state = {
-          status: ConnectionStatusEnum.CONNECTED,
+          status: ConnectionStatus.CONNECTED,
           statistics: {},
           actionLoopers: {},
-          location: new ConsumerLocationDTO({
-            original: { ip: '', country: '' },
-            current: { ip: '', country: '' }
-          })
+          location
         }
         const getters = {
           currentIdentity: 'consumer id'

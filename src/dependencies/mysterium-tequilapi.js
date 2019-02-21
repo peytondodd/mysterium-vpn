@@ -34,7 +34,8 @@ function bootstrap (container: Container) {
     ['bugReporterMetrics', 'tequilapiClient.config'],
     (bugReporterMetrics: BugReporterMetrics, config: Object) => {
       const clientFactory = new ReportingTequilapiClientFactory(config.baseURL)
-      const client: TequilapiClient = clientFactory.build()
+      const adapter = clientFactory.buildAdapter()
+      const client: TequilapiClient = clientFactory.build(adapter)
       const clientWithMetrics = new TequilapiClientWithMetrics(client, bugReporterMetrics)
       return clientWithMetrics
     }

@@ -30,7 +30,7 @@ import { UserSettingsProxy } from '../../../../src/app/user-settings/user-settin
 import { buildRendererCommunication } from '../../../../src/app/communication/renderer-communication'
 import identityStoreFactory from '../../../../src/renderer/store/modules/identity'
 import types from '../../../../src/renderer/store/types'
-import IdentityRegistrationDTO from 'mysterium-tequilapi/lib/dto/identity-registration'
+import type { IdentityRegistrationDTO } from 'mysterium-tequilapi/lib/dto/identity-registration/identity-registration'
 import mainStoreFactory from '../../../../src/renderer/store/modules/main'
 import EmptyTequilapiClientMock from '../store/modules/empty-tequilapi-client-mock'
 import CountryImageResolver from '../../../../src/app/countries/unknown-country-reporter'
@@ -100,7 +100,7 @@ describe('Vpn', () => {
     })
 
     it('renders ID icon when identity becomes unregistered', () => {
-      const registration = new IdentityRegistrationDTO({ registered: false, signature: null, publicKey: null })
+      const registration: IdentityRegistrationDTO = { registered: false }
       vpnWrapper.vm.$store.commit(types.SET_IDENTITY_REGISTRATION, registration)
       expect(vpnWrapper.findAll('.identity-button')).to.have.lengthOf(1)
       expect(vpnWrapper.findAll('.identity-button--registered')).to.have.lengthOf(0)
@@ -108,7 +108,7 @@ describe('Vpn', () => {
     })
 
     it('renders ID icon when identity becomes registered', () => {
-      const registration = new IdentityRegistrationDTO({ registered: true, signature: null, publicKey: null })
+      const registration: IdentityRegistrationDTO = { registered: true }
       vpnWrapper.vm.$store.commit(types.SET_IDENTITY_REGISTRATION, registration)
       expect(vpnWrapper.findAll('.identity-button')).to.have.lengthOf(1)
       expect(vpnWrapper.findAll('.identity-button--registered')).to.have.lengthOf(1)
