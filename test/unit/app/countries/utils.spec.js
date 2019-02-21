@@ -19,6 +19,7 @@
 
 import {
   getCountryLabel,
+  isCountryKnown,
   isCountryTrusted
 } from '../../../../src/app/countries/utils'
 import { QualityLevel } from 'mysterium-vpn-js'
@@ -54,6 +55,13 @@ describe('countries utils', () => {
       expect(getCountryLabel(countries[0], 10)).to.be.eql('Australia (0x0987654..)')
       expect(getCountryLabel(countries[1], 10)).to.be.eql('Congo, The.. (0x0987654..)')
       expect(getCountryLabel(countries[2], 10)).to.be.eql('Lithuania (0x1234567..)')
+    })
+  })
+
+  describe('.isCountryKnown', () => {
+    it('returns true only for known countries', () => {
+      expect(isCountryKnown('it')).to.be.true
+      expect(isCountryKnown('xx')).to.be.false
     })
   })
 
