@@ -42,6 +42,14 @@ export default {
       required: true
     }
   },
+  data: function () {
+    return {
+      dateObject: null
+    }
+  },
+  created: function () {
+    this.dateObject = new Date(this.session.dateStarted)
+  },
   computed: {
     durationString () {
       return formatTimeDisplayOrDefault(this.session.duration)
@@ -62,9 +70,6 @@ export default {
     },
     startTime () {
       return getReadableTime(this.dateObject)
-    },
-    dateObject () {
-      return new Date(this.session.dateStarted)
     },
     countryCode () {
       return this.session.providerCountry

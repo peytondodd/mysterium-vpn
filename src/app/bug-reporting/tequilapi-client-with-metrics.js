@@ -31,16 +31,7 @@ import type { ConsumerLocationDTO } from 'mysterium-tequilapi/lib/dto/consumer-l
 import type { IdentityRegistrationDTO } from 'mysterium-tequilapi/lib/dto/identity-registration/identity-registration'
 import type { BugReporterMetrics } from './metrics/bug-reporter-metrics'
 import { METRICS } from './metrics/metrics'
-
-type SessionDto = {
-  sessionId: string,
-  providerId: string,
-  providerCountry: string,
-  dateStarted: number,
-  bytesSent: number,
-  bytesReceived: number,
-  duration: number
-}
+import { SessionDTO } from 'mysterium-tequilapi/lib/dto/session'
 
 class TequilapiClientWithMetrics implements TequilapiClient {
   _bugReporterMetrics: BugReporterMetrics
@@ -127,39 +118,9 @@ class TequilapiClientWithMetrics implements TequilapiClient {
     return this._client.location(timeout)
   }
 
-  // TODO: use real endpoint
-  async sessionsList (): Promise<SessionDto[]> {
-    return [
-      {
-        sessionId: '30f610a0-c096-11e8-b371-ebde26989839',
-        providerId: '0x3b03a513fba4bd4868edd340f77da0c920150f3e',
-        providerCountry: 'lt',
-        dateStarted: 1537787035230,
-        duration: 35 * 60,
-        bytesSent: 1024,
-        bytesReceived: 6000
-      },
-      {
-        sessionId: '76fca3dc-28d0-4f00-b06e-a7d6050699ae',
-        providerId: '0x1b03b513fba4bd4868edd340f77da0c920150f0a',
-        providerCountry: 'us',
-        dateStarted: 1537787035230,
-        duration: 35 * 60,
-        bytesSent: 1024,
-        bytesReceived: 6000
-      },
-      {
-        sessionId: 'ffbfb796-5483-4a1b-82c8-10d6b85d4d62',
-        providerId: '0x1b03b513fba4bd4868edd340f77da0c920150f0a',
-        providerCountry: 'us',
-        dateStarted: 1537787035230,
-        duration: 35 * 60,
-        bytesSent: 1024,
-        bytesReceived: 6000
-      }
-    ]
+  async sessionsList (): Promise<SessionDTO[]> {
+    return this._client.sessionsList()
   }
 }
 
-export type { SessionDto }
 export default TequilapiClientWithMetrics

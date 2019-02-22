@@ -42,6 +42,7 @@
 <script>
 import SessionItem from '../components/session-item'
 import CloseButton from '../components/close-button'
+import logger from '../../app/logger'
 
 export default {
   name: 'ConnectionHistory',
@@ -55,6 +56,8 @@ export default {
   created: function () {
     this.tequilapiClient.sessionsList().then(sessions => {
       this.sessions = sessions
+    }).catch(error => {
+      logger.error('Fetching sessions failed', error)
     })
   },
   methods: {

@@ -20,16 +20,16 @@
 import SessionItem from '../../../../src/renderer/components/session-item'
 import { createLocalVue, mount } from '@vue/test-utils'
 import { beforeEach, describe, expect, it } from '../../../helpers/dependencies'
-import type { SessionDto } from '../../../../src/app/bug-reporting/tequilapi-client-with-metrics'
+import { SessionDTO } from 'mysterium-tequilapi/lib/dto/session'
 
 function mountSessionItem () {
   const localVue = createLocalVue()
 
-  const session: SessionDto = {
+  const session: SessionDTO = {
     sessionId: '691bb110-c096-11e8-b371-ebde26989839',
     providerId: '0x3b03a513fba4bd4868edd340f77da0c920150f3e',
     providerCountry: 'lt',
-    dateStarted: new Date(2018, 8, 24, 14, 3, 55),
+    dateStarted: '2019-02-14T11:04:15Z',
     bytesSent: 1024,
     bytesReceived: 6000,
     duration: 35 * 60
@@ -63,7 +63,7 @@ describe('SessionItem', () => {
 
   it('renders start date and time', () => {
     const startText = wrapper.findAll('td').at(1).element.innerText
-    expect(startText).to.eql('24/09/2018\n14:03:55')
+    expect(startText).to.eql('14/02/2019\n13:04:15')
   })
 
   it('renders duration time', () => {

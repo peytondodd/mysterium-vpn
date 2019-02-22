@@ -20,18 +20,18 @@ import { createLocalVue, mount } from '@vue/test-utils'
 import { beforeEach, describe, it, expect } from '../../../helpers/dependencies'
 import ConnectionHistory from '../../../../src/renderer/pages/connection-history'
 import DIContainer from '../../../../src/app/di/vue-container'
-import type { SessionDto } from '../../../../src/app/bug-reporting/tequilapi-client-with-metrics'
 import VueRouter from 'vue-router'
+import { SessionDTO } from 'mysterium-tequilapi/lib/dto/session'
 
 describe('ConnectionHistory', () => {
   let wrapper
 
-  const mockedSessions: SessionDto[] = [
+  const mockedSessions: SessionDTO[] = [
     {
       sessionId: '5fefd260-c096-11e8-b371-ebde26989839',
       providerId: '0x3b03a513fba4bd4868edd340f77da0c920150f3e',
       providerCountry: 'lt',
-      dateStarted: 1537787035230,
+      dateStarted: '2019-02-14T11:04:15Z',
       bytesSent: 1024,
       bytesReceived: 6000,
       duration: 35 * 60
@@ -40,7 +40,7 @@ describe('ConnectionHistory', () => {
       sessionId: '64eef750-c096-11e8-b371-ebde26989839',
       providerId: '0x3b03a513fba4bd4868edd340f77da0c920150f3e',
       providerCountry: 'lt',
-      dateStarted: 1537787035230,
+      dateStarted: '2019-02-14T11:04:15Z',
       bytesSent: 1024,
       bytesReceived: 6000,
       duration: 35 * 60
