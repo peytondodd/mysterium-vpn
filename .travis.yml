@@ -37,51 +37,53 @@ jobs:
       name: Coverage
     - script: yarn packages:check-outdated
       name: Outdated packages
-before_deploy:
-- bash util_scripts/travis-number.sh
-- mkdir binaries && mkdir releases
-# OS X
-- FORCE_DOWNLOAD=1 yarn download:bins:osx
-- yarn build
-- cp build/MysteriumVPN-*.dmg binaries/MysteriumVPN-latest.dmg
-- cp build/MysteriumVPN-*.dmg releases/
-# Windows
-- FORCE_DOWNLOAD=1 yarn download:bins:win
-- yarn build:win
-- cp build/MysteriumVPN\ Setup\ *.exe binaries/MysteriumVPN\ Setup\ Latest.exe
-- cp build/MysteriumVPN\ Setup\ *.exe releases/
-deploy:
-  # Latest (master branch)
-  - provider: pages
-    local-dir: binaries
-    skip-cleanup: true
-    github-token: "$GITHUB_API_TOKEN"
-    keep-history: false
-    target-branch: mysterium_vpn
-    repo: MysteriumNetwork/build-artifacts
-    on:
-      tags: false
-      branch: master
-  # Release-candidate ('release/x.x' release branches)
-  - provider: pages
-    local-dir: releases
-    skip-cleanup: true
-    github-token: "$GITHUB_API_TOKEN"
-    keep-history: false
-    target-branch: mysterium_vpn_rc
-    repo: MysteriumNetwork/build-artifacts
-    on:
-      tags: false
-      all_branches: true
-      condition: $TRAVIS_BRANCH =~ ^release/[0-9]+\.[0-9]+$
-  # Release (tags)
-  - provider: releases
-    file_glob: true
-    file: releases/*
-    skip_cleanup: true
-    api_key: "$GITHUB_API_TOKEN"
-    on:
-      tags: true
+    - stage: Deploy
+      script: skip
+      before_deploy:
+      - bash util_scripts/travis-number.sh
+      - mkdir binaries && mkdir releases
+      # OS X
+      - FORCE_DOWNLOAD=1 yarn download:bins:osx
+      - yarn build
+      - cp build/MysteriumVPN-*.dmg binaries/MysteriumVPN-latest.dmg
+      - cp build/MysteriumVPN-*.dmg releases/
+      # Windows
+      - FORCE_DOWNLOAD=1 yarn download:bins:win
+      - yarn build:win
+      - cp build/MysteriumVPN\ Setup\ *.exe binaries/MysteriumVPN\ Setup\ Latest.exe
+      - cp build/MysteriumVPN\ Setup\ *.exe releases/
+      deploy:
+        # Latest (master branch)
+        - provider: pages
+          local-dir: binaries
+          skip-cleanup: true
+          github-token: "$GITHUB_API_TOKEN"
+          keep-history: false
+          target-branch: mysterium_vpn
+          repo: MysteriumNetwork/build-artifacts
+          on:
+            tags: false
+            branch: master
+          # Release-candidate ('release/x.x' release branches)
+        - provider: pages
+          local-dir: releases
+          skip-cleanup: true
+          github-token: "$GITHUB_API_TOKEN"
+          keep-history: false
+          target-branch: mysterium_vpn_rc
+          repo: MysteriumNetwork/build-artifacts
+          on:
+            tags: false
+            all_branches: true
+            condition: $TRAVIS_BRANCH =~ ^release/[0-9]+\.[0-9]+$
+        # Release (tags)
+        - provider: releases
+          file_glob: true
+          file: releases/*
+          skip_cleanup: true
+          api_key: "$GITHUB_API_TOKEN"
+          on:
+            tags: true
 
 notifications:
   slack:
