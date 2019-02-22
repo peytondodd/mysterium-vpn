@@ -21,6 +21,8 @@ import SessionItem from '../../../../src/renderer/components/session-item'
 import { createLocalVue, mount } from '@vue/test-utils'
 import { beforeEach, describe, expect, it } from '../../../helpers/dependencies'
 import { SessionDTO } from 'mysterium-tequilapi/lib/dto/session'
+import { TimeFormatter } from '../../../../src/libraries/time-formatter'
+import DIContainer from '../../../../src/app/di/vue-container'
 
 function mountSessionItem () {
   const localVue = createLocalVue()
@@ -34,6 +36,10 @@ function mountSessionItem () {
     bytesReceived: 6000,
     duration: 35 * 60
   }
+
+  const dependencies = new DIContainer(localVue)
+  const LT_TIMEZONE_OFFSET = -120
+  dependencies.constant('timeFormatter', new TimeFormatter(LT_TIMEZONE_OFFSET))
 
   return mount(SessionItem, {
     localVue,

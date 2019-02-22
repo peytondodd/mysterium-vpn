@@ -48,6 +48,7 @@ import VersionCheck from '../../../libraries/mysterium-client/version-check'
 import FeatureToggle from '../../../app/features/feature-toggle'
 import type { BugReporterMetrics } from '../../../app/bug-reporting/metrics/bug-reporter-metrics'
 import { TequilapiStatusNotifier } from '../../../libraries/mysterium-client/monitoring/tequilapi-status-notifier'
+import { TimeFormatter } from '../../../libraries/time-formatter'
 
 declare var MYSTERIUM_CLIENT_VERSION: string
 
@@ -132,14 +133,15 @@ function bootstrap (container: Container) {
 
   container.service(
     'mysteriumClient.logPublisher',
-    ['bugReporter', 'mysteriumClient.config', 'mysteriumClient.tailFunction'],
-    (bugReporter: BugReporter, config: ClientConfig, tailFunction: TailFunction) => {
+    ['bugReporter', 'mysteriumClient.config', 'mysteriumClient.tailFunction', 'timeFormatter'],
+    (bugReporter: BugReporter, config: ClientConfig, tailFunction: TailFunction, timeFormatter: TimeFormatter) => {
       return new ClientLogPublisher(
         bugReporter,
         path.join(config.logDir, config.stdOutFileName),
         path.join(config.logDir, config.stdErrFileName),
         config.systemLogPath,
         () => new Date(),
+        timeFormatter,
         tailFunction
       )
     }

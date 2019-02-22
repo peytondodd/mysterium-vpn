@@ -20,12 +20,14 @@
 import { beforeEach, describe, expect, it } from '../../../../helpers/dependencies'
 import BugReporterMetricsStore from '../../../../../src/app/bug-reporting/metrics/bug-reporter-metrics-store'
 import { EXTRA, METRICS, NOT_SET, TAGS } from '../../../../../src/app/bug-reporting/metrics/metrics'
+import { TimeFormatter } from '../../../../../src/libraries/time-formatter'
 
 describe('BugReporterMetricsStore', () => {
   let store: BugReporterMetricsStore
 
   beforeEach(() => {
-    store = new BugReporterMetricsStore()
+    const timeFormatter = new TimeFormatter(0)
+    store = new BugReporterMetricsStore(timeFormatter)
   })
 
   describe('.get/.set', () => {

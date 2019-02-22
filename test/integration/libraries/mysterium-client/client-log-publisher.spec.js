@@ -25,19 +25,23 @@ import ClientLogPublisher from '../../../../src/libraries/mysterium-client/clien
 import { existsSync, unlinkSync } from 'fs'
 import path from 'path'
 import { CallbackRecorder } from '../../../helpers/utils'
+import { TimeFormatter } from '../../../../src/libraries/time-formatter'
 
 describe('ClientLogPublisher', () => {
-  let logCallbackParam = ''
+  let logCallbackParam: string
   let publisher
   const stdout = path.join(process.cwd(), __dirname, 'stdout.log')
   const stderr = path.join(process.cwd(), __dirname, 'stderr.log')
-  const dateFunction = () => new Date('2018-01-01')
-  const tailFunction = (path: string, logCallback: LogCallback) => {
-    logCallback(logCallbackParam)
-  }
 
   beforeEach(() => {
-    publisher = new ClientLogPublisher(new BugReporterMock(), stdout, stderr, stdout, dateFunction, tailFunction)
+    logCallbackParam = ''
+    const tailFunction = (path: string, logCallback: LogCallback) => {
+      logCallback(logCallbackParam)
+    }
+    const dateFunction = () => new Date('2018-01-01')
+    const timeFormatter = new TimeFormatter(0)
+    const bugReporter = new BugReporterMock()
+    publisher = new ClientLogPublisher(bugReporter, stdout, stderr, stdout, dateFunction, timeFormatter, tailFunction)
   })
 
   afterEach(() => {

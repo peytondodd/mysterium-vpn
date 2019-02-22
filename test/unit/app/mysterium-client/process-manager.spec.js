@@ -34,6 +34,7 @@ import BugReporterMetricsStore from '../../../../src/app/bug-reporting/metrics/b
 import TequilapiVersionMock from '../../../helpers/mysterium-tequilapi/tequilapi-version-check.spec'
 import { MockStatusNotifier } from '../../../helpers/mysterium-client/monitoring-mock'
 import Monitoring from '../../../../src/libraries/mysterium-client/monitoring/monitoring'
+import { TimeFormatter } from '../../../../src/libraries/time-formatter'
 
 class InstallerMock implements Installer {
   needsInstallationMock: boolean = false
@@ -118,7 +119,8 @@ describe('ProcessManager', () => {
 
     const featureToggle = new FeatureToggle({})
     const bugReporter = new BugReporterMock()
-    const bugReporterMetrics = new BugReporterMetricsStore()
+    const timeFormatter = new TimeFormatter(0)
+    const bugReporterMetrics = new BugReporterMetricsStore(timeFormatter)
 
     processManager = new ProcessManager(
       installer,

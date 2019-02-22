@@ -18,14 +18,20 @@
 // @flow
 
 import type { BugReporterMetrics } from './bug-reporter-metrics'
-import { getCurrentTimeISOFormat } from '../../../libraries/strings'
 import { EXTRA, NOT_SET, TAGS } from './metrics'
 import type { KeyValueMap, Metric, RavenData } from './metrics'
+import { TimeFormatter } from '../../../libraries/time-formatter'
 
 /**
  * Collects metrics storing them.
  */
 class BugReporterMetricsStore implements BugReporterMetrics {
+  _timeFormatter: TimeFormatter
+
+  constructor (timeFormatter: TimeFormatter) {
+    this._timeFormatter = timeFormatter
+  }
+
   _metrics: Map<Metric, mixed> = new Map()
 
   set (metric: Metric, value: mixed) {
@@ -37,7 +43,7 @@ class BugReporterMetricsStore implements BugReporterMetrics {
   }
 
   setWithCurrentDateTime (metric: Metric) {
-    this.set(metric, getCurrentTimeISOFormat())
+    this.set(metric, this._timeFormatter.getCurrentTimeISOFormat())
   }
 
   getMetrics (): RavenData {

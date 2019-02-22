@@ -24,6 +24,7 @@ import LogCacheBundle from '../../../../../src/app/logging/log-cache-bundle'
 import type { BugReporterMetrics } from '../../../../../src/app/bug-reporting/metrics/bug-reporter-metrics'
 import BugReporterMetricsStore from '../../../../../src/app/bug-reporting/metrics/bug-reporter-metrics-store'
 import { TAGS } from '../../../../../src/app/bug-reporting/metrics/metrics'
+import { TimeFormatter } from '../../../../../src/libraries/time-formatter'
 
 describe('MainEnvironmentCollector', () => {
   const releaseID = 'id of release'
@@ -38,7 +39,8 @@ describe('MainEnvironmentCollector', () => {
     frontendLogCache = new LogCache()
     mysteriumProcessLogCache = new LogCache()
     const logCacheBundle = new LogCacheBundle(backendLogCache, frontendLogCache, mysteriumProcessLogCache)
-    bugReporterMetrics = new BugReporterMetricsStore()
+    const timeFormatter = new TimeFormatter(0)
+    bugReporterMetrics = new BugReporterMetricsStore(timeFormatter)
     collector = new MainEnvironmentCollector(logCacheBundle, releaseID, bugReporterMetrics)
   })
 

@@ -29,7 +29,6 @@
 
 <script>
 import { formatBytesReadableOrDefault, formatTimeDisplayOrDefault } from '../../libraries/unit-converter'
-import { getReadableDate, getReadableTime } from '../../libraries/strings'
 import CountryFlag from './country-flag'
 import { limitedLengthString } from '../../app/strings'
 
@@ -42,6 +41,9 @@ export default {
       required: true
     }
   },
+  dependencies: [
+    'timeFormatter'
+  ],
   data: function () {
     return {
       dateObject: null
@@ -66,10 +68,10 @@ export default {
       return limitedLengthString(this.session.providerId, 11)
     },
     startDate () {
-      return getReadableDate(this.dateObject)
+      return this.timeFormatter.getReadableDate(this.dateObject)
     },
     startTime () {
-      return getReadableTime(this.dateObject)
+      return this.timeFormatter.getReadableTime(this.dateObject)
     },
     countryCode () {
       return this.session.providerCountry

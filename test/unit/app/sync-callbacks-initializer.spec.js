@@ -27,6 +27,7 @@ import type { SerializedLogCaches } from '../../../src/app/logging/log-cache-bun
 import { METRICS, TAGS } from '../../../src/app/bug-reporting/metrics/metrics'
 import type { RavenData } from '../../../src/app/bug-reporting/metrics/metrics'
 import BugReporterMetricsStore from '../../../src/app/bug-reporting/metrics/bug-reporter-metrics-store'
+import { TimeFormatter } from '../../../src/libraries/time-formatter'
 
 class MockEnvironmentCollector implements EnvironmentCollector {
   mockMysteriumVpnReleaseId = 'mock mysterium vpn release id'
@@ -88,7 +89,8 @@ describe('SyncCallbacksInitializer', () => {
     communication = new MockCommunication()
     envCollector = new MockEnvironmentCollector()
     logCache = new LogCache()
-    metricsStore = new BugReporterMetricsStore()
+    const timeFormatter = new TimeFormatter(0)
+    metricsStore = new BugReporterMetricsStore(timeFormatter)
     initializer = new SyncCallbacksInitializer(communication, envCollector, logCache, metricsStore)
   })
 

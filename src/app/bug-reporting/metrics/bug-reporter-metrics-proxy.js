@@ -20,16 +20,18 @@
 import type { BugReporterMetrics } from './bug-reporter-metrics'
 import type { Metric, RavenData } from './metrics'
 import type { SyncRendererCommunication } from '../../communication/sync/sync-communication'
-import { getCurrentTimeISOFormat } from '../../../libraries/strings'
+import { TimeFormatter } from '../../../libraries/time-formatter'
 
 /**
  * Collects metrics, proxying all requests to communication.
  */
 class BugReporterMetricsProxy implements BugReporterMetrics {
   _syncCommunication: SyncRendererCommunication
+  _timeFormatter: TimeFormatter
 
-  constructor (syncCommunication: SyncRendererCommunication) {
+  constructor (syncCommunication: SyncRendererCommunication, timeFormatter: TimeFormatter) {
     this._syncCommunication = syncCommunication
+    this._timeFormatter = timeFormatter
   }
 
   set (metric: Metric, value: mixed) {
@@ -37,7 +39,7 @@ class BugReporterMetricsProxy implements BugReporterMetrics {
   }
 
   setWithCurrentDateTime (metric: Metric) {
-    this.set(metric, getCurrentTimeISOFormat())
+    this.set(metric, this._timeFormatter.getCurrentTimeISOFormat())
   }
 
   getMetrics (): RavenData {

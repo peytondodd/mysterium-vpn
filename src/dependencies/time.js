@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 The "mysteriumnetwork/mysterium-vpn" Authors.
+ * Copyright (C) 2019 The "mysteriumnetwork/mysterium-vpn" Authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,14 +17,18 @@
 
 // @flow
 
-type TransformFn = (string) => string
+import type { Container } from '../app/di'
+import { TimeFormatter } from '../libraries/time-formatter'
 
-function prependWithFn (fn: () => string): TransformFn {
-  return (data: string) => {
-    return fn() + data
-  }
+function bootstrap (container: Container) {
+  container.service(
+    'timeFormatter',
+    [],
+    () => {
+      const offset = new Date().getTimezoneOffset()
+      return new TimeFormatter(offset)
+    }
+  )
 }
 
-export {
-  prependWithFn
-}
+export default bootstrap

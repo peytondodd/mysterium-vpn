@@ -22,6 +22,7 @@ import ConnectionHistory from '../../../../src/renderer/pages/connection-history
 import DIContainer from '../../../../src/app/di/vue-container'
 import VueRouter from 'vue-router'
 import { SessionDTO } from 'mysterium-tequilapi/lib/dto/session'
+import { TimeFormatter } from '../../../../src/libraries/time-formatter'
 
 describe('ConnectionHistory', () => {
   let wrapper
@@ -56,6 +57,7 @@ describe('ConnectionHistory', () => {
         return mockedSessions
       }
     })
+    dependencies.constant('timeFormatter', new TimeFormatter(0))
     const router = new VueRouter()
     return mount(ConnectionHistory, { localVue, router })
   }

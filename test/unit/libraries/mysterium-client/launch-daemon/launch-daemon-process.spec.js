@@ -30,6 +30,7 @@ import Monitoring from '../../../../../src/libraries/mysterium-client/monitoring
 import VersionCheck from '../../../../../src/libraries/mysterium-client/version-check'
 import type { NodeHealthcheckDTO } from 'mysterium-tequilapi/lib/dto/node-healthcheck'
 import lolex from 'lolex'
+import { TimeFormatter } from '../../../../../src/libraries/time-formatter'
 
 class TequilapiClientMock extends EmptyTequilapiClientMock {
   stopped: boolean = false
@@ -62,7 +63,10 @@ describe('LaunchDaemonProcess', () => {
   let processStarted: boolean
 
   beforeEach(() => {
-    const logPublisher = new ClientLogPublisher(new BugReporterMock(), '', '', '', () => new Date(), () => {})
+    const bugReporter = new BugReporterMock()
+    const timeFormatter = new TimeFormatter(0)
+    const logPublisher = new ClientLogPublisher(bugReporter, '', '', '', () => new Date(), timeFormatter, () => {})
+
     tequilApi = new TequilapiClientMock()
     notifierMock = new MockStatusNotifier()
     monitoring = new Monitoring(notifierMock)
