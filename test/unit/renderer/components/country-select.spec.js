@@ -118,7 +118,7 @@ describe('CountrySelect', () => {
       expect(flags.wrappers[0].element.src).to.contain('/lt.svg')
 
       // country code is known
-      expect(multiselectOptions.wrappers[1].text()).to.contain('United Kingdom (0x2)')
+      expect(multiselectOptions.wrappers[1].text()).to.contain('United Kin.. (0x2)')
       expect(flags.wrappers[1].element.src).to.contain('/gb.svg')
 
       // country code is not defined
@@ -146,7 +146,7 @@ describe('CountrySelect', () => {
     })
   })
 
-  describe('selectedCountryLabel()', () => {
+  describe('countryLabel()', () => {
     beforeEach(() => {
       wrapper = mountWith([], buildRendererCommunication(fakeMessageBus), bugReporterMock)
       fakeMessageBus.clean()
@@ -159,7 +159,7 @@ describe('CountrySelect', () => {
         code: 'cd'
       }
 
-      const label = wrapper.vm.selectedCountryLabel(country)
+      const label = wrapper.vm.countryLabel(country)
       expect(label).to.be.eql('The Democr.. (0x1234567..)')
     })
 
@@ -170,7 +170,7 @@ describe('CountrySelect', () => {
         code: 'lt'
       }
 
-      const label = wrapper.vm.selectedCountryLabel(country)
+      const label = wrapper.vm.countryLabel(country)
       expect(label).to.be.eql('Lithuania (0x1234567..)')
     })
 
