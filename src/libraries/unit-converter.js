@@ -87,3 +87,4 @@ export {
   formatTimeDisplayOrDefault,
   formatTimeDisplay
 }
+export type { BytesReadable }
