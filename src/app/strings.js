@@ -15,32 +15,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-.close-button {
-  height: 2.4rem;
-  width: 3.5rem;
-  position: relative;
-  cursor: pointer;
-  &--right {
-    float: right;
+// @flow
+
+function limitedLengthString (value: string, maxLength: ?number = null): string {
+  if (maxLength && value.length > maxLength) {
+    return value.substring(0, maxLength) + '..'
   }
-  &--marginned {
-    position: fixed;
-    top: 1.5rem;
-    right: 1.5rem;
-  }
-  &__bar {
-    background-color: @g8;
-    display: block;
-    width: 3.5rem;
-    height: 0.5rem;
-    position: absolute;
-    top: 0.9rem;
-    left: 0;
-    &--first-bar {
-      transform: translate3d(0, 0, 0) rotate(45deg) scale(.6);
-    }
-    &--second-bar {
-      transform: translate3d(0, 0, 0) rotate(-45deg) scale(.6);
-    }
-  }
+  return value
 }
+
+export { limitedLengthString }

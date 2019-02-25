@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 The "mysteriumnetwork/mysterium-vpn" Authors.
+ * Copyright (C) 2019 The "mysteriumnetwork/mysterium-vpn" Authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,32 +15,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-.close-button {
-  height: 2.4rem;
-  width: 3.5rem;
-  position: relative;
-  cursor: pointer;
-  &--right {
-    float: right;
-  }
-  &--marginned {
-    position: fixed;
-    top: 1.5rem;
-    right: 1.5rem;
-  }
-  &__bar {
-    background-color: @g8;
-    display: block;
-    width: 3.5rem;
-    height: 0.5rem;
-    position: absolute;
-    top: 0.9rem;
-    left: 0;
-    &--first-bar {
-      transform: translate3d(0, 0, 0) rotate(45deg) scale(.6);
-    }
-    &--second-bar {
-      transform: translate3d(0, 0, 0) rotate(-45deg) scale(.6);
-    }
-  }
+// @flow
+
+import type { BytesReadable } from '../../libraries/formatters/bytes-formatter'
+
+export type SessionItem = {
+  id: string,
+  countryCode: string,
+  identity: string,
+  startDate: ?string,
+  startTime: ?string,
+  sent: BytesReadable,
+  received: BytesReadable,
+  duration: string
 }

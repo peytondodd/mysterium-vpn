@@ -19,6 +19,7 @@
 import countries from './list'
 import type { Country } from './country'
 import { QualityLevel } from 'mysterium-vpn-js'
+import { limitedLengthString } from '../strings'
 
 const COUNTRY_CODE_LENGTH = 2
 const COUNTRY_NAME_UNRESOLVED = 'N/A'
@@ -31,13 +32,6 @@ function getCountryLabel (country: Country, maxNameLength: ?number = null, maxId
   }
 
   return `${title} (${identity})`
-}
-
-function limitedLengthString (value: string, maxLength: ?number = null): string {
-  if (maxLength && value.length > maxLength) {
-    return value.substring(0, maxLength) + '..'
-  }
-  return value
 }
 
 function isCountryKnown (countryCode: ?string): boolean {

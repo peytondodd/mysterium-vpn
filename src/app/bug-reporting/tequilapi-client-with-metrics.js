@@ -31,6 +31,7 @@ import type { ConsumerLocationDTO } from 'mysterium-tequilapi/lib/dto/consumer-l
 import type { IdentityRegistrationDTO } from 'mysterium-tequilapi/lib/dto/identity-registration/identity-registration'
 import type { BugReporterMetrics } from './metrics/bug-reporter-metrics'
 import { METRICS } from './metrics/metrics'
+import { SessionDTO } from 'mysterium-tequilapi/lib/dto/session'
 
 class TequilapiClientWithMetrics implements TequilapiClient {
   _bugReporterMetrics: BugReporterMetrics
@@ -115,6 +116,10 @@ class TequilapiClientWithMetrics implements TequilapiClient {
 
   async location (timeout?: number): Promise<ConsumerLocationDTO> {
     return this._client.location(timeout)
+  }
+
+  async sessionsList (): Promise<SessionDTO[]> {
+    return this._client.sessionsList()
   }
 }
 

@@ -51,6 +51,14 @@
             slot="item"
             class="nav__trigger"
             href="#"
+            @click="showConnectionHistory">
+            <icon-history class="nav__icon nav__icon--history"/>
+            <span class="nav__text">connection history</span>
+          </a>
+          <a
+            slot="item"
+            class="nav__trigger"
+            href="#"
             @click="reportIssue">
             <icon-issue class="nav__icon nav__icon--issue"/>
             <span class="nav__text">report issue</span>
@@ -89,6 +97,7 @@ import { remote, shell } from 'electron'
 import { mapGetters, mapActions } from 'vuex'
 import IconIssue from '@/assets/img/icon--issue.svg'
 import IconEye from '@/assets/img/icon--eye.svg'
+import IconHistory from '@/assets/img/icon--history.svg'
 import IconQuit from '@/assets/img/icon--quit.svg'
 import IconLightbulb from '@/assets/img/icon--lightbulb.svg'
 import DisconnectNotificationSettings from '@/components/disconnect-notification-setting'
@@ -100,6 +109,7 @@ export default {
   dependencies: ['mysteriumVpnReleaseID', 'feedbackForm'],
   components: {
     IconEye,
+    IconHistory,
     IconIssue,
     IconQuit,
     IconLightbulb,
@@ -120,6 +130,9 @@ export default {
     },
     openRemoteLink (url) {
       shell.openExternal(url)
+    },
+    showConnectionHistory () {
+      this.$router.push('/connection-history')
     },
     reportIssue () {
       this.feedbackForm.show()

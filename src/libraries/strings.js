@@ -25,16 +25,6 @@ function prependWithFn (fn: () => string): TransformFn {
   }
 }
 
-function getCurrentTimeISOFormat (): string {
-  return toISOString(new Date())
-}
-
-function toISOString (date: Date): string {
-  return date.toISOString()
-}
-
 export {
-  prependWithFn,
-  getCurrentTimeISOFormat,
-  toISOString
+  prependWithFn
 }

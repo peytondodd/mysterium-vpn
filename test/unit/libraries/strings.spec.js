@@ -18,11 +18,7 @@
 // @flow
 
 import { describe, it, expect } from '../../helpers/dependencies'
-import {
-  getCurrentTimeISOFormat,
-  prependWithFn,
-  toISOString
-} from '../../../src/libraries/strings'
+import { prependWithFn } from '../../../src/libraries/strings'
 
 describe('strings', () => {
   describe('prependWithFn', () => {
@@ -35,21 +31,6 @@ describe('strings', () => {
       const transform = prependWithFn(prependFn)
       expect(transform('data')).to.eql('1data')
       expect(transform('data')).to.eql('2data')
-    })
-  })
-
-  describe('getCurrentTimeISOFormat', () => {
-    const current = getCurrentTimeISOFormat()
-    it('returns a string representing current time', () => {
-      expect(Date.parse(current)).to.not.be.NaN
-      expect(Date.parse(current)).to.be.string
-    })
-  })
-
-  describe('toISOString', () => {
-    const datetime = new Date(Date.parse('04 Dec 1995 00:12:00 GMT'))
-    it('returns ISO formatted string from datetime number', () => {
-      expect(toISOString(datetime)).to.eql('1995-12-04T00:12:00.000Z')
     })
   })
 })

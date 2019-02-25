@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 The "mysteriumnetwork/mysterium-vpn" Authors.
+ * Copyright (C) 2017 The "mysteriumnetwork/mysterium-vpn" Authors.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,32 +15,34 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-.close-button {
-  height: 2.4rem;
-  width: 3.5rem;
-  position: relative;
-  cursor: pointer;
-  &--right {
-    float: right;
+@greyBright: @greyLighter;
+
+@border: @g8;
+
+@headerTextColor: @g6;
+
+.connection-history {
+  table, th, td {
+    border-collapse: collapse;
+    border-spacing: 1px;
+    border: solid 1px @border;
   }
-  &--marginned {
-    position: fixed;
-    top: 1.5rem;
-    right: 1.5rem;
+
+  table {
+    margin-top: 20px;
+    margin-left: auto;
+    margin-right: auto;
   }
-  &__bar {
-    background-color: @g8;
-    display: block;
-    width: 3.5rem;
-    height: 0.5rem;
-    position: absolute;
-    top: 0.9rem;
-    left: 0;
-    &--first-bar {
-      transform: translate3d(0, 0, 0) rotate(45deg) scale(.6);
-    }
-    &--second-bar {
-      transform: translate3d(0, 0, 0) rotate(-45deg) scale(.6);
-    }
+
+  th {
+    background-color: @greyBright;
+    color: @headerTextColor;
+    padding: 1em;
+  }
+
+  td {
+    text-align: center;
+    vertical-align: middle;
+    padding: 0.5em;
   }
 }

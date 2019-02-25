@@ -24,49 +24,36 @@
     </div>
     <div class="stats__block">
       <div class="stats__label">RECEIVED</div>
-      <div class="stats__value">{{ received.value }}</div>
+      <div class="stats__value">{{ received.amount }}</div>
       <div class="stats__unit">{{ received.units }}</div>
     </div>
     <div class="stats__block">
       <div class="stats__label">SENT</div>
-      <div class="stats__value">{{ sent.value }}</div>
+      <div class="stats__value">{{ sent.amount }}</div>
       <div class="stats__unit">{{ sent.units }}</div>
     </div>
   </div>
 </template>
 
 <script>
-import { bytesReadable, timeDisplay } from '../../libraries/unit-converter'
-
 export default {
   name: 'StatsDisplay',
   props: {
     connection: {
       type: Object,
-      default () { return { stats: {} } }
+      default () { return { statistics: {} } }
     }
   },
+  dependencies: ['durationFormatter', 'bytesFormatter'],
   computed: {
     duration () {
-      try {
-        return timeDisplay(this.connection.statistics.duration)
-      } catch (err) {
-        return '--:--:--'
-      }
+      return this.durationFormatter.formatOrDefault(this.connection.statistics.duration)
     },
-    received (vm) {
-      try {
-        return bytesReadable(vm.connection.statistics.bytesReceived)
-      } catch (err) {
-        return { value: '-', units: 'KB' }
-      }
+    received () {
+      return this.bytesFormatter.formatOrDefault(this.connection.statistics.bytesReceived)
     },
-    sent (vm) {
-      try {
-        return bytesReadable(vm.connection.statistics.bytesSent)
-      } catch (err) {
-        return { value: '-', units: 'KB' }
-      }
+    sent () {
+      return this.bytesFormatter.formatOrDefault(this.connection.statistics.bytesSent)
     }
   }
 }

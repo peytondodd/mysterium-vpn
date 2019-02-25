@@ -36,6 +36,7 @@ import ServiceManager, { SERVICE_STATE }
   from '../../../../../src/libraries/mysterium-client/service-manager/service-manager'
 import { MockStatusNotifier } from '../../../../helpers/mysterium-client/monitoring-mock'
 import Monitoring from '../../../../../src/libraries/mysterium-client/monitoring/monitoring'
+import { TimeFormatter } from '../../../../../src/libraries/formatters/time-formatter'
 
 const SERVICE_MANAGER_PATH = '/service-manager/bin/servicemanager.exe'
 
@@ -90,7 +91,10 @@ class TequilapiMock extends EmptyTequilapiClientMock {
 class ClientLogPublisherMock extends ClientLogPublisher {
   constructor () {
     const bugReporter = new BugReporterMock()
-    super(bugReporter, '', '', '', () => new Date(), (filePath: string, logCallback: LogCallback) => {})
+    const dateFunction = () => new Date()
+    const timeFormatter = new TimeFormatter(0)
+    const tailFunction = (filePath: string, logCallback: LogCallback) => {}
+    super(bugReporter, '', '', '', dateFunction, timeFormatter, tailFunction)
   }
 
   async setup (): Promise<void> {}

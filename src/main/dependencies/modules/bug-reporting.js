@@ -27,6 +27,7 @@ import LogCache from '../../../app/logging/log-cache'
 import LogCacheBundle from '../../../app/logging/log-cache-bundle'
 import type { BugReporterMetrics } from '../../../app/bug-reporting/metrics/bug-reporter-metrics'
 import BugReporterMetricsStore from '../../../app/bug-reporting/metrics/bug-reporter-metrics-store'
+import { TimeFormatter } from '../../../libraries/formatters/time-formatter'
 
 function bootstrap (container: Container) {
   container.factory(
@@ -54,8 +55,8 @@ function bootstrap (container: Container) {
 
   container.factory(
     'bugReporterMetrics',
-    [],
-    (): BugReporterMetrics => new BugReporterMetricsStore()
+    ['timeFormatter'],
+    (timeFormatter: TimeFormatter): BugReporterMetrics => new BugReporterMetricsStore(timeFormatter)
   )
 
   container.factory(

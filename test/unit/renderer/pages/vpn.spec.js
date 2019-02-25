@@ -35,6 +35,8 @@ import mainStoreFactory from '../../../../src/renderer/store/modules/main'
 import EmptyTequilapiClientMock from '../store/modules/empty-tequilapi-client-mock'
 import CountryImageResolver from '../../../../src/app/countries/unknown-country-reporter'
 import FeatureToggle from '../../../../src/app/features/feature-toggle'
+import { DurationFormatter } from '../../../../src/libraries/formatters/duration-formatter'
+import { BytesFormatter } from '../../../../src/libraries/formatters/bytes-formatter'
 
 describe('Vpn', () => {
   let vpnWrapper
@@ -55,6 +57,8 @@ describe('Vpn', () => {
     dependencies.constant('countryImageResolver', new CountryImageResolver(bugReporterMock))
     dependencies.constant('featureToggle', new FeatureToggle({ payments: paymentsEnabled }))
     dependencies.constant('getPaymentLink', () => {})
+    dependencies.constant('durationFormatter', new DurationFormatter())
+    dependencies.constant('bytesFormatter', new BytesFormatter())
 
     const store = new Store({
       getters: {

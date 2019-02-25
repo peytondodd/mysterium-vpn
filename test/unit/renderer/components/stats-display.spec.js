@@ -15,18 +15,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import Vue from 'vue'
 import StatsDisplay from '../../../../src/renderer/components/stats-display'
+import { createLocalVue, mount } from '@vue/test-utils'
+import DIContainer from '../../../../src/app/di/vue-container'
+import { DurationFormatter } from '../../../../src/libraries/formatters/duration-formatter'
+import { BytesFormatter } from '../../../../src/libraries/formatters/bytes-formatter'
 
-const mount = function (connection) {
-  // TODO Migrate to createLocalVue() from package '@vue/test-utils'
-  const vm = new Vue({
-    template: '<div><stats-display :connection="connection"/></div>',
-    components: { 'stats-display': StatsDisplay },
-    data: { connection: connection }
+const mountStatsDisplay = function (connection) {
+  const localVue = createLocalVue()
+
+  const dependencies = new DIContainer(localVue)
+  dependencies.constant('durationFormatter', new DurationFormatter())
+  dependencies.constant('bytesFormatter', new BytesFormatter())
+
+  return mount(StatsDisplay, {
+    localVue,
+    propsData: { connection }
   })
-
-  return vm.$mount()
 }
 
 describe('StatsDisplay', () => {
@@ -35,7 +40,8 @@ describe('StatsDisplay', () => {
   }
 
   it('renders and displays statistics', () => {
-    const vm = mount(initialConnectionState)
+    const wrapper = mountStatsDisplay(initialConnectionState)
+    const vm = wrapper.vm
     const els = vm.$el.querySelectorAll('.stats__value')
     expect(els[0].textContent).to.eql('--:--:--')
     expect(els[1].textContent).to.eql('-')
@@ -43,13 +49,14 @@ describe('StatsDisplay', () => {
   })
 
   it('displays statistics formatting', () => {
-    const vm = mount({
+    const wrapper = mountStatsDisplay({
       statistics: {
         duration: 13325,
         bytesReceived: 1232133, // 1.17505 MB
         bytesSent: 123321 // 0.117608 MB
       }
     })
+    const vm = wrapper.vm
     const els = vm.$el.querySelectorAll('.stats__value')
     expect(els[0].textContent).to.eql('03:42:05')
     expect(els[1].textContent).to.eql('1.18')

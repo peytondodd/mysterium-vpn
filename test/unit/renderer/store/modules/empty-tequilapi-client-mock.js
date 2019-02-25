@@ -27,6 +27,7 @@ import type { ConsumerLocationDTO } from 'mysterium-tequilapi/lib/dto/consumer-l
 import type { NodeHealthcheckDTO } from 'mysterium-tequilapi/lib/dto/node-healthcheck'
 import type { IdentityRegistrationDTO } from 'mysterium-tequilapi/lib/dto/identity-registration/identity-registration'
 import { ConnectionStatus } from 'mysterium-tequilapi/lib/dto/connection-status'
+import { SessionDTO } from 'mysterium-tequilapi/lib/dto/session'
 
 class EmptyTequilapiClientMock implements TequilapiClient {
   async healthCheck (_timeout: ?number): Promise<NodeHealthcheckDTO> {
@@ -89,6 +90,10 @@ class EmptyTequilapiClientMock implements TequilapiClient {
 
   async location (): Promise<ConsumerLocationDTO> {
     return {}
+  }
+
+  async sessionsList (): Promise<SessionDTO[]> {
+    return []
   }
 }
 

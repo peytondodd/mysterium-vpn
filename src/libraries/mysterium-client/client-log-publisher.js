@@ -23,7 +23,8 @@ import logLevels from './log-levels'
 import type { LogCallback } from './index'
 import createFileIfMissing from '../create-file-if-missing'
 import { INVERSE_DOMAIN_PACKAGE_NAME } from './launch-daemon/config'
-import { toISOString, prependWithFn } from '../strings'
+import { prependWithFn } from '../strings'
+import { TimeFormatter } from '../formatters/time-formatter'
 
 type Publishers = {
   [logLevels.INFO | logLevels.ERROR]: Publisher<string>,
@@ -41,6 +42,7 @@ class ClientLogPublisher {
   _stderrPath: string
   _systemFilePath: ?string
   _dateFunction: DateFunction
+  _timeFormatter: TimeFormatter
   _tailFunction: TailFunction
 
   constructor (
@@ -49,6 +51,7 @@ class ClientLogPublisher {
     stderrPath: string,
     systemFilePath: ?string,
     dateFunction: DateFunction,
+    timeFormatter: TimeFormatter,
     tailFunction: TailFunction
   ) {
     this._bugReporter = bugReporter
@@ -56,6 +59,7 @@ class ClientLogPublisher {
     this._stderrPath = stderrPath
     this._systemFilePath = systemFilePath
     this._dateFunction = dateFunction
+    this._timeFormatter = timeFormatter
     this._tailFunction = tailFunction
 
     this._publishers = {
@@ -89,7 +93,7 @@ class ClientLogPublisher {
   }
 
   _tailErrorFile () {
-    const prependWithCurrentTime = prependWithFn(() => toISOString(this._dateFunction()))
+    const prependWithCurrentTime = prependWithFn(() => this._timeFormatter.formatISODateTime(this._dateFunction()))
 
     this._tailFile(this._stderrPath, (data) => {
       this._notifyOnErrorSubscribers(prependWithCurrentTime(prependWithSpace(data)))
