@@ -19,12 +19,14 @@ import StatsDisplay from '../../../../src/renderer/components/stats-display'
 import { createLocalVue, mount } from '@vue/test-utils'
 import DIContainer from '../../../../src/app/di/vue-container'
 import { DurationFormatter } from '../../../../src/libraries/formatters/duration-formatter'
+import { BytesFormatter } from '../../../../src/libraries/formatters/bytes-formatter'
 
 const mountStatsDisplay = function (connection) {
   const localVue = createLocalVue()
 
   const dependencies = new DIContainer(localVue)
   dependencies.constant('durationFormatter', new DurationFormatter())
+  dependencies.constant('bytesFormatter', new BytesFormatter())
 
   return mount(StatsDisplay, {
     localVue,

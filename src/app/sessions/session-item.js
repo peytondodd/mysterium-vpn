@@ -17,7 +17,7 @@
 
 // @flow
 
-import type { BytesReadable } from '../../libraries/unit-converter'
+import type { BytesReadable } from '../../libraries/formatters/bytes-formatter'
 
 export type SessionItem = {
   id: string,

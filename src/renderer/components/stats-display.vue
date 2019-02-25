@@ -36,8 +36,6 @@
 </template>
 
 <script>
-import { formatBytesReadableOrDefault } from '../../libraries/unit-converter'
-
 export default {
   name: 'StatsDisplay',
   props: {
@@ -46,13 +44,17 @@ export default {
       default () { return { statistics: {} } }
     }
   },
-  dependencies: ['durationFormatter'],
+  dependencies: ['durationFormatter', 'bytesFormatter'],
   computed: {
     duration () {
       return this.durationFormatter.formatTimeDisplayOrDefault(this.connection.statistics.duration)
     },
-    received: vm => formatBytesReadableOrDefault(vm.connection.statistics.bytesReceived),
-    sent: vm => formatBytesReadableOrDefault(vm.connection.statistics.bytesSent)
+    received () {
+      return this.bytesFormatter.formatBytesReadableOrDefault(this.connection.statistics.bytesReceived)
+    },
+    sent () {
+      return this.bytesFormatter.formatBytesReadableOrDefault(this.connection.statistics.bytesSent)
+    }
   }
 }
 </script>

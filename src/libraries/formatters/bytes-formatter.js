@@ -19,41 +19,36 @@
 
 import size from 'file-size'
 
-type BytesReadable = {
+export type BytesReadable = {
   amount: string,
   units: string
 }
 
-/**
- * @function
- * @param {number} bytes
- * @returns {{amount:number,units:string}} result - holds amount and units
- * @throws if argument is null
- */
-
-function formatBytesReadable (bytes: number): BytesReadable {
-  if (typeof bytes !== 'number') {
-    throw new Error('provide valid input for conversion')
+export class BytesFormatter {
+  /**
+   * @function
+   * @param {number} bytes
+   * @returns {{amount:number,units:string}} result - holds amount and units
+   * @throws if argument is null
+   */
+  formatBytesReadable (bytes: number): BytesReadable {
+    if (typeof bytes !== 'number') {
+      throw new Error('provide valid input for conversion')
+    }
+    const calculated = size(bytes).calculate('jedec')
+    return {
+      amount: calculated.fixed,
+      units: calculated.suffix.replace('i', '')
+    }
   }
-  const calculated = size(bytes).calculate('jedec')
-  return {
-    amount: calculated.fixed,
-    units: calculated.suffix.replace('i', '')
+
+  formatBytesReadableOrDefault (bytes: number): BytesReadable {
+    try {
+      return this.formatBytesReadable(bytes)
+    } catch (err) {
+      return bytesReadableDefault
+    }
   }
 }
 
 const bytesReadableDefault: BytesReadable = { amount: '-', units: 'KB' }
-
-function formatBytesReadableOrDefault (bytes: number): BytesReadable {
-  try {
-    return formatBytesReadable(bytes)
-  } catch (err) {
-    return bytesReadableDefault
-  }
-}
-
-export {
-  formatBytesReadableOrDefault,
-  formatBytesReadable
-}
-export type { BytesReadable }

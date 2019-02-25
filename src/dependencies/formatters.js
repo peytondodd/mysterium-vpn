@@ -20,6 +20,7 @@
 import type { Container } from '../app/di'
 import { TimeFormatter } from '../libraries/formatters/time-formatter'
 import { DurationFormatter } from '../libraries/formatters/duration-formatter'
+import { BytesFormatter } from '../libraries/formatters/bytes-formatter'
 
 function bootstrap (container: Container) {
   container.service(
@@ -36,6 +37,14 @@ function bootstrap (container: Container) {
     [],
     () => {
       return new DurationFormatter()
+    }
+  )
+
+  container.service(
+    'bytesFormatter',
+    [],
+    () => {
+      return new BytesFormatter()
     }
   )
 }

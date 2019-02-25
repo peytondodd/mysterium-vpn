@@ -23,6 +23,7 @@ import EmptyTequilapiClientMock from '../../renderer/store/modules/empty-tequila
 import { SessionDTO } from 'mysterium-tequilapi/lib/dto/session'
 import { TimeFormatter } from '../../../../src/libraries/formatters/time-formatter'
 import { DurationFormatter } from '../../../../src/libraries/formatters/duration-formatter'
+import { BytesFormatter } from '../../../../src/libraries/formatters/bytes-formatter'
 
 class SessionListTequilapiClientMock extends EmptyTequilapiClientMock {
   mockSessions: SessionDTO[] = []
@@ -40,7 +41,8 @@ describe('SessionItemList', () => {
     client = new SessionListTequilapiClientMock()
     const timeFormatter = new TimeFormatter(0)
     const durationFormatter = new DurationFormatter()
-    list = new SessionItemList(client, timeFormatter, durationFormatter)
+    const bytesFormatter = new BytesFormatter()
+    list = new SessionItemList(client, timeFormatter, durationFormatter, bytesFormatter)
   })
 
   describe('.getItems', () => {

@@ -48,14 +48,15 @@ import { SessionItemList } from '../../app/sessions/session-item-list'
 export default {
   name: 'ConnectionHistory',
   components: { CloseButton, SessionItem },
-  dependencies: ['tequilapiClient', 'timeFormatter', 'durationFormatter'],
+  dependencies: ['tequilapiClient', 'timeFormatter', 'durationFormatter', 'bytesFormatter'],
   data: function () {
     return {
       sessionItems: []
     }
   },
   created: function () {
-    const list = new SessionItemList(this.tequilapiClient, this.timeFormatter, this.durationFormatter)
+    const list =
+      new SessionItemList(this.tequilapiClient, this.timeFormatter, this.durationFormatter, this.bytesFormatter)
     list.fetchItems().then(items => {
       this.sessionItems = items
     }).catch(error => {
