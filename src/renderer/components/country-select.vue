@@ -22,7 +22,7 @@
       :max-height="120"
       v-model="country"
       track-by="id"
-      :custom-label="selectedCountryLabel"
+      :custom-label="countryLabel"
       placeholder="Choose country"
       :options="filteredCountries"
       :loading="countriesAreLoading"
@@ -102,19 +102,12 @@ export default {
     onChange (country) {
       this.$emit('selected', country)
     },
-    selectedCountryLabel (country) {
-      if (typeof country !== 'object') {
-        return
-      }
-
-      return getCountryLabel(country, 10)
-    },
     countryLabel (country) {
       if (typeof country !== 'object') {
         return
       }
 
-      return getCountryLabel(country)
+      return getCountryLabel(country, 10)
     },
     onConnectionRequest (proposal) {
       const selectedCountry = this.countryList.find((country) => country.id === proposal.providerId)
