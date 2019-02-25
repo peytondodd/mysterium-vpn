@@ -27,35 +27,35 @@ describe('TimeFormatter', () => {
     formatter = new TimeFormatter(-120)
   })
 
-  describe('.getCurrentTimeISOFormat', () => {
+  describe('.getCurrentgetCurrentISODateTimegetCurrentISODateTimeDateTime', () => {
     it('returns a string representing current time', () => {
-      const current = formatter.getCurrentTimeISOFormat()
+      const current = formatter.getCurrentISODateTime()
 
       expect(Date.parse(current)).to.not.be.NaN
       expect(Date.parse(current)).to.be.string
     })
   })
 
-  describe('.toISOString', () => {
+  describe('.formatISODateTime', () => {
     const datetime = new Date(Date.parse('04 Dec 1995 00:12:00 GMT'))
 
     it('returns ISO formatted string from datetime number', () => {
-      expect(formatter.toISOString(datetime)).to.eql('1995-12-04T00:12:00.000Z')
+      expect(formatter.formatISODateTime(datetime)).to.eql('1995-12-04T00:12:00.000Z')
     })
   })
 
-  describe('.getReadableTime', () => {
+  describe('.formatTime', () => {
     it('returns readable time', () => {
       // -120
       const date = new Date(Date.UTC(2018, 8, 24, 14, 3, 55))
-      expect(formatter.getReadableTime(date)).to.eql('16:03:55')
+      expect(formatter.formatTime(date)).to.eql('16:03:55')
     })
   })
 
-  describe('.getReadableDate', () => {
+  describe('.formatDate', () => {
     it('returns readable date', () => {
       const date = new Date(2018, 8, 24, 14, 3, 55)
-      expect(formatter.getReadableDate(date)).to.eql('24/09/2018')
+      expect(formatter.formatDate(date)).to.eql('24/09/2018')
     })
   })
 })

@@ -93,7 +93,7 @@ class ClientLogPublisher {
   }
 
   _tailErrorFile () {
-    const prependWithCurrentTime = prependWithFn(() => this._timeFormatter.toISOString(this._dateFunction()))
+    const prependWithCurrentTime = prependWithFn(() => this._timeFormatter.formatISODateTime(this._dateFunction()))
 
     this._tailFile(this._stderrPath, (data) => {
       this._notifyOnErrorSubscribers(prependWithCurrentTime(prependWithSpace(data)))

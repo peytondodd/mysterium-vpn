@@ -23,26 +23,26 @@ import { DurationFormatter } from '../../../../src/libraries/formatters/duration
 describe('DurationFormatter', () => {
   const formatter = new DurationFormatter()
 
-  describe('.formatTimeDisplay', () => {
+  describe('.format', () => {
     it('converts time correnctly', () => {
-      expect(formatter.formatTimeDisplay(60 * 60 + 60 + 1)).to.be.eql('01:01:01')
-      expect(formatter.formatTimeDisplay(60 * 60 * 24 * 5)).to.be.eql('120:00:00')
+      expect(formatter.format(60 * 60 + 60 + 1)).to.be.eql('01:01:01')
+      expect(formatter.format(60 * 60 * 24 * 5)).to.be.eql('120:00:00')
     })
     it('throws invalid parameter types', () => {
-      expect(() => formatter.formatTimeDisplay((null: any))).to.throw('invalid input')
-      expect(() => formatter.formatTimeDisplay((undefined: any))).to.throw('invalid input')
-      expect(() => formatter.formatTimeDisplay(('some string': any))).to.throw('invalid input')
-      expect(() => formatter.formatTimeDisplay(-10)).to.throw('invalid input')
+      expect(() => formatter.format((null: any))).to.throw('invalid input')
+      expect(() => formatter.format((undefined: any))).to.throw('invalid input')
+      expect(() => formatter.format(('some string': any))).to.throw('invalid input')
+      expect(() => formatter.format(-10)).to.throw('invalid input')
     })
   })
 
-  describe('.formatTimeDisplayOrDefault', () => {
+  describe('.formatOrDefault', () => {
     it('returns display value', () => {
-      expect(formatter.formatTimeDisplayOrDefault(60 * 60 + 60 + 1)).to.be.eql('01:01:01')
+      expect(formatter.formatOrDefault(60 * 60 + 60 + 1)).to.be.eql('01:01:01')
     })
 
     it('returns default value when parsing fails', () => {
-      expect(formatter.formatTimeDisplayOrDefault(('a': any))).to.eql('--:--:--')
+      expect(formatter.formatOrDefault(('a': any))).to.eql('--:--:--')
     })
   })
 })

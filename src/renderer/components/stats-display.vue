@@ -47,13 +47,13 @@ export default {
   dependencies: ['durationFormatter', 'bytesFormatter'],
   computed: {
     duration () {
-      return this.durationFormatter.formatTimeDisplayOrDefault(this.connection.statistics.duration)
+      return this.durationFormatter.formatOrDefault(this.connection.statistics.duration)
     },
     received () {
-      return this.bytesFormatter.formatBytesReadableOrDefault(this.connection.statistics.bytesReceived)
+      return this.bytesFormatter.formatOrDefault(this.connection.statistics.bytesReceived)
     },
     sent () {
-      return this.bytesFormatter.formatBytesReadableOrDefault(this.connection.statistics.bytesSent)
+      return this.bytesFormatter.formatOrDefault(this.connection.statistics.bytesSent)
     }
   }
 }

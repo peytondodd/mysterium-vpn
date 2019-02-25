@@ -31,7 +31,7 @@ export class BytesFormatter {
    * @returns {{amount:number,units:string}} result - holds amount and units
    * @throws if argument is null
    */
-  formatBytesReadable (bytes: number): BytesReadable {
+  format (bytes: number): BytesReadable {
     if (typeof bytes !== 'number') {
       throw new Error('provide valid input for conversion')
     }
@@ -42,9 +42,9 @@ export class BytesFormatter {
     }
   }
 
-  formatBytesReadableOrDefault (bytes: number): BytesReadable {
+  formatOrDefault (bytes: number): BytesReadable {
     try {
-      return this.formatBytesReadable(bytes)
+      return this.format(bytes)
     } catch (err) {
       return bytesReadableDefault
     }

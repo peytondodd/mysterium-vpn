@@ -24,21 +24,21 @@ class TimeFormatter {
     this._minutesOffset = minutesOffset
   }
 
-  getReadableTime (date: Date): string {
+  formatDate (date: Date): string {
+    return date.toLocaleDateString(FORMAT_LOCALE)
+  }
+
+  formatTime (date: Date): string {
     const newDate = this._getDateWithOffset(date)
     return newDate.toLocaleTimeString(FORMAT_LOCALE, { timeZone: 'UTC' })
   }
 
-  getCurrentTimeISOFormat (): string {
-    return this.toISOString(new Date())
-  }
-
-  toISOString (date: Date): string {
+  formatISODateTime (date: Date): string {
     return date.toISOString()
   }
 
-  getReadableDate (date: Date): string {
-    return date.toLocaleDateString(FORMAT_LOCALE)
+  getCurrentISODateTime (): string {
+    return this.formatISODateTime(new Date())
   }
 
   _getDateWithOffset (date: Date): Date {

@@ -43,7 +43,7 @@ class BugReporterMetricsStore implements BugReporterMetrics {
   }
 
   setWithCurrentDateTime (metric: Metric) {
-    this.set(metric, this._timeFormatter.getCurrentTimeISOFormat())
+    this.set(metric, this._timeFormatter.getCurrentISODateTime())
   }
 
   getMetrics (): RavenData {

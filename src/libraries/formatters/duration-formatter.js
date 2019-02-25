@@ -24,7 +24,7 @@ export class DurationFormatter {
    * @returns {string} readable in --:--:-- format
    * @throws {Error} if argument is null
    */
-  formatTimeDisplay (seconds: number): string {
+  format (seconds: number): string {
     if (typeof seconds !== 'number' || seconds < 0) {
       throw new Error('invalid input')
     }
@@ -37,9 +37,9 @@ export class DurationFormatter {
     return `${h}:${m}:${s}`
   }
 
-  formatTimeDisplayOrDefault (seconds: number): string {
+  formatOrDefault (seconds: number): string {
     try {
-      return this.formatTimeDisplay(seconds)
+      return this.format(seconds)
     } catch (err) {
       return timeDisplayDefault
     }

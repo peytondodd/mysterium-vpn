@@ -20,68 +20,68 @@ import { BytesFormatter } from '../../../../src/libraries/formatters/bytes-forma
 describe('BytesFormatter', () => {
   const formatter = new BytesFormatter()
 
-  describe('.formatBytesReadable', () => {
+  describe('.format', () => {
     it('returns object with value (fixed 2 decimals) and units ', () => {
       const val = 123
-      const result = formatter.formatBytesReadable(val)
+      const result = formatter.format(val)
       expect(result.units).to.eql('Bytes')
       expect(result.amount).to.eql('123.00')
     })
 
     it('calculates one Byte correctly', () => {
       const val = 1
-      const result = formatter.formatBytesReadable(val)
+      const result = formatter.format(val)
       expect(result.units).to.eql('Byte')
       expect(result.amount).to.eql('1.00')
     })
 
     it('calculates one KB correctly', () => {
       const val = 1024
-      const result = formatter.formatBytesReadable(val)
+      const result = formatter.format(val)
       expect(result.units).to.eql('KB')
       expect(result.amount).to.eql('1.00')
     })
 
     it('calculates one MB correctly', () => {
       const val = 1024 * 1024
-      const result = formatter.formatBytesReadable(val)
+      const result = formatter.format(val)
       expect(result.units).to.eql('MB')
       expect(result.amount).to.eql('1.00')
     })
 
     it('calculates one GB correctly', () => {
       const val = 1024 * 1024 * 1024
-      const result = formatter.formatBytesReadable(val)
+      const result = formatter.format(val)
       expect(result.units).to.eql('GB')
       expect(result.amount).to.eql('1.00')
     })
 
     it('calculates one TB correctly', () => {
       const val = 1024 * 1024 * 1024 * 1024
-      const result = formatter.formatBytesReadable(val)
+      const result = formatter.format(val)
       expect(result.units).to.eql('TB')
       expect(result.amount).to.eql('1.00')
     })
 
     it('returns 0', () => {
-      expect(formatter.formatBytesReadable(0).amount).to.eql('0.00')
+      expect(formatter.format(0).amount).to.eql('0.00')
     })
     it('throws', () => {
-      expect(() => formatter.formatBytesReadable()).to.throw('provide valid input for conversion')
-      expect(() => formatter.formatBytesReadable('str')).to.throw('provide valid input for conversion')
+      expect(() => formatter.format()).to.throw('provide valid input for conversion')
+      expect(() => formatter.format('str')).to.throw('provide valid input for conversion')
     })
   })
 
-  describe('.formatBytesReadableOrDefault', () => {
+  describe('.formatOrDefault', () => {
     it('returns readable value', () => {
-      expect(formatter.formatBytesReadableOrDefault(10000)).to.eql({
+      expect(formatter.formatOrDefault(10000)).to.eql({
         amount: '9.77',
         units: 'KB'
       })
     })
 
     it('returns default value when parsing fails', () => {
-      expect(formatter.formatBytesReadableOrDefault('a')).to.eql({
+      expect(formatter.formatOrDefault('a')).to.eql({
         amount: '-',
         units: 'KB'
       })

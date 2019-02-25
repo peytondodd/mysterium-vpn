@@ -85,11 +85,11 @@ export class SessionItemList {
       id: session.sessionId,
       countryCode: session.providerCountry,
       identity: session.providerId,
-      startDate: date != null ? this._timeFormatter.getReadableDate(date) : null,
-      startTime: date != null ? this._timeFormatter.getReadableTime(date) : null,
-      sent: this._bytesFormatter.formatBytesReadableOrDefault(session.bytesSent),
-      received: this._bytesFormatter.formatBytesReadableOrDefault(session.bytesReceived),
-      duration: this._durationFormatter.formatTimeDisplayOrDefault(session.duration)
+      startDate: date != null ? this._timeFormatter.formatDate(date) : null,
+      startTime: date != null ? this._timeFormatter.formatTime(date) : null,
+      sent: this._bytesFormatter.formatOrDefault(session.bytesSent),
+      received: this._bytesFormatter.formatOrDefault(session.bytesReceived),
+      duration: this._durationFormatter.formatOrDefault(session.duration)
     }
   }
 }
