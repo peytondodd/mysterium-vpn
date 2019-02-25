@@ -19,6 +19,7 @@
 
 import type { Container } from '../app/di'
 import { TimeFormatter } from '../libraries/time-formatter'
+import { DurationFormatter } from '../libraries/duration-formatter'
 
 function bootstrap (container: Container) {
   container.service(
@@ -27,6 +28,14 @@ function bootstrap (container: Container) {
     () => {
       const offset = new Date().getTimezoneOffset()
       return new TimeFormatter(offset)
+    }
+  )
+
+  container.service(
+    'durationFormatter',
+    [],
+    () => {
+      return new DurationFormatter()
     }
   )
 }

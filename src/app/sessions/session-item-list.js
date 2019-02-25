@@ -21,15 +21,21 @@ import { TequilapiClient } from 'mysterium-tequilapi/lib/client'
 import { TimeFormatter } from '../../libraries/time-formatter'
 import { SessionDTO } from 'mysterium-tequilapi/lib/dto/session'
 import type { SessionItem } from './session-item'
-import { formatBytesReadableOrDefault, formatTimeDisplayOrDefault } from '../../libraries/unit-converter'
+import { formatBytesReadableOrDefault } from '../../libraries/unit-converter'
+import { DurationFormatter } from '../../libraries/duration-formatter'
 
 export class SessionItemList {
   _client: TequilapiClient
   _timeFormatter: TimeFormatter
+  _durationFormatter: DurationFormatter
 
-  constructor (client: TequilapiClient, timeFormatter: TimeFormatter) {
+  constructor (
+    client: TequilapiClient,
+    timeFormatter: TimeFormatter,
+    durationFormatter: DurationFormatter) {
     this._client = client
     this._timeFormatter = timeFormatter
+    this._durationFormatter = durationFormatter
   }
 
   async fetchItems (): Promise<SessionItem[]> {
@@ -80,7 +86,7 @@ export class SessionItemList {
       startTime: date != null ? this._timeFormatter.getReadableTime(date) : null,
       sent: formatBytesReadableOrDefault(session.bytesSent),
       received: formatBytesReadableOrDefault(session.bytesReceived),
-      duration: formatTimeDisplayOrDefault(session.duration)
+      duration: this._durationFormatter.formatTimeDisplayOrDefault(session.duration)
     }
   }
 }

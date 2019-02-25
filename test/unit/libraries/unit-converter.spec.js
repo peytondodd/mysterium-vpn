@@ -17,9 +17,7 @@
 
 import {
   formatBytesReadable,
-  formatBytesReadableOrDefault,
-  formatTimeDisplay,
-  formatTimeDisplayOrDefault
+  formatBytesReadableOrDefault
 } from '../../../src/libraries/unit-converter'
 
 describe('unit-converter', () => {
@@ -88,29 +86,6 @@ describe('unit-converter', () => {
         amount: '-',
         units: 'KB'
       })
-    })
-  })
-
-  describe('.formatTimeDisplay', () => {
-    it('converts time correnctly', () => {
-      expect(formatTimeDisplay(60 * 60 + 60 + 1)).to.be.eql('01:01:01')
-      expect(formatTimeDisplay(60 * 60 * 24 * 5)).to.be.eql('120:00:00')
-    })
-    it('throws invalid parameter types', () => {
-      expect(() => formatTimeDisplay(null)).to.throw('invalid input')
-      expect(() => formatTimeDisplay(undefined)).to.throw('invalid input')
-      expect(() => formatTimeDisplay('some string')).to.throw('invalid input')
-      expect(() => formatTimeDisplay(-10)).to.throw('invalid input')
-    })
-  })
-
-  describe('.formatTimeDisplayOrDefault', () => {
-    it('returns display value', () => {
-      expect(formatTimeDisplayOrDefault(60 * 60 + 60 + 1)).to.be.eql('01:01:01')
-    })
-
-    it('returns default value when parsing fails', () => {
-      expect(formatTimeDisplayOrDefault('a')).to.eql('--:--:--')
     })
   })
 })

@@ -23,6 +23,7 @@ import DIContainer from '../../../../src/app/di/vue-container'
 import VueRouter from 'vue-router'
 import { SessionDTO } from 'mysterium-tequilapi/lib/dto/session'
 import { TimeFormatter } from '../../../../src/libraries/time-formatter'
+import { DurationFormatter } from '../../../../src/libraries/duration-formatter'
 
 describe('ConnectionHistory', () => {
   let wrapper
@@ -58,6 +59,7 @@ describe('ConnectionHistory', () => {
       }
     })
     dependencies.constant('timeFormatter', new TimeFormatter(0))
+    dependencies.constant('durationFormatter', new DurationFormatter())
     const router = new VueRouter()
     return mount(ConnectionHistory, { localVue, router })
   }

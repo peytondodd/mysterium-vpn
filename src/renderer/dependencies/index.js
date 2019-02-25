@@ -23,7 +23,7 @@ import featureToggleBootstrap from '../../dependencies/feature-toggle'
 import bugReportingBootstrap from './modules/bug-reporting'
 import eventsBootstrap from '../../dependencies/statistics'
 import paymentsBootstrap from '../../dependencies/payments'
-import timeBootstrap from '../../dependencies/time'
+import formattersBootstrap from '../../dependencies/formatters'
 import vueBootstrap from './modules/vue'
 import applicationBootstrap from './modules/application'
 import userSettingsBootstrap from './modules/user-settings'
@@ -40,7 +40,7 @@ function bootstrap (): DIContainer {
   bugReportingBootstrap(container)
   eventsBootstrap(container)
   paymentsBootstrap(container)
-  timeBootstrap(container)
+  formattersBootstrap(container)
   vueBootstrap(container)
   userSettingsBootstrap(container)
   applicationBootstrap(container)

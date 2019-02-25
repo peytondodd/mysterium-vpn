@@ -22,6 +22,7 @@ import { SessionItemList } from '../../../../src/app/sessions/session-item-list'
 import EmptyTequilapiClientMock from '../../renderer/store/modules/empty-tequilapi-client-mock'
 import { SessionDTO } from 'mysterium-tequilapi/lib/dto/session'
 import { TimeFormatter } from '../../../../src/libraries/time-formatter'
+import { DurationFormatter } from '../../../../src/libraries/duration-formatter'
 
 class SessionListTequilapiClientMock extends EmptyTequilapiClientMock {
   mockSessions: SessionDTO[] = []
@@ -38,7 +39,8 @@ describe('SessionItemList', () => {
   beforeEach(() => {
     client = new SessionListTequilapiClientMock()
     const timeFormatter = new TimeFormatter(0)
-    list = new SessionItemList(client, timeFormatter)
+    const durationFormatter = new DurationFormatter()
+    list = new SessionItemList(client, timeFormatter, durationFormatter)
   })
 
   describe('.getItems', () => {
