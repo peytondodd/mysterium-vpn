@@ -23,7 +23,7 @@ import RendererEnvironmentCollector
 import FakeSyncRendererCommunication from '../../../../helpers/communication/fake-sync-renderer-communication'
 import BugReporterMetricsStore from '../../../../../src/app/bug-reporting/metrics/bug-reporter-metrics-store'
 import type { BugReporterMetrics } from '../../../../../src/app/bug-reporting/metrics/bug-reporter-metrics'
-import { TimeFormatter } from '../../../../../src/libraries/time-formatter'
+import { TimeFormatter } from '../../../../../src/libraries/formatters/time-formatter'
 
 describe('RendererEnvironmentCollector', () => {
   const releaseID = 'id of release'

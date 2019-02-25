@@ -31,7 +31,7 @@ import type { SyncRendererCommunication } from '../../../app/communication/sync/
 import { createWinstonSyncComLogger } from '../../../app/logging/winston'
 import { BugReporterMetricsProxy } from '../../../app/bug-reporting/metrics/bug-reporter-metrics-proxy'
 import type { BugReporterMetrics } from '../../../app/bug-reporting/metrics/bug-reporter-metrics'
-import { TimeFormatter } from '../../../libraries/time-formatter'
+import { TimeFormatter } from '../../../libraries/formatters/time-formatter'
 
 function bootstrap (container: Container) {
   container.constant('bugReporter.sentryURL', 'https://f1e63dd563c34c35a56e98aa02518d40@sentry.io/300978')

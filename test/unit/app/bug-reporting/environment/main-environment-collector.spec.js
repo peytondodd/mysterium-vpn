@@ -24,7 +24,7 @@ import LogCacheBundle from '../../../../../src/app/logging/log-cache-bundle'
 import type { BugReporterMetrics } from '../../../../../src/app/bug-reporting/metrics/bug-reporter-metrics'
 import BugReporterMetricsStore from '../../../../../src/app/bug-reporting/metrics/bug-reporter-metrics-store'
 import { TAGS } from '../../../../../src/app/bug-reporting/metrics/metrics'
-import { TimeFormatter } from '../../../../../src/libraries/time-formatter'
+import { TimeFormatter } from '../../../../../src/libraries/formatters/time-formatter'
 
 describe('MainEnvironmentCollector', () => {
   const releaseID = 'id of release'

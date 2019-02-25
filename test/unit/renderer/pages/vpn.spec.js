@@ -35,7 +35,7 @@ import mainStoreFactory from '../../../../src/renderer/store/modules/main'
 import EmptyTequilapiClientMock from '../store/modules/empty-tequilapi-client-mock'
 import CountryImageResolver from '../../../../src/app/countries/unknown-country-reporter'
 import FeatureToggle from '../../../../src/app/features/feature-toggle'
-import { DurationFormatter } from '../../../../src/libraries/duration-formatter'
+import { DurationFormatter } from '../../../../src/libraries/formatters/duration-formatter'
 
 describe('Vpn', () => {
   let vpnWrapper

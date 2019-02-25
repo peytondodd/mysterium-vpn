@@ -18,11 +18,11 @@
 // @flow
 
 import { TequilapiClient } from 'mysterium-tequilapi/lib/client'
-import { TimeFormatter } from '../../libraries/time-formatter'
+import { TimeFormatter } from '../../libraries/formatters/time-formatter'
 import { SessionDTO } from 'mysterium-tequilapi/lib/dto/session'
 import type { SessionItem } from './session-item'
 import { formatBytesReadableOrDefault } from '../../libraries/unit-converter'
-import { DurationFormatter } from '../../libraries/duration-formatter'
+import { DurationFormatter } from '../../libraries/formatters/duration-formatter'
 
 export class SessionItemList {
   _client: TequilapiClient

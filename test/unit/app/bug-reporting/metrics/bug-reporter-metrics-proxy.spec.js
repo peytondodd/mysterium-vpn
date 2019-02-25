@@ -21,7 +21,7 @@ import { beforeEach, describe, expect, it } from '../../../../helpers/dependenci
 import { BugReporterMetricsProxy } from '../../../../../src/app/bug-reporting/metrics/bug-reporter-metrics-proxy'
 import METRICS from '../../../../../src/renderer/store/types'
 import FakeSyncRendererCommunication from '../../../../helpers/communication/fake-sync-renderer-communication'
-import { TimeFormatter } from '../../../../../src/libraries/time-formatter'
+import { TimeFormatter } from '../../../../../src/libraries/formatters/time-formatter'
 
 describe('BugReporterMetricsProxy', () => {
   let proxy: BugReporterMetricsProxy

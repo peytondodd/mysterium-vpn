@@ -22,7 +22,7 @@ import TequilapiClientWithMetrics from '../../../../src/app/bug-reporting/tequil
 import EmptyTequilapiClientMock from '../../renderer/store/modules/empty-tequilapi-client-mock'
 import BugReporterMetricsStore from '../../../../src/app/bug-reporting/metrics/bug-reporter-metrics-store'
 import { METRICS, NOT_SET } from '../../../../src/app/bug-reporting/metrics/metrics'
-import { TimeFormatter } from '../../../../src/libraries/time-formatter'
+import { TimeFormatter } from '../../../../src/libraries/formatters/time-formatter'
 
 describe('TequilapiClientWithMetrics', () => {
   let api

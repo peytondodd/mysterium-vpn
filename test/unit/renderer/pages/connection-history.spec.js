@@ -22,8 +22,8 @@ import ConnectionHistory from '../../../../src/renderer/pages/connection-history
 import DIContainer from '../../../../src/app/di/vue-container'
 import VueRouter from 'vue-router'
 import { SessionDTO } from 'mysterium-tequilapi/lib/dto/session'
-import { TimeFormatter } from '../../../../src/libraries/time-formatter'
-import { DurationFormatter } from '../../../../src/libraries/duration-formatter'
+import { TimeFormatter } from '../../../../src/libraries/formatters/time-formatter'
+import { DurationFormatter } from '../../../../src/libraries/formatters/duration-formatter'
 
 describe('ConnectionHistory', () => {
   let wrapper

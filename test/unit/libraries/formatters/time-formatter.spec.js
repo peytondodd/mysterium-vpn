@@ -17,8 +17,8 @@
 
 // @flow
 
-import { describe, it, expect, beforeEach } from '../../helpers/dependencies'
-import { TimeFormatter } from '../../../src/libraries/time-formatter'
+import { describe, it, expect, beforeEach } from '../../../helpers/dependencies'
+import { TimeFormatter } from '../../../../src/libraries/formatters/time-formatter'
 
 describe('TimeFormatter', () => {
   let formatter: TimeFormatter

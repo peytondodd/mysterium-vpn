@@ -17,8 +17,8 @@
 
 // @flow
 
-import { describe, it, expect } from '../../helpers/dependencies'
-import { DurationFormatter } from '../../../src/libraries/duration-formatter'
+import { describe, it, expect } from '../../../helpers/dependencies'
+import { DurationFormatter } from '../../../../src/libraries/formatters/duration-formatter'
 
 describe('DurationFormatter', () => {
   const formatter = new DurationFormatter()

@@ -27,7 +27,7 @@ import type { SerializedLogCaches } from '../../../src/app/logging/log-cache-bun
 import { METRICS, TAGS } from '../../../src/app/bug-reporting/metrics/metrics'
 import type { RavenData } from '../../../src/app/bug-reporting/metrics/metrics'
 import BugReporterMetricsStore from '../../../src/app/bug-reporting/metrics/bug-reporter-metrics-store'
-import { TimeFormatter } from '../../../src/libraries/time-formatter'
+import { TimeFormatter } from '../../../src/libraries/formatters/time-formatter'
 
 class MockEnvironmentCollector implements EnvironmentCollector {
   mockMysteriumVpnReleaseId = 'mock mysterium vpn release id'

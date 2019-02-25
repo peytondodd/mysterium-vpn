@@ -20,7 +20,7 @@
 import SessionItem from '../../../../src/renderer/components/session-item'
 import { createLocalVue, mount } from '@vue/test-utils'
 import { beforeEach, describe, expect, it } from '../../../helpers/dependencies'
-import { TimeFormatter } from '../../../../src/libraries/time-formatter'
+import { TimeFormatter } from '../../../../src/libraries/formatters/time-formatter'
 import DIContainer from '../../../../src/app/di/vue-container'
 import type { SessionItem as SessionItemType } from '../../../../src/app/sessions/session-item'
 

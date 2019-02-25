@@ -24,7 +24,7 @@ import type { LogCallback } from './index'
 import createFileIfMissing from '../create-file-if-missing'
 import { INVERSE_DOMAIN_PACKAGE_NAME } from './launch-daemon/config'
 import { prependWithFn } from '../strings'
-import { TimeFormatter } from '../time-formatter'
+import { TimeFormatter } from '../formatters/time-formatter'
 
 type Publishers = {
   [logLevels.INFO | logLevels.ERROR]: Publisher<string>,

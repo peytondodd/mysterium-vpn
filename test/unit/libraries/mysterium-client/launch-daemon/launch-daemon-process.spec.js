@@ -30,7 +30,7 @@ import Monitoring from '../../../../../src/libraries/mysterium-client/monitoring
 import VersionCheck from '../../../../../src/libraries/mysterium-client/version-check'
 import type { NodeHealthcheckDTO } from 'mysterium-tequilapi/lib/dto/node-healthcheck'
 import lolex from 'lolex'
-import { TimeFormatter } from '../../../../../src/libraries/time-formatter'
+import { TimeFormatter } from '../../../../../src/libraries/formatters/time-formatter'
 
 class TequilapiClientMock extends EmptyTequilapiClientMock {
   stopped: boolean = false

@@ -20,7 +20,7 @@
 import type { BugReporterMetrics } from './bug-reporter-metrics'
 import type { Metric, RavenData } from './metrics'
 import type { SyncRendererCommunication } from '../../communication/sync/sync-communication'
-import { TimeFormatter } from '../../../libraries/time-formatter'
+import { TimeFormatter } from '../../../libraries/formatters/time-formatter'
 
 /**
  * Collects metrics, proxying all requests to communication.

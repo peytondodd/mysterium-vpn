@@ -21,8 +21,8 @@ import { beforeEach, describe, expect, it } from '../../../helpers/dependencies'
 import { SessionItemList } from '../../../../src/app/sessions/session-item-list'
 import EmptyTequilapiClientMock from '../../renderer/store/modules/empty-tequilapi-client-mock'
 import { SessionDTO } from 'mysterium-tequilapi/lib/dto/session'
-import { TimeFormatter } from '../../../../src/libraries/time-formatter'
-import { DurationFormatter } from '../../../../src/libraries/duration-formatter'
+import { TimeFormatter } from '../../../../src/libraries/formatters/time-formatter'
+import { DurationFormatter } from '../../../../src/libraries/formatters/duration-formatter'
 
 class SessionListTequilapiClientMock extends EmptyTequilapiClientMock {
   mockSessions: SessionDTO[] = []

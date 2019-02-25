@@ -20,7 +20,7 @@
 import type { BugReporterMetrics } from './bug-reporter-metrics'
 import { EXTRA, NOT_SET, TAGS } from './metrics'
 import type { KeyValueMap, Metric, RavenData } from './metrics'
-import { TimeFormatter } from '../../../libraries/time-formatter'
+import { TimeFormatter } from '../../../libraries/formatters/time-formatter'
 
 /**
  * Collects metrics storing them.

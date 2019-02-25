@@ -48,7 +48,7 @@ import VersionCheck from '../../../libraries/mysterium-client/version-check'
 import FeatureToggle from '../../../app/features/feature-toggle'
 import type { BugReporterMetrics } from '../../../app/bug-reporting/metrics/bug-reporter-metrics'
 import { TequilapiStatusNotifier } from '../../../libraries/mysterium-client/monitoring/tequilapi-status-notifier'
-import { TimeFormatter } from '../../../libraries/time-formatter'
+import { TimeFormatter } from '../../../libraries/formatters/time-formatter'
 
 declare var MYSTERIUM_CLIENT_VERSION: string
 

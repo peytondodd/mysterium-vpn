@@ -34,7 +34,7 @@ import BugReporterMetricsStore from '../../../../src/app/bug-reporting/metrics/b
 import TequilapiVersionMock from '../../../helpers/mysterium-tequilapi/tequilapi-version-check.spec'
 import { MockStatusNotifier } from '../../../helpers/mysterium-client/monitoring-mock'
 import Monitoring from '../../../../src/libraries/mysterium-client/monitoring/monitoring'
-import { TimeFormatter } from '../../../../src/libraries/time-formatter'
+import { TimeFormatter } from '../../../../src/libraries/formatters/time-formatter'
 
 class InstallerMock implements Installer {
   needsInstallationMock: boolean = false

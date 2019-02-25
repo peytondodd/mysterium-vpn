@@ -36,7 +36,7 @@ import ServiceManager, { SERVICE_STATE }
   from '../../../../../src/libraries/mysterium-client/service-manager/service-manager'
 import { MockStatusNotifier } from '../../../../helpers/mysterium-client/monitoring-mock'
 import Monitoring from '../../../../../src/libraries/mysterium-client/monitoring/monitoring'
-import { TimeFormatter } from '../../../../../src/libraries/time-formatter'
+import { TimeFormatter } from '../../../../../src/libraries/formatters/time-formatter'
 
 const SERVICE_MANAGER_PATH = '/service-manager/bin/servicemanager.exe'
 

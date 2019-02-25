@@ -18,8 +18,8 @@
 // @flow
 
 import type { Container } from '../app/di'
-import { TimeFormatter } from '../libraries/time-formatter'
-import { DurationFormatter } from '../libraries/duration-formatter'
+import { TimeFormatter } from '../libraries/formatters/time-formatter'
+import { DurationFormatter } from '../libraries/formatters/duration-formatter'
 
 function bootstrap (container: Container) {
   container.service(

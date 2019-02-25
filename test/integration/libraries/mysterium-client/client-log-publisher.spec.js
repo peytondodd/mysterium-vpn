@@ -25,7 +25,7 @@ import ClientLogPublisher from '../../../../src/libraries/mysterium-client/clien
 import { existsSync, unlinkSync } from 'fs'
 import path from 'path'
 import { CallbackRecorder } from '../../../helpers/utils'
-import { TimeFormatter } from '../../../../src/libraries/time-formatter'
+import { TimeFormatter } from '../../../../src/libraries/formatters/time-formatter'
 
 describe('ClientLogPublisher', () => {
   let logCallbackParam: string

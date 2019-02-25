@@ -18,7 +18,7 @@
 import StatsDisplay from '../../../../src/renderer/components/stats-display'
 import { createLocalVue, mount } from '@vue/test-utils'
 import DIContainer from '../../../../src/app/di/vue-container'
-import { DurationFormatter } from '../../../../src/libraries/duration-formatter'
+import { DurationFormatter } from '../../../../src/libraries/formatters/duration-formatter'
 
 const mountStatsDisplay = function (connection) {
   const localVue = createLocalVue()
