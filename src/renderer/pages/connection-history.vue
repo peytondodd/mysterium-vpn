@@ -31,9 +31,9 @@
             <th>Received/Sent</th>
           </tr>
           <session-item
-            v-for="session in sessions"
-            :key="session.id"
-            :session="session"/>
+            v-for="sessionItem in sessionItems"
+            :key="sessionItem.id"
+            :value="sessionItem"/>
         </table>
       </div>
     </div>
@@ -43,19 +43,21 @@
 import SessionItem from '../components/session-item'
 import CloseButton from '../components/close-button'
 import logger from '../../app/logger'
+import { SessionItemList } from '../../app/sessions/session-item-list'
 
 export default {
   name: 'ConnectionHistory',
   components: { CloseButton, SessionItem },
-  dependencies: ['tequilapiClient'],
+  dependencies: ['tequilapiClient', 'timeFormatter'],
   data: function () {
     return {
-      sessions: []
+      sessionItems: []
     }
   },
   created: function () {
-    this.tequilapiClient.sessionsList().then(sessions => {
-      this.sessions = sessions
+    const list = new SessionItemList(this.tequilapiClient, this.timeFormatter)
+    list.fetchItems().then(items => {
+      this.sessionItems = items
     }).catch(error => {
       logger.error('Fetching sessions failed', error)
     })

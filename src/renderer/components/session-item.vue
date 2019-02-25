@@ -18,17 +18,16 @@
 <template>
   <tr>
     <td>
-      <CountryFlag :code="countryCode"/>
+      <CountryFlag :code="this.value.countryCode"/>
       {{ shortIdentity }}
     </td>
-    <td>{{ startDate }}<br>{{ startTime }}</td>
-    <td>{{ durationString }}</td>
+    <td>{{ this.value.startDate }}<br>{{ this.value.startTime }}</td>
+    <td>{{ this.value.duration }}</td>
     <td>⇩{{ received }}<br>⇧{{ sent }}</td>
   </tr>
 </template>
 
 <script>
-import { formatBytesReadableOrDefault, formatTimeDisplayOrDefault } from '../../libraries/unit-converter'
 import CountryFlag from './country-flag'
 import { limitedLengthString } from '../../app/strings'
 
@@ -36,45 +35,22 @@ export default {
   name: 'SessionItem',
   components: { CountryFlag },
   props: {
-    session: {
+    value: {
       type: Object,
       required: true
     }
   },
-  dependencies: [
-    'timeFormatter'
-  ],
-  data: function () {
-    return {
-      dateObject: null
-    }
-  },
-  created: function () {
-    this.dateObject = new Date(this.session.dateStarted)
-  },
   computed: {
-    durationString () {
-      return formatTimeDisplayOrDefault(this.session.duration)
-    },
     sent () {
-      const sent = formatBytesReadableOrDefault(this.session.bytesSent)
+      const sent = this.value.sent
       return sent.amount + sent.units
     },
     received () {
-      const received = formatBytesReadableOrDefault(this.session.bytesReceived)
+      const received = this.value.received
       return received.amount + received.units
     },
     shortIdentity () {
-      return limitedLengthString(this.session.providerId, 11)
-    },
-    startDate () {
-      return this.timeFormatter.getReadableDate(this.dateObject)
-    },
-    startTime () {
-      return this.timeFormatter.getReadableTime(this.dateObject)
-    },
-    countryCode () {
-      return this.session.providerCountry
+      return limitedLengthString(this.value.identity, 11)
     }
   }
 }

@@ -20,21 +20,22 @@
 import SessionItem from '../../../../src/renderer/components/session-item'
 import { createLocalVue, mount } from '@vue/test-utils'
 import { beforeEach, describe, expect, it } from '../../../helpers/dependencies'
-import { SessionDTO } from 'mysterium-tequilapi/lib/dto/session'
 import { TimeFormatter } from '../../../../src/libraries/time-formatter'
 import DIContainer from '../../../../src/app/di/vue-container'
+import type { SessionItem as SessionItemType } from '../../../../src/app/sessions/session-item'
 
 function mountSessionItem () {
   const localVue = createLocalVue()
 
-  const session: SessionDTO = {
-    sessionId: '691bb110-c096-11e8-b371-ebde26989839',
-    providerId: '0x3b03a513fba4bd4868edd340f77da0c920150f3e',
-    providerCountry: 'lt',
-    dateStarted: '2019-02-14T11:04:15Z',
-    bytesSent: 1024,
-    bytesReceived: 6000,
-    duration: 35 * 60
+  const value: SessionItemType = {
+    id: '691bb110-c096-11e8-b371-ebde26989839',
+    countryCode: 'lt',
+    identity: '0x3b03a513fba4bd4868edd340f77da0c920150f3e',
+    startDate: '14/02/2019',
+    startTime: '13:04:15',
+    sent: { amount: '1.00', units: 'KB' },
+    received: { amount: '5.86', units: 'KB' },
+    duration: '00:35:00'
   }
 
   const dependencies = new DIContainer(localVue)
@@ -43,7 +44,7 @@ function mountSessionItem () {
 
   return mount(SessionItem, {
     localVue,
-    propsData: { session }
+    propsData: { value }
   })
 }
 
