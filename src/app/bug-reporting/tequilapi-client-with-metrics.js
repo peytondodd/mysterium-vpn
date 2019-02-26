@@ -32,6 +32,8 @@ import type { IdentityRegistrationDTO } from 'mysterium-tequilapi/lib/dto/identi
 import type { BugReporterMetrics } from './metrics/bug-reporter-metrics'
 import { METRICS } from './metrics/metrics'
 import { SessionDTO } from 'mysterium-tequilapi/lib/dto/session'
+import { ServiceInfoDTO } from 'mysterium-tequilapi/lib/dto/service-info'
+import { ServiceRequest } from 'mysterium-tequilapi/lib/dto/service-request'
 
 class TequilapiClientWithMetrics implements TequilapiClient {
   _bugReporterMetrics: BugReporterMetrics
@@ -120,6 +122,22 @@ class TequilapiClientWithMetrics implements TequilapiClient {
 
   async sessionsList (): Promise<SessionDTO[]> {
     return this._client.sessionsList()
+  }
+
+  async serviceList (): Promise<ServiceInfoDTO[]> {
+    return this._client.serviceList()
+  }
+
+  async serviceGet (id: string): Promise<ServiceInfoDTO> {
+    return this._client.serviceGet(id)
+  }
+
+  async serviceStart (request: ServiceRequest, timeout?: number | void): Promise<ServiceInfoDTO> {
+    return this._client.serviceStart(request, timeout)
+  }
+
+  async serviceStop (serviceId: string): Promise<void> {
+    return this._client.serviceStop(serviceId)
   }
 }
 

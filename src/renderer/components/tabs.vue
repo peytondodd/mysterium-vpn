@@ -37,6 +37,10 @@
 export default {
   methods: {
     activeRoute (routeName) {
+      if (!this.$router || !this.$router.currentRoute) {
+        return routeName === 'vpn'
+      }
+
       return this.$router.currentRoute.name === routeName
     }
   }
