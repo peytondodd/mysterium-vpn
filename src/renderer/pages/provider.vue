@@ -100,7 +100,6 @@ export default {
   methods: {
     ...mapMutations({ hideErr: type.HIDE_ERROR }),
     startService () {
-
     }
   },
   async mounted () {
