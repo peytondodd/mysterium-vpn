@@ -28,6 +28,7 @@ import identityFactory from '../../store/modules/identity'
 import connectionFactory from '../../store/modules/connection'
 import errorsFactory from '../../store/modules/errors'
 import termsFactory from '../../store/modules/terms'
+import providerFactory from '../../store/modules/provider'
 import TequilapiConnectionEstablisher from '../../../app/connection/tequilapi-connection-establisher'
 
 function bootstrap (container: Container) {
@@ -106,6 +107,7 @@ function bootstrap (container: Container) {
       return connectionFactory(tequilapiClient, rendererCommunication, bugReporter, connectionEstablisher)
     }
   )
+  container.constant('vue-store.provider', providerFactory())
   container.constant('vue-store.errors', errorsFactory())
   container.constant('vue-store.terms', termsFactory())
 }
