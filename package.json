@@ -113,7 +113,7 @@
     "lolex": "^2.7.4",
     "md5": "^2.2.1",
     "mysterium-client-bin": "0.5.3",
-    "mysterium-tequilapi": "^0.6.0",
+    "mysterium-tequilapi": "^0.7.0",
     "mysterium-vpn-js": "^0.0.2",
     "os-name": "^2.0.1",
     "raven": "^2.4.1",
