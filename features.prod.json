@@ -1,4 +1,4 @@
 {
-  "payments": true,
+  "payments": false,
   "clientVersionCheck": true
 }
