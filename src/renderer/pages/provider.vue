@@ -22,11 +22,11 @@
       <tabs/>
 
       <div class="control__top">
-        <h1>Active</h1>
+        <h1>{{ statusText }}</h1>
 
         <div
           class="control__location">
-          connected users: <strong>5</strong>
+          connected users: <strong>{{ users }}</strong>
         </div>
       </div>
 
@@ -34,8 +34,8 @@
         <div
           class="control__action btn"
           :class="{'btn--transparent':true}"
-          @click="startService">
-          Stop service
+          @click="toggleService">
+          {{ buttonText }}
         </div>
       </div>
 
@@ -61,12 +61,12 @@
             </div>
             <div class="stats__block">
               <div class="stats__label">DATA RECEIVED</div>
-              <div class="stats__value">3.4</div>
+              <div class="stats__value">0</div>
               <div class="stats__unit">Gb</div>
             </div>
             <div class="stats__block">
               <div class="stats__label">DATA SENT</div>
-              <div class="stats__value">12.3</div>
+              <div class="stats__value">0</div>
               <div class="stats__unit">Gb</div>
             </div>
           </div>
@@ -81,6 +81,9 @@ import type from '../store/types'
 import { mapMutations, mapGetters } from 'vuex'
 import AppError from '../partials/app-error'
 import Tabs from '../components/tabs'
+import { ServiceStatus } from 'mysterium-tequilapi/lib/dto/service-status'
+import { ConnectionStatus } from 'mysterium-tequilapi/lib/dto/connection-status'
+import logger from '../../app/logger'
 
 export default {
   name: 'Main',
@@ -89,22 +92,122 @@ export default {
     AppError
   },
   dependencies: [
-    'tequilapiClient'
+    'providerService'
   ],
   data () {
-    return {}
+    return {
+      status: ServiceStatus.NOT_RUNNING,
+      serviceId: '',
+      users: 0
+    }
   },
   computed: {
-    ...mapGetters(['errorMessage', 'showError'])
+    ...mapGetters(['errorMessage', 'showError', 'currentIdentity']),
+    statusText () {
+      switch (this.status) {
+        case ServiceStatus.STARTING:
+          return 'Starting..'
+        case ServiceStatus.RUNNING:
+          return 'Running'
+        default:
+          return 'Stopped'
+      }
+    },
+    buttonText () {
+      switch (this.status) {
+        case ServiceStatus.STARTING:
+          return 'Starting..'
+        case ServiceStatus.RUNNING:
+          return 'Stop service'
+        default:
+          return 'Start service'
+      }
+    }
   },
   methods: {
     ...mapMutations({ hideErr: type.HIDE_ERROR }),
-    startService () {
+    async toggleService () {
+      if (this.status === ServiceStatus.NOT_RUNNING) {
+        await this.startService()
+
+        return
+      }
+
+      if (this.status === ServiceStatus.RUNNING) {
+        await this.stopService()
+      }
+    },
+
+    async startService () {
+      try {
+        const service = await this.providerService.start(this.currentIdentity, 'openvpn')
+        this.status = service.status
+        this.serviceId = service.id
+
+        this.startIncrementingUsers()
+      } catch (e) {
+        this.$store.commit(type.SHOW_ERROR_MESSAGE, 'Failed to start the service')
+        logger.log(e)
+      }
+    },
+
+    async stopService () {
+      try {
+        await this.providerService.stop(this.serviceId)
+        this.status = ServiceStatus.NOT_RUNNING
+
+        this.stopIncrementingUsers()
+      } catch (e) {
+        this.$store.commit(type.SHOW_ERROR_MESSAGE, 'Failed to stop the service')
+        logger.log(e)
+      }
+    },
+
+    startIncrementingUsers () {
+      // UI candy
+      this.interval = setInterval(() => {
+        this.incrementUsers()
+      }, 3000)
+    },
+
+    stopIncrementingUsers () {
+      clearInterval(this.interval)
+      this.users = 0
+    },
+
+    incrementUsers () {
+      const random = Math.floor(Math.random() * 10) + 1
+
+      if (random > 6 && this.users > 0) {
+        this.users--
+
+        return
+      }
+
+      if (this.status === ServiceStatus.RUNNING) {
+        this.users++
+
+        return
+      }
+
+      this.users = 0
     }
   },
   async mounted () {
+    // reset any error messages from VPN page
+    this.$store.commit(type.HIDE_ERROR)
+
+    // disconnect from VPN if still connected
+    if (this.$store.getters.status !== ConnectionStatus.NOT_CONNECTED) {
+      this.$store.dispatch(type.DISCONNECT)
+    }
+
+    // stop statistics fetching
+    this.$store.dispatch(type.STOP_ACTION_LOOPING, type.CONNECTION_IP)
+    this.$store.dispatch(type.STOP_ACTION_LOOPING, type.FETCH_CONNECTION_STATUS)
   },
   beforeDestroy () {
+    clearInterval(this.clearInterval)
   }
 }
 </script>

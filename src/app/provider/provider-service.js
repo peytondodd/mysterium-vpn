@@ -16,41 +16,23 @@
  */
 
 // @flow
-import type from '../types'
 
-type State = {
-  status: ?string
-}
+import type { TequilapiClient } from 'mysterium-tequilapi/lib/client'
 
-function stateFactory (): State {
-  return {
-    status: null
+class ProviderService {
+  _tequilapiClient: TequilapiClient
+
+  constructor (tequilapiClient: TequilapiClient) {
+    this._tequilapiClient = tequilapiClient
+  }
+
+  async start (providerId: string, serviceType: string) {
+    return this._tequilapiClient.serviceStart({ providerId, serviceType })
+  }
+
+  async stop (serviceId: string) {
+    return this._tequilapiClient.serviceStop(serviceId)
   }
 }
 
-const mutations = {
-  [type.SET_PROVIDER_STATUS] (state: State, status: string) {
-    state.status = status
-  }
-}
-
-const getters = {
-  providerStatus: (state: State) => state.status
-}
-
-const actions = {
-  [type.SET_PROVIDER_STATUS] ({ commit }, status: string) {
-    commit(type.SET_PROVIDER_STATUS, status)
-  }
-}
-
-function factory () {
-  return {
-    state: stateFactory(),
-    mutations,
-    getters,
-    actions
-  }
-}
-
-export default factory
+export default ProviderService
