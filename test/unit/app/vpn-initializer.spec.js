@@ -19,9 +19,7 @@
 
 import VpnInitializer from '../../../src/app/vpn-initializer'
 import { beforeEach, describe, expect, it } from '../../helpers/dependencies'
-import type { State as IdentityState } from '../../../src/renderer/store/modules/identity'
 import type { IdentityDTO } from 'mysterium-tequilapi/lib/dto/identity'
-import types from '../../../src/renderer/store/types'
 import { capturePromiseError } from '../../helpers/utils'
 import IdentityManager from '../../../src/app/identity-manager'
 import messages from '../../../src/app/messages'
@@ -80,14 +78,12 @@ describe('VpnInitializer', () => {
   describe('.initialize', () => {
     let tequilapiManipulator
     let tequilapi
-    let state: IdentityState
 
     const updateClientVersion: () => Promise<void> = async () => {}
 
     beforeEach(() => {
       tequilapiManipulator = new MockTequilapiManipulator('test version')
       tequilapi = tequilapiManipulator.getTequilapi()
-      state = { current: null, registration: null }
     })
 
     describe('with some identities', () => {
@@ -99,15 +95,14 @@ describe('VpnInitializer', () => {
       })
 
       it('stores first fetched identity', async () => {
-        const commit = (mutation, ...args: Array<any>) => {
-          if (mutation === types.SET_CURRENT_IDENTITY && args.length === 1) {
-            state.current = args[0]
-          }
-        }
-        const identityManager = new IdentityManager(tequilapi, commit, state)
+        const identityManager = new IdentityManager(tequilapi)
+
+        let identity = null
+        identityManager.onCurrentIdentityChange(id => { identity = id })
+
         await new VpnInitializer(tequilapi).initialize(identityManager, updateClientVersion)
 
-        expect(state.current).to.eql(mockIdentity)
+        expect(identity).to.eql(mockIdentity)
       })
     })
 
@@ -126,15 +121,13 @@ describe('VpnInitializer', () => {
       })
 
       it('creates and unlocks identity', async () => {
-        const commit = (mutation, ...args: Array<any>) => {
-          if (mutation === types.SET_CURRENT_IDENTITY && args.length === 1) {
-            state.current = args[0]
-          }
-        }
-        const identityManager = new IdentityManager(tequilapi, commit, state)
+        const identityManager = new IdentityManager(tequilapi)
+        let identity = null
+        identityManager.onCurrentIdentityChange(id => { identity = id })
+
         await new VpnInitializer(tequilapi).initialize(identityManager, updateClientVersion)
 
-        expect(state.current).to.eql(mockCreatedIdentity)
+        expect(identity).to.eql(mockCreatedIdentity)
         expect(identityUnlocked).to.eql(true)
       })
     })
@@ -148,19 +141,16 @@ describe('VpnInitializer', () => {
         })
 
         it('throws exception and shows error', async () => {
-          const committed = []
-          const commit = (...args: Array<any>) => {
-            committed.push(args)
-          }
           const vpnInitializer = new VpnInitializer(tequilapi)
-          const identityManager = new IdentityManager(tequilapi, commit, state)
+
+          const identityManager = new IdentityManager(tequilapi)
+          let errorMessage = null
+          identityManager.onErrorMessage(msg => { errorMessage = msg })
+
           const err = await capturePromiseError(vpnInitializer.initialize(identityManager, updateClientVersion))
 
           expect(err).to.eql(mockError)
-          expect(committed[committed.length - 1]).to.eql([
-            types.SHOW_ERROR_MESSAGE,
-            messages.identityListFailed
-          ])
+          expect(errorMessage).to.eql(messages.identityListFailed)
         })
       })
 
@@ -171,23 +161,15 @@ describe('VpnInitializer', () => {
         })
 
         it('throws exception and shows error message', async () => {
-          const committed = []
-          const commit = (...args: Array<any>) => {
-            committed.push(args)
-            if (args.length === 2 && args[0] === types.SET_CURRENT_IDENTITY) {
-              state.current = args[1]
-            }
-          }
-          const identityManager = new IdentityManager(tequilapi, commit, state)
+          const identityManager = new IdentityManager(tequilapi)
+          let errorMessage = null
+          identityManager.onErrorMessage(msg => { errorMessage = msg })
+
           const vpnInitializer = new VpnInitializer(tequilapi)
           const err = await capturePromiseError(vpnInitializer.initialize(identityManager, updateClientVersion))
 
           expect(err).to.be.an('error')
-
-          expect(committed[committed.length - 1]).to.eql([
-            types.SHOW_ERROR_MESSAGE,
-            messages.identityCreateFailed
-          ])
+          expect(errorMessage).to.eql(messages.identityCreateFailed)
         })
       })
 
@@ -198,23 +180,15 @@ describe('VpnInitializer', () => {
         })
 
         it('throws exception and shows error message', async () => {
-          const committed = []
-          const commit = (...args: Array<any>) => {
-            committed.push(args)
-            if (args.length === 2 && args[0] === types.SET_CURRENT_IDENTITY) {
-              state.current = args[1]
-            }
-          }
-          const identityManager = new IdentityManager(tequilapi, commit, state)
+          const identityManager = new IdentityManager(tequilapi)
+          let errorMessage = null
+          identityManager.onErrorMessage(msg => { errorMessage = msg })
+
           const vpnInitializer = new VpnInitializer(tequilapi)
           const err = await capturePromiseError(vpnInitializer.initialize(identityManager, updateClientVersion))
 
           expect(err).to.be.an('error')
-
-          expect(committed[committed.length - 1]).to.eql([
-            types.SHOW_ERROR_MESSAGE,
-            messages.identityUnlockFailed
-          ])
+          expect(errorMessage).to.eql(messages.identityUnlockFailed)
         })
       })
     })

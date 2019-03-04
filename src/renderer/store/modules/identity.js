@@ -22,6 +22,7 @@ import type { BugReporter } from '../../../app/bug-reporting/interface'
 import type { RendererCommunication } from '../../../app/communication/renderer-communication'
 import type { IdentityRegistrationDTO } from 'mysterium-tequilapi/lib/dto/identity-registration/identity-registration'
 import logger from '../../../app/logger'
+import IdentityManager from '../../../app/identity-manager'
 
 type State = {
   current: ?IdentityDTO,
@@ -32,6 +33,16 @@ function stateFactory (): State {
   return {
     current: null,
     registration: null
+  }
+}
+
+function actionsFactory () {
+  return {
+    startObserving ({ commit }: { commit: Function }, identityManager: IdentityManager) {
+      identityManager.onCurrentIdentityChange((newIdentity: IdentityDTO) => {
+        commit(type.SET_CURRENT_IDENTITY, newIdentity)
+      })
+    }
   }
 }
 
@@ -67,7 +78,8 @@ function factory (bugReporter: BugReporter, communication: RendererCommunication
   return {
     state: stateFactory(),
     getters: { ...getters },
-    mutations: mutationsFactory(bugReporter, communication)
+    mutations: mutationsFactory(bugReporter, communication),
+    actions: actionsFactory()
   }
 }
 

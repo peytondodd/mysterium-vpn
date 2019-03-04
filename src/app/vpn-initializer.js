@@ -31,6 +31,7 @@ class VpnInitializer {
     this._tequilapi = tequilapi
   }
 
+  // TODO: pass-in identityManager to constructor instead
   async initialize (identityManager: IdentityManager, updateClientVersion: () => Promise<void>): Promise<void> {
     await this._prepareIdentity(identityManager)
     await updateClientVersion()

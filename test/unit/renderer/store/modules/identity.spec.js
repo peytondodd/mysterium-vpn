@@ -17,6 +17,7 @@
 
 // @flow
 
+import Vuex from 'vuex'
 import { beforeEach, describe, expect, it } from '../../../../helpers/dependencies'
 import factory from '../../../../../src/renderer/store/modules/identity'
 import type { State } from '../../../../../src/renderer/store/modules/identity'
@@ -25,23 +26,26 @@ import type { IdentityRegistrationDTO } from 'mysterium-tequilapi/lib/dto/identi
 import BugReporterMock from '../../../../helpers/bug-reporter-mock'
 import { buildRendererCommunication } from '../../../../../src/app/communication/renderer-communication'
 import DirectMessageBus from '../../../../helpers/direct-message-bus'
+import IdentityManager from '../../../../../src/app/identity-manager'
+import EmptyTequilapiClientMock from './empty-tequilapi-client-mock'
+import { createLocalVue } from '@vue/test-utils'
 
 describe('identity store', () => {
-  let store
+  let storeConfig
   let bugReporter
   let communication
 
   beforeEach(() => {
     bugReporter = new BugReporterMock()
     communication = buildRendererCommunication(new DirectMessageBus())
-    store = factory(bugReporter, communication)
+    storeConfig = factory(bugReporter, communication)
   })
 
   describe('getters', () => {
     let getters
 
     beforeEach(() => {
-      getters = store.getters
+      getters = storeConfig.getters
     })
 
     describe('.currentIdentity', () => {
@@ -67,7 +71,7 @@ describe('identity store', () => {
     let mutations
 
     beforeEach(() => {
-      mutations = store.mutations
+      mutations = storeConfig.mutations
     })
 
     describe('SET_IDENTITY_REGISTRATION', () => {
@@ -79,6 +83,30 @@ describe('identity store', () => {
         const registration: IdentityRegistrationDTO = { registered: true }
         mutations[types.SET_IDENTITY_REGISTRATION](state, registration)
         expect(state.registration).to.eql(registration)
+      })
+    })
+  })
+
+  describe('with store', () => {
+    describe('actions', () => {
+      let store
+      let identityManager: IdentityManager
+
+      beforeEach(() => {
+        identityManager = new IdentityManager(new EmptyTequilapiClientMock())
+
+        const localVue = createLocalVue()
+        localVue.use(Vuex)
+        store = new Vuex.Store(storeConfig)
+      })
+
+      describe('.startObserving', () => {
+        it('observes identity', () => {
+          store.dispatch('startObserving', identityManager)
+
+          identityManager.setCurrentIdentity({ id: 'new identity' })
+          expect(store.getters.currentIdentity).to.eql('new identity')
+        })
       })
     })
   })

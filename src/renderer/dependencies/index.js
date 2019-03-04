@@ -21,6 +21,7 @@ import DIContainer from '../../app/di/vue-container'
 import bugReportingConfigBootstrap from '../../dependencies/bug-reporting'
 import featureToggleBootstrap from '../../dependencies/feature-toggle'
 import bugReportingBootstrap from './modules/bug-reporting'
+import identityBootstrap from './modules/identity'
 import eventsBootstrap from '../../dependencies/statistics'
 import paymentsBootstrap from '../../dependencies/payments'
 import formattersBootstrap from '../../dependencies/formatters'
@@ -38,6 +39,7 @@ function bootstrap (): DIContainer {
   featureToggleBootstrap(container)
   bugReportingConfigBootstrap(container)
   bugReportingBootstrap(container)
+  identityBootstrap(container)
   eventsBootstrap(container)
   paymentsBootstrap(container)
   formattersBootstrap(container)

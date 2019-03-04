@@ -59,7 +59,7 @@ export default {
     AppError,
     AppModal
   },
-  dependencies: ['rendererCommunication', 'syncCommunication', 'logger', 'bugReporterMetrics'],
+  dependencies: ['rendererCommunication', 'syncCommunication', 'logger', 'bugReporterMetrics', 'identityManager'],
   computed: {
     ...mapGetters(['navVisible', 'loading', 'visual', 'overlayError'])
   },
@@ -69,6 +69,11 @@ export default {
 
     // we need to notify the main process that we're up
     this.rendererCommunication.rendererBooted.send()
+
+    this.$store.dispatch('startObserving', this.identityManager)
+    this.identityManager.onErrorMessage(message => {
+      this.$store.commit(type.SHOW_ERROR_MESSAGE, message)
+    })
 
     this.rendererCommunication.reconnectRequest.on(() => {
       this.$store.dispatch(type.RECONNECT)
