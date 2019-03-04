@@ -80,7 +80,7 @@ export class RendererInitializer {
     })
 
     rendererCommunication.identityRegistration.on(registration => {
-      store.commit(type.SET_IDENTITY_REGISTRATION, registration)
+      identityManager.setRegistration(registration)
     })
   }
 }

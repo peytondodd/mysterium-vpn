@@ -71,6 +71,7 @@ export default {
 
     logger.info('Renderer initialized')
   }
+  // TODO: unsubscribe on beforeDestroy
 }
 </script>
 

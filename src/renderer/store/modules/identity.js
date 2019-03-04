@@ -40,6 +40,9 @@ function actionsFactory () {
       identityManager.onCurrentIdentityChange((newIdentity: IdentityDTO) => {
         commit(type.SET_CURRENT_IDENTITY, newIdentity)
       })
+      identityManager.onRegistrationChange((newRegistration: IdentityRegistrationDTO) => {
+        commit(type.SET_IDENTITY_REGISTRATION, newRegistration)
+      })
     }
   }
 }

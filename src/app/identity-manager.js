@@ -18,6 +18,7 @@
 // @flow
 
 import type { IdentityDTO } from 'mysterium-tequilapi/lib/dto/identity'
+import type { IdentityRegistrationDTO } from 'mysterium-tequilapi/lib/dto/identity-registration/identity-registration'
 import type { TequilapiClient } from 'mysterium-tequilapi/lib/client'
 import messages from './messages'
 import Publisher from '../libraries/publisher'
@@ -31,7 +32,10 @@ class IdentityManager {
   _tequilapi: TequilapiClient
 
   _identity: ?IdentityDTO = null
+  _registration: ?IdentityRegistrationDTO
+
   _identityPublisher: Publisher<IdentityDTO> = new Publisher()
+  _registrationPublisher: Publisher<IdentityRegistrationDTO> = new Publisher()
   _errorMessagePublisher: Publisher<string> = new Publisher()
 
   constructor (tequilapi: TequilapiClient) {
@@ -56,8 +60,18 @@ class IdentityManager {
     this._identityPublisher.publish(identity)
   }
 
+  // TODO: unify naming
   onCurrentIdentityChange (callback: IdentityDTO => void) {
     this._identityPublisher.addSubscriber(callback)
+  }
+
+  setRegistration (registration: IdentityRegistrationDTO) {
+    this._registration = registration
+    this._registrationPublisher.publish(registration)
+  }
+
+  onRegistrationChange (subscriber: IdentityRegistrationDTO => any) {
+    this._registrationPublisher.addSubscriber(subscriber)
   }
 
   async createIdentity (): Promise<IdentityDTO> {
