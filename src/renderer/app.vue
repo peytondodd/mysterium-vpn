@@ -43,13 +43,12 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import type from '@/store/types'
 import AppVisual from '@/partials/app-visual'
 import AppNav from '@/partials/app-nav'
 import AppError from '@/partials/app-error'
 import AppModal from '@/partials/app-modal'
 import logger from '../app/logger'
-import messages from '../app/messages'
+import { RendererInitializer } from './renderer-initializer'
 
 export default {
   name: 'App',
@@ -65,65 +64,12 @@ export default {
   },
   async mounted () {
     logger.setLogger(this.logger)
-    logger.info('App view was mounted')
+    logger.info('Renderer was mounted, will initialize')
 
-    // TODO: extract initialization to Flow file
+    new RendererInitializer().initialize(this.rendererCommunication, this.bugReporter, this.identityManager,
+      this.$store, this.$router)
 
-    // we need to notify the main process that we're up
-    this.rendererCommunication.rendererBooted.send()
-
-    this.$store.dispatch('startObserving', this.identityManager)
-    this.identityManager.onErrorMessage(message => {
-      this.$store.commit(type.SHOW_ERROR_MESSAGE, message)
-    })
-    this.identityManager.onCurrentIdentityChange(identity => {
-      this.rendererCommunication.currentIdentityChanged.send({ id: identity.id })
-      this.bugReporter.setUser(identity)
-    })
-
-    this.rendererCommunication.reconnectRequest.on(() => {
-      this.$store.dispatch(type.RECONNECT)
-    })
-
-    this.rendererCommunication.connectionRequest.on((proposal) => {
-      const provider = {
-        id: proposal.providerId,
-        country: proposal.providerCountry
-      }
-      this.$store.dispatch(type.CONNECT, provider)
-    })
-
-    this.rendererCommunication.connectionCancel.on(() => {
-      this.$store.dispatch(type.DISCONNECT)
-    })
-
-    this.rendererCommunication.termsRequested.on((terms) => {
-      this.$store.commit(type.TERMS, terms)
-      this.$router.push('/terms')
-    })
-
-    this.rendererCommunication.termsAccepted.on(() => {
-      this.$router.push('/')
-    })
-
-    this.rendererCommunication.rendererShowError.on((error) => {
-      logger.info('App error received from communication:', error.hint, error.message)
-      this.$store.dispatch(type.OVERLAY_ERROR, error)
-    })
-
-    // if the client was down, but now up, we need to unlock the identity once again
-    this.rendererCommunication.healthcheckUp.on(() => {
-      this.$store.dispatch(type.OVERLAY_ERROR, null)
-      this.$router.push('/load')
-    })
-
-    this.rendererCommunication.healthcheckDown.on(() => {
-      this.$store.dispatch(type.OVERLAY_ERROR, messages.mysteriumCLientDown)
-    })
-
-    this.rendererCommunication.identityRegistration.on(registration => {
-      this.$store.commit(type.SET_IDENTITY_REGISTRATION, registration)
-    })
+    logger.info('Renderer initialized')
   }
 }
 </script>
