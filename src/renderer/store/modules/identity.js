@@ -18,8 +18,6 @@
 // @flow
 import type from '../types'
 import type { IdentityDTO } from 'mysterium-tequilapi/lib/dto/identity'
-import type { BugReporter } from '../../../app/bug-reporting/interface'
-import type { RendererCommunication } from '../../../app/communication/renderer-communication'
 import type { IdentityRegistrationDTO } from 'mysterium-tequilapi/lib/dto/identity-registration/identity-registration'
 import logger from '../../../app/logger'
 import IdentityManager from '../../../app/identity-manager'
@@ -46,13 +44,10 @@ function actionsFactory () {
   }
 }
 
-function mutationsFactory (bugReporter: BugReporter, communication: RendererCommunication) {
+function mutationsFactory () {
   return {
     [type.SET_CURRENT_IDENTITY] (state, identity: IdentityDTO) {
       state.current = identity
-      bugReporter.setUser(identity)
-      // TODO remove check
-      communication.currentIdentityChanged.send({ id: identity.id || '' })
     },
     [type.SET_IDENTITY_REGISTRATION]: (state: State, registration: IdentityRegistrationDTO) => {
       state.registration = registration
@@ -74,11 +69,11 @@ const getters = {
   }
 }
 
-function factory (bugReporter: BugReporter, communication: RendererCommunication) {
+function factory () {
   return {
     state: stateFactory(),
     getters: { ...getters },
-    mutations: mutationsFactory(bugReporter, communication),
+    mutations: mutationsFactory(),
     actions: actionsFactory()
   }
 }

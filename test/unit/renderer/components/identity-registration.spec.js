@@ -30,7 +30,6 @@ import Vuex from 'vuex'
 import mainStoreFactory from '@/store/modules/main'
 import EmptyTequilapiClientMock from '../store/modules/empty-tequilapi-client-mock'
 import identityStoreFactory from '../../../../src/renderer/store/modules/identity'
-import BugReporterMock from '../../../helpers/bug-reporter-mock'
 import types from '../../../../src/renderer/store/types'
 import MockEventSender from '../../../helpers/statistics/mock-event-sender'
 
@@ -54,9 +53,8 @@ describe('IdentityRegistration', () => {
     dependencies.constant('getPaymentLink', () => {})
 
     const tequilapi = new EmptyTequilapiClientMock()
-    const bugReporter = new BugReporterMock()
     const identity = {
-      ...identityStoreFactory(bugReporter, rendererCommunication),
+      ...identityStoreFactory(),
       state: stateOverride
     }
     store = new Vuex.Store({

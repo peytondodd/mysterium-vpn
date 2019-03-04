@@ -23,22 +23,15 @@ import factory from '../../../../../src/renderer/store/modules/identity'
 import type { State } from '../../../../../src/renderer/store/modules/identity'
 import types from '../../../../../src/renderer/store/types'
 import type { IdentityRegistrationDTO } from 'mysterium-tequilapi/lib/dto/identity-registration/identity-registration'
-import BugReporterMock from '../../../../helpers/bug-reporter-mock'
-import { buildRendererCommunication } from '../../../../../src/app/communication/renderer-communication'
-import DirectMessageBus from '../../../../helpers/direct-message-bus'
 import IdentityManager from '../../../../../src/app/identity-manager'
 import EmptyTequilapiClientMock from './empty-tequilapi-client-mock'
 import { createLocalVue } from '@vue/test-utils'
 
 describe('identity store', () => {
   let storeConfig
-  let bugReporter
-  let communication
 
   beforeEach(() => {
-    bugReporter = new BugReporterMock()
-    communication = buildRendererCommunication(new DirectMessageBus())
-    storeConfig = factory(bugReporter, communication)
+    storeConfig = factory()
   })
 
   describe('getters', () => {

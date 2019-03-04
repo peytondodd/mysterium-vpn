@@ -59,7 +59,7 @@ export default {
     AppError,
     AppModal
   },
-  dependencies: ['rendererCommunication', 'syncCommunication', 'logger', 'bugReporterMetrics', 'identityManager'],
+  dependencies: ['rendererCommunication', 'syncCommunication', 'logger', 'identityManager', 'bugReporter'],
   computed: {
     ...mapGetters(['navVisible', 'loading', 'visual', 'overlayError'])
   },
@@ -67,12 +67,18 @@ export default {
     logger.setLogger(this.logger)
     logger.info('App view was mounted')
 
+    // TODO: extract initialization to Flow file
+
     // we need to notify the main process that we're up
     this.rendererCommunication.rendererBooted.send()
 
     this.$store.dispatch('startObserving', this.identityManager)
     this.identityManager.onErrorMessage(message => {
       this.$store.commit(type.SHOW_ERROR_MESSAGE, message)
+    })
+    this.identityManager.onCurrentIdentityChange(identity => {
+      this.rendererCommunication.currentIdentityChanged.send({ id: identity.id })
+      this.bugReporter.setUser(identity)
     })
 
     this.rendererCommunication.reconnectRequest.on(() => {

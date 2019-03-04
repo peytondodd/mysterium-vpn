@@ -70,7 +70,7 @@ describe('Vpn', () => {
       },
       modules: {
         main: mainStoreFactory(new EmptyTequilapiClientMock(), new MockEventSender()),
-        identity: identityStoreFactory(bugReporterMock, communication)
+        identity: identityStoreFactory()
       }
     })
 

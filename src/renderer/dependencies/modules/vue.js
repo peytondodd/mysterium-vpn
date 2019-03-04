@@ -96,8 +96,8 @@ function bootstrap (container: Container) {
   )
   container.service(
     'vue-store.identity',
-    ['bugReporter', 'rendererCommunication'],
-    (bugReporter, rendererCommunication) => identityFactory(bugReporter, rendererCommunication)
+    [],
+    () => identityFactory()
   )
   container.service(
     'vue-store.connection',
