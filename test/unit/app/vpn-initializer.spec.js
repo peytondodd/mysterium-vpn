@@ -41,6 +41,7 @@ class MockTequilapiManipulator {
     }
   }
 
+  // TODO: return TequilapiClient interface
   getTequilapi (): Object {
     return this._tequilapi
   }
@@ -53,8 +54,13 @@ class MockTequilapiManipulator {
     this._tequilapi.identityCreate = () => Promise.resolve(identity)
   }
 
-  tequilapiMockIdentityUnlock () {
-    this._tequilapi.identityUnlock = () => Promise.resolve()
+  tequilapiMockIdentityUnlock (callback: ?(() => void) = null) {
+    this._tequilapi.identityUnlock = () => {
+      if (callback) {
+        callback()
+      }
+      return Promise.resolve()
+    }
   }
 
   tequilapiMockIdentitiesListError (error: Error) {
@@ -81,7 +87,7 @@ describe('VpnInitializer', () => {
     beforeEach(() => {
       tequilapiManipulator = new MockTequilapiManipulator('test version')
       tequilapi = tequilapiManipulator.getTequilapi()
-      state = { current: null, unlocked: false, registration: null }
+      state = { current: null, registration: null }
     })
 
     describe('with some identities', () => {
@@ -107,27 +113,29 @@ describe('VpnInitializer', () => {
 
     describe('with not identities', () => {
       const mockCreatedIdentity: IdentityDTO = { id: '0xC001FACY' }
+      let identityUnlocked: boolean
 
       beforeEach(() => {
         tequilapiManipulator.tequilapiMockIdentitiesList([])
         tequilapiManipulator.tequilapiMockIdentityCreate(mockCreatedIdentity)
-        tequilapiManipulator.tequilapiMockIdentityUnlock()
+
+        identityUnlocked = false
+        tequilapiManipulator.tequilapiMockIdentityUnlock(() => {
+          identityUnlocked = true
+        })
       })
 
       it('creates and unlocks identity', async () => {
-        let unlocked = false
         const commit = (mutation, ...args: Array<any>) => {
           if (mutation === types.SET_CURRENT_IDENTITY && args.length === 1) {
             state.current = args[0]
-          } else if (mutation === types.IDENTITY_UNLOCK_SUCCESS && args.length === 0) {
-            unlocked = true
           }
         }
         const identityManager = new IdentityManager(tequilapi, commit, state)
         await new VpnInitializer(tequilapi).initialize(identityManager, updateClientVersion)
 
         expect(state.current).to.eql(mockCreatedIdentity)
-        expect(unlocked).to.be.true
+        expect(identityUnlocked).to.eql(true)
       })
     })
 

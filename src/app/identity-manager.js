@@ -78,7 +78,6 @@ class IdentityManager {
 
     try {
       await this._tequilapi.identityUnlock(currentIdentity.id, PASSWORD)
-      this._commit(types.IDENTITY_UNLOCK_SUCCESS)
     } catch (err) {
       this._showErrorMessage(messages.identityUnlockFailed)
       throw err

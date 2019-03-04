@@ -48,7 +48,6 @@ describe('identity store', () => {
       it('returns id of identity', () => {
         const state: State = {
           current: { id: 'identity id' },
-          unlocked: false,
           registration: null
         }
         expect(getters.currentIdentity(state)).to.eql('identity id')
@@ -57,7 +56,6 @@ describe('identity store', () => {
       it('returns null when identity is not present', () => {
         const state: State = {
           current: null,
-          unlocked: false,
           registration: null
         }
         expect(getters.currentIdentity(state)).to.eql(null)
@@ -76,7 +74,6 @@ describe('identity store', () => {
       it('fetches and commits identity registration', async () => {
         const state: State = {
           current: null,
-          unlocked: false,
           registration: null
         }
         const registration: IdentityRegistrationDTO = { registered: true }

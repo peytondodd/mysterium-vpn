@@ -25,14 +25,12 @@ import logger from '../../../app/logger'
 
 type State = {
   current: ?IdentityDTO,
-  unlocked: boolean,
   registration: ?IdentityRegistrationDTO
 }
 
 function stateFactory (): State {
   return {
     current: null,
-    unlocked: false,
     registration: null
   }
 }
@@ -44,16 +42,6 @@ function mutationsFactory (bugReporter: BugReporter, communication: RendererComm
       bugReporter.setUser(identity)
       // TODO remove check
       communication.currentIdentityChanged.send({ id: identity.id || '' })
-    },
-    [type.IDENTITY_UNLOCK_SUCCESS] (state) {
-      state.unlocked = true
-    },
-    [type.IDENTITY_UNLOCK_PENDING] (state) {
-      state.unlocked = false
-    },
-    // TODO: remove duplicated mutation
-    [type.IDENTITY_UNLOCK_FAIL] (state) {
-      state.unlocked = false
     },
     [type.SET_IDENTITY_REGISTRATION]: (state: State, registration: IdentityRegistrationDTO) => {
       state.registration = registration
