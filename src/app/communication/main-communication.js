@@ -29,7 +29,6 @@ import type {
   RequestTermsDTO,
   TermsAnsweredDTO
 } from './dto'
-import type { IdentityRegistrationDTO } from 'mysterium-tequilapi/lib/dto/identity-registration/identity-registration'
 import type { UserSettings } from '../user-settings/user-settings'
 import { MessageReceiver } from './message-receiver'
 import { MessageSender } from './message-sender'
@@ -54,8 +53,6 @@ export type MainCommunication = {
 
   proposalsUpdate: MessageReceiver<void>,
   countryUpdate: MessageSender<CountriesDTO>,
-
-  identityRegistration: MessageSender<IdentityRegistrationDTO>,
 
   toggleFavoriteProvider: MessageReceiver<FavoriteProviderDTO>,
   showDisconnectNotification: MessageReceiver<boolean>,
@@ -88,8 +85,6 @@ export function buildMainCommunication (messageBus: MessageBus): MainCommunicati
 
     proposalsUpdate: transports.proposalsUpdate.buildReceiver(),
     countryUpdate: transports.countryUpdate.buildSender(),
-
-    identityRegistration: transports.identityRegistration.buildSender(),
 
     toggleFavoriteProvider: transports.toggleFavoriteProvider.buildReceiver(),
     showDisconnectNotification: transports.showDisconnectNotification.buildReceiver(),

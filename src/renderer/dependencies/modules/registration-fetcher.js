@@ -17,7 +17,7 @@
 
 // @flow
 
-import type { Container } from '../../../app/di'
+import type { Container } from '../../../app/di/index'
 import TequilapiRegistrationFetcher from '../../../app/data-fetchers/tequilapi-registration-fetcher'
 
 function bootstrap (container: Container) {

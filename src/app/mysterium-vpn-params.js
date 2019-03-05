@@ -17,7 +17,6 @@
 
 // @flow
 import { BrowserWindow } from 'electron'
-import TequilapiRegistrationFetcher from './data-fetchers/tequilapi-registration-fetcher'
 import type { EnvironmentCollector } from './bug-reporting/environment/environment-collector'
 import { UserSettingsStorage } from './user-settings/user-settings-storage'
 import MainBufferedIpc from './communication/ipc/main-buffered-ipc'
@@ -45,7 +44,6 @@ export type MysteriumVpnParams = {
   terms: Terms,
   processManager: ProcessManager,
   proposalFetcher: TequilapiProposalFetcher,
-  registrationFetcher: TequilapiRegistrationFetcher,
   countryList: CountryList,
   bugReporter: BugReporter,
   environmentCollector: EnvironmentCollector,

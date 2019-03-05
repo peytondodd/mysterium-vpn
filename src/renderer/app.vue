@@ -58,16 +58,28 @@ export default {
     AppError,
     AppModal
   },
-  dependencies: ['rendererCommunication', 'syncCommunication', 'logger', 'identityManager', 'bugReporter'],
+  dependencies: [
+    'rendererCommunication',
+    'syncCommunication',
+    'logger',
+    'identityManager',
+    'bugReporter',
+    'registrationFetcher'
+  ],
   computed: {
     ...mapGetters(['navVisible', 'loading', 'visual', 'overlayError'])
   },
   async mounted () {
-    logger.setLogger(this.logger)
-    logger.info('Renderer was mounted, will initialize')
+    try {
+      logger.setLogger(this.logger)
+      logger.info('Renderer was mounted, will initialize')
 
-    new RendererInitializer().initialize(this.rendererCommunication, this.bugReporter, this.identityManager,
-      this.$store, this.$router)
+      new RendererInitializer().initialize(this.rendererCommunication, this.bugReporter, this.identityManager,
+        this.registrationFetcher, this.$store, this.$router)
+    } catch (err) {
+      logger.error('Renderer initialization failed', err)
+      this.bugReporter.captureErrorException(err)
+    }
 
     logger.info('Renderer initialized')
   }

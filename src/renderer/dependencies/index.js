@@ -29,6 +29,7 @@ import vueBootstrap from './modules/vue'
 import applicationBootstrap from './modules/application'
 import userSettingsBootstrap from './modules/user-settings'
 import mysteriumTequilapiBootstrap from '../../dependencies/mysterium-tequilapi'
+import registrationFetcherBootstrap from './modules/registration-fetcher'
 
 /**
  * Bootstraps all application dependencies into DI container
@@ -47,6 +48,7 @@ function bootstrap (): DIContainer {
   userSettingsBootstrap(container)
   applicationBootstrap(container)
   mysteriumTequilapiBootstrap(container)
+  registrationFetcherBootstrap(container)
 
   return container
 }

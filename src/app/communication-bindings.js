@@ -17,20 +17,15 @@
 
 // @flow
 
-import type { IdentityRegistrationDTO } from 'mysterium-tequilapi/lib/dto/identity-registration/identity-registration'
 import type { CurrentIdentityChangeDTO } from './communication/dto'
-import TequilapiRegistrationFetcher from './data-fetchers/tequilapi-registration-fetcher'
 import type { IdentityDTO } from 'mysterium-tequilapi/lib/dto/identity'
 import { ConnectionStatus } from 'mysterium-tequilapi/lib/dto/connection-status'
 import type { BugReporter } from './bug-reporting/interface'
 import StartupEventTracker from './statistics/startup-event-tracker'
-import logger from './logger'
 import Notification from './notification'
 import type { UserSettingsStore } from './user-settings/user-settings-store'
 import type { MainCommunication } from './communication/main-communication'
 import { onceOnMessage } from './communication/utils'
-
-const LOG_PREFIX = '[CommunicationBindings] '
 
 class CommunicationBindings {
   _communication: MainCommunication
@@ -74,27 +69,10 @@ class CommunicationBindings {
     })
   }
 
-  startRegistrationFetcherOnCurrentIdentity (registrationFetcher: TequilapiRegistrationFetcher) {
-    onceOnMessage(this._communication.currentIdentityChanged, (identityChange: CurrentIdentityChangeDTO) => {
-      registrationFetcher.start(identityChange.id)
-      logger.info(`${LOG_PREFIX}Registration fetcher started with ID ${identityChange.id}`)
-    })
-  }
-
   syncCurrentIdentityForBugReporter (bugReporter: BugReporter) {
     this._communication.currentIdentityChanged.on((identityChange: CurrentIdentityChangeDTO) => {
       const identity: IdentityDTO = { id: identityChange.id }
       bugReporter.setUser(identity)
-    })
-  }
-
-  syncRegistrationStatus (registrationFetcher: TequilapiRegistrationFetcher, bugReporter: BugReporter) {
-    registrationFetcher.onFetchedRegistration((registration: IdentityRegistrationDTO) => {
-      this._communication.identityRegistration.send(registration)
-    })
-    registrationFetcher.onFetchingError((error: Error) => {
-      logger.error(`${LOG_PREFIX}Identity registration fetching failed`, error)
-      bugReporter.captureErrorException(error)
     })
   }
 }

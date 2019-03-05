@@ -23,24 +23,11 @@ import StartupEventTracker from '../../../src/app/statistics/startup-event-track
 import MockEventSender from '../../helpers/statistics/mock-event-sender'
 import SubscribableMessageBus from '../../helpers/subscribable-message-bus'
 import messages from '../../../src/app/communication/messages'
-import TequilapiRegistrationFetcher from '../../../src/app/data-fetchers/tequilapi-registration-fetcher'
-import EmptyTequilapiClientMock from '../renderer/store/modules/empty-tequilapi-client-mock'
 import BugReporterMock from '../../helpers/bug-reporter-mock'
-import factoryTequilapiManipulator from '../../helpers/mysterium-tequilapi/factory-tequilapi-manipulator'
 import { UserSettingsStorage } from '../../../src/app/user-settings/user-settings-storage'
 import Notification from '../../../src/app/notification'
 import { ConnectionStatus } from 'mysterium-tequilapi/lib/dto/connection-status'
-import { nextTick } from '../../helpers/utils'
 import { buildMainCommunication } from '../../../src/app/communication/main-communication'
-
-class TequilapiRegistrationFetcherMock extends TequilapiRegistrationFetcher {
-  startedWithId: ?string
-
-  start (id: string) {
-    this.startedWithId = id
-    super.start(id)
-  }
-}
 
 class UserSettingsStoreMock extends UserSettingsStorage {
   saveWasCalled: boolean = false
@@ -148,19 +135,6 @@ describe('CommunicationBindings', () => {
     })
   })
 
-  describe('.startRegistrationFetcherOnCurrentIdentity', () => {
-    const regFetcher = new TequilapiRegistrationFetcherMock(new EmptyTequilapiClientMock())
-    it('starts registration fetcher once', () => {
-      comBinds.startRegistrationFetcherOnCurrentIdentity(regFetcher)
-      msgBus.triggerOn(messages.CURRENT_IDENTITY_CHANGED, { id: 'some data' })
-
-      expect(regFetcher.startedWithId).to.eql('some data')
-
-      msgBus.triggerOn(messages.CURRENT_IDENTITY_CHANGED, { id: 'some other data' })
-      expect(regFetcher.startedWithId).to.eql('some data')
-    })
-  })
-
   describe('.syncCurrentIdentityForBugReporter', () => {
     const bugReporter = new BugReporterMock()
 
@@ -169,35 +143,6 @@ describe('CommunicationBindings', () => {
       msgBus.triggerOn(messages.CURRENT_IDENTITY_CHANGED, { id: 'some data' })
 
       expect(bugReporter.identity).to.eql({ id: 'some data' })
-    })
-  })
-
-  describe('.syncRegistrationStatus', () => {
-    let bugReporter
-    beforeEach(() => {
-      bugReporter = new BugReporterMock()
-    })
-
-    it('sends registration status to renderer via communication', async () => {
-      const regFetcher = new TequilapiRegistrationFetcherMock(factoryTequilapiManipulator().getFakeApi())
-      comBinds.syncRegistrationStatus(regFetcher, bugReporter)
-      regFetcher.start('someID')
-      await nextTick()
-
-      expect(bugReporter.errorExceptions).to.eql([])
-      expect(msgBus.sentData[0].channel).to.be.eql(messages.IDENTITY_REGISTRATION)
-    })
-
-    it('reports error via bugReporter, if one occurs', async () => {
-      const fakeTeqFactory = factoryTequilapiManipulator()
-      fakeTeqFactory.setIdentityRegistrationFail()
-      const fakeTeq = fakeTeqFactory.getFakeApi()
-      const regFetcher = new TequilapiRegistrationFetcherMock(fakeTeq)
-      comBinds.syncRegistrationStatus(regFetcher, bugReporter)
-      regFetcher.start('someID')
-      await nextTick()
-
-      expect(bugReporter.errorExceptions[0].error.message).to.eql('Mock error')
     })
   })
 })

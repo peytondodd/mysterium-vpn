@@ -23,10 +23,12 @@ import type { RendererCommunication } from '../app/communication/renderer-commun
 import type { BugReporter } from '../app/bug-reporting/interface'
 import IdentityManager from '../app/identity-manager'
 import logger from '../app/logger'
+import TequilapiRegistrationFetcher from '../app/data-fetchers/tequilapi-registration-fetcher'
+import type { IdentityRegistrationDTO } from 'mysterium-tequilapi/lib/dto/identity-registration/identity-registration'
 
 export class RendererInitializer {
   initialize (rendererCommunication: RendererCommunication, bugReporter: BugReporter, identityManager: IdentityManager,
-    store: any, router: any) {
+    registrationFetcher: TequilapiRegistrationFetcher, store: any, router: any) {
     // we need to notify the main process that we're up
     rendererCommunication.rendererBooted.send()
 
@@ -79,8 +81,23 @@ export class RendererInitializer {
       store.dispatch(type.OVERLAY_ERROR, messages.mysteriumCLientDown)
     })
 
-    rendererCommunication.identityRegistration.on(registration => {
+    this._fetchRegistrationOnCurrentIdentity(identityManager, registrationFetcher, bugReporter)
+  }
+
+  _fetchRegistrationOnCurrentIdentity (
+    identityManager: IdentityManager, registrationFetcher: TequilapiRegistrationFetcher, bugReporter: BugReporter) {
+    registrationFetcher.onFetchedRegistration((registration: IdentityRegistrationDTO) => {
+      logger.info('Identity registration fetched', registration)
       identityManager.setRegistration(registration)
+    })
+    registrationFetcher.onFetchingError((error: Error) => {
+      logger.error('Identity registration fetching failed', error)
+      bugReporter.captureErrorException(error)
+    })
+
+    identityManager.onCurrentIdentityChange((identity) => {
+      registrationFetcher.start(identity.id)
+      logger.info(`Registration fetcher started with ID ${identity.id}`)
     })
   }
 }
