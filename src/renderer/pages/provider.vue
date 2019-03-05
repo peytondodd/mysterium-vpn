@@ -53,23 +53,6 @@
                 @click="hideErr()"/>
             </div>
           </transition>
-          <div class="stats__container">
-            <div class="stats__block">
-              <div class="stats__label">TIME</div>
-              <div class="stats__value">00:00:00</div>
-              <div class="stats__unit">H:M:S</div>
-            </div>
-            <div class="stats__block">
-              <div class="stats__label">DATA RECEIVED</div>
-              <div class="stats__value">0</div>
-              <div class="stats__unit">Gb</div>
-            </div>
-            <div class="stats__block">
-              <div class="stats__label">DATA SENT</div>
-              <div class="stats__value">0</div>
-              <div class="stats__unit">Gb</div>
-            </div>
-          </div>
         </div>
       </div>
     </div>
