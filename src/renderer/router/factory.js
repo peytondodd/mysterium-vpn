@@ -20,7 +20,6 @@ import Router from 'vue-router'
 import VpnLoader from '@/pages/vpn-loader'
 import AppLoading from '@/pages/app-loading'
 import Vpn from '@/pages/vpn'
-import Provider from '@/pages/provider'
 import Terms from '@/pages/terms'
 import ConnectionHistory from '@/pages/connection-history'
 import About from '@/pages/about'
@@ -56,14 +55,6 @@ function factory (store) {
           visual: 'head'
         },
         component: Vpn
-      },
-      {
-        path: '/provider',
-        name: 'provider',
-        meta: {
-          visual: 'head'
-        },
-        component: Provider
       },
       {
         path: '/terms',
