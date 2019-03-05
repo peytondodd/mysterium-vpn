@@ -17,6 +17,13 @@
 
 <template>
   <div class="page">
+    <identity-button
+      v-if="paymentsAreEnabled && !isIdentityMenuOpen"
+      :registered="registered"
+      :click="showInstructions"/>
+
+    <IdentityRegistration v-if="paymentsAreEnabled"/>
+
     <div class="page__control control">
 
       <tabs/>
@@ -67,15 +74,20 @@ import Tabs from '../components/tabs'
 import { ServiceStatus } from 'mysterium-tequilapi/lib/dto/service-status'
 import { ConnectionStatus } from 'mysterium-tequilapi/lib/dto/connection-status'
 import logger from '../../app/logger'
+import IdentityButton from '../components/identity-button'
+import IdentityRegistration from '../components/identity-registration'
 
 export default {
   name: 'Main',
   components: {
     Tabs,
+    IdentityButton,
+    IdentityRegistration,
     AppError
   },
   dependencies: [
-    'providerService'
+    'providerService',
+    'featureToggle'
   ],
   data () {
     return {
@@ -105,7 +117,22 @@ export default {
         default:
           return 'Start service'
       }
-    }
+    },
+    paymentsAreEnabled () {
+      return this.featureToggle.paymentsAreEnabled()
+    },
+    isIdentityMenuOpen () {
+      return this.$store.state.main.identityMenuOpen
+    },
+    registration () {
+      return this.$store.getters.registration
+    },
+    registered () {
+      if (!this.registration) {
+        return false
+      }
+      return this.registration.registered
+    },
   },
   methods: {
     ...mapMutations({ hideErr: type.HIDE_ERROR }),
@@ -174,6 +201,9 @@ export default {
       }
 
       this.users = 0
+    },
+    showInstructions () {
+      this.$store.commit(type.SHOW_IDENTITY_MENU)
     }
   },
   async mounted () {
