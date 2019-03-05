@@ -38,7 +38,6 @@ import SyncCallbacksInitializer from './sync-callbacks-initializer'
 import type { StringLogger } from './logging/string-logger'
 import logger from './logger'
 import StartupEventTracker from './statistics/startup-event-tracker'
-import TequilapiRegistrationFetcher from './data-fetchers/tequilapi-registration-fetcher'
 import MainBufferedIpc from './communication/ipc/main-buffered-ipc'
 import CommunicationBindings from './communication-bindings'
 import { METRICS, TAGS } from './bug-reporting/metrics/metrics'
@@ -57,7 +56,6 @@ class MysteriumVpn {
   _terms: Terms
   _processManager: ProcessManager
   _proposalFetcher: TequilapiProposalFetcher
-  _registrationFetcher: TequilapiRegistrationFetcher
   _countryList: CountryList
   _bugReporter: BugReporter
   _environmentCollector: EnvironmentCollector
@@ -83,7 +81,6 @@ class MysteriumVpn {
     this._terms = params.terms
     this._processManager = params.processManager
     this._proposalFetcher = params.proposalFetcher
-    this._registrationFetcher = params.registrationFetcher
     this._countryList = params.countryList
     this._bugReporter = params.bugReporter
     this._environmentCollector = params.environmentCollector
@@ -156,11 +153,6 @@ class MysteriumVpn {
 
     this._communicationBindings.setCurrentIdentityForEventTracker(this._startupEventTracker)
     this._communicationBindings.syncCurrentIdentityForBugReporter(this._bugReporter)
-
-    if (this._featureToggle.paymentsAreEnabled()) {
-      this._communicationBindings.startRegistrationFetcherOnCurrentIdentity(this._registrationFetcher)
-      this._communicationBindings.syncRegistrationStatus(this._registrationFetcher, this._bugReporter)
-    }
 
     this._bugReporterMetrics.setWithCurrentDateTime(METRICS.START_TIME)
 

@@ -1,5 +1,5 @@
-// flow-typed signature: 7d35a38530fa52969ff649b407acb1d0
-// flow-typed version: 2d80ca911c/winston_v3.x.x/flow_>=v0.34.x
+// flow-typed signature: 766e6a33a8057f12e56e8a9400cab9f6
+// flow-typed version: 14a225d629/winston_v3.x.x/flow_>=v0.34.x
 
 declare type $winstonLevels = {
   [string]: number
@@ -27,7 +27,10 @@ declare type $winstonFileTransportConfig<T: $winstonLevels> = {
   level?: $Keys<T>
 };
 
-declare class $winstonTransport {}
+declare class $winstonTransport {
+  level?: string;
+  silent?: boolean;
+}
 
 declare class $winstonFileTransport<T> extends $winstonTransport {
   constructor($winstonFileTransportConfig<T>): $winstonFileTransport<T>;
@@ -68,9 +71,11 @@ declare type $winstonFormatSubModule = {
   combine: (...args: Array<$winstonFormat>) => $winstonFormat,
   json: () => $winstonFormat,
   label: (config?: Object) => $winstonFormat,
+  metadata: () => $winstonFormat,
   prettyPrint: () => $winstonFormat,
   simple: () => $winstonFormat,
-  timestamp: () => $winstonFormat,
+  splat: () => $winstonFormat,
+  timestamp: (?{ alias?: string, format?: string }) => $winstonFormat,
   colorize: () => $winstonFormat,
   logstash: () => $winstonFormat,
   printf: ((args: $winstonInfo<Object>) => string) => $winstonFormat

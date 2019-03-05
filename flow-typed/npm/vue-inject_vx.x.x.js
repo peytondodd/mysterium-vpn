@@ -1,4 +1,4 @@
-// flow-typed signature: 4de6af3f1f4a70c96ce7aa983513665e
+// flow-typed signature: 053193791a87d8117bac329b35ebee49
 // flow-typed version: <<STUB>>/vue-inject_v^2.0.1/flow_v0.80.0
 
 /**
@@ -22,14 +22,6 @@ declare module 'vue-inject' {
  * require those files directly. Feel free to delete any files that aren't
  * needed.
  */
-declare module 'vue-inject/dist/vue-inject' {
-  declare module.exports: any;
-}
-
-declare module 'vue-inject/dist/vue-inject.min' {
-  declare module.exports: any;
-}
-
 declare module 'vue-inject/src/base' {
   declare module.exports: any;
 }
@@ -47,12 +39,6 @@ declare module 'vue-inject/src/plugin' {
 }
 
 // Filename aliases
-declare module 'vue-inject/dist/vue-inject.js' {
-  declare module.exports: $Exports<'vue-inject/dist/vue-inject'>;
-}
-declare module 'vue-inject/dist/vue-inject.min.js' {
-  declare module.exports: $Exports<'vue-inject/dist/vue-inject.min'>;
-}
 declare module 'vue-inject/src/base.js' {
   declare module.exports: $Exports<'vue-inject/src/base'>;
 }

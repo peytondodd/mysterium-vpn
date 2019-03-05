@@ -17,11 +17,11 @@
 
 // @flow
 
-import types from '../renderer/store/types'
 import type { IdentityDTO } from 'mysterium-tequilapi/lib/dto/identity'
+import type { IdentityRegistrationDTO } from 'mysterium-tequilapi/lib/dto/identity-registration/identity-registration'
 import type { TequilapiClient } from 'mysterium-tequilapi/lib/client'
-import type { State as IdentityState } from '../renderer/store/modules/identity'
 import messages from './messages'
+import Publisher from '../libraries/publisher'
 
 const PASSWORD = ''
 
@@ -30,13 +30,16 @@ const PASSWORD = ''
  */
 class IdentityManager {
   _tequilapi: TequilapiClient
-  _commit: Function
-  _state: IdentityState
 
-  constructor (tequilapi: TequilapiClient, commit: Function, state: IdentityState) {
+  _identity: ?IdentityDTO = null
+  _registration: ?IdentityRegistrationDTO
+
+  _identityPublisher: Publisher<IdentityDTO> = new Publisher()
+  _registrationPublisher: Publisher<IdentityRegistrationDTO> = new Publisher()
+  _errorMessagePublisher: Publisher<string> = new Publisher()
+
+  constructor (tequilapi: TequilapiClient) {
     this._tequilapi = tequilapi
-    this._commit = commit
-    this._state = state
   }
 
   async listIdentities (): Promise<Array<IdentityDTO>> {
@@ -53,7 +56,22 @@ class IdentityManager {
       throw new Error('Cannot set empty identity.')
     }
 
-    this._commit(types.SET_CURRENT_IDENTITY, identity)
+    this._identity = identity
+    this._identityPublisher.publish(identity)
+  }
+
+  // TODO: unify naming
+  onCurrentIdentityChange (callback: IdentityDTO => void) {
+    this._identityPublisher.addSubscriber(callback)
+  }
+
+  setRegistration (registration: IdentityRegistrationDTO) {
+    this._registration = registration
+    this._registrationPublisher.publish(registration)
+  }
+
+  onRegistrationChange (subscriber: IdentityRegistrationDTO => any) {
+    this._registrationPublisher.addSubscriber(subscriber)
   }
 
   async createIdentity (): Promise<IdentityDTO> {
@@ -66,7 +84,7 @@ class IdentityManager {
   }
 
   async unlockCurrentIdentity (): Promise<void> {
-    const currentIdentity = this._state.current
+    const currentIdentity = this._identity
 
     if (currentIdentity == null || !currentIdentity.id) {
       const message = 'Identity is not available'
@@ -78,16 +96,19 @@ class IdentityManager {
 
     try {
       await this._tequilapi.identityUnlock(currentIdentity.id, PASSWORD)
-      this._commit(types.IDENTITY_UNLOCK_SUCCESS)
     } catch (err) {
       this._showErrorMessage(messages.identityUnlockFailed)
       throw err
     }
   }
 
+  onErrorMessage (callback: string => void) {
+    this._errorMessagePublisher.addSubscriber(callback)
+  }
+
   // TODO: this class should not show errors in case VpnInitializer is run with multiple retries
   _showErrorMessage (message: string): void {
-    this._commit(types.SHOW_ERROR_MESSAGE, message)
+    this._errorMessagePublisher.publish(message)
   }
 }
 

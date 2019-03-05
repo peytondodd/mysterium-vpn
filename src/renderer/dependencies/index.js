@@ -21,6 +21,7 @@ import DIContainer from '../../app/di/vue-container'
 import bugReportingConfigBootstrap from '../../dependencies/bug-reporting'
 import featureToggleBootstrap from '../../dependencies/feature-toggle'
 import bugReportingBootstrap from './modules/bug-reporting'
+import identityBootstrap from './modules/identity'
 import eventsBootstrap from '../../dependencies/statistics'
 import paymentsBootstrap from '../../dependencies/payments'
 import formattersBootstrap from '../../dependencies/formatters'
@@ -28,6 +29,7 @@ import vueBootstrap from './modules/vue'
 import applicationBootstrap from './modules/application'
 import userSettingsBootstrap from './modules/user-settings'
 import mysteriumTequilapiBootstrap from '../../dependencies/mysterium-tequilapi'
+import registrationFetcherBootstrap from './modules/registration-fetcher'
 
 /**
  * Bootstraps all application dependencies into DI container
@@ -38,6 +40,7 @@ function bootstrap (): DIContainer {
   featureToggleBootstrap(container)
   bugReportingConfigBootstrap(container)
   bugReportingBootstrap(container)
+  identityBootstrap(container)
   eventsBootstrap(container)
   paymentsBootstrap(container)
   formattersBootstrap(container)
@@ -45,6 +48,7 @@ function bootstrap (): DIContainer {
   userSettingsBootstrap(container)
   applicationBootstrap(container)
   mysteriumTequilapiBootstrap(container)
+  registrationFetcherBootstrap(container)
 
   return container
 }

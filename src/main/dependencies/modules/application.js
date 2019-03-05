@@ -74,7 +74,6 @@ function bootstrap (container: Container) {
     [
       'mysteriumVpnApplication.config',
       'proposalFetcher',
-      'registrationFetcher',
       'countryList',
       'mysteriumClientProcessManager',
       'bugReporter',
@@ -95,7 +94,6 @@ function bootstrap (container: Container) {
     (
       mysteriumVpnConfig: MysteriumVpnConfig,
       proposalFetcher,
-      registrationFetcher,
       countryList,
       processManager: ProcessManager,
       bugReporter,
@@ -120,7 +118,6 @@ function bootstrap (container: Container) {
         terms: new Terms(path.join(mysteriumVpnConfig.staticDirectory, 'terms'), mysteriumVpnConfig.userDataDirectory),
         processManager: processManager,
         proposalFetcher: proposalFetcher,
-        registrationFetcher: registrationFetcher,
         countryList: countryList,
         bugReporter: bugReporter,
         environmentCollector,

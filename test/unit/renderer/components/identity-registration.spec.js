@@ -22,21 +22,16 @@ import IdentityRegistration from '@/components/identity-registration'
 import { createLocalVue, mount } from '@vue/test-utils'
 import DirectMessageBus from '../../../helpers/direct-message-bus'
 import { buildRendererCommunication } from '../../../../src/app/communication/renderer-communication'
-import { buildMainCommunication } from '../../../../src/app/communication/main-communication'
 import type { RendererCommunication } from '../../../../src/app/communication/renderer-communication'
-import type { MainCommunication } from '../../../../src/app/communication/main-communication'
-import type { IdentityRegistrationDTO } from 'mysterium-tequilapi/lib/dto/identity-registration/identity-registration'
 import Vuex from 'vuex'
 import mainStoreFactory from '@/store/modules/main'
 import EmptyTequilapiClientMock from '../store/modules/empty-tequilapi-client-mock'
 import identityStoreFactory from '../../../../src/renderer/store/modules/identity'
-import BugReporterMock from '../../../helpers/bug-reporter-mock'
 import types from '../../../../src/renderer/store/types'
 import MockEventSender from '../../../helpers/statistics/mock-event-sender'
 
 describe('IdentityRegistration', () => {
   let rendererCommunication: RendererCommunication
-  let mainCommunication: MainCommunication
   let wrapper: IdentityRegistration
   let store: Vuex.Store
 
@@ -48,15 +43,13 @@ describe('IdentityRegistration', () => {
 
     const messageBus = new DirectMessageBus()
     rendererCommunication = buildRendererCommunication(messageBus)
-    mainCommunication = buildMainCommunication(messageBus)
 
     dependencies.constant('rendererCommunication', rendererCommunication)
     dependencies.constant('getPaymentLink', () => {})
 
     const tequilapi = new EmptyTequilapiClientMock()
-    const bugReporter = new BugReporterMock()
     const identity = {
-      ...identityStoreFactory(bugReporter, rendererCommunication),
+      ...identityStoreFactory(),
       state: stateOverride
     }
     store = new Vuex.Store({
@@ -94,9 +87,6 @@ describe('IdentityRegistration', () => {
     })
 
     it('renders instructions when menu is opened', () => {
-      const registration: IdentityRegistrationDTO = { registered: false }
-
-      mainCommunication.identityRegistration.send(registration)
       expect(wrapper.findAll('#registration-instructions.is-open')).to.have.lengthOf(0)
       store.commit(types.SHOW_IDENTITY_MENU)
       expect(wrapper.findAll('#registration-instructions.is-open')).to.have.lengthOf(1)

@@ -27,7 +27,6 @@ import formattersBootstrap from '../../dependencies/formatters'
 import mysteriumClientBootstrap from './modules/mysterium-client'
 import mysteriumTequilapiBootstrap from '../../dependencies/mysterium-tequilapi'
 import proposalFetcherBootstrap from './modules/proposal-fetcher'
-import registrationFetcherBootstrap from './modules/registration-fetcher'
 import userSettingsBootstrap from './modules/user-settings'
 import disconnectNotificationsBootstrap from './modules/disconnect-notification'
 import communicationBootstrap from './modules/communication'
@@ -48,7 +47,6 @@ function bootstrap (): DIContainer {
   mysteriumClientBootstrap(container)
   mysteriumTequilapiBootstrap(container)
   proposalFetcherBootstrap(container)
-  registrationFetcherBootstrap(container)
   userSettingsBootstrap(container)
   disconnectNotificationsBootstrap(container)
   communicationBootstrap(container)
