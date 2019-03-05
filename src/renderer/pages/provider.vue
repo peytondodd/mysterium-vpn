@@ -30,11 +30,6 @@
 
       <div class="control__top">
         <h1>{{ statusText }}</h1>
-
-        <div
-          class="control__location">
-          connected users: <strong>{{ users }}</strong>
-        </div>
       </div>
 
       <div class="control__bottom">
@@ -60,6 +55,11 @@
                 @click="hideErr()"/>
             </div>
           </transition>
+          <div class="stats__block">
+            <div class="stats__label">CONNECTED</div>
+            <div class="stats__value">{{ users }}</div>
+            <div class="stats__unit">USERS</div>
+          </div>
         </div>
       </div>
     </div>
