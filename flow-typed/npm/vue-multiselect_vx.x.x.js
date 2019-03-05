@@ -1,4 +1,4 @@
-// flow-typed signature: c202fcb167ea324b152f84cd4553a1b8
+// flow-typed signature: 438dbd41314ec7312fe0fc5b18577f3e
 // flow-typed version: <<STUB>>/vue-multiselect_v^2.0.8/flow_v0.80.0
 
 /**
@@ -26,22 +26,6 @@ declare module 'vue-multiselect/dist/vue-multiselect.min' {
   declare module.exports: any;
 }
 
-declare module 'vue-multiselect/lib/index' {
-  declare module.exports: any;
-}
-
-declare module 'vue-multiselect/lib/multiselectMixin' {
-  declare module.exports: any;
-}
-
-declare module 'vue-multiselect/lib/pointerMixin' {
-  declare module.exports: any;
-}
-
-declare module 'vue-multiselect/lib/utils' {
-  declare module.exports: any;
-}
-
 declare module 'vue-multiselect/src/index' {
   declare module.exports: any;
 }
@@ -54,25 +38,9 @@ declare module 'vue-multiselect/src/pointerMixin' {
   declare module.exports: any;
 }
 
-declare module 'vue-multiselect/src/utils' {
-  declare module.exports: any;
-}
-
 // Filename aliases
 declare module 'vue-multiselect/dist/vue-multiselect.min.js' {
   declare module.exports: $Exports<'vue-multiselect/dist/vue-multiselect.min'>;
-}
-declare module 'vue-multiselect/lib/index.js' {
-  declare module.exports: $Exports<'vue-multiselect/lib/index'>;
-}
-declare module 'vue-multiselect/lib/multiselectMixin.js' {
-  declare module.exports: $Exports<'vue-multiselect/lib/multiselectMixin'>;
-}
-declare module 'vue-multiselect/lib/pointerMixin.js' {
-  declare module.exports: $Exports<'vue-multiselect/lib/pointerMixin'>;
-}
-declare module 'vue-multiselect/lib/utils.js' {
-  declare module.exports: $Exports<'vue-multiselect/lib/utils'>;
 }
 declare module 'vue-multiselect/src/index.js' {
   declare module.exports: $Exports<'vue-multiselect/src/index'>;
@@ -82,7 +50,4 @@ declare module 'vue-multiselect/src/multiselectMixin.js' {
 }
 declare module 'vue-multiselect/src/pointerMixin.js' {
   declare module.exports: $Exports<'vue-multiselect/src/pointerMixin'>;
-}
-declare module 'vue-multiselect/src/utils.js' {
-  declare module.exports: $Exports<'vue-multiselect/src/utils'>;
 }

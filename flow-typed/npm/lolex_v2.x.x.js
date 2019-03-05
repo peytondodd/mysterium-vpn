@@ -1,5 +1,5 @@
-// flow-typed signature: a865cf1b7ee719c2a40b85dc8dccf56c
-// flow-typed version: fc3f3a2e99/lolex_v2.x.x/flow_>=v0.64.x
+// flow-typed signature: 87dc85fab2898ee0b31032578f05fc57
+// flow-typed version: 71723e3707/lolex_v2.x.x/flow_>=v0.64.x
 
 // @flow
 declare module 'lolex' {
@@ -15,9 +15,10 @@ declare module 'lolex' {
   declare type lolex = {
     createClock(now?: number, loopLimit?: number): Clock,
     install(config?: installConfig): Clock,
+    timers: Object,
     withGlobal(global: Object): lolex,
   };
-  declare class Clock {
+  declare type Clock = {
     setTimeout: typeof setTimeout;
     clearTimeout: typeof clearTimeout;
     setInterval: typeof setInterval;
@@ -28,7 +29,8 @@ declare module 'lolex' {
     cancelAnimationFrame: typeof cancelAnimationFrame;
     hrtime: typeof process.hrtime;
     nextTick: typeof process.nextTick;
-    performace: {
+    now: number;
+    performance?: {
       now: typeof performance.now,
     };
     tick(time: number | string): void;
@@ -38,8 +40,8 @@ declare module 'lolex' {
     runMicrotasks(): void;
     runToFrame(): void;
     runToLast(): void;
-    setSystemTime(now?: Date): void;
-    uninstall(): void;
+    setSystemTime(now?: number | Date): void;
+    uninstall(): Object[];
     Date: typeof Date;
     Performance: typeof Performance;
   }
