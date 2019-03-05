@@ -25,6 +25,7 @@ import realSleep from '../../../libraries/sleep'
 import IpcMessageBus from '../../../app/communication/ipc-message-bus'
 import { buildRendererCommunication } from '../../../app/communication/renderer-communication'
 import CountryImageResolver from '../../../app/countries/unknown-country-reporter'
+import ProviderService from '../../../app/provider/provider-service'
 
 function bootstrap (container: Container) {
   const mysteriumVpnReleaseID = remote.getGlobal('__mysteriumVpnReleaseID')
@@ -67,6 +68,12 @@ function bootstrap (container: Container) {
     'countryImageResolver',
     ['bugReporter'],
     (bugReporter) => new CountryImageResolver(bugReporter)
+  )
+
+  container.service(
+    'providerService',
+    ['tequilapiClient'],
+    (tequilapiClient: TequilapiClient) => new ProviderService(tequilapiClient)
   )
 }
 
