@@ -157,7 +157,7 @@ export default {
         this.startIncrementingUsers()
       } catch (e) {
         this.$store.commit(type.SHOW_ERROR_MESSAGE, 'Failed to start the service')
-        logger.log(e)
+        logger.warn(e)
       }
     },
 
