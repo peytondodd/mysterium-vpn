@@ -121,7 +121,8 @@ const serviceInfoDto = (): ServiceInfoDTO => {
 
   return {
     id: '123',
-    status: ServiceStatus['NOT_RUNNING'],
+    providerId: '0x123',
+    type: 'wireguard',
     proposal: parseProposalDTO({
       id: 1,
       providerId: '0x1',
@@ -129,6 +130,7 @@ const serviceInfoDto = (): ServiceInfoDTO => {
       serviceDefinition: { locationOriginate: { country: 'lt' } },
       metrics: { connectCount: { success: 0, fail: 10, timeout: 50 } }
     }),
+    status: ServiceStatus['NOT_RUNNING'],
     options: options
   }
 }

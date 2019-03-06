@@ -26,8 +26,8 @@ class ProviderService {
     this._tequilapiClient = tequilapiClient
   }
 
-  async start (providerId: string, serviceType: string) {
-    return this._tequilapiClient.serviceStart({ providerId, serviceType })
+  async start (providerId: string, type: string) {
+    return this._tequilapiClient.serviceStart({ providerId, type })
   }
 
   async stop (serviceId: string) {

@@ -132,7 +132,7 @@ export default {
         return false
       }
       return this.registration.registered
-    },
+    }
   },
   methods: {
     ...mapMutations({ hideErr: type.HIDE_ERROR }),
