@@ -71,7 +71,7 @@ import type from '../store/types'
 import { mapMutations, mapGetters } from 'vuex'
 import AppError from '../partials/app-error'
 import Tabs from '../components/tabs'
-import { ServiceStatus } from 'mysterium-tequilapi/lib/dto/service-status'
+import { ServiceStatus } from 'mysterium-vpn-js/lib/models/service-status'
 import { ConnectionStatus } from 'mysterium-tequilapi/lib/dto/connection-status'
 import logger from '../../app/logger'
 import IdentityButton from '../components/identity-button'
@@ -90,7 +90,8 @@ export default {
   },
   dependencies: [
     'tequilapiClient',
-    'featureToggle'
+    'featureToggle',
+    'bugReporter'
   ],
   data () {
     return {
@@ -100,27 +101,52 @@ export default {
   },
   created: function () {
     this.providerService = new ProviderService(this.tequilapiClient, this.currentIdentity, PROVIDER_SERVICE_TYPE)
+    this.providerService.addStatusSubscriber(newStatus => {
+      this.status = newStatus
+      // TODO: show error if status changes from "Starting" to "NotRunning"
+      // TODO: show error if service ends unexpectedly, without stoping service
+    })
+    // TODO: unsubscribe from status
+    // TODO: investigate why .beforeDestroy is never called, but .created is called when switching between tabs - memory leak?
   },
   computed: {
     ...mapGetters(['errorMessage', 'showError', 'currentIdentity']),
     statusText () {
+      const notRunning = 'Stopped'
+      const starting = 'Starting..'
+      const running = 'Running'
+
       switch (this.status) {
+        case ServiceStatus.NOT_RUNNING:
+          return notRunning
         case ServiceStatus.STARTING:
-          return 'Starting..'
+          return starting
         case ServiceStatus.RUNNING:
-          return 'Running'
+          return running
         default:
-          return 'Stopped'
+          const msg = `Unknown status value: ${this.status}`
+          logger.error(msg)
+          this.bugReporter.captureErrorMessage(msg)
+          return notRunning
       }
     },
     buttonText () {
+      const notRunning = 'Start service'
+      const starting = 'Starting..'
+      const running = 'Stop service'
+
       switch (this.status) {
+        case ServiceStatus.NOT_RUNNING:
+          return notRunning
         case ServiceStatus.STARTING:
-          return 'Starting..'
+          return starting
         case ServiceStatus.RUNNING:
-          return 'Stop service'
+          return running
         default:
-          return 'Start service'
+          const msg = `Unknown status value: ${this.status}`
+          logger.error(msg)
+          this.bugReporter.captureErrorMessage(msg)
+          return notRunning
       }
     },
     paymentsAreEnabled () {
@@ -155,8 +181,7 @@ export default {
 
     async startService () {
       try {
-        const service = await this.providerService.start()
-        this.status = service.status
+        await this.providerService.start()
 
         this.startIncrementingUsers()
       } catch (e) {
@@ -168,7 +193,6 @@ export default {
     async stopService () {
       try {
         await this.providerService.stop()
-        this.status = ServiceStatus.NOT_RUNNING
 
         this.stopIncrementingUsers()
       } catch (e) {
