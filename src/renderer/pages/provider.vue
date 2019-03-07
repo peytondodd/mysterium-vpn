@@ -78,7 +78,7 @@ import IdentityButton from '../components/identity-button'
 import IdentityRegistration from '../components/identity-registration'
 import { ProviderService } from 'mysterium-vpn-js/lib/domain/provider-service'
 
-const PROVIDER_SERVICE_TYPE = 'openvpn'
+const PROVIDER_SERVICE_TYPE = 'wireguard'
 
 export default {
   name: 'Main',
