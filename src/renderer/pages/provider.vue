@@ -173,7 +173,7 @@ export default {
         this.stopIncrementingUsers()
       } catch (e) {
         this.$store.commit(type.SHOW_ERROR_MESSAGE, 'Failed to stop the service')
-        logger.log(e)
+        logger.warn(e)
       }
     },
 
