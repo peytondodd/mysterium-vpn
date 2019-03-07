@@ -4913,6 +4913,11 @@ filename-regex@^2.0.0:
   resolved "https://registry.yarnpkg.com/filename-regex/-/filename-regex-2.0.1.tgz#c1c4b9bee3e09725ddb106b75c1e301fe2f18b26"
   integrity sha1-wcS5vuPglyXdsQa3XB4wH+LxiyY=
 
+filesize@^4.1.2:
+  version "4.1.2"
+  resolved "https://registry.yarnpkg.com/filesize/-/filesize-4.1.2.tgz#fcd570af1353cea97897be64f56183adb995994b"
+  integrity sha512-iSWteWtfNcrWQTkQw8ble2bnonSl7YJImsn9OZKpE2E4IHhXI78eASpDYUljXZZdYj36QsEKjOs/CsiDqmKMJw==
+
 fill-range@^2.1.0:
   version "2.2.4"
   resolved "https://registry.yarnpkg.com/fill-range/-/fill-range-2.2.4.tgz#eb1e773abb056dcd8df2bfdf6af59b8b3a936565"
@@ -7857,10 +7862,17 @@ mysterium-tequilapi@^0.7.2:
     "@babel/runtime" "^7.1.5"
     axios "^0.18.0"
 
-mysterium-vpn-js@^0.0.2:
+"mysterium-vpn-js@file:../mysterium-vpn-js":
   version "0.0.2"
-  resolved "https://registry.yarnpkg.com/mysterium-vpn-js/-/mysterium-vpn-js-0.0.2.tgz#650129ab9fa3e8bdcab58082f13f04826e73fd27"
-  integrity sha512-EEOmwvWz8vyFflsbTT1V0NzCuI5x+g6oP0xGnHwmhr/dBAUVDWyXjd8rk8JRJSdtWel1zCYUCVzyLMIF9VNOLw==
+  dependencies:
+    filesize "^4.1.2"
+    mysterium-tequilapi "^0.7.2"
+
+"mysterium-vpn-js@file:/Users/donce/projects/mysterium-vpn-js/":
+  version "0.0.2"
+  dependencies:
+    filesize "^4.1.2"
+    mysterium-tequilapi "^0.7.2"
 
 nan@^2.10.0, nan@^2.9.2:
   version "2.11.0"

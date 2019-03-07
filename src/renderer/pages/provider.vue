@@ -76,6 +76,9 @@ import { ConnectionStatus } from 'mysterium-tequilapi/lib/dto/connection-status'
 import logger from '../../app/logger'
 import IdentityButton from '../components/identity-button'
 import IdentityRegistration from '../components/identity-registration'
+import { ProviderService } from 'mysterium-vpn-js/lib/domain/provider-service'
+
+const PROVIDER_SERVICE_TYPE = 'openvpn'
 
 export default {
   name: 'Main',
@@ -86,15 +89,17 @@ export default {
     AppError
   },
   dependencies: [
-    'providerService',
+    'tequilapiClient',
     'featureToggle'
   ],
   data () {
     return {
       status: ServiceStatus.NOT_RUNNING,
-      serviceId: '',
       users: 0
     }
+  },
+  created: function () {
+    this.providerService = new ProviderService(this.tequilapiClient, this.currentIdentity, PROVIDER_SERVICE_TYPE)
   },
   computed: {
     ...mapGetters(['errorMessage', 'showError', 'currentIdentity']),
@@ -150,9 +155,8 @@ export default {
 
     async startService () {
       try {
-        const service = await this.providerService.start(this.currentIdentity, 'openvpn')
+        const service = await this.providerService.start()
         this.status = service.status
-        this.serviceId = service.id
 
         this.startIncrementingUsers()
       } catch (e) {
@@ -163,7 +167,7 @@ export default {
 
     async stopService () {
       try {
-        await this.providerService.stop(this.serviceId)
+        await this.providerService.stop()
         this.status = ServiceStatus.NOT_RUNNING
 
         this.stopIncrementingUsers()
