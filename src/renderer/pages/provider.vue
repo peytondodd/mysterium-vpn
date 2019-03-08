@@ -96,6 +96,9 @@ export default {
     this.providerService = new ProviderService(this.tequilapiClient, this.currentIdentity, PROVIDER_SERVICE_TYPE)
     this.statusSubscriber = newStatus => this.onStatusChange(newStatus)
     this.providerService.addStatusSubscriber(this.statusSubscriber)
+    this.providerService.checkForExistingService().catch(err => {
+      logger.error('Check for existing service failed', err)
+    })
 
     // reset any error messages from VPN page
     this.$store.commit(type.HIDE_ERROR)
