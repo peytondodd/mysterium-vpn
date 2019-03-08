@@ -105,18 +105,18 @@ class EmptyTequilapiClientMock implements TequilapiClient {
   }
 
   async serviceGet (id: string): Promise<ServiceInfoDTO> {
-    return serviceInfoDto()
+    return buildServiceInfoDTO()
   }
 
   async serviceStart (request: ServiceRequest, timeout?: number | void): Promise<ServiceInfoDTO> {
-    return serviceInfoDto()
+    return buildServiceInfoDTO()
   }
 
   async serviceStop (serviceId: string): Promise<void> {
   }
 }
 
-const serviceInfoDto = (): ServiceInfoDTO => {
+const buildServiceInfoDTO = (): ServiceInfoDTO => {
   const options: { [key: string]: any } = {}
 
   return {

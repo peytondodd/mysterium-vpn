@@ -16,36 +16,45 @@
   -->
 
 <template>
-  <div class="tabs">
-    <router-link
-      :to="{ name: 'vpn' }"
-      class="tab__button"
-      :class="{'tab__button--active': activeRoute('vpn')}">
-      Use VPN
-    </router-link>
+  <div>
+    <identity-button
+      v-if="!isIdentityMenuOpen"
+      :registered="registered"
+      :click="showInstructions"/>
 
-    <router-link
-      :to="{ name: 'provider' }"
-      class="tab__button"
-      :class="{'tab__button--active': activeRoute('provider')}">
-      Run service
-    </router-link>
+    <IdentityRegistration/>
   </div>
 </template>
 
 <script>
-export default {
-  methods: {
-    activeRoute (routeName) {
-      const currentRoute = this.getCurrentRoute() || 'vpn'
-      return routeName === currentRoute
-    },
-    getCurrentRoute () {
-      if (!this.$router || !this.$router.currentRoute) {
-        return null
-      }
+import IdentityButton from '../components/identity-button'
+import IdentityRegistration from '../components/identity-registration'
+import types from '../store/types'
 
-      return this.$router.currentRoute.name
+export default {
+  components: {
+    IdentityButton,
+    IdentityRegistration
+  },
+  dependencies: [
+  ],
+  methods: {
+    showInstructions () {
+      this.$store.commit(types.SHOW_IDENTITY_MENU)
+    }
+  },
+  computed: {
+    isIdentityMenuOpen () {
+      return this.$store.state.main.identityMenuOpen
+    },
+    registered () {
+      if (!this.registration) {
+        return false
+      }
+      return this.registration.registered
+    },
+    registration () {
+      return this.$store.getters.registration
     }
   }
 }

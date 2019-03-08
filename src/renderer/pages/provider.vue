@@ -17,12 +17,7 @@
 
 <template>
   <div class="page">
-    <identity-button
-      v-if="paymentsAreEnabled && !isIdentityMenuOpen"
-      :registered="registered"
-      :click="showInstructions"/>
-
-    <IdentityRegistration v-if="paymentsAreEnabled"/>
+    <Identity v-if="paymentsAreEnabled"/>
 
     <div class="page__control control">
 
@@ -74,8 +69,7 @@ import Tabs from '../components/tabs'
 import { ServiceStatus } from 'mysterium-vpn-js/lib/models/service-status'
 import { ConnectionStatus } from 'mysterium-tequilapi/lib/dto/connection-status'
 import logger from '../../app/logger'
-import IdentityButton from '../components/identity-button'
-import IdentityRegistration from '../components/identity-registration'
+import Identity from '../components/identity'
 import { ProviderService } from 'mysterium-vpn-js/lib/domain/provider-service'
 
 const PROVIDER_SERVICE_TYPE = 'wireguard'
@@ -84,8 +78,7 @@ export default {
   name: 'Main',
   components: {
     Tabs,
-    IdentityButton,
-    IdentityRegistration,
+    Identity,
     AppError
   },
   dependencies: [
@@ -107,7 +100,6 @@ export default {
       // TODO: show error if service ends unexpectedly, without stoping service
     })
     // TODO: unsubscribe from status
-    // TODO: investigate why .beforeDestroy is never called, but .created is called when switching between tabs - memory leak?
   },
   computed: {
     ...mapGetters(['errorMessage', 'showError', 'currentIdentity']),
@@ -151,18 +143,6 @@ export default {
     },
     paymentsAreEnabled () {
       return this.featureToggle.paymentsAreEnabled()
-    },
-    isIdentityMenuOpen () {
-      return this.$store.state.main.identityMenuOpen
-    },
-    registration () {
-      return this.$store.getters.registration
-    },
-    registered () {
-      if (!this.registration) {
-        return false
-      }
-      return this.registration.registered
     }
   },
   methods: {
@@ -229,11 +209,9 @@ export default {
       }
 
       this.users = 0
-    },
-    showInstructions () {
-      this.$store.commit(type.SHOW_IDENTITY_MENU)
     }
   },
+  // TODO: move hooks into single place
   async mounted () {
     // reset any error messages from VPN page
     this.$store.commit(type.HIDE_ERROR)

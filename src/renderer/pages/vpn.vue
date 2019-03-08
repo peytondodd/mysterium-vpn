@@ -17,12 +17,7 @@
 
 <template>
   <div class="page">
-    <identity-button
-      v-if="paymentsAreEnabled && !isIdentityMenuOpen"
-      :registered="registered"
-      :click="showInstructions"/>
-
-    <IdentityRegistration v-if="paymentsAreEnabled"/>
+    <Identity v-if="paymentsAreEnabled"/>
 
     <div class="page__control control">
 
@@ -90,21 +85,19 @@ import AppError from '../partials/app-error'
 import config from '../config'
 import { ActionLooperConfig } from '../store/modules/connection'
 import FavoriteButton from '../components/favorite-button'
-import IdentityButton from '../components/identity-button'
-import IdentityRegistration from '../components/identity-registration'
 import Tabs from '../components/tabs'
+import Identity from '../components/identity'
 
 export default {
   name: 'Main',
   components: {
+    Identity,
     Tabs,
     FavoriteButton,
     CountrySelect,
     ConnectionButton,
     StatsDisplay,
-    AppError,
-    IdentityButton,
-    IdentityRegistration
+    AppError
   },
   dependencies: [
     'bugReporter',
@@ -146,21 +139,6 @@ export default {
     providerCountry () {
       return this.country ? this.country.code : null
     },
-    registrationFetched () {
-      return this.registration != null
-    },
-    registration () {
-      return this.$store.getters.registration
-    },
-    registered () {
-      if (!this.registration) {
-        return false
-      }
-      return this.registration.registered
-    },
-    isIdentityMenuOpen () {
-      return this.$store.state.main.identityMenuOpen
-    },
     paymentsAreEnabled () {
       return this.featureToggle.paymentsAreEnabled()
     }
@@ -187,15 +165,13 @@ export default {
       if (countries.length < 1) this.bugReporter.captureInfoMessage('Renderer received empty countries list')
 
       this.countryList = countries
-    },
-    showInstructions () {
-      this.$store.commit(type.SHOW_IDENTITY_MENU)
     }
   },
   async mounted () {
     this.startupEventTracker.sendAppStartSuccessEvent()
     this.rendererCommunication.countryUpdate.on(this.onCountriesUpdate)
 
+    // TODO: do not start loopers each time this page is mounted, or stop loopers when in .beforeDestroy
     const ipConfig = new ActionLooperConfig(type.CONNECTION_IP, config.ipUpdateThreshold)
     this.$store.dispatch(type.START_ACTION_LOOPING, ipConfig)
     const statusConfig = new ActionLooperConfig(type.FETCH_CONNECTION_STATUS, config.statusUpdateThreshold)
