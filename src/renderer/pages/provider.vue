@@ -84,7 +84,8 @@ export default {
   dependencies: [
     'tequilapiClient',
     'featureToggle',
-    'bugReporter'
+    'bugReporter',
+    'providerService'
   ],
   data () {
     return {
@@ -93,7 +94,6 @@ export default {
     }
   },
   async mounted () {
-    this.providerService = new ProviderService(this.tequilapiClient, this.currentIdentity, PROVIDER_SERVICE_TYPE)
     this.statusSubscriber = newStatus => this.onStatusChange(newStatus)
     this.providerService.addStatusSubscriber(this.statusSubscriber)
     this.providerService.checkForExistingService().catch(err => {
@@ -177,7 +177,7 @@ export default {
     async startService () {
       try {
         // TODO: before starting service, ensure that VPN service has finished stopping
-        await this.providerService.start()
+        await this.providerService.start(this.currentIdentity)
 
         this.startIncrementingUsers()
       } catch (e) {
