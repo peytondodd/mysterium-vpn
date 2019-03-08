@@ -92,14 +92,26 @@ export default {
       users: 0
     }
   },
-  created: function () {
+  async mounted () {
     this.providerService = new ProviderService(this.tequilapiClient, this.currentIdentity, PROVIDER_SERVICE_TYPE)
-    this.providerService.addStatusSubscriber(newStatus => {
-      this.status = newStatus
-      // TODO: show error if status changes from "Starting" to "NotRunning"
-      // TODO: show error if service ends unexpectedly, without stoping service
-    })
-    // TODO: unsubscribe from status
+    this.statusSubscriber = newStatus => this.onStatusChange(newStatus)
+    this.providerService.addStatusSubscriber(this.statusSubscriber)
+
+    // reset any error messages from VPN page
+    this.$store.commit(type.HIDE_ERROR)
+
+    // disconnect from VPN if still connected
+    if (this.$store.getters.status !== ConnectionStatus.NOT_CONNECTED) {
+      this.$store.dispatch(type.DISCONNECT)
+    }
+
+    // stop statistics fetching
+    this.$store.dispatch(type.STOP_ACTION_LOOPING, type.CONNECTION_IP)
+    this.$store.dispatch(type.STOP_ACTION_LOOPING, type.FETCH_CONNECTION_STATUS)
+  },
+  beforeDestroy () {
+    this.providerService.removeStatusSubscriber(this.statusSubscriber)
+    clearInterval(this.clearInterval)
   },
   computed: {
     ...mapGetters(['errorMessage', 'showError', 'currentIdentity']),
@@ -161,11 +173,13 @@ export default {
 
     async startService () {
       try {
+        // TODO: before starting service, ensure that VPN service has finished stopping
         await this.providerService.start()
 
         this.startIncrementingUsers()
       } catch (e) {
         this.$store.commit(type.SHOW_ERROR_MESSAGE, 'Failed to start the service')
+        // TODO: hide this error message if starting service succeeds after another try
         logger.warn(e)
       }
     },
@@ -179,6 +193,12 @@ export default {
         this.$store.commit(type.SHOW_ERROR_MESSAGE, 'Failed to stop the service')
         logger.warn(e)
       }
+    },
+
+    onStatusChange (newStatus) {
+      this.status = newStatus
+      // TODO: show error if status changes from "Starting" to "NotRunning"
+      // TODO: show error if service ends unexpectedly, without stoping service
     },
 
     startIncrementingUsers () {
@@ -210,23 +230,6 @@ export default {
 
       this.users = 0
     }
-  },
-  // TODO: move hooks into single place
-  async mounted () {
-    // reset any error messages from VPN page
-    this.$store.commit(type.HIDE_ERROR)
-
-    // disconnect from VPN if still connected
-    if (this.$store.getters.status !== ConnectionStatus.NOT_CONNECTED) {
-      this.$store.dispatch(type.DISCONNECT)
-    }
-
-    // stop statistics fetching
-    this.$store.dispatch(type.STOP_ACTION_LOOPING, type.CONNECTION_IP)
-    this.$store.dispatch(type.STOP_ACTION_LOOPING, type.FETCH_CONNECTION_STATUS)
-  },
-  beforeDestroy () {
-    clearInterval(this.clearInterval)
   }
 }
 </script>
