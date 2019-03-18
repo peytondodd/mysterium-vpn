@@ -121,7 +121,12 @@ class MysteriumVpn {
     // fired when all windows are closed
     app.on('window-all-closed', () => this.onWindowsClosed())
     // fired just before quitting, this should quit
-    app.on('will-quit', () => this.onWillQuit())
+    app.on('will-quit', async (event) => {
+      // this is needed to wait for async ops to finish
+      event.preventDefault()
+
+      await this.onWillQuit()
+    })
     // fired when app activated
     app.on('activate', () => {
       try {
@@ -284,7 +289,14 @@ class MysteriumVpn {
       this._bugReporter.captureErrorException(e)
     }
 
-    await this._processManager.stop()
+    try {
+      await this._processManager.stop()
+    } catch (e) {
+      logException('Failed to stop process', e)
+      this._bugReporter.captureErrorException(e)
+    }
+
+    process.exit(1)
   }
 
   // make sure terms are up to date and accepted
