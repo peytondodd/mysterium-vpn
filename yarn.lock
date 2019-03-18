@@ -4913,6 +4913,11 @@ filename-regex@^2.0.0:
   resolved "https://registry.yarnpkg.com/filename-regex/-/filename-regex-2.0.1.tgz#c1c4b9bee3e09725ddb106b75c1e301fe2f18b26"
   integrity sha1-wcS5vuPglyXdsQa3XB4wH+LxiyY=
 
+filesize@^4.1.2:
+  version "4.1.2"
+  resolved "https://registry.yarnpkg.com/filesize/-/filesize-4.1.2.tgz#fcd570af1353cea97897be64f56183adb995994b"
+  integrity sha512-iSWteWtfNcrWQTkQw8ble2bnonSl7YJImsn9OZKpE2E4IHhXI78eASpDYUljXZZdYj36QsEKjOs/CsiDqmKMJw==
+
 fill-range@^2.1.0:
   version "2.2.4"
   resolved "https://registry.yarnpkg.com/fill-range/-/fill-range-2.2.4.tgz#eb1e773abb056dcd8df2bfdf6af59b8b3a936565"
@@ -7840,27 +7845,30 @@ mute-stream@0.0.7, mute-stream@~0.0.4:
   resolved "https://registry.yarnpkg.com/mute-stream/-/mute-stream-0.0.7.tgz#3075ce93bc21b8fab43e1bc4da7e8115ed1e7bab"
   integrity sha1-MHXOk7whuPq0PhvE2n6BFe0ee6s=
 
-mysterium-client-bin@0.5.3:
-  version "0.5.3"
-  resolved "https://registry.yarnpkg.com/mysterium-client-bin/-/mysterium-client-bin-0.5.3.tgz#4188ae7253cda01e962446cb5d62b690a5a10c86"
-  integrity sha512-lEPfqQgEAy0rtpU/4Uh2PMXIt4mz+Z8s5NLqxIBGm1CxMFlALC16mWKbxnDirKjmt28mBhXu6grrWB9nHLkUJg==
+mysterium-client-bin@0.0.0-dev:
+  version "0.0.0-dev"
+  resolved "https://registry.yarnpkg.com/mysterium-client-bin/-/mysterium-client-bin-0.0.0-dev.tgz#424873072964e7a5835115281eb38bbb925dbce8"
+  integrity sha512-Ck3ZNDEOko6LrZKZBtkbjfuaeIXxgQXad7NkTppBJmh2rUfs1C+jhDnh9f4MS1Kn4Jwep+0Z0NYz5GC+wuM8Rw==
   dependencies:
     extract-zip "^1.6.7"
     follow-redirects "^1.5.2"
     targz "^1.0.1"
 
-mysterium-tequilapi@^0.6.0:
-  version "0.6.0"
-  resolved "https://registry.yarnpkg.com/mysterium-tequilapi/-/mysterium-tequilapi-0.6.0.tgz#1a0bc3c9223da23ab8e9d124cc92b84275f7ed15"
-  integrity sha512-aW09RRekmBxU+bdVCWjLRjUJPcJ2NAxNPFIaSCTTjJDTUlvMdpPDUHUPZFGLhDS4mnlA7GFl9bBXC8XOctjtRw==
+mysterium-tequilapi@^0.7.3:
+  version "0.7.3"
+  resolved "https://registry.yarnpkg.com/mysterium-tequilapi/-/mysterium-tequilapi-0.7.3.tgz#60254a056b7363ed3430b3fc1d945a708a868796"
+  integrity sha512-PVpzuzucRHm/ZRzfGFmBnNCI5X3D5UB/PpvtJ66bvi9DRmMDopY7nGXaOHaPGmIVTlShZoqz5eVEHQRrovQecA==
   dependencies:
     "@babel/runtime" "^7.1.5"
     axios "^0.18.0"
 
-mysterium-vpn-js@^0.0.2:
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/mysterium-vpn-js/-/mysterium-vpn-js-0.0.2.tgz#650129ab9fa3e8bdcab58082f13f04826e73fd27"
-  integrity sha512-EEOmwvWz8vyFflsbTT1V0NzCuI5x+g6oP0xGnHwmhr/dBAUVDWyXjd8rk8JRJSdtWel1zCYUCVzyLMIF9VNOLw==
+mysterium-vpn-js@^0.0.5:
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/mysterium-vpn-js/-/mysterium-vpn-js-0.0.5.tgz#fde8c9f08e6e290e34f5b16c627ab5705ff062f2"
+  integrity sha512-Ci/ktWD1Kcg8eI2a7NwQsJSVgipXQd3rkBfALdsHvI6ea9CmROwS7fqcIVCsLMiV8rtBdRIptY+f9xHW7MPbjg==
+  dependencies:
+    filesize "^4.1.2"
+    mysterium-tequilapi "^0.7.3"
 
 nan@^2.10.0, nan@^2.9.2:
   version "2.11.0"

@@ -17,14 +17,12 @@
 
 <template>
   <div class="page">
-    <identity-button
-      v-if="paymentsAreEnabled && !isIdentityMenuOpen"
-      :registered="registered"
-      :click="showInstructions"/>
-
-    <IdentityRegistration v-if="paymentsAreEnabled" />
+    <Identity v-if="paymentsAreEnabled"/>
 
     <div class="page__control control">
+
+      <tabs/>
+
       <div class="control__top">
         <h1
           :class="{'is-grey':statusCode===-1}"
@@ -39,7 +37,7 @@
       <div class="control__bottom">
         <div
           class="control__countries">
-          <div class="control__countries__row" />
+          <div class="control__countries__row"/>
           <country-select
             :country-list="countryList"
             :countries-are-loading="countriesAreLoading"
@@ -53,7 +51,7 @@
         </div>
         <connection-button
           :provider-id="providerIdentity"
-          :provider-country="providerCountry" />
+          :provider-country="providerCountry"/>
       </div>
 
       <div class="control__footer">
@@ -87,19 +85,19 @@ import AppError from '../partials/app-error'
 import config from '../config'
 import { ActionLooperConfig } from '../store/modules/connection'
 import FavoriteButton from '../components/favorite-button'
-import IdentityButton from '../components/identity-button'
-import IdentityRegistration from '../components/identity-registration'
+import Tabs from '../components/tabs'
+import Identity from '../components/identity'
 
 export default {
   name: 'Main',
   components: {
+    Identity,
+    Tabs,
     FavoriteButton,
     CountrySelect,
     ConnectionButton,
     StatsDisplay,
-    AppError,
-    IdentityButton,
-    IdentityRegistration
+    AppError
   },
   dependencies: [
     'bugReporter',
@@ -119,15 +117,20 @@ export default {
     ...mapGetters(['connection', 'status', 'ip', 'errorMessage', 'showError']),
     statusCode () {
       switch (this.status) {
-        case 'NotConnected': return -1
-        case 'Connecting': return 0
-        case 'Connected': return 1
+        case 'NotConnected':
+          return -1
+        case 'Connecting':
+          return 0
+        case 'Connected':
+          return 1
       }
     },
     statusTitle () {
       switch (this.status) {
-        case 'NotConnected': return 'Disconnected'
-        default: return this.status
+        case 'NotConnected':
+          return 'Disconnected'
+        default:
+          return this.status
       }
     },
     providerIdentity () {
@@ -136,28 +139,15 @@ export default {
     providerCountry () {
       return this.country ? this.country.code : null
     },
-    registrationFetched () {
-      return this.registration != null
-    },
-    registration () {
-      return this.$store.getters.registration
-    },
-    registered () {
-      if (!this.registration) {
-        return false
-      }
-      return this.registration.registered
-    },
-    isIdentityMenuOpen () {
-      return this.$store.state.main.identityMenuOpen
-    },
     paymentsAreEnabled () {
       return this.featureToggle.paymentsAreEnabled()
     }
   },
   methods: {
     ...mapMutations({ hideErr: type.HIDE_ERROR }),
-    setCountry (data) { this.country = data },
+    setCountry (data) {
+      this.country = data
+    },
     fetchCountries () {
       this.countriesAreLoading = true
       this.rendererCommunication.proposalsUpdate.send()
@@ -175,15 +165,13 @@ export default {
       if (countries.length < 1) this.bugReporter.captureInfoMessage('Renderer received empty countries list')
 
       this.countryList = countries
-    },
-    showInstructions () {
-      this.$store.commit(type.SHOW_IDENTITY_MENU)
     }
   },
   async mounted () {
     this.startupEventTracker.sendAppStartSuccessEvent()
     this.rendererCommunication.countryUpdate.on(this.onCountriesUpdate)
 
+    // TODO: do not start loopers each time this page is mounted, or stop loopers when in .beforeDestroy
     const ipConfig = new ActionLooperConfig(type.CONNECTION_IP, config.ipUpdateThreshold)
     this.$store.dispatch(type.START_ACTION_LOOPING, ipConfig)
     const statusConfig = new ActionLooperConfig(type.FETCH_CONNECTION_STATUS, config.statusUpdateThreshold)

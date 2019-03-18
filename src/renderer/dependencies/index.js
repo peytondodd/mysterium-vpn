@@ -30,6 +30,7 @@ import applicationBootstrap from './modules/application'
 import userSettingsBootstrap from './modules/user-settings'
 import mysteriumTequilapiBootstrap from '../../dependencies/mysterium-tequilapi'
 import registrationFetcherBootstrap from './modules/registration-fetcher'
+import providerServiceBootstrap from './modules/provider-service'
 
 /**
  * Bootstraps all application dependencies into DI container
@@ -49,6 +50,7 @@ function bootstrap (): DIContainer {
   applicationBootstrap(container)
   mysteriumTequilapiBootstrap(container)
   registrationFetcherBootstrap(container)
+  providerServiceBootstrap(container)
 
   return container
 }

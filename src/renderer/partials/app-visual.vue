@@ -67,6 +67,10 @@ export default {
         return ['is-pulsing']
       }
 
+      if (this.$route.name === 'provider') {
+        return ['is-disabled', 'not-connected']
+      }
+
       if (this.loading) {
         classes = ['is-loading', 'is-pulsing']
       } else if (this.$route.name === 'vpn') {

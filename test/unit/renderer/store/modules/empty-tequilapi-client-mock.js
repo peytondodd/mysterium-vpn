@@ -28,6 +28,10 @@ import type { NodeHealthcheckDTO } from 'mysterium-tequilapi/lib/dto/node-health
 import type { IdentityRegistrationDTO } from 'mysterium-tequilapi/lib/dto/identity-registration/identity-registration'
 import { ConnectionStatus } from 'mysterium-tequilapi/lib/dto/connection-status'
 import { SessionDTO } from 'mysterium-tequilapi/lib/dto/session'
+import { ServiceInfoDTO } from 'mysterium-tequilapi/lib/dto/service-info'
+import { ServiceRequest } from 'mysterium-tequilapi/lib/dto/service-request'
+import { ServiceStatus } from 'mysterium-tequilapi/lib/dto/service-status'
+import { parseProposalDTO } from 'mysterium-tequilapi/lib/dto/proposal'
 
 class EmptyTequilapiClientMock implements TequilapiClient {
   async healthCheck (_timeout: ?number): Promise<NodeHealthcheckDTO> {
@@ -94,6 +98,40 @@ class EmptyTequilapiClientMock implements TequilapiClient {
 
   async sessionsList (): Promise<SessionDTO[]> {
     return []
+  }
+
+  async serviceList (): Promise<ServiceInfoDTO[]> {
+    return []
+  }
+
+  async serviceGet (id: string): Promise<ServiceInfoDTO> {
+    return buildServiceInfoDTO()
+  }
+
+  async serviceStart (request: ServiceRequest, timeout?: number | void): Promise<ServiceInfoDTO> {
+    return buildServiceInfoDTO()
+  }
+
+  async serviceStop (serviceId: string): Promise<void> {
+  }
+}
+
+const buildServiceInfoDTO = (): ServiceInfoDTO => {
+  const options: { [key: string]: any } = {}
+
+  return {
+    id: '123',
+    providerId: '0x123',
+    type: 'wireguard',
+    proposal: parseProposalDTO({
+      id: 1,
+      providerId: '0x1',
+      serviceType: 'mock',
+      serviceDefinition: { locationOriginate: { country: 'lt' } },
+      metrics: { connectCount: { success: 0, fail: 10, timeout: 50 } }
+    }),
+    status: ServiceStatus['NOT_RUNNING'],
+    options: options
   }
 }
 
