@@ -30,7 +30,7 @@
       <div class="control__bottom">
         <div
           class="control__action btn"
-          :class="{'btn--transparent':true}"
+          :class="{'btn--transparent':true, 'btn--disabled': pendingRequest}"
           @click="toggleService">
           {{ buttonText }}
         </div>
@@ -70,9 +70,6 @@ import { ServiceStatus } from 'mysterium-vpn-js/lib/models/service-status'
 import { ConnectionStatus } from 'mysterium-tequilapi/lib/dto/connection-status'
 import logger from '../../app/logger'
 import Identity from '../components/identity'
-import { ProviderService } from 'mysterium-vpn-js/lib/domain/provider-service'
-
-const PROVIDER_SERVICE_TYPE = 'wireguard'
 
 export default {
   name: 'Main',
@@ -90,6 +87,7 @@ export default {
   data () {
     return {
       status: ServiceStatus.NOT_RUNNING,
+      pendingRequest: false,
       users: 0
     }
   },
@@ -138,6 +136,10 @@ export default {
       }
     },
     buttonText () {
+      if (this.pendingRequest) {
+        return 'Please wait...'
+      }
+
       const notRunning = 'Start service'
       const starting = 'Starting..'
       const running = 'Stop service'
@@ -163,6 +165,10 @@ export default {
   methods: {
     ...mapMutations({ hideErr: type.HIDE_ERROR }),
     async toggleService () {
+      if (this.pendingRequest) {
+        return
+      }
+
       if (this.status === ServiceStatus.NOT_RUNNING) {
         await this.startService()
 
@@ -172,66 +178,46 @@ export default {
       if (this.status === ServiceStatus.RUNNING) {
         await this.stopService()
       }
+
+      this.providerService.checkForExistingService()
     },
 
     async startService () {
+      this.pendingRequest = true
+
       try {
         // TODO: before starting service, ensure that VPN service has finished stopping
         await this.providerService.start(this.currentIdentity)
 
-        this.startIncrementingUsers()
+        this.$store.commit(type.HIDE_ERROR)
       } catch (e) {
-        this.$store.commit(type.SHOW_ERROR_MESSAGE, 'Failed to start the service')
+        this.$store.commit(type.SHOW_ERROR_MESSAGE, 'Failed to start the service: ' + e.message)
         // TODO: hide this error message if starting service succeeds after another try
         logger.warn(e)
       }
+
+      this.pendingRequest = false
     },
 
     async stopService () {
+      this.pendingRequest = true
+
       try {
         await this.providerService.stop()
 
-        this.stopIncrementingUsers()
+        this.status = ServiceStatus.NOT_RUNNING
       } catch (e) {
-        this.$store.commit(type.SHOW_ERROR_MESSAGE, 'Failed to stop the service')
+        this.$store.commit(type.SHOW_ERROR_MESSAGE, 'Failed to stop the service: ' + e.message)
         logger.warn(e)
       }
+
+      this.pendingRequest = false
     },
 
     onStatusChange (newStatus) {
       this.status = newStatus
       // TODO: show error if status changes from "Starting" to "NotRunning"
       // TODO: show error if service ends unexpectedly, without stoping service
-    },
-
-    startIncrementingUsers () {
-      // UI candy
-      this.interval = setInterval(() => {
-        this.incrementUsers()
-      }, 3000)
-    },
-
-    stopIncrementingUsers () {
-      clearInterval(this.interval)
-      this.users = 0
-    },
-
-    incrementUsers () {
-      const random = Math.floor(Math.random() * 10) + 1
-
-      if (random > 6 && this.users > 0) {
-        this.users--
-
-        return
-      }
-
-      if (this.status === ServiceStatus.RUNNING) {
-        this.users++
-
-        return
-      }
-
-      this.users = 0
     }
   }
 }

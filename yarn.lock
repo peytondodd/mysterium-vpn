@@ -7845,10 +7845,10 @@ mute-stream@0.0.7, mute-stream@~0.0.4:
   resolved "https://registry.yarnpkg.com/mute-stream/-/mute-stream-0.0.7.tgz#3075ce93bc21b8fab43e1bc4da7e8115ed1e7bab"
   integrity sha1-MHXOk7whuPq0PhvE2n6BFe0ee6s=
 
-mysterium-client-bin@0.5.3:
-  version "0.5.3"
-  resolved "https://registry.yarnpkg.com/mysterium-client-bin/-/mysterium-client-bin-0.5.3.tgz#4188ae7253cda01e962446cb5d62b690a5a10c86"
-  integrity sha512-lEPfqQgEAy0rtpU/4Uh2PMXIt4mz+Z8s5NLqxIBGm1CxMFlALC16mWKbxnDirKjmt28mBhXu6grrWB9nHLkUJg==
+mysterium-client-bin@0.0.0-dev:
+  version "0.0.0-dev"
+  resolved "https://registry.yarnpkg.com/mysterium-client-bin/-/mysterium-client-bin-0.0.0-dev.tgz#424873072964e7a5835115281eb38bbb925dbce8"
+  integrity sha512-Ck3ZNDEOko6LrZKZBtkbjfuaeIXxgQXad7NkTppBJmh2rUfs1C+jhDnh9f4MS1Kn4Jwep+0Z0NYz5GC+wuM8Rw==
   dependencies:
     extract-zip "^1.6.7"
     follow-redirects "^1.5.2"
@@ -7862,14 +7862,10 @@ mysterium-tequilapi@^0.7.3:
     "@babel/runtime" "^7.1.5"
     axios "^0.18.0"
 
-"mysterium-vpn-js@file:../mysterium-vpn-js":
-  version "0.0.2"
-  dependencies:
-    filesize "^4.1.2"
-    mysterium-tequilapi "^0.7.3"
-
-"mysterium-vpn-js@file:/Users/donce/projects/mysterium-vpn-js/":
-  version "0.0.2"
+mysterium-vpn-js@^0.0.5:
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/mysterium-vpn-js/-/mysterium-vpn-js-0.0.5.tgz#fde8c9f08e6e290e34f5b16c627ab5705ff062f2"
+  integrity sha512-Ci/ktWD1Kcg8eI2a7NwQsJSVgipXQd3rkBfALdsHvI6ea9CmROwS7fqcIVCsLMiV8rtBdRIptY+f9xHW7MPbjg==
   dependencies:
     filesize "^4.1.2"
     mysterium-tequilapi "^0.7.3"

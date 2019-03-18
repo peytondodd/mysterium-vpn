@@ -26,4 +26,4 @@ export default function bootstrap (container: Container) {
   })
 }
 
-const PROVIDER_SERVICE_TYPE = 'wireguard'
+const PROVIDER_SERVICE_TYPE = 'openvpn'

@@ -11,16 +11,10 @@ const { dependencies, version } = require('../package.json')
 const { buildNumber } = require('../build-number.json')
 const webpack = require('webpack')
 const features = require('./features')
-const utilHelpers = require('../src/libraries/util-helpers')
 
 const BabiliWebpackPlugin = require('babili-webpack-plugin')
 
 const mysteriumClientVersion = dependencies['mysterium-client-bin']
-
-
-if (!utilHelpers.isSemanticVersionValid(mysteriumClientVersion)) {
-  throw new Error('mysterium-client-bin package must use an exact version.')
-}
 
 let mainConfig = {
   entry: {
