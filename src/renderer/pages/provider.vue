@@ -204,8 +204,6 @@ export default {
 
       try {
         await this.providerService.stop()
-
-        this.status = ServiceStatus.NOT_RUNNING
       } catch (e) {
         this.$store.commit(type.SHOW_ERROR_MESSAGE, 'Failed to stop the service: ' + e.message)
         logger.warn(e)
