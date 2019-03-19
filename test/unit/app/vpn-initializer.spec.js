@@ -106,7 +106,7 @@ describe('VpnInitializer', () => {
       })
     })
 
-    describe('with not identities', () => {
+    describe('with no identities', () => {
       const mockCreatedIdentity: IdentityDTO = { id: '0xC001FACY' }
       let identityUnlocked: boolean
 

@@ -17,7 +17,7 @@
 
 <template>
   <div class="page">
-    <Identity v-if="paymentsAreEnabled"/>
+    <Identity/>
 
     <div class="page__control control">
 
@@ -80,7 +80,6 @@ export default {
   },
   dependencies: [
     'tequilapiClient',
-    'featureToggle',
     'bugReporter',
     'providerService'
   ],
@@ -157,9 +156,6 @@ export default {
           this.bugReporter.captureErrorMessage(msg)
           return notRunning
       }
-    },
-    paymentsAreEnabled () {
-      return this.featureToggle.paymentsAreEnabled()
     }
   },
   methods: {

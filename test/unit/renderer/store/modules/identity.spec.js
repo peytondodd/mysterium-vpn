@@ -94,10 +94,10 @@ describe('identity store', () => {
       })
 
       describe('.startObserving', () => {
-        it('observes identity', () => {
+        it('observes identity', async () => {
           store.dispatch('startObserving', identityManager)
 
-          identityManager.setCurrentIdentity({ id: 'new identity' })
+          await identityManager.unlockIdentity({ id: 'new identity' })
           expect(store.getters.currentIdentity).to.eql('new identity')
         })
       })

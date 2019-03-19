@@ -119,15 +119,4 @@ describe('Vpn', () => {
       expect(vpnWrapper.findAll('.identity-button--unregistered')).to.have.lengthOf(0)
     })
   })
-
-  describe('when payments are disabled', () => {
-    beforeEach(() => {
-      bugReporterMock = new BugReporterMock()
-      vpnWrapper = mountVpn(false)
-    })
-
-    it('does not render ID icon when payments feature disabled', async () => {
-      expect(vpnWrapper.findAll('.identity-button')).to.have.lengthOf(0)
-    })
-  })
 })

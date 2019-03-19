@@ -51,15 +51,6 @@ class IdentityManager {
     }
   }
 
-  setCurrentIdentity (identity: IdentityDTO) {
-    if (!identity.id) {
-      throw new Error('Cannot set empty identity.')
-    }
-
-    this._identity = identity
-    this._identityPublisher.publish(identity)
-  }
-
   // TODO: unify naming
   onCurrentIdentityChange (callback: IdentityDTO => void) {
     this._identityPublisher.addSubscriber(callback)
@@ -83,27 +74,31 @@ class IdentityManager {
     }
   }
 
-  async unlockCurrentIdentity (): Promise<void> {
-    const currentIdentity = this._identity
-
-    if (currentIdentity == null || !currentIdentity.id) {
-      const message = 'Identity is not available'
-
+  async unlockIdentity (identity: IdentityDTO): Promise<void> {
+    if (!identity.id) {
+      const message = 'Cannot unlock invalid identity'
       this._showErrorMessage(message)
 
       throw new Error(message)
     }
 
     try {
-      await this._tequilapi.identityUnlock(currentIdentity.id, PASSWORD)
+      await this._tequilapi.identityUnlock(identity.id, PASSWORD)
     } catch (err) {
       this._showErrorMessage(messages.identityUnlockFailed)
       throw err
     }
+
+    this._setCurrentIdentity(identity)
   }
 
   onErrorMessage (callback: string => void) {
     this._errorMessagePublisher.addSubscriber(callback)
+  }
+
+  _setCurrentIdentity (identity: IdentityDTO) {
+    this._identity = identity
+    this._identityPublisher.publish(identity)
   }
 
   // TODO: this class should not show errors in case VpnInitializer is run with multiple retries

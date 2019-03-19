@@ -17,7 +17,7 @@
 
 <template>
   <div class="page">
-    <Identity v-if="paymentsAreEnabled"/>
+    <Identity/>
 
     <div class="page__control control">
 
@@ -103,8 +103,7 @@ export default {
     'bugReporter',
     'rendererCommunication',
     'startupEventTracker',
-    'userSettingsStore',
-    'featureToggle'
+    'userSettingsStore'
   ],
   data () {
     return {
@@ -138,9 +137,6 @@ export default {
     },
     providerCountry () {
       return this.country ? this.country.code : null
-    },
-    paymentsAreEnabled () {
-      return this.featureToggle.paymentsAreEnabled()
     }
   },
   methods: {
