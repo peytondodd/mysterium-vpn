@@ -82,29 +82,28 @@ class ServiceManagerProcess implements Process {
     // since this is service managed process
     try {
       await this._tequilapi.connectionCancel()
-      await this.stopServices()
     } catch (err) {
       if (err.name !== TequilapiError.name) {
         throw err
       }
     }
+
+    await this.stopServices()
   }
 
   async stopServices (): Promise<void> {
     let services = []
     try {
       services = await this._tequilapi.serviceList()
-    } catch (err) {
-      if (err.name !== TequilapiError.name) {
-        throw err
-      }
+    } catch (error) {
+      logger.error(`Can't get serviceList for stopServices: ${error.message}`)
     }
 
     services.forEach(async (service) => {
       try {
         await this._tequilapi.serviceStop(service.id)
-      } catch (e) {
-        logger.error(`Can't stop service: ${service.type}-${service.id}`)
+      } catch (error) {
+        logger.error(`Can't stop service: ${service.type}-${service.id}: ${error.message}`)
       }
     })
   }
