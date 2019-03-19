@@ -29,13 +29,15 @@ import EmptyTequilapiClientMock from '../store/modules/empty-tequilapi-client-mo
 import identityStoreFactory from '../../../../src/renderer/store/modules/identity'
 import types from '../../../../src/renderer/store/types'
 import MockEventSender from '../../../helpers/statistics/mock-event-sender'
+import FeatureToggle from '../../../../src/app/features/feature-toggle'
+import type { IdentityDTO } from 'mysterium-tequilapi/lib/dto/identity'
 
 describe('IdentityRegistration', () => {
   let rendererCommunication: RendererCommunication
   let wrapper: IdentityRegistration
   let store: Vuex.Store
 
-  function mountEverything (stateOverride = {}) {
+  function mountEverything (currentIdentity: ?IdentityDTO) {
     const vm = createLocalVue()
     vm.use(Vuex)
 
@@ -46,11 +48,12 @@ describe('IdentityRegistration', () => {
 
     dependencies.constant('rendererCommunication', rendererCommunication)
     dependencies.constant('getPaymentLink', () => {})
+    dependencies.constant('featureToggle', new FeatureToggle({ payments: true }))
 
     const tequilapi = new EmptyTequilapiClientMock()
     const identity = {
       ...identityStoreFactory(),
-      state: stateOverride
+      state: { current: currentIdentity }
     }
     store = new Vuex.Store({
       modules: {
@@ -67,9 +70,7 @@ describe('IdentityRegistration', () => {
 
   describe('HTML rendering when State is not OK', () => {
     beforeEach(() => {
-      mountEverything({
-        current: null
-      })
+      mountEverything(null)
     })
 
     it('should still render component', () => {
@@ -79,11 +80,7 @@ describe('IdentityRegistration', () => {
 
   describe('HTML rendering when State is OK', () => {
     beforeEach(() => {
-      mountEverything({
-        current: {
-          id: '0x1'
-        }
-      })
+      mountEverything({ id: '0x1' })
     })
 
     it('renders instructions when menu is opened', () => {
