@@ -114,7 +114,7 @@
     "md5": "^2.2.1",
     "mysterium-client-bin": "0.0.0-dev",
     "mysterium-tequilapi": "^0.7.3",
-    "mysterium-vpn-js": "^0.0.5",
+    "mysterium-vpn-js": "^0.0.6",
     "os-name": "^2.0.1",
     "raven": "^2.4.1",
     "raven-js": "^3.22.3",
