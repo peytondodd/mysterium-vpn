@@ -39,9 +39,7 @@ class VpnInitializer {
 
   async _prepareIdentity (identityManager: IdentityManager): Promise<void> {
     const identity = await this._getFirstOrCreateIdentity(identityManager)
-    identityManager.setCurrentIdentity(identity)
-
-    await identityManager.unlockCurrentIdentity()
+    await identityManager.unlockIdentity(identity)
   }
 
   async _getFirstOrCreateIdentity (identityManager: IdentityManager): Promise<IdentityDTO> {

@@ -62,7 +62,7 @@ describe('RendererInitializer', () => {
       })
 
       initializer.initialize(communication, bugReporter, identityManager, registrationFetcher, new MockStore(), null)
-      identityManager.setCurrentIdentity({ id: 'test identity' })
+      await identityManager.unlockIdentity({ id: 'test identity' })
       await nextTick()
 
       expect(registration).to.eql(tequilapiClient.mockRegistration)
