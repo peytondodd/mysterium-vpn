@@ -125,7 +125,13 @@ class MysteriumVpn {
       // this is needed to wait for async ops to finish
       event.preventDefault()
 
-      await this.onWillQuit()
+      try {
+        await this.onWillQuit()
+      } catch (e) {
+        this._bugReporter.captureErrorException(e)
+      }
+
+      process.exit(1)
     })
     // fired when app activated
     app.on('activate', () => {
@@ -295,8 +301,6 @@ class MysteriumVpn {
       logException('Failed to stop process', e)
       this._bugReporter.captureErrorException(e)
     }
-
-    process.exit(1)
   }
 
   // make sure terms are up to date and accepted
