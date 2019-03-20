@@ -17,11 +17,20 @@
 
 <template>
   <div class="page">
+    <tab-navigation-modal
+      v-if="showTabModal"
+      :on-continue="toServicePage"
+      :on-cancel="() => showTabModal = false"
+    >
+      Navigating to the Service page will stop the VPN connection.
+    </tab-navigation-modal>
     <Identity/>
 
     <div class="page__control control">
 
-      <tabs/>
+      <tabs
+        :on-click="onTabClick"
+      />
 
       <div class="control__top">
         <h1
@@ -87,10 +96,12 @@ import { ActionLooperConfig } from '../store/modules/connection'
 import FavoriteButton from '../components/favorite-button'
 import Tabs from '../components/tabs'
 import Identity from '../components/identity'
+import TabNavigationModal from '../components/tab-navigation-modal'
 
 export default {
   name: 'Main',
   components: {
+    TabNavigationModal,
     Identity,
     Tabs,
     FavoriteButton,
@@ -103,13 +114,15 @@ export default {
     'bugReporter',
     'rendererCommunication',
     'startupEventTracker',
-    'userSettingsStore'
+    'userSettingsStore',
+    'providerService'
   ],
   data () {
     return {
       country: null,
       countryList: [],
-      countriesAreLoading: false
+      countriesAreLoading: false,
+      showTabModal: false
     }
   },
   computed: {
@@ -158,12 +171,38 @@ export default {
     onCountriesUpdate (countries) {
       this.countriesAreLoading = false
 
-      if (countries.length < 1) this.bugReporter.captureInfoMessage('Renderer received empty countries list')
+      if (countries.length < 1) {
+        this.bugReporter.captureInfoMessage('Renderer received empty countries list')
+      }
 
       this.countryList = countries
+    },
+    onTabClick (page) {
+      if (page === 'provider') {
+        if (this.statusCode > -1) {
+          this.showTabModal = true
+        } else {
+          this.goToServicePage()
+        }
+      }
+    },
+    toServicePage () {
+      if (this.statusCode > -1) {
+        this.$store.dispatch(type.DISCONNECT)
+      }
+
+      this.goToServicePage()
+    },
+    goToServicePage () {
+      this.$router.push('/provider')
     }
   },
   async mounted () {
+    if (await this.providerService.isActive()) {
+      this.$router.push('/provider')
+      return
+    }
+
     this.startupEventTracker.sendAppStartSuccessEvent()
     this.rendererCommunication.countryUpdate.on(this.onCountriesUpdate)
 

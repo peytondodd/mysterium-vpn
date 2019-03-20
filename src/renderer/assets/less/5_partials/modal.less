@@ -18,12 +18,25 @@
 .modal {
   position: absolute;
   top: 0;
-  background: rgba(255,255,255,0.9);
+  background: rgba(0,0,0,0.25);
   width: 100vw;
   height: 100vh;
-  z-index: 2;
+  z-index: 5;
   &__dialog {
-    &--s {}
+    &--boxed {
+      border: 1px solid @mainLight;
+      border-radius: 4px;
+      background-color: @white;
+      .modal__actions {
+        display: block;
+        text-align: center;
+        padding-bottom: 0;
+      }
+    }
+    &--s {
+      margin-top: 10vh;
+      height: auto;
+    }
     padding: 2rem;
     max-width: 80%;
     margin: 0 auto;
@@ -55,5 +68,12 @@
   }
   &__action {
     margin: 0 0.5rem;
+  }
+  &-button {
+    padding: 0.75rem;
+    border: 1px solid @mainLight;
+    display: inline-block;
+    text-decoration: none;
+    border-radius: 5px;
   }
 }

@@ -19,9 +19,17 @@
   <div class="page">
     <Identity/>
 
-    <div class="page__control control">
+    <tab-navigation-modal
+      v-if="showTabModal"
+      to="vpn"
+      :on-continue="toVpnPage"
+      :on-cancel="() => showTabModal = false"
+    >
+      Navigating to the VPN page will stop the service.
+    </tab-navigation-modal>
 
-      <tabs/>
+    <div class="page__control control">
+      <tabs :on-click="onTabClick"/>
 
       <div class="control__top">
         <h1>{{ statusText }}</h1>
@@ -70,10 +78,14 @@ import { ServiceStatus } from 'mysterium-vpn-js/lib/models/service-status'
 import { ConnectionStatus } from 'mysterium-tequilapi/lib/dto/connection-status'
 import logger from '../../app/logger'
 import Identity from '../components/identity'
+import AppModal from '../partials/app-modal'
+import TabNavigationModal from '../components/tab-navigation-modal'
 
 export default {
   name: 'Main',
   components: {
+    TabNavigationModal,
+    AppModal,
     Tabs,
     Identity,
     AppError
@@ -87,7 +99,8 @@ export default {
     return {
       status: ServiceStatus.NOT_RUNNING,
       pendingRequest: false,
-      users: 0
+      users: 0,
+      showTabModal: false
     }
   },
   async mounted () {
@@ -99,11 +112,6 @@ export default {
 
     // reset any error messages from VPN page
     this.$store.commit(type.HIDE_ERROR)
-
-    // disconnect from VPN if still connected
-    if (this.$store.getters.status !== ConnectionStatus.NOT_CONNECTED) {
-      this.$store.dispatch(type.DISCONNECT)
-    }
 
     // stop statistics fetching
     this.$store.dispatch(type.STOP_ACTION_LOOPING, type.CONNECTION_IP)
@@ -212,6 +220,23 @@ export default {
       this.status = newStatus
       // TODO: show error if status changes from "Starting" to "NotRunning"
       // TODO: show error if service ends unexpectedly, without stoping service
+    },
+    async toVpnPage () {
+      await this.providerService.stop()
+
+      this.gotToVpn()
+    },
+    async onTabClick (page) {
+      if (page === 'vpn') {
+        if (await this.providerService.isActive()) {
+          this.showTabModal = true
+        } else {
+          this.gotToVpn()
+        }
+      }
+    },
+    gotToVpn () {
+      this.$router.push('/vpn')
     }
   }
 }

@@ -17,27 +17,36 @@
 
 <template>
   <div class="tabs">
-    <router-link
-      :to="{ name: 'vpn' }"
+    <a
+      href="#"
+      @click.prevent="onClick('vpn')"
       class="tab__button"
       :class="{'tab__button--active': activeRoute('vpn')}">
       Use VPN
-    </router-link>
+    </a>
 
-    <router-link
-      :to="{ name: 'provider' }"
+    <a
+      href="#"
+      @click.prevent="onClick('provider')"
       class="tab__button"
       :class="{'tab__button--active': activeRoute('provider')}">
       Run service
-    </router-link>
+    </a>
   </div>
 </template>
 
 <script>
 export default {
+  props: {
+    onClick: {
+      type: Function,
+      default: () => {}
+    }
+  },
   methods: {
     activeRoute (routeName) {
       const currentRoute = this.getCurrentRoute() || 'vpn'
+
       return routeName === currentRoute
     },
     getCurrentRoute () {

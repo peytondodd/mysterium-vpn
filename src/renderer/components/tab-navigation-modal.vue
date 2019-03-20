@@ -1,5 +1,5 @@
 <!--
-  - Copyright (C) 2017 The "mysteriumnetwork/mysterium-vpn" Authors.
+  - Copyright (C) 2019 The "mysteriumnetwork/mysterium-vpn" Authors.
   -
   - This program is free software: you can redistribute it and/or modify
   - it under the terms of the GNU General Public License as published by
@@ -16,37 +16,40 @@
   -->
 
 <template>
-  <div class="modal">
-    <i
-      class="modal__close close"
-      @click="$store.dispatch('switchModal', null)"
-      v-if="close"/>
-    <div
-      class="modal__dialog"
-      :class="{'modal__dialog--s': size === 's', 'modal__dialog--boxed': boxed}">
+  <app-modal
+    :boxed="true"
+    size="s">
+    <p>
       <slot/>
+    </p>
+    <p>Are you sure you want to continue?</p>
+
+    <div class="modal__actions text-center">
+      <a
+        href="#"
+        @click.prevent="onContinue"
+        class="modal-button">Yes, continue</a>
+      <a
+        href="#"
+        @click.prevent="onCancel"
+        class="modal-button">No, stay</a>
     </div>
-  </div>
+  </app-modal>
 </template>
 
 <script>
+import AppModal from '../partials/app-modal'
+
 export default {
-  name: 'AppModal',
-  data () {
-    return {}
-  },
+  components: { AppModal },
   props: {
-    size: {
-      type: String,
+    onContinue: {
+      type: Function,
       default: null
     },
-    close: {
-      type: Boolean,
-      default: true
-    },
-    boxed: {
-      type: Boolean,
-      default: false
+    onCancel: {
+      type: Function,
+      default: null
     }
   }
 }
