@@ -51,9 +51,7 @@
             </div>
           </transition>
           <div class="stats__block">
-            <div class="stats__label">CONNECTED</div>
-            <div class="stats__value">{{ users }}</div>
-            <div class="stats__unit">USERS</div>
+            <div class="stats__unit"><a href="#" @click="openStatsPage()" title="Open dashboard of current service">STATISTICS</a></div>
           </div>
         </div>
       </div>
@@ -70,6 +68,7 @@ import { ServiceStatus } from 'mysterium-vpn-js/lib/models/service-status'
 import { ConnectionStatus } from 'mysterium-tequilapi/lib/dto/connection-status'
 import logger from '../../app/logger'
 import Identity from '../components/identity'
+import { shell } from 'electron'
 
 export default {
   name: 'Main',
@@ -81,7 +80,8 @@ export default {
   dependencies: [
     'tequilapiClient',
     'bugReporter',
-    'providerService'
+    'providerService',
+    'dashboardBaseUrl'
   ],
   data () {
     return {
@@ -212,6 +212,14 @@ export default {
       this.status = newStatus
       // TODO: show error if status changes from "Starting" to "NotRunning"
       // TODO: show error if service ends unexpectedly, without stoping service
+    },
+
+    openStatsPage () {
+        shell.openExternal(this.getProviderStatsLink(this.currentIdentity, 'openvpn'))
+    },
+
+    getProviderStatsLink (providerId, serviceType) {
+      return this.dashboardBaseUrl + '/node/' + providerId + '/' + serviceType
     }
   }
 }
