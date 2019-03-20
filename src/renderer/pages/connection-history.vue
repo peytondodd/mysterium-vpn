@@ -65,7 +65,10 @@ export default {
   },
   methods: {
     close: function () {
-      this.$router.push('/vpn')
+      // $router.back() doesn't work
+      // $router.go(-1) only works when used twice
+      // appears that -1 is duplicated in page history
+      this.$router.go(-2)
     }
   }
 }
