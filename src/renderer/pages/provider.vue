@@ -38,7 +38,7 @@
       <div class="control__bottom">
         <div
           class="control__action btn"
-          :class="{'btn--transparent':true, 'btn--disabled': pendingRequest}"
+          :class="{'btn--transparent': isButtonActive}"
           @click="toggleService">
           {{ buttonText }}
         </div>
@@ -123,6 +123,12 @@ export default {
   },
   computed: {
     ...mapGetters(['errorMessage', 'showError', 'currentIdentity']),
+    pendingRequests () {
+      return this.pendingStartRequest || this.pendingStopRequest
+    },
+    isButtonActive () {
+      return this.status !== ServiceStatus.NOT_RUNNING || this.pendingRequests
+    },
     statusText () {
       const notRunning = 'Stopped'
       const starting = 'Starting..'
@@ -143,7 +149,7 @@ export default {
       }
     },
     buttonText () {
-      if (this.pendingStartRequest || this.pendingStopRequest) {
+      if (this.pendingRequests) {
         return 'Please wait...'
       }
 
@@ -169,7 +175,7 @@ export default {
   methods: {
     ...mapMutations({ hideErr: type.HIDE_ERROR }),
     async toggleService () {
-      if (this.pendingStartRequest || this.pendingStopRequest) {
+      if (this.pendingRequests) {
         return
       }
 
