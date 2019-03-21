@@ -97,9 +97,10 @@ export default {
   data () {
     return {
       status: ServiceStatus.NOT_RUNNING,
-      pendingRequest: false,
-      users: 0,
-      showTabModal: false
+      pendingStartRequest: false,
+      pendingStopRequest: false,
+      showTabModal: false,
+      users: 0
     }
   },
   async mounted () {
@@ -142,7 +143,7 @@ export default {
       }
     },
     buttonText () {
-      if (this.pendingRequest) {
+      if (this.pendingStartRequest || this.pendingStopRequest) {
         return 'Please wait...'
       }
 
@@ -168,7 +169,7 @@ export default {
   methods: {
     ...mapMutations({ hideErr: type.HIDE_ERROR }),
     async toggleService () {
-      if (this.pendingRequest) {
+      if (this.pendingStartRequest || this.pendingStopRequest) {
         return
       }
 
@@ -186,7 +187,7 @@ export default {
     },
 
     async startService () {
-      this.pendingRequest = true
+      this.pendingStartRequest = true
 
       try {
         // TODO: before starting service, ensure that VPN service has finished stopping
@@ -199,11 +200,11 @@ export default {
         logger.warn(e)
       }
 
-      this.pendingRequest = false
+      this.pendingStartRequest = false
     },
 
     async stopService () {
-      this.pendingRequest = true
+      this.pendingStopRequest = true
 
       try {
         await this.providerService.stop()
@@ -212,7 +213,7 @@ export default {
         logger.warn(e)
       }
 
-      this.pendingRequest = false
+      this.pendingStopRequest = false
     },
 
     onStatusChange (newStatus) {
@@ -226,13 +227,16 @@ export default {
       this.gotToVpn()
     },
     async onTabClick (page) {
-      if (page === 'vpn') {
-        if (await this.providerService.isActive()) {
-          this.showTabModal = true
-        } else {
-          this.gotToVpn()
-        }
+      if (page !== 'vpn') {
+        return
       }
+
+      if (this.status !== ServiceStatus.NOT_RUNNING || this.pendingStartRequest) {
+        this.showTabModal = true
+        return
+      }
+
+      this.gotToVpn()
     },
     gotToVpn () {
       this.$router.push('/vpn')

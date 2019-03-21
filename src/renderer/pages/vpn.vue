@@ -178,13 +178,16 @@ export default {
       this.countryList = countries
     },
     onTabClick (page) {
-      if (page === 'provider') {
-        if (this.statusCode > -1) {
-          this.showTabModal = true
-        } else {
-          this.goToServicePage()
-        }
+      if (page !== 'provider') {
+        return
       }
+
+      if (this.statusCode > -1) {
+        this.showTabModal = true
+        return
+      }
+
+      this.goToServicePage()
     },
     toServicePage () {
       if (this.statusCode > -1) {
