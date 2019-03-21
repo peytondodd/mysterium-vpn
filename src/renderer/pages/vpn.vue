@@ -199,8 +199,7 @@ export default {
   },
   async mounted () {
     if (await this.providerService.isActive()) {
-      this.$router.push('/provider')
-      return
+      return this.goToServicePage()
     }
 
     this.startupEventTracker.sendAppStartSuccessEvent()

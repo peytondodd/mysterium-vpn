@@ -59,14 +59,21 @@ describe('Vpn', () => {
     dependencies.constant('getPaymentLink', () => {})
     dependencies.constant('durationFormatter', new DurationFormatter())
     dependencies.constant('bytesFormatter', new BytesFormatter())
+    dependencies.constant('providerService', { isActive: async () => false })
 
     const store = new Store({
       getters: {
-        connection () {},
-        status () { return 'NotConnected' },
-        ip () {},
-        errorMessage () {},
-        showError () {}
+        connection () {
+        },
+        status () {
+          return 'NotConnected'
+        },
+        ip () {
+        },
+        errorMessage () {
+        },
+        showError () {
+        }
       },
       modules: {
         main: mainStoreFactory(new EmptyTequilapiClientMock(), new MockEventSender()),
@@ -81,7 +88,7 @@ describe('Vpn', () => {
   }
 
   describe('when payments are enabled', () => {
-    beforeEach(() => {
+    beforeEach(async () => {
       bugReporterMock = new BugReporterMock()
       vpnWrapper = mountVpn()
     })
@@ -94,7 +101,6 @@ describe('Vpn', () => {
       it('it shows error when empty proposal list is received', async () => {
         fakeMessageBus.triggerOn(messages.COUNTRY_UPDATE, [])
         vpnWrapper.vm.fetchCountries()
-
         expect(bugReporterMock.infoMessages[0].message).to.eql('Renderer received empty countries list')
       })
     })

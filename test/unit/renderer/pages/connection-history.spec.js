@@ -81,6 +81,6 @@ describe('ConnectionHistory', () => {
 
   it('renders close button which opens vpn window', () => {
     wrapper.find('.close-button').trigger('click')
-    expect(wrapper.vm.$router.currentRoute.path).to.eql('/vpn')
+    expect(wrapper.vm.$router.currentRoute.path).to.eql('/')
   })
 })
