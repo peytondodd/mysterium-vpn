@@ -19,7 +19,7 @@
   <div class="page">
     <tab-navigation-modal
       v-if="showTabModal"
-      :on-continue="toServicePage"
+      :on-continue="stopAndGoToProviderPage"
       :on-cancel="() => showTabModal = false"
     >
       Navigating to the Service page will stop the VPN connection.
@@ -187,25 +187,26 @@ export default {
         return
       }
 
-      this.goToServicePage()
+      this.goToProviderPage()
     },
-    toServicePage () {
+    async stopAndGoToProviderPage () {
       if (this.statusCode > -1) {
-        this.$store.dispatch(type.DISCONNECT)
+        await this.$store.dispatch(type.DISCONNECT)
       }
 
-      this.goToServicePage()
+      this.goToProviderPage()
     },
-    goToServicePage () {
+    goToProviderPage () {
       this.$router.push('/provider')
     }
   },
   async mounted () {
+    this.startupEventTracker.sendAppStartSuccessEvent()
+
     if (await this.providerService.isActive()) {
-      return this.goToServicePage()
+      return this.goToProviderPage()
     }
 
-    this.startupEventTracker.sendAppStartSuccessEvent()
     this.rendererCommunication.countryUpdate.on(this.onCountriesUpdate)
 
     // TODO: do not start loopers each time this page is mounted, or stop loopers when in .beforeDestroy

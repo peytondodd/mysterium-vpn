@@ -22,7 +22,7 @@
     <tab-navigation-modal
       v-if="showTabModal"
       to="vpn"
-      :on-continue="toVpnPage"
+      :on-continue="stopAndGoToVpn"
       :on-cancel="() => showTabModal = false"
     >
       Navigating to the VPN page will stop the service.
@@ -38,7 +38,7 @@
       <div class="control__bottom">
         <div
           class="control__action btn"
-          :class="{'btn--transparent':true, 'btn--disabled': pendingRequest}"
+          :class="{'btn--transparent':true}"
           @click="toggleService">
           {{ buttonText }}
         </div>
@@ -221,10 +221,10 @@ export default {
       // TODO: show error if status changes from "Starting" to "NotRunning"
       // TODO: show error if service ends unexpectedly, without stoping service
     },
-    async toVpnPage () {
+    async stopAndGoToVpn () {
       await this.providerService.stop()
 
-      this.gotToVpn()
+      this.goToVpn()
     },
     async onTabClick (page) {
       if (page !== 'vpn') {
@@ -236,9 +236,9 @@ export default {
         return
       }
 
-      this.gotToVpn()
+      this.goToVpn()
     },
-    gotToVpn () {
+    goToVpn () {
       this.$router.push('/vpn')
     }
   }
